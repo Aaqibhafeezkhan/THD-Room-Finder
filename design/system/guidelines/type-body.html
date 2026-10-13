@@ -1,0 +1,27 @@
+<!-- @dsCard group="Type" viewport="700x210" name="Body, Labels & Overline" subtitle="Roboto Regular body; Medium labels; uppercase overlines for filters" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: var(--font-sans); background: var(--md-surface); padding: 22px 24px; color: var(--md-on-surface); }
+  .stack { display: flex; flex-direction: column; gap: 14px; max-width: 560px; }
+  .overline { font-size: 0.75rem; font-weight: 500; text-transform: uppercase; color: var(--md-on-surface-variant); }
+  .body-l { font-size: 1rem; line-height: 1.7; color: var(--md-on-surface); }
+  .body-m { font-size: 0.875rem; line-height: 1.5; color: var(--md-on-surface-variant); }
+  .label { font-size: 0.875rem; font-weight: 500; color: var(--md-primary); }
+  .spec { font-family: var(--font-mono); font-size: 11px; color: var(--md-on-surface-variant); }
+</style>
+</head>
+<body>
+  <div class="stack">
+    <div><span class="overline">Building</span> &nbsp;<span class="spec">label · 500 · 12px · uppercase</span></div>
+    <p class="body-l">Find free study rooms at Technische Hochschule Deggendorf — instantly. <span class="spec">body-large · 400 · 16px / 1.7</span></p>
+    <p class="body-m">Room data is cached locally with a 24-hour TTL, so the full list works even offline. <span class="spec">body-medium · 400 · 14px / 1.5</span></p>
+    <div><span class="label">Find a Free Room</span> &nbsp;<span class="spec">button label · 500 · 14px</span></div>
+  </div>
+</body>
+</html>

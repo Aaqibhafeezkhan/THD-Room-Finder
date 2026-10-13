@@ -1,0 +1,30 @@
+<!-- @dsCard group="Spacing" viewport="700x170" name="Spacing Scale — 4px grid" subtitle="Material 4px base. Card padding 16, card gap 8, screen inset 16." -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: var(--font-sans); background: var(--md-surface); padding: 20px 24px; }
+  .row { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+  .item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .bar { background: var(--md-primary-container); border-radius: var(--radius-xs); height: 44px; }
+  .v { font-family: var(--font-mono); font-size: 11px; color: var(--md-on-surface-variant); }
+  .n { font-size: 11px; font-weight: 500; color: var(--md-on-surface); }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="item"><div class="bar" style="width:4px;"></div><span class="n">1</span><span class="v">4</span></div>
+    <div class="item"><div class="bar" style="width:8px;"></div><span class="n">2</span><span class="v">8</span></div>
+    <div class="item"><div class="bar" style="width:12px;"></div><span class="n">3</span><span class="v">12</span></div>
+    <div class="item"><div class="bar" style="width:16px;"></div><span class="n">4</span><span class="v">16</span></div>
+    <div class="item"><div class="bar" style="width:24px;"></div><span class="n">6</span><span class="v">24</span></div>
+    <div class="item"><div class="bar" style="width:32px;"></div><span class="n">8</span><span class="v">32</span></div>
+    <div class="item"><div class="bar" style="width:40px;"></div><span class="n">10</span><span class="v">40</span></div>
+    <div class="item"><div class="bar" style="width:64px;"></div><span class="n">16</span><span class="v">64</span></div>
+  </div>
+</body>
+</html>

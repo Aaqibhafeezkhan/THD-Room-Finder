@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Campus Room Finder" description="Mobile app screen: 2.5D campus map → tap a building → free-room list → room detail with schedule" -->
+<helmet>
+<script src="./ds-base.js"></script>
+<script src="./campus-data.js"></script>
+<script src="./context-data.js"></script>
+<script src="./rooms-data.js"></script>
+<style>
+  *{box-sizing:border-box;}
+  .crf-scroll::-webkit-scrollbar{width:0;height:0;}
+  .crf-seg{display:flex;gap:4px;background:var(--md-surface-1);border:1px solid var(--md-outline-variant);border-radius:999px;padding:4px;}
+  .crf-seg button{flex:1;padding:7px 0;font:500 12px/1 var(--font-sans);border:none;border-radius:999px;cursor:pointer;transition:background .12s,color .12s;}
+</style>
+</helmet>
+
+<div style="width:100%;height:100%;max-width:480px;margin:0 auto;background:var(--md-bg);color:var(--md-on-surface);font-family:var(--font-sans);display:flex;flex-direction:column;overflow:hidden;position:relative;">
+
+  <sc-if value="{{ notReady }}" hint-placeholder-val="{{ true }}">
+    <div style="flex:1;display:flex;align-items:center;justify-content:center;color:var(--md-on-surface-variant);font-size:14px;">Loading campus…</div>
+  </sc-if>
+
+  <sc-if value="{{ ready }}">
+  <div style="display:flex;flex-direction:column;height:100%;">
+
+    <!-- ── Header ─────────────────────────────────────────── -->
+    <sc-if value="{{ isOverview }}">
+      <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.AppBar" mode="brand" hint-size="100%,64px"></x-import>
+    </sc-if>
+    <sc-if value="{{ showBackBar }}">
+      <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.AppBar" mode="back" title="{{ backTitle }}" on-back="{{ goBack }}" hint-size="100%,64px"></x-import>
+    </sc-if>
+
+    <!-- ── Map (overview + building) ──────────────────────── -->
+    <sc-if value="{{ showMap }}">
+      <div style="position:relative;height:308px;flex-shrink:0;border-bottom:1px solid var(--md-outline-variant);">
+        <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.CampusMap"
+          campus="{{ CAMPUS }}" context="{{ CONTEXT }}" availability="{{ availability }}"
+          mode="{{ mapMode }}" selected-key="{{ selectedKey }}" on-select="{{ onMapSelect }}"
+          show-trees="{{ showTrees }}" style="display:block;width:100%;height:100%;" hint-size="100%,308px"></x-import>
+
+        <!-- map theme toggle -->
+        <div class="crf-seg" style="position:absolute;top:12px;right:12px;width:168px;backdrop-filter:blur(2px);box-shadow:var(--md-shadow-1);">
+          <sc-for list="{{ modes }}" as="m" hint-placeholder-count="3">
+            <sc-if value="{{ m.active }}"><button onClick="{{ m.onClick }}" style="flex:1;padding:6px 0;font:500 11px/1 var(--font-sans);border:none;border-radius:999px;cursor:pointer;background:var(--md-secondary-container);color:var(--md-on-secondary-container);">{{ m.label }}</button></sc-if>
+            <sc-if value="{{ m.inactive }}" hint-placeholder-val="{{ true }}"><button onClick="{{ m.onClick }}" style="flex:1;padding:6px 0;font:500 11px/1 var(--font-sans);border:none;border-radius:999px;cursor:pointer;background:var(--md-surface);color:var(--md-on-surface-variant);">{{ m.label }}</button></sc-if>
+          </sc-for>
+        </div>
+
+        <!-- map legend -->
+        <div style="position:absolute;left:12px;bottom:12px;display:flex;gap:12px;align-items:center;background:color-mix(in srgb,var(--md-surface) 86%,transparent);border:1px solid var(--md-outline-variant);border-radius:999px;padding:6px 12px;font-size:11px;color:var(--md-on-surface-variant);box-shadow:var(--md-shadow-1);">
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:9px;height:9px;border-radius:2px;background:#00897B;display:inline-block;"></span>Open</span>
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:9px;height:9px;border-radius:2px;background:#4DB6AC;display:inline-block;"></span>Some</span>
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:9px;height:9px;border-radius:2px;background:#C4C6D0;display:inline-block;"></span>Full</span>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ── Scenario bar (overview + building) ─────────────── -->
+    <sc-if value="{{ showMap }}">
+      <div style="padding:12px 16px 4px;flex-shrink:0;">
+        <div class="crf-seg">
+          <sc-for list="{{ scenarios }}" as="s" hint-placeholder-count="3">
+            <sc-if value="{{ s.active }}"><button onClick="{{ s.onClick }}" style="flex:1;padding:7px 0;font:500 12px/1 var(--font-sans);border:none;border-radius:999px;cursor:pointer;background:var(--md-secondary-container);color:var(--md-on-secondary-container);">{{ s.label }}</button></sc-if>
+            <sc-if value="{{ s.inactive }}" hint-placeholder-val="{{ true }}"><button onClick="{{ s.onClick }}" style="flex:1;padding:7px 0;font:500 12px/1 var(--font-sans);border:none;border-radius:999px;cursor:pointer;background:transparent;color:var(--md-on-surface-variant);">{{ s.label }}</button></sc-if>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ── Overview sheet ─────────────────────────────────── -->
+    <sc-if value="{{ isOverview }}">
+      <div class="crf-scroll" style="flex:1;overflow-y:auto;padding:18px 20px 28px;display:flex;flex-direction:column;">
+        <div style="text-align:center;margin:auto 0;">
+          <div style="font-size:72px;font-weight:300;line-height:1;color:var(--md-primary);font-variant-numeric:tabular-nums;">{{ totalFree }}</div>
+          <div style="font-size:15px;font-weight:500;margin-top:10px;">rooms free {{ scenLabel }}</div>
+          <div style="font-size:13px;color:var(--md-on-surface-variant);margin-top:3px;">across {{ buildingCount }} buildings · {{ totalRooms }} rooms total</div>
+          <div style="margin-top:22px;font-size:13px;color:var(--md-on-surface-variant);max-width:30ch;margin-left:auto;margin-right:auto;text-wrap:pretty;">Tap a building on the map to see exactly which rooms are free.</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ── Building sheet (free-room list) ────────────────── -->
+    <sc-if value="{{ isBuilding }}">
+      <div class="crf-scroll" style="flex:1;overflow-y:auto;padding:14px 16px 24px;">
+        <!-- building summary -->
+        <div style="display:flex;align-items:center;gap:13px;margin-bottom:14px;">
+          <sc-if value="{{ bFreeS }}" hint-placeholder-val="{{ true }}"><div style="width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-weight:700;font-size:16px;color:#fff;flex-shrink:0;background:var(--status-free);">{{ bLabel }}</div></sc-if>
+          <sc-if value="{{ bSomeS }}"><div style="width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-weight:700;font-size:16px;color:#fff;flex-shrink:0;background:#4DB6AC;">{{ bLabel }}</div></sc-if>
+          <sc-if value="{{ bFullS }}"><div style="width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-weight:700;font-size:16px;color:#fff;flex-shrink:0;background:#74777F;">{{ bLabel }}</div></sc-if>
+          <div style="min-width:0;">
+            <div style="font-size:15px;font-weight:600;line-height:1.2;text-wrap:balance;">{{ bName }}</div>
+            <div style="font-family:var(--font-mono);font-size:12px;color:var(--md-on-surface-variant);margin-top:2px;">{{ bMeta }}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:7px;margin-bottom:8px;">
+          <sc-if value="{{ bFreeS }}" hint-placeholder-val="{{ true }}"><span style="font-size:26px;font-weight:400;color:var(--status-free);font-variant-numeric:tabular-nums;">{{ bFree }}</span></sc-if>
+          <sc-if value="{{ bSomeS }}"><span style="font-size:26px;font-weight:400;color:#4DB6AC;font-variant-numeric:tabular-nums;">{{ bFree }}</span></sc-if>
+          <sc-if value="{{ bFullS }}"><span style="font-size:26px;font-weight:400;color:#74777F;font-variant-numeric:tabular-nums;">{{ bFree }}</span></sc-if>
+          <span style="font-size:13px;color:var(--md-on-surface-variant);">of {{ bTotal }} rooms free {{ scenLabel }}</span>
+        </div>
+        <svg viewBox="0 0 100 6" preserveAspectRatio="none" style="display:block;width:100%;height:6px;border-radius:4px;overflow:hidden;margin-bottom:18px;">
+          <rect x="0" y="0" width="100" height="6" fill="var(--md-surface-variant)"></rect>
+          <rect x="0" y="0" width="{{ bPct }}" height="6" fill="{{ bColor }}"></rect>
+        </svg>
+
+        <sc-if value="{{ hasFree }}">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <sc-for list="{{ rooms }}" as="r" hint-placeholder-count="4">
+              <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.RoomCard"
+                name="{{ r.name }}" meta="{{ r.meta }}" status="{{ r.status }}"
+                duration="{{ r.duration }}"
+                on-click="{{ r.onOpen }}" hint-size="100%,84px"></x-import>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ noFree }}">
+          <div style="text-align:center;padding:34px 18px;color:var(--md-on-surface-variant);font-size:14px;background:var(--md-surface-1);border-radius:16px;text-wrap:pretty;">No free rooms in this building {{ scenLabel }}. Try another building or a later time.</div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- ── Room detail ────────────────────────────────────── -->
+    <sc-if value="{{ isRoom }}">
+      <div class="crf-scroll" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:16px;">
+        <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.StatusCard"
+          status="{{ rStatus }}" title="{{ rTitle }}" sub="{{ rSub }}" duration="{{ rDuration }}" hint-size="100%,96px"></x-import>
+
+        <section style="background:var(--md-surface);box-shadow:var(--md-shadow-1);border-radius:16px;overflow:hidden;">
+          <sc-for list="{{ detailRows }}" as="row" hint-placeholder-count="4">
+            <div style="display:flex;gap:12px;padding:12px 16px;border-bottom:1px solid var(--md-outline-variant);font-size:14px;align-items:baseline;">
+              <span style="color:var(--md-on-surface-variant);flex-shrink:0;min-width:84px;">{{ row.label }}</span>
+              <span style="word-break:break-word;">{{ row.value }}</span>
+            </div>
+          </sc-for>
+        </section>
+
+        <section style="display:flex;flex-direction:column;gap:8px;">
+          <h2 style="font-weight:500;font-size:15px;padding:0 4px;margin:0;">Schedule — {{ scheduleDay }}</h2>
+          <div style="background:var(--md-surface);box-shadow:var(--md-shadow-1);border-radius:16px;overflow:hidden;">
+            <sc-if value="{{ hasSchedule }}">
+              <sc-for list="{{ schedule }}" as="e" hint-placeholder-count="3">
+                <sc-if value="{{ e.active }}"><div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-bottom:1px solid var(--md-outline-variant);font-size:14px;background:var(--md-error-container);">
+                  <span style="color:var(--md-on-surface-variant);font-variant-numeric:tabular-nums;min-width:108px;flex-shrink:0;font-size:13px;font-family:var(--font-mono);">{{ e.time }}</span>
+                  <div style="display:flex;align-items:center;gap:8px;flex:1;flex-wrap:wrap;">
+                    <span style="font-weight:500;">{{ e.type }}</span>
+                    <span style="font-size:12px;color:var(--md-on-surface-variant);background:var(--md-surface-variant);padding:2px 8px;border-radius:8px;">{{ e.dur }} min</span>
+                  </div>
+                </div></sc-if>
+                <sc-if value="{{ e.inactive }}" hint-placeholder-val="{{ true }}"><div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-bottom:1px solid var(--md-outline-variant);font-size:14px;background:transparent;">
+                  <span style="color:var(--md-on-surface-variant);font-variant-numeric:tabular-nums;min-width:108px;flex-shrink:0;font-size:13px;font-family:var(--font-mono);">{{ e.time }}</span>
+                  <div style="display:flex;align-items:center;gap:8px;flex:1;flex-wrap:wrap;">
+                    <span style="font-weight:500;">{{ e.type }}</span>
+                    <span style="font-size:12px;color:var(--md-on-surface-variant);background:var(--md-surface-variant);padding:2px 8px;border-radius:8px;">{{ e.dur }} min</span>
+                  </div>
+                </div></sc-if>
+              </sc-for>
+            </sc-if>
+            <sc-if value="{{ noSchedule }}">
+              <div style="padding:20px;text-align:center;font-size:14px;color:var(--md-on-surface-variant);">No events scheduled — free all day.</div>
+            </sc-if>
+          </div>
+        </section>
+      </div>
+    </sc-if>
+
+  </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:412,&quot;height&quot;:880},&quot;defaultScenario&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;now&quot;,&quot;plus2&quot;,&quot;thu14&quot;],&quot;default&quot;:&quot;now&quot;,&quot;tsType&quot;:&quot;'now'|'plus2'|'thu14'&quot;},&quot;mapMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto&quot;,&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;auto&quot;,&quot;tsType&quot;:&quot;'auto'|'light'|'dark'&quot;},&quot;showTrees&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = {
+    ready: false,
+    scenario: this.props.defaultScenario || 'now',
+    mode: this.props.mapMode || 'auto',
+    view: 'overview',     // overview | building | room
+    selBuilding: null,
+    selRoom: null,
+  };
+
+  componentDidMount() { this._poll(); }
+  _poll = () => {
+    if (window.CAMPUS_GEOJSON && window.CAMPUS_CONTEXT && window.RF_ROOMS) this.setState({ ready: true });
+    else setTimeout(this._poll, 60);
+  };
+
+  setScenario = (id) => this.setState({ scenario: id });
+  setMode = (m) => this.setState({ mode: m });
+  openBuilding = (k) => this.setState({ selBuilding: k, view: 'building', selRoom: null });
+  openRoom = (id) => this.setState({ selRoom: id, view: 'room' });
+  goBack = () => {
+    const S = this.state;
+    if (S.view === 'room') this.setState({ view: 'building', selRoom: null });
+    else this.setState({ view: 'overview', selBuilding: null, selRoom: null });
+  };
+
+  renderVals() {
+    const S = this.state;
+    if (!S.ready) return { ready: false, notReady: true };
+
+    const campus = window.CAMPUS_GEOJSON;
+    const RF = window.RF_ROOMS;
+    const showTrees = this.props.showTrees !== false;
+    const names = {}; campus.features.forEach(f => names[f.properties.key] = f.properties);
+    const avail = RF.availFor(S.scenario, campus);
+    const totalFree = Object.values(avail).reduce((a, x) => a + x.free, 0);
+    const totalRooms = Object.values(avail).reduce((a, x) => a + x.total, 0);
+    const scenLabel = RF.SCEN_LABEL[S.scenario];
+
+    const scenarios = [['now', 'Now'], ['plus2', '+2 h'], ['thu14', 'Thu 14:00']].map(([id, label]) => ({
+      label, onClick: () => this.setScenario(id), active: S.scenario === id, inactive: S.scenario !== id,
+    }));
+    const modes = [['auto', 'Auto'], ['light', 'Light'], ['dark', 'Dark']].map(([id, label]) => ({
+      label, onClick: () => this.setMode(id), active: S.mode === id, inactive: S.mode !== id,
+    }));
+
+    const out = {
+      ready: true, notReady: false,
+      CAMPUS: campus, CONTEXT: window.CAMPUS_CONTEXT, availability: avail,
+      mapMode: S.mode, showTrees,
+      scenarios, modes, totalFree, totalRooms, scenLabel,
+      buildingCount: campus.features.length,
+      isOverview: S.view === 'overview',
+      isBuilding: S.view === 'building',
+      isRoom: S.view === 'room',
+      showMap: S.view !== 'room',
+      showBackBar: S.view !== 'overview',
+      selectedKey: S.view === 'overview' ? null : S.selBuilding,
+      onMapSelect: this.openBuilding,
+      goBack: this.goBack,
+    };
+
+    // ── building view ──
+    if (S.view === 'building' || S.view === 'room') {
+      const k = S.selBuilding, p = names[k] || {}, a = avail[k] || { free: 0, total: 0 };
+      const ratio = a.total ? a.free / a.total : 0;
+      const color = a.free === 0 ? '#74777F' : (ratio >= 0.5 ? 'var(--status-free)' : '#4DB6AC');
+      out.backTitle = 'Building ' + (p.label || k);
+      out.bLabel = p.label; out.bName = p.name; out.bColor = color;
+      out.bFullS = a.free === 0;
+      out.bFreeS = a.free > 0 && ratio >= 0.5;
+      out.bSomeS = a.free > 0 && ratio < 0.5;
+      out.bFree = a.free; out.bTotal = a.total; out.bPct = Math.round(ratio * 100);
+      out.bMeta = p.sat ? 'satellite site' : 'main campus · building ' + p.label;
+
+      const all = RF.roomsFor(k, p.label, S.scenario, campus);
+      const free = all.filter(r => r.isFree).map(r => ({
+        name: r.name,
+        meta: r.building + ' · Floor ' + r.floor + ' · ' + r.seats + ' seats',
+        status: r.status,
+        duration: r.duration,
+        onOpen: () => this.openRoom(r.ident),
+      }));
+      out.rooms = free;
+      out.hasFree = free.length > 0;
+      out.noFree = free.length === 0;
+
+      // ── room detail ──
+      if (S.view === 'room') {
+        const r = all.find(x => x.ident === S.selRoom) || all[0];
+        out.backTitle = r.name;
+        const occupied = !r.isFree;
+        out.rStatus = r.status;
+        out.rTitle = occupied ? 'Occupied now' : (r.status === 'soon' ? 'Closing soon' : 'Free now');
+        out.rSub = occupied
+          ? 'Occupied until ' + r.occUntil
+          : (r.allDay ? 'No classes scheduled today' : 'Free until ' + r.freeUntil);
+        out.rDuration = occupied ? '' : r.duration;
+        const rows = [
+          { label: 'Building', value: p.name + ' (' + p.label + ')' },
+          { label: 'Floor', value: r.floor === 0 ? 'Ground floor' : 'Floor ' + r.floor },
+          { label: 'Seats', value: r.seats + ' regular' },
+        ];
+        if (r.facilities.length) rows.push({ label: 'Facilities', value: r.facilities.join(', ') });
+        rows.push({ label: 'Contact', value: r.email });
+        out.detailRows = rows;
+        out.scheduleDay = S.scenario === 'thu14' ? 'Thu, Jun 26' : 'Wed, Jun 25';
+        out.schedule = r.schedule.map(e => ({ ...e, inactive: !e.active }));
+        out.hasSchedule = r.schedule.length > 0;
+        out.noSchedule = r.schedule.length === 0;
+      }
+    }
+
+    return out;
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!-- @dsCard group="Room Finder App" viewport="940x600" name="Campus Map — Tablet split" subtitle="The tablet layout of the responsive app: 2.5D map + on-brand side panel. Real OSM footprints tinted by availability; tap a building, scenario + light/dark toggle." -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../../styles.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; }
+  body { font-family: var(--font-sans, Roboto, sans-serif); background: var(--md-bg); color: var(--md-on-surface); }
+  .wrap { display: grid; grid-template-columns: 1fr 320px; height: 100vh; }
+  .map { position: relative; }
+  .panel { background: var(--md-surface); border-left: 1px solid var(--md-outline-variant); padding: 22px 20px; display: flex; flex-direction: column; gap: 0; }
+  .eyebrow { display: flex; align-items: center; gap: 7px; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--md-primary); font-weight: 700; }
+  .eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--md-tertiary); }
+  h1 { font-size: 21px; font-weight: 600; margin: 12px 0 16px; letter-spacing: -.01em; color: var(--md-on-surface); }
+  h1 em { font-style: normal; color: var(--md-tertiary); }
+  .row { display: flex; gap: 8px; margin-bottom: 16px; }
+  .row button { flex: 1; font: 500 11.5px/1 var(--font-sans); color: var(--md-on-surface-variant); background: transparent; border: 1px solid var(--md-outline-variant); border-radius: 999px; padding: 7px 0; cursor: pointer; }
+  .row button.on { border-color: var(--md-primary); color: var(--md-on-secondary-container); background: var(--md-secondary-container); }
+  .big { display: flex; align-items: baseline; gap: 10px; padding-bottom: 16px; border-bottom: 1px solid var(--md-outline-variant); }
+  .big .n { font-size: 46px; font-weight: 300; line-height: 1; color: var(--md-primary); font-variant-numeric: tabular-nums; }
+  .big .l { font-size: 12px; color: var(--md-on-surface-variant); max-width: 13ch; }
+  .card { padding: 18px 0; }
+  .ch { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .badge { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; font-weight: 700; color: #fff; }
+  .nm { font-size: 13.5px; font-weight: 600; color: var(--md-on-surface); }
+  .meta { font-family: var(--font-mono, "Roboto Mono", monospace); font-size: 11px; color: var(--md-on-surface-variant); }
+  .fl { display: flex; align-items: baseline; gap: 6px; margin: 10px 0 8px; }
+  .fl b { font-size: 19px; font-weight: 700; }
+  .fl span { font-size: 12px; color: var(--md-on-surface-variant); }
+  .bar { height: 6px; border-radius: 4px; background: var(--md-surface-variant); overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: 4px; }
+  .foot { margin-top: auto; padding-top: 16px; font-size: 11px; color: var(--md-on-surface-variant); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="map" id="map"></div>
+  <aside class="panel">
+    <div class="eyebrow"><span class="dot"></span>Live · from THabella</div>
+    <h1>Find a <em>free room</em> on campus</h1>
+    <div class="row" id="scenario">
+      <button data-s="now" class="on">Now</button>
+      <button data-s="plus2">+2 h</button>
+      <button data-s="thu14">Thu 14:00</button>
+    </div>
+    <div class="row" id="modes">
+      <button data-m="auto" class="on">Auto</button>
+      <button data-m="light">Light</button>
+      <button data-m="dark">Dark</button>
+    </div>
+    <div class="big"><div class="n" id="total">0</div><div class="l">rooms free across THD right now</div></div>
+    <div class="card" id="card"></div>
+    <div class="foot">Auto-refreshes every 30s · cached for offline · © OpenStreetMap (ODbL)</div>
+  </aside>
+</div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../../_ds_bundle.js"></script>
+<script src="./campus-data.js"></script>
+<script src="./context-data.js"></script>
+<script type="text/babel">
+  const { CampusMap } = window.THDRoomFinderDesignSystem_de229b;
+  const CAMPUS = window.CAMPUS_GEOJSON, CONTEXT = window.CAMPUS_CONTEXT;
+  const SCEN = {
+    now: {},
+    plus2: { B:[6,10],E:[12,20],K:[5,8],I:[9,16],G:[11,16],C:[18,22],H:[10,12],ITC2:[15,20],HS:[8,10],DEGG:[6,8] },
+    thu14: { A:[3,14],C:[5,22],D:[4,18],H:[2,12],J:[3,12],L:[6,20],ITC2:[4,20],G:[2,16],DEGG:[1,8],V2:[2,12],HS:[2,10] },
+  };
+  const NAMES = {}; CAMPUS.features.forEach(f => NAMES[f.properties.key] = f.properties);
+  function availFor(s) { const a = {}; CAMPUS.features.forEach(f => { const p = f.properties, o = SCEN[s][p.key]; a[p.key] = { free: o ? o[0] : p.free, total: o ? o[1] : p.total }; }); return a; }
+
+  const root = ReactDOM.createRoot(document.createElement('div'));
+  function Mount() {
+    const [, force] = React.useReducer(x => x + 1, 0);
+    const ref = React.useRef({ scenario: 'now', mode: 'auto', sel: 'C' });
+    React.useEffect(() => {
+      const sc = document.getElementById('scenario'), md = document.getElementById('modes');
+      sc.onclick = e => { const b = e.target.closest('button'); if (!b) return; ref.current.scenario = b.dataset.s; [...sc.children].forEach(x => x.classList.toggle('on', x === b)); force(); };
+      md.onclick = e => { const b = e.target.closest('button'); if (!b) return; ref.current.mode = b.dataset.m; [...md.children].forEach(x => x.classList.toggle('on', x === b)); force(); };
+    }, []);
+    const st = ref.current;
+    const avail = React.useMemo(() => availFor(st.scenario), [st.scenario]);
+    const a = avail[st.sel] || { free: 0, total: 0 }, r = a.total ? a.free / a.total : 0;
+    const col = a.free === 0 ? '#74777F' : (r >= 0.5 ? '#00897B' : '#4DB6AC');
+    const total = Object.values(avail).reduce((s, x) => s + x.free, 0);
+    // dark toggle drives the DS [data-theme] scope so panel + map agree
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = st.mode === 'dark' || (st.mode === 'auto' && prefersDark);
+    React.useEffect(() => { document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light'); document.getElementById('total').textContent = total; });
+    const pick = k => { ref.current.sel = k; force(); };
+    return (
+      <React.Fragment>
+        {ReactDOM.createPortal(<CampusMap campus={CAMPUS} context={CONTEXT} availability={avail} mode={st.mode} selectedKey={st.sel} onSelect={pick} showTrees={true} />, document.getElementById('map'))}
+        {ReactDOM.createPortal(
+          <div>
+            <div className="ch"><div className="badge" style={{ background: col }}>{NAMES[st.sel].label}</div>
+              <div><div className="nm">{NAMES[st.sel].name}</div><div className="meta">{NAMES[st.sel].sat ? 'satellite site' : 'building ' + NAMES[st.sel].label}</div></div></div>
+            <div className="fl"><b style={{ color: col }}>{a.free}</b><span>of {a.total} rooms free</span></div>
+            <div className="bar"><i style={{ width: Math.round(r * 100) + '%', background: col }}></i></div>
+          </div>, document.getElementById('card'))}
+      </React.Fragment>
+    );
+  }
+  root.render(<Mount />);
+</script>
+</body>
+</html>

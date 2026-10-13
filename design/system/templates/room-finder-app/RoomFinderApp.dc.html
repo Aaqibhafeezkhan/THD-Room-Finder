@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Room Finder — Responsive App" description="Map-first room finder across mobile / tablet / desktop: 2.5D campus map → tap a building → free-room list → room detail. M3 with Android-12 dynamic color, light/dark, offline copy. Switch device + theme in the toolbar." -->
+<helmet>
+<script src="./ds-base.js"></script>
+<style>
+  html, body { margin: 0; height: 100%; }
+  body { background: var(--md-bg); }
+  /* the M3 device frame ships a green default surface; force our palette */
+  #rf-app [style*="f4fbf8"] { background: var(--md-bg) !important; }
+  /* hide scrollbars everywhere (scroll still works) */
+  #rf-app *::-webkit-scrollbar { width: 0; height: 0; display: none; }
+  #rf-app * { scrollbar-width: none; -ms-overflow-style: none; }
+</style>
+<script>
+/* Loads the DS bundle (via ds-base.js), React/Babel, the shared data, and the
+   app's JSX in order, then mounts it. Sequential loading guarantees each file's
+   globals exist before the next one evaluates. To reuse in another project,
+   only ds-base.js needs its `base` path pointed at the bound DS folder. */
+(function () {
+  if (window.__rfTplLoaded) return; window.__rfTplLoaded = true;
+  var NS_KEY = 'THDRoomFinderDesignSystem_de229b';
+  function load(src) { return new Promise(function (res, rej) { var s = document.createElement('script'); s.src = src; s.crossOrigin = 'anonymous'; s.onload = res; s.onerror = function () { rej(new Error('load ' + src)); }; document.head.appendChild(s); }); }
+  function until(fn) { return new Promise(function (res) { (function c() { fn() ? res() : setTimeout(c, 40); })(); }); }
+  function babelFile(src) {
+    return fetch(src).then(function (r) { return r.text(); }).then(function (code) {
+      var out = Babel.transform(code, { presets: ['react'], filename: src }).code;
+      var s = document.createElement('script'); s.textContent = ';(function(){\n' + out + '\n})();'; document.head.appendChild(s);
+    });
+  }
+  (async function () {
+    try {
+      await until(function () { return window[NS_KEY]; });                 // DS bundle (ds-base.js)
+      await load('https://unpkg.com/react@18.3.1/umd/react.development.js');
+      await load('https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js');
+      await load('https://unpkg.com/@babel/standalone@7.29.0/babel.min.js');
+      await load('./campus-data.js');
+      await load('./context-data.js');
+      await load('./rooms-data.js');
+      await babelFile('./android-frame.jsx');
+      await babelFile('./screens.jsx');
+      await babelFile('./app.jsx');
+      await until(function () { return window.RoomFinderApp && window.ReactDOM; });
+      var el = document.getElementById('rf-app');
+      if (!el) { el = document.createElement('div'); el.id = 'rf-app'; document.body.appendChild(el); }
+      el.style.cssText = 'position:fixed;inset:0;';
+      window.ReactDOM.createRoot(el).render(window.React.createElement(window.RoomFinderApp));
+    } catch (e) { console.error('Room Finder template failed to load:', e); }
+  })();
+})();
+</script>
+</helmet>
+<div id="rf-app" style="height:100%;display:grid;place-items:center;font-family:var(--font-sans);color:var(--md-on-surface-variant);background:var(--md-bg);">Loading Room Finder…</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1220,&quot;height&quot;:880}}"></script>
+</body>
+</html>

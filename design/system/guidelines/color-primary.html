@@ -1,0 +1,33 @@
+<!-- @dsCard group="Colors" viewport="700x180" name="Primary — THD Blue" subtitle="The single brand accent: buttons, links, active states, the big count" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: var(--font-sans); background: var(--md-bg); padding: 20px; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .sw { flex: 1; min-width: 150px; border-radius: var(--radius-m); padding: 14px; box-shadow: var(--md-shadow-1); display: flex; flex-direction: column; gap: 28px; min-height: 110px; }
+  .name { font-size: 13px; font-weight: 500; }
+  .hex { font-family: var(--font-mono); font-size: 12px; opacity: 0.8; }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="sw" style="background: var(--md-primary); color: var(--md-on-primary);">
+      <span class="name">Primary</span>
+      <span class="hex">#1565C0</span>
+    </div>
+    <div class="sw" style="background: var(--md-primary-container); color: var(--md-on-primary-container);">
+      <span class="name">Primary container</span>
+      <span class="hex">#D3E4FF</span>
+    </div>
+    <div class="sw" style="background: var(--md-on-primary-container); color: var(--md-primary-container);">
+      <span class="name">On primary container</span>
+      <span class="hex">#001C3B</span>
+    </div>
+  </div>
+</body>
+</html>
