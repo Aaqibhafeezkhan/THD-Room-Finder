@@ -33,7 +33,7 @@ flowchart LR
   C --> D[Draft PR<br/>Closes #n]
   D -->|board: In progress| E[Ready for review]
   E -->|board: In review| F[Maintainer review]
-  F -->|squash merge| G[Done]
+  F -->|merge commit| G[Done]
 ```
 
 1. **Pick an issue.** Look at the **Ready** column of the
@@ -46,7 +46,8 @@ flowchart LR
 3. **Open a draft PR early** with `Closes #<issue>` in the description. The
    board moves the card for you.
 4. **Mark it ready for review** when the acceptance criteria are met and the
-   checks pass. The maintainer reviews and merges (squash).
+   checks pass. The maintainer reviews and merges with a merge commit, so
+   every commit you made lands on `main` and counts on your GitHub profile.
 
 No issue for what you want to do? Start a
 [discussion](https://github.com/arudaev/THD-Room-Finder/discussions) or open
@@ -56,7 +57,8 @@ an issue with one of the forms. The maintainer triages it into a milestone.
 
 | Rule | Why |
 |---|---|
-| PR titles follow [Conventional Commits](https://www.conventionalcommits.org/) (`feat(focus): start a private session`), at most 72 characters | The title becomes the squash commit on `main`; CI checks it |
+| PR titles follow [Conventional Commits](https://www.conventionalcommits.org/) (`feat(focus): start a private session`), at most 72 characters | The title becomes the merge commit's title on `main`; CI checks it |
+| Commit messages inside the PR also follow Conventional Commits | They land on `main` unchanged |
 | Every PR links an issue (`Closes #n` or `Refs #n`) | Traceability and automatic board updates; CI checks it |
 | One issue per PR; dependent work may form a [native stack](docs/contributing/workflow.md#stacked-pull-requests) | Small, reviewable diffs |
 | Business rules go in `src/domain/` with a Vitest test | The domain layer is the trusted core |

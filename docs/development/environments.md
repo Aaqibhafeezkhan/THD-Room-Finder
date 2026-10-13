@@ -20,7 +20,7 @@ flowchart LR
     SM[(Supabase production)]
     VM --> SM
   end
-  Local -->|PR| Preview -->|squash merge| Production
+  Local -->|PR| Preview -->|merge| Production
 ```
 
 | | Local | Preview | Production |

@@ -32,9 +32,10 @@ Actions.
 
 | Setting | Value | Why |
 |---|---|---|
-| `main` ruleset | PR required; required checks: Web, Android, PR conventions; linear history; no force-push; no deletion | `main` is production |
+| `main` ruleset | PR required (no approval count: only the maintainer can merge); required checks: Web, Android, PR conventions; no force-push; no deletion | `main` is production |
 | Bypass | Repository admins, **through a pull request only** | The maintainer can merge their own PR without a second reviewer, but cannot push directly |
-| Merge methods | Squash only; commit = PR title + body | One conventional commit per PR on `main` |
+| When collaborators join | Set required approvals to **1** (no code-owner requirement) | Collaborators then need the maintainer's approval; the admin bypass still lets the maintainer merge their own PRs |
+| Merge methods | Merge commit only; merge commit = PR title + body | Contributors keep every commit on their profile; `git log --first-parent` reads PR by PR |
 | Head branches | Deleted automatically after merge | No branch litter |
 | Update branch | Enabled | Keep a PR current with one click |
 | Feature branches | Unprotected | Owners may force-push their own branch when restacking |

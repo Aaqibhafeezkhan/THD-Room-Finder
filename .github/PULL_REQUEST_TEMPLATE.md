@@ -1,5 +1,5 @@
 <!--
-Title: Conventional Commits, it becomes the squash commit on main.
+Title: Conventional Commits; it becomes the merge commit's title on main.
   feat(focus): start a private focus session from room detail
   fix(rooms): keep lecture rooms below claimed rooms
   docs(contributing): explain /take
