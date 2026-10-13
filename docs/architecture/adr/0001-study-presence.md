@@ -1,6 +1,6 @@
 # ADR 0001: individual room study presence
 
-Status: implementation contract proposed for M1-S1; operational activation remains gated. Date: 10 October 2026. Scope authority: [project charter](../PROJECT-CHARTER.md). Tracks [#17](https://github.com/arudaev/THD-Room-Finder/issues/17); component implementation remains [#21](https://github.com/arudaev/THD-Room-Finder/issues/21).
+Status: implementation contract proposed for M1-S1; operational activation remains gated. **Amended by [ADR 0002](0002-focus-session-lifecycle.md) (13 October 2026)**: the sharing model, the lease/expiry rules and the history rule are replaced where marked below. Date: 10 October 2026. Scope authority: [project charter](../../../PROJECT-CHARTER.md). Tracks [#17](https://github.com/arudaev/THD-Room-Finder/issues/17); component implementation remains [#21](https://github.com/arudaev/THD-Room-Finder/issues/21).
 
 ## Decision
 
@@ -24,6 +24,8 @@ flowchart LR
 These are modules in the existing app and one Supabase project, not independently deployed microservices. Prefer direct user-JWT RPC calls over an extra Vercel proxy for every heartbeat. Database policies and RPC admission checks must therefore protect **direct** requests; hiding the endpoint or placing optional checks in the UI cannot secure it.
 
 ## Identity and audience
+
+> **Amended by ADR 0002.** The three sharing choices below are replaced by *private claim* and *public to my batch*, plus a signed-out local timer. Batch = programme + intake term, as defined here. Everything else in this section still applies.
 
 Store an Auth user ID, chosen display name (1–32 characters), canonical degree ID, entry cohort ID, audience preference and optional name-display consent. Do not store email again in the public profile. Display names are non-unique; no global handle directory or username search is needed for M1. Preferences survive returning visits; favorites remain local. A user's selected accent is never an access-control input.
 
@@ -72,6 +74,8 @@ In the UI, shared start requires a current, sufficiently fresh “now” schedul
 
 ## Lease and client state
 
+> **Superseded by ADR 0002.** A hidden page no longer stops renewal or expires the session after five minutes; sessions are duration-bound with a check-in lease. The single-owner tab, server-time and no-resurrection rules below still apply.
+
 Start at server time `s`: `absoluteEnd = s + chosenDuration`; `expiresAt = min(absoluteEnd, s + 300 seconds)`. While visible, renew at 60 seconds plus 0–5 seconds jitter. Reject renewal before a 45-second minimum interval, for an expired/ended session, wrong owner/token or stale version. Accepted renewal uses server time and the same bounded expiry. No delayed request can resurrect an expired session. The 45-second admission floor tolerates ordinary cadence variation; it is not the client target.
 
 ```mermaid
@@ -101,9 +105,11 @@ Read summaries once for the visible room/detail set, then at most every 60 secon
 
 Existing room eligibility, query-time availability, duration and access constraints run first. For otherwise suitable rooms, default activity bucket 0 = no reported activity or authorized same-degree/same-cohort activity; bucket 1 = unrelated activity. Preserve existing duration/tiebreak ordering within each bucket. Quiet preference moves all activity to bucket 1. Expired/unknown summaries restore schedule-only order; unknown must not be labeled empty. Live presence appears only for “now”, never attached to a historical/future time-travel result.
 
-The activity row sits below the existing availability window. Building badges summarize study activity without changing timetable fill colors. Detail owns Start/End; a compact active control persists across navigation. A shared session is not a booking and does not hide the room from other students. Proposed component and state requirements are documented in the [design-session brief](../docs/Design-Session-Brief.md).
+The activity row sits below the existing availability window. Building badges summarize study activity without changing timetable fill colors. Detail owns Start/End; a compact active control persists across navigation. A shared session is not a booking and does not hide the room from other students. Proposed component and state requirements are documented in the [design-session brief](../../../design/brief/README.md).
 
 ## Retention and failure boundary
+
+> **Clarified by ADR 0002.** The server still keeps no completed focus history. The focus graph lives on the student's device only.
 
 No completed focus history in M1. Stop returning expired/revoked records immediately; physically delete them within 24 hours with a tested scheduled cleanup. Remove idempotency/budget rows within 24 hours of their window ending. Keep operational logs for at most seven days with error code, latency and aggregate request metrics; no email, display name, JWT, room/session IDs or cohort in logs. Document processor backup retention separately; application deletion is not a promise of immediate backup erasure. Identity persists until deletion. Deletion/revocation acceptance must test future reads and backup-policy disclosures.
 
@@ -115,4 +121,4 @@ Read-only checks on 10 October 2026 confirmed the linked Vercel project, a READY
 
 Therefore start with a local Supabase instance and synthetic identities once implementation begins. Do not reuse another app's production database or create paid branches to fill the evidence gap. Later choose one isolated preview project, then ephemeral branching only if measured need and entitlement/cost justify it. Branch instances have separate credentials and billable usage; they are not covered by Spend Cap. [Branch usage](https://supabase.com/docs/guides/platform/manage-your-usage/branching), [cost controls](https://supabase.com/docs/guides/platform/cost-control).
 
-Before hosted activation, verify actual plan/region/mail provider/branch entitlement, a maintainer-selected monthly allowance, preview binding and migration ownership using [the acceptance checklist](pilot-verification.md). No new paid service is authorized by this ADR alone. Implementation can proceed locally while this gate remains open; #17 stays open until its entitlement/cost criterion has evidence.
+Before hosted activation, verify actual plan/region/mail provider/branch entitlement, a maintainer-selected monthly allowance, preview binding and migration ownership using [the acceptance checklist](../pilot-verification.md). No new paid service is authorized by this ADR alone. Implementation can proceed locally while this gate remains open; #17 stays open until its entitlement/cost criterion has evidence.

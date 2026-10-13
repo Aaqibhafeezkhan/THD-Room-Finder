@@ -1,0 +1,26 @@
+name: Docs
+
+on:
+  pull_request:
+    paths: ['**/*.md', '.github/workflows/docs.yml']
+  push:
+    branches: [main]
+    paths: ['**/*.md']
+
+permissions:
+  contents: read
+
+jobs:
+  links:
+    name: Docs — relative links
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check links between repository files
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --offline --no-progress
+            --exclude-path node_modules --exclude-path android --exclude-path dist
+            './**/*.md'
+          fail: true

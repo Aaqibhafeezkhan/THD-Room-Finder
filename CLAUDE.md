@@ -37,7 +37,8 @@ public/icons/   # app icons
 shared/         # canonical room/building taxonomy (JSON)
 website/        # static marketing landing page (GitHub Pages)
 scripts/dev/    # Python helpers (taxonomy normalization, THabella snapshot)
-docs/           # GitHub wiki (submodule)
+docs/           # documentation: product/ architecture/ development/ contributing/
+design/         # Claude Design system mirror (system/) + design brief (brief/)
 ```
 
 ## Architecture
@@ -64,6 +65,7 @@ Base URL: `https://thabella.th-deg.de/thabella/opn/` — **no auth**.
 | `POST /room/findRooms` | `{}` | All rooms `RoomDto[]` |
 | `POST /period/findByDate/{dateTime}` | `{"sqlDate":"YYYY-MM-DD HH:mm"}` | A day's events `PeriodDto[]` |
 
+Full reference: `docs/architecture/thabella-api.md`.
 Gotchas: `room_ident` is a `Map<string,string>` (one period → N rooms). Public
 fields only; titles/organiser are null. **Undocumented, may change** — DTOs are
 fully nullable, unknown keys ignored. Cache aggressively (rooms 24h, events 5min,
@@ -131,14 +133,19 @@ Do **not** add any AI or tool attribution to commits or PRs — no
 Commits are authored solely by the human maintainer.
 
 Author: `arudaev <hlexhelftd@gmail.com>`. Native stack, issue/sub-issue, project
-status and environment conventions are in [CONTRIBUTING.md](CONTRIBUTING.md).
+status and environment conventions are in [CONTRIBUTING.md](CONTRIBUTING.md) and
+`docs/contributing/`.
 Read [PROJECT-CHARTER.md](PROJECT-CHARTER.md) for selected scope. One branch/PR
 per coherent task; dependent tasks may form a stack. Agents never merge stacks,
 enable auto-merge, force-push shared history or publish releases.
 
 ## Current work authorization
 
-The current scope is documentation, research, issue/project workflows and
-environment or staging setup. Do not build interactive prototypes, application
-features or feature database changes without a separate explicit request.
-Tracked issues and requests to continue planning do not authorize implementation.
+Phase 1 = focus sessions (see `PROJECT-CHARTER.md`, `docs/product/focus-sessions.md`,
+`docs/architecture/adr/0002-focus-session-lifecycle.md`).
+
+Authorized now: documentation, research, design-system work in Claude Design
+(mirror in `design/`), issue/project workflows, repository settings, and local
+or staging environment setup. Application features, database migrations and
+hosted Supabase provisioning need a separate explicit request to implement a
+tracked issue; an issue on the board does not authorize implementing it.

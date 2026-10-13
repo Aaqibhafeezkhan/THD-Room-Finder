@@ -99,8 +99,8 @@ long as I need?"*:
 | Web host | Vercel (Frankfurt functions) |
 
 The visual system (tokens + components) is sourced from the Claude Design
-project *THD Room Finder Design System* and lives in `src/styles/tokens` and
-`src/components`.
+project *THD Room Finder Design System*, mirrored in [`design/system/`](design/README.md),
+and implemented in `src/styles/tokens` and `src/components`.
 
 ---
 
@@ -119,11 +119,14 @@ UI (React screens, src/features/*)
 The domain layer is a faithful TypeScript port of the v1 Android app's trusted
 THabella logic (`RoomMapper`, `PeriodMapper`, `GetFreeRoomsUseCase`,
 `RoomPriorityPolicy`), extended with duration/status derivation and the
-teaching-room filter. See [AGENTS.md](AGENTS.md) for a fuller map.
+teaching-room filter. See the [architecture overview](docs/architecture/overview.md)
+and [AGENTS.md](AGENTS.md) for a fuller map.
 
 ---
 
 ## THabella API
+
+Full reference: [docs/architecture/thabella-api.md](docs/architecture/thabella-api.md).
 
 Base URL: `https://thabella.th-deg.de/thabella/opn/` – **no auth required**.
 
@@ -176,6 +179,8 @@ is an isolated step.
 | Workflow | Trigger | What it does |
 |---|---|---|
 | `ci.yml` | push / PR | Typecheck, test, web build; build Android debug APK |
+| `pr-conventions.yml` | PR | Conventional title, linked issue, auto-assign, path labels |
+| `issue-commands.yml` | issue comment | `/take` and `/drop` self-assignment |
 | `release.yml` | tag `v*` | Build web + signed Android APK, publish a GitHub release |
 | `pages.yml` | push to `main` | Deploy `website/` marketing page to GitHub Pages |
 
@@ -196,7 +201,8 @@ public/icons/   App icons (PWA + Android)
 shared/         Canonical room/building taxonomy (JSON)
 website/        Static marketing landing page (GitHub Pages)
 scripts/dev/    Python helpers (taxonomy normalization, THabella snapshot)
-docs/           GitHub wiki (submodule)
+docs/           Documentation: product, architecture, development, contributing
+design/         Mirror of the Claude Design system + design brief
 ```
 
 ---
@@ -205,27 +211,35 @@ docs/           GitHub wiki (submodule)
 
 GPL-3.0 — see [LICENSE](LICENSE).
 
-## Product research and future direction
+## What's next: focus sessions
 
-The selected plan develops individual study presence alongside the
-room finder, while keeping myTHD as the source for academic services. Start with
-[Product direction](docs/Product-Direction.md), then the
-[market research](docs/Market-Research.md), [user stories](docs/User-Stories.md),
-[conditional roadmap](docs/Product-Roadmap.md),
-[architecture options](docs/Future-Architecture.md), and
-[design-session brief](docs/Design-Session-Brief.md).
+Room Finder is growing from an exam-season utility into a **daily focus tool**.
+In Phase 1 you walk into a free room, press **Start focus**, and study:
+privately (the room shows as claimed, nobody learns who) or open to your batch
+(classmates from, say, *AIN 7* see a violet room on the map and can join you).
+Every session fills in your personal focus graph.
 
-The expanded exploration covers [focus and shared study](docs/Focus-and-Presence.md),
-[focus/event interaction patterns](docs/Interaction-Research.md), and
-[reusing the map for other campuses](docs/Map-Expansion.md).
-The selected first milestone is individual room focus and cohort-aware room
-discovery; see [PROJECT-CHARTER.md](PROJECT-CHARTER.md). Contributor commits,
-branches, native PR stacks and project conventions are in
-[CONTRIBUTING.md](CONTRIBUTING.md). See
-[operating budgets and safeguards](docs/Operating-Envelope.md) for PWA, scaling
-and abuse-cost planning.
+| Phase | Milestone | Status |
+|---|---|---|
+| Foundation | Design system, docs, board and automation | In progress |
+| Phase 1 | Focus sessions: private claims, batch sessions, Profile tab, focus graph | Planned, design starting |
+| Phase 2 | Group focus and profiles; organization accounts and gatherings | Later |
+| Phase 3 | City layer: Deggendorf events, festivals and museums | Later |
 
-Focus/presence is selected future scope, not a shipped feature. GitHub planning
-is authorized; implementation follows the tracked tasks and narrow service
-boundary in the charter. `docs/` is a separate wiki submodule; its changes
-require separate publication.
+Read the [charter](PROJECT-CHARTER.md), the
+[focus sessions spec](docs/product/focus-sessions.md) and the
+[roadmap](docs/product/roadmap.md), or follow progress on the
+[project board](https://github.com/users/arudaev/projects/8).
+
+## Documentation
+
+All documentation lives in [`docs/`](docs/README.md): product, architecture,
+development and contributor guides. The design system is mirrored in
+[`design/`](design/README.md) and lives in Claude Design.
+
+## Contributing
+
+Pick an issue in the **Ready** column of the
+[project board](https://github.com/users/arudaev/projects/8), comment `/take`,
+and open a draft PR. Start with [CONTRIBUTING.md](CONTRIBUTING.md); look for
+[`good first issue`](https://github.com/arudaev/THD-Room-Finder/labels/good%20first%20issue).

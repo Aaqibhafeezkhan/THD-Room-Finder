@@ -1,6 +1,8 @@
 # M1 operating and preview acceptance
 
-Contract: [ADR 0001](0001-study-presence.md). These are proposed pilot limits and required measurements, not measured capacity or a provider billing guarantee. Initial extra provisioned spend remains **zero until a hosted budget is selected**.
+> Request volumes below assume ADR 0001's 60-second renewal. [ADR 0002](adr/0002-focus-session-lifecycle.md) renews only while the app is visible and lets locked phones coast on the lease, so real volumes should be lower; re-measure in M1-S6 (#22).
+
+Contract: [ADR 0001](adr/0001-study-presence.md). These are proposed pilot limits and required measurements, not measured capacity or a provider billing guarantee. Initial extra provisioned spend remains **zero until a hosted budget is selected**.
 
 ## Workload and request ceiling
 

@@ -1,56 +1,97 @@
-# Campus study presence: project charter
+# Project charter
 
-Decision date: **10 October 2026**. Owner: repository maintainer. Status: selected product direction and delivery plan; feature implementation and paid infrastructure provisioning have not started. This supersedes the earlier three-concept comparison and invitation-first recommendation.
+| | |
+|---|---|
+| **Product** | THD Room Finder: find a free room at THD, and focus in it alone or with your batch |
+| **Owner** | Maintainer ([@arudaev](https://github.com/arudaev)) |
+| **Decided** | 10 October 2026 (study presence), **revised 13 October 2026 (focus-first)** |
+| **Scope authority** | This file. Details: [focus sessions spec](docs/product/focus-sessions.md), [ADR 0001](docs/architecture/adr/0001-study-presence.md), [ADR 0002](docs/architecture/adr/0002-focus-session-lifecycle.md) |
 
-## First delivery: my room, my focus, my classmates
+## Why the direction changed
 
-A student has E203 saved, arrives there, opens its detail and starts focus. Their remembered identity includes a chosen display name, degree and batch/cohort. With the visibility chosen during setup, classmates can see a relevant room-level study signal. Other room seekers see that there is self-reported study activity, without receiving private identity information. Starting a session should be a short familiar action, not an event composer.
+The app in production answers one question well: *where is a free room right
+now, and for how long?* Students need that answer intensely around exams,
+roughly four months a year, and hardly at all otherwise. New students try it
+once, find a good map and stop opening it. A room list alone cannot grow
+beyond exam season.
 
-Solo means studying individually; it does **not** necessarily mean invisible. Distinguish study mode from audience. Setup explains cohort visibility once and lets the student choose a default; start uses that preference with a visible audience summary. A private local timer remains available. No favorites are automatically published, and the app does not infer that a student entered a building.
+**Phase 1 makes Room Finder a daily focus tool.** About a hundred teaching
+rooms stand free for hours on a normal day. They are, in effect, free
+co-working spaces. The app helps a student pick one, start a focus session,
+and optionally let their batch know where they are.
 
-Switching from solo/quiet to open/group marks willingness to study with others and can broaden the chosen audience. In M1 this is a mode of one person's session, not a multi-person timer, RSVP system or event. A display name can be shown to an explicitly selected audience. The map may show a building activity badge; room detail/list supplies the precise room, mode and permitted cohort information.
+## Phases
+
+```mermaid
+timeline
+    title THD Room Finder roadmap
+    M0 Foundation : Design system in Claude Design and git : Docs in the repo : Issue taxonomy, board and automation
+    Phase 1 · M1 Focus sessions : Private claim or public batch session : Batch-aware ranking and map : Profile tab and local focus graph
+    Phase 2 · M2 Group focus & profiles : Group sessions : Handles and display names
+    Phase 2 · M3 Organizations : Verified org accounts (paid tier) : Announced gatherings and study sessions
+    Phase 3 · M4 City layer : Deggendorf events, festivals, museums : Yellow zones, refreshed by scheduled CI
+```
+
+Milestones and epics: [roadmap](docs/product/roadmap.md). Later phases in
+detail: [later phases](docs/product/later-phases.md).
+
+## Phase 1 decisions
+
+| # | Decision | Detail |
+|---|---|---|
+| D1 | **Private is the default** and claims the room anonymously: everyone sees *a focus session* in dark purple, nobody sees who. | ADR 0002 §1 |
+| D2 | **Public invites your batch**: same programme + intake sees a violet "AIN 7 · studying" signal and may see a display name; everyone else sees the anonymous claim. | ADR 0002 §1 |
+| D3 | A claim is **not a reservation**. THabella lectures always win and end the session. | ADR 0002 §1 |
+| D4 | **Locking the phone does not end a session.** Sessions end at the chosen end (default: next lecture, max 3 h), on End, or after a missed 60-minute check-in. | ADR 0002 §2 |
+| D5 | **Focus history lives on the device.** The focus graph and the share card are generated locally; the server keeps no completed sessions. | ADR 0002 §3 |
+| D6 | Navigation becomes **Campus · Rooms · Profile**. Profile holds the study profile, focus graph, saved rooms and appearance. | [Spec](docs/product/focus-sessions.md#profile-tab-replaces-saved) |
+| D7 | **Colour semantics:** teal free, amber closing soon, red lecture, **violet** your focus and your batch, **dark purple** claimed by someone else, **ochre** reserved for Phase 3 events, blue for structure and actions. Colour is never the only signal. | [Spec](docs/product/focus-sessions.md#colour-semantics) |
+| D8 | **Ordering:** free (incl. your batch) → closing soon → claimed → lecture, longest-free first within each. Presence only for "now". | ADR 0002 §4 |
+| D9 | Batch = programme + intake term, **self-declared**, shown as programme + current semester (AIN 7). | [Spec](docs/product/focus-sessions.md#batches) |
+| D10 | Backend: one Supabase project (Auth with email code, Postgres with RLS, small RPC surface). The THabella proxy stays a narrow CORS/cache proxy. | ADR 0001 |
 
 ## Scope
 
-| M1: deliver together | Later, separate epics | Outside this project's purpose |
+| Phase 1 (M1) | Later phases | Never in this project |
 |---|---|---|
-| Remembered identity, degree/cohort and audience preference | Shared group leases/timers, polls, pre-planned sessions | University timetable/grades/email replacement |
-| Start/end one individual's room-linked focus, chosen end time and five-minute lease expiry | Organization tags/roles and verified-host events | Exclusive room reservation or proof of physical occupancy |
-| Cohort-aware room signals and activity-aware room ordering | City places/events and justified additional maps | Continuous GPS tracking, public attendance histories |
-| Solo versus open mode, separate audience and optional name display | Notifications, friends, calendar subscriptions, payments | A general-purpose social network/chat service |
-| EN/DE, accessible list/map equivalents, restrained palette | Other identity conveniences justified by usage | Automatic publication of private favorites |
-| Isolated previews, fake-user testing, budget/abuse controls | Expanded campus/community pilots | Agent merges/releases or surprise infrastructure spending |
+| Study profile with programme, batch and sharing default | Group sessions, handles, friends-lite (M2) | Replacing myTHD: grades, timetables, university email |
+| One focus session per person: private claim or public batch | Verified organization accounts, gatherings (M3) | Booking rooms in THabella, or pretending to |
+| Batch- and claim-aware list order and map signals | City events, festivals, museums (M4) | GPS tracking or attendance records |
+| Profile tab, local focus graph, share card | Server push, calendar export | Selling or sharing student data |
+| Local Supabase stack, isolated preview environment | Additional campuses when there is demand | A general chat or social network |
 
-Room schedules remain authoritative for scheduled teaching. Study activity is an independent self-reported layer. Never recolor a lecture-free room as lecture-occupied, hide occupied lectures through social relevance, or imply that starting focus reserves the room.
+## Guardrails
 
-## Room ordering decision
+- **Accountless still works.** Browsing, search, saved rooms and a local timer
+  never require sign-in.
+- **The schedule is authoritative.** No social signal hides a lecture or makes
+  an occupied room look free.
+- **Privacy by construction.** Authorization is enforced by the service (RLS
+  and RPC), never by hiding data in the client. No real student data in
+  previews; synthetic users only.
+- **Costs are bounded before launch.** Hosted activation waits for the
+  [pilot checklist](docs/architecture/pilot-verification.md): plan, region,
+  budget alerts, request ceilings.
+- **Agents propose, the maintainer merges.** No agent merges PRs, enables
+  auto-merge, force-pushes shared history or publishes releases.
 
-Apply existing teaching eligibility, chosen time, duration and access constraints first. For otherwise suitable rooms, the proposed default puts **no study activity or relevant same-degree/same-batch activity** ahead of unrelated study activity. Preserve duration-ranked ordering within activity buckets. Matching activity has a clear relevance badge; it is not proof that the person welcomes interruption. Open mode states whether company is welcome.
+## Current authorization
 
-Provide a discoverable quiet preference that deprioritizes all shared activity. Saved rooms stay easy to find; a saved room does not disappear because another student is focusing. Expired signals stop influencing ranking. No presence data means ordinary schedule ranking, not an invented zero-occupancy claim. Domain/data tests must cover these rules before implementation.
+Authorized now: documentation, research, design-system work in Claude Design,
+issue and project workflows, repository settings, and local or staging
+environment setup (including a local Supabase configuration without schema).
 
-## Identity, visibility and architecture decision
+Application features, database migrations and hosted Supabase provisioning
+start only when the maintainer explicitly asks for a tracked issue to be
+implemented. An issue existing on the board does not authorize implementing
+it.
 
-Recommend Supabase Auth plus Postgres/RLS for the new shared capability, subject to an isolated-environment and budget check. Browsing/favorites/local timer remain accountless. Store minimal chosen identity, canonical degree/cohort, consent/default audience and one active room session per identity. Do not assume a university SSO/API or require university credentials. Degree/cohort are self-declared unless later separately verified.
+## Definition of done for Phase 1
 
-The service returns only audience-authorized summaries. Outsiders may receive a coarse activity signal needed for ranking; private names/cohort records are not sent and merely hidden in the client. Broad visibility is an explicit setting. Deletion/revocation and expiry must remove future access. A later implementation ADR must settle auth provider, exact cohort taxonomy and retention before service activation; this charter authorizes planning for the narrowly defined service, not arbitrary backend expansion.
-
-Use server-time leases, a candidate 60-second renewal and approximately five-minute expiry after last renewal. Choose the final interval against measured cost and expiry UX; the previous 30-second model is a comparison, not a mandate. Hidden pages stop renewal under the proposed session model. A chosen session end also terminates activity. Screen-awake is optional and capability-dependent. Group continuity is deferred from M1.
-
-## Visual direction
-
-Retain current Material 3 tokens and room availability semantics. Current source already uses blue primary, teal availability, amber warning and red occupied; the whole interface is not teal-only. New identity/activity accents can use restrained violet, apricot/orange and ochre/yellow containers, with dark readable text and coordinated dark-theme variants. Blue/slate stay structural; teal/amber/red keep their established availability meanings.
-
-Do not use color as a unique identity, verified role or sole cohort label. A cohort mapping is stable and labeled; colors may repeat. Organization tags such as ESN, CC, FF or UAI are later verified-role badges, not freely claimed authority. See the design brief for state/component specifications; exact palette values require contrast validation before production CSS.
-
-## Delivery and completion
-
-Use `main` as production trunk with PR-specific Vercel previews; no permanent `dev` integration branch is required for this work. Dependent tasks can form a native GitHub PR stack, one branch/PR per independently reviewable issue. Same task fixes stay in that PR. Maintainer alone merges. CI must run on every stack base, not only PRs targeting main.
-
-Use synthetic students/cohorts in isolated Supabase previews or local development. Never seed fake users into production, reuse a production service-role credential in the browser, or assume a paid account makes branches free. Confirm entitlement/cost before provisioning. The current authorized scope is documentation, research, issue/project workflows and environment or staging setup. Interactive prototypes, application features and feature database implementation require a separate explicit request; tracked issues describe future work and do not authorize starting it.
-
-M1 completes when room → start → authorized classmate visibility → correct room ordering → expiry/end works on phone/desktop and EN/DE, remains accessible without the map, passes meaningful tests/typecheck/build, and meets documented request/cost limits. CI success alone does not prove device behavior or privacy. Review is based on this selected flow, not a requirement to compare three different products first.
-
-Supporting detail: [focus behavior](docs/Focus-and-Presence.md), [roadmap](docs/Product-Roadmap.md), [design brief](docs/Design-Session-Brief.md), [operating envelope](docs/Operating-Envelope.md), [delivery conventions](CONTRIBUTING.md). Wiki documentation is a separate Git submodule; the root charter and contribution guide are the reviewable repository entry points.
-
-Architecture and environment planning: [identity/presence ADR](architecture/0001-study-presence.md) and [operating and preview acceptance](architecture/pilot-verification.md). These describe proposed requirements only; feature implementation, hosted entitlement/budget evidence and production activation remain open.
+Room → Start focus → private claim visible to others → switch to public →
+batchmate sees the invitation → correct list order and map signals →
+phone locked for 30 minutes → check-in → End → focus graph updated. This works
+on Android (app and browser), iOS Safari and desktop, in English and German,
+in light and dark, with list equivalents for every map signal. Privacy is
+verified by direct API calls for owner, batchmate, other batch and signed-out
+users, and request volume is measured against ADR 0002.

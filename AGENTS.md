@@ -25,12 +25,13 @@ apps were retired into the `v1-native` git tag.
    (`src/styles/tokens`). Shadows, not borders. Keep the Material 3 look.
 5. **Bilingual by construction.** UI strings use `t(en, de)` from `useI18n()`.
    Never translate room/building codes (`A.011`, `ITC1.07`).
-6. **Keep backend scope explicit.** Current shipped app is accountless and the
-   THabella proxy remains CORS/caching only. The selected M1 plan in
-   [PROJECT-CHARTER.md](PROJECT-CHARTER.md) permits designing a separate, minimal
-   identity/presence service. Implement it only in the tracked delivery tasks
-   with isolated environments, audience authorization and cost limits; do not
-   turn the timetable proxy into a general social backend.
+6. **Keep backend scope explicit.** The shipped app is accountless and the
+   THabella proxy stays CORS/caching only. Phase 1 adds one Supabase project
+   (Auth + Postgres/RLS + a small RPC surface) for focus sessions, per
+   [ADR 0001](docs/architecture/adr/0001-study-presence.md) and
+   [ADR 0002](docs/architecture/adr/0002-focus-session-lifecycle.md). Use only
+   local or staging instances with synthetic users; never put a service-role
+   key in the browser; do not turn the timetable proxy into a general backend.
 
 ## Where things live
 
@@ -93,25 +94,24 @@ A signed release APK needs `android/keystore.properties` (see the `.example`).
   history. Inspect sync/rebase/push behavior before touching published layers;
   maintainer handles shared-history restacking and all merges/releases.
 
-## Known follow-ups (good first tasks)
+## Planning, issues and design
 
-- **Room/building identity audit** via `shared/thd-room-taxonomy.json`:
-  normalization already exists; verify remaining aliases and distinguish
-  campuses before extending shared building codes.
-- **2.5D CampusMap extensions**: the SVG map is implemented in `CampusScreen`.
-  Future event overlays and other-campus datasets are proposals.
-- **iOS**: `npx cap add ios` once Apple developer funding lands.
-
-## Product research
-
-See `docs/Product-Direction.md` for the selected product plan, roadmap, user
-stories and design-session brief. See `docs/Map-Expansion.md` for map reuse limits
-and `docs/Focus-and-Presence.md` for proposed focus-session semantics.
-The selected first milestone is individual room-linked focus with remembered
-degree/cohort identity and cohort-aware room signals/ranking; see
-`PROJECT-CHARTER.md`. Solo/group mode is separate from visibility. Multi-person
-focus, organizations, voting and push are later scope. GitHub planning is now
-authorized, along with documentation, research and environment/staging setup.
-Do not build interactive prototypes, application features or feature database
-changes without a separate explicit request. Issues describe future work;
-continuing planning does not authorize implementation.
+- Scope authority: [PROJECT-CHARTER.md](PROJECT-CHARTER.md). Phase 1 is focus
+  sessions: private claims, public batch sessions, Profile tab, local focus
+  graph. Spec: [docs/product/focus-sessions.md](docs/product/focus-sessions.md);
+  lifecycle: [ADR 0002](docs/architecture/adr/0002-focus-session-lifecycle.md).
+- Documentation lives in `docs/` (an ordinary folder; the wiki submodule is
+  gone). Update docs in the same PR as the behaviour they describe.
+- Design: the Claude Design project *THD Room Finder Design System* is mirrored
+  in `design/system/`; the brief and sessions are in `design/brief/`. Change the
+  repo first, then sync the project ([design/README.md](design/README.md)).
+- Issues: forms for story, task, spike, bug and epic; titles `[M1-S3] …`;
+  labels `type:*` + `area:*`; parent/child and blockers as native
+  relationships. See [docs/contributing/writing-issues.md](docs/contributing/writing-issues.md).
+- PR bodies use `Closes #n` for the issue they complete (CI checks it), and the
+  title is a Conventional Commit (CI checks it).
+- Authorized now: documentation, research, design-system work, issue and
+  project workflows, repository settings, local/staging environment setup.
+  Application features, migrations and hosted Supabase need an explicit
+  request to implement a tracked issue. Issues on the board are not that
+  request.
