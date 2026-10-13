@@ -51,6 +51,11 @@ recognisable from a screenshot (see the attached reference):
 
 ## 2 · Profile is three things, nothing else
 
+**Rule for what belongs on Profile:** only things a student checks or
+updates almost daily. Saved rooms (daily) and the focus graph (daily) pass;
+settings you touch once a semester do not. Later phases may add more daily
+things; nothing else goes here.
+
 1. **Header, one line:** avatar initial, display name, "AIN 7" chip, gear
    icon (→ Settings).
 2. **Focus graph** card (above).

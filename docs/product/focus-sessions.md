@@ -83,8 +83,10 @@ the status card so the Start focus action stays above the fold.
 
 Navigation becomes **Campus · Rooms · Profile**.
 
-The Profile shows three things; everything else lives in **Settings**, behind
-one gear icon.
+The Profile holds only what a student checks or updates **almost daily**:
+their focus graph and saved rooms. Everything set once a semester or less
+lives in **Settings**, behind one gear icon. Later phases add to Profile only
+if they pass the same test.
 
 | Profile | Contents |
 |---|---|
