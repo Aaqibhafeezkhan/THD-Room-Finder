@@ -1,10 +1,10 @@
 const config = require('../project-config.json');
+const { issueReferences } = require('./pr-conventions.cjs');
 
+// Same parser as the PR conventions check, so a reference that passes CI also
+// moves the board: closing keywords anywhere in the body, outside code blocks.
 function linkedIssueNumbers(body, owner, repo) {
-  const text = (body || '').replace(/```[\s\S]*?```/g, '');
-  const escaped = `${owner}/${repo}`.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const pattern = new RegExp(`(?:^|\\n)\\s*(?:[-*]\\s*)?(?:Issue:|Closes|Fixes|Resolves)\\s+(?:#(\\d+)|https://github\\.com/${escaped}/issues/(\\d+))(?=\\s|$|[.,])`, 'gi');
-  return [...text.matchAll(pattern)].map(match => Number(match[1] || match[2])).filter((number, index, all) => all.indexOf(number) === index);
+  return issueReferences(body, owner, repo).closes;
 }
 
 function pullRequestStatus(pr) {

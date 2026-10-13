@@ -10,6 +10,10 @@ test('links only explicit same-repository issue lines', () => {
 test('ignores foreign links, code examples, duplicates and malformed IDs', () => {
   assert.deepEqual(linkedIssueNumbers('Issue: https://github.com/other/repo/issues/1\n```\nCloses #2\n```\nIssue: #3\nCloses #3\nIssue: #4oops', 'arudaev', 'THD-Room-Finder'), [3]);
 });
+test('finds closing references in the middle of a sentence', () => {
+  assert.deepEqual(linkedIssueNumbers('Disposable PR for #26. Closes #51', 'arudaev', 'THD-Room-Finder'), [51]);
+  assert.deepEqual(linkedIssueNumbers('Refs #30\nFixes #36.', 'arudaev', 'THD-Room-Finder'), [36]);
+});
 test('draft and review-ready PRs have different project states', () => {
   assert.equal(pullRequestStatus({ state: 'open', draft: true }), 'In progress');
   assert.equal(pullRequestStatus({ state: 'open', draft: false }), 'In review');
