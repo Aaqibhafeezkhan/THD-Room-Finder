@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html>
+<head>
+html,body{background:transparent}</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/tokens/colors.css">
+<link rel="stylesheet" href="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/tokens/typography.css">
+<link rel="stylesheet" href="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/tokens/breakpoints.css">
+<link rel="stylesheet" href="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/tokens/elevation.css">
+<link rel="stylesheet" href="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/styles.css">
+<script src="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/_ds_bundle.js"></script>
+<style>
+html, body { margin: 0; background: var(--md-bg); }
+* { box-sizing: border-box; }
+a { color: var(--md-primary); }
+a:hover { color: var(--md-on-primary-container); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</helmet>
+
+<div data-theme="{{ pageTheme }}" style="min-height:100vh;background:var(--md-bg);color:var(--md-on-surface);font-family:var(--font-sans);padding:32px 40px 80px;display:flex;flex-direction:column;gap:32px">
+
+  <header style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:24px">
+    <div style="display:flex;flex-direction:column;gap:6px;max-width:640px">
+      <div style="font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--md-on-surface-variant)">Phase 1 · Design session D1</div>
+      <h1 style="margin:0;font-size:32px;font-weight:400;line-height:1.2">Room detail and the focus surface</h1>
+      <p style="margin:0;font-size:14px;line-height:1.5;color:var(--md-on-surface-variant);text-wrap:pretty">Start, run and end a focus session from E 212. Ten states, phone and desktop, light and dark, English and German. The schedule always wins; Private is the default.</p>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <sc-for list="{{ viewChips }}" as="c" hint-placeholder-count="4">
+          <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Chip" active="{{ c.active }}" onClick="{{ c.go }}" hint-size="auto,44px">{{ c.label }}</x-import>
+        </sc-for>
+      </div>
+      <div style="display:flex;gap:8px">
+        <sc-for list="{{ themeChips }}" as="c" hint-placeholder-count="2">
+          <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Chip" active="{{ c.active }}" onClick="{{ c.go }}" hint-size="auto,44px">{{ c.label }}</x-import>
+        </sc-for>
+      </div>
+      <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.LanguageToggle" value="{{ lang }}" onChange="{{ setLang }}" hint-size="190px,46px"></x-import>
+    </div>
+  </header>
+
+  <sc-if value="{{ showStateChips }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--md-on-surface-variant)">{{ stateChipsTitle }}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <sc-for list="{{ stateChips }}" as="c" hint-placeholder-count="10">
+          <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Chip" active="{{ c.active }}" onClick="{{ c.go }}" hint-size="auto,44px">{{ c.label }}</x-import>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-for list="{{ sections }}" as="sec" hint-placeholder-count="1">
+    <section style="display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <h2 style="margin:0;font-size:20px;font-weight:400">{{ sec.title }}</h2>
+        <p style="margin:0;font-size:13px;color:var(--md-on-surface-variant);max-width:720px;text-wrap:pretty">{{ sec.sub }}</p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start">
+        <sc-for list="{{ sec.frames }}" as="f" hint-placeholder-count="2">
+          <div id="{{ f.id }}" style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;gap:8px;max-width:{{ f.boxW }}px">
+              <span style="font:500 12px var(--font-mono);padding:2px 8px;border-radius:var(--radius-xs);background:var(--md-on-surface);color:var(--md-surface)">{{ f.id }}</span>
+              <span style="font-size:13px;font-weight:500">{{ f.caption }}</span>
+              <span style="font-size:12px;color:var(--md-on-surface-variant)">{{ f.tag }}</span>
+            </div>
+            <div style="width:{{ f.boxW }}px;height:{{ f.boxH }}px;overflow:hidden;border-radius:{{ f.radius }};box-shadow:var(--md-shadow-2)">
+              <div data-theme="{{ f.theme }}" lang="{{ f.lang }}" data-screen-label="{{ f.id }} {{ f.caption }}" style="width:{{ f.w }}px;height:{{ f.h }}px;transform:scale({{ f.scale }});transform-origin:0 0;position:relative;display:flex;flex-direction:column;background:var(--md-bg);color:var(--md-on-surface);font-family:var(--font-sans);overflow:hidden">
+
+                <sc-if value="{{ f.isPhone }}" hint-placeholder-val="{{ true }}">
+                  <div style="height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:13px;font-weight:500;background:var(--md-surface);color:var(--md-on-surface)">
+                    <span style="font-family:var(--font-mono);font-variant-numeric:tabular-nums">{{ f.v.clock }}</span>
+                    <span style="font-size:12px;color:var(--md-on-surface-variant)">{{ f.v.net }}</span>
+                  </div>
+                </sc-if>
+
+                <div style="flex:1;min-height:0;display:flex">
+                  <sc-if value="{{ f.isDesktop }}" hint-placeholder-val="{{ false }}">
+                    <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.AdaptiveNav" variant="drawer" items="{{ f.nav }}" active="rooms" hint-size="280px,100%"></x-import>
+                  </sc-if>
+
+                  <sc-if value="{{ f.showList }}" hint-placeholder-val="{{ false }}">
+                    <div style="width:{{ f.listW }};flex-shrink:0;display:flex;flex-direction:column;min-height:0;border-right:1px solid var(--md-outline-variant)">
+                      <sc-if value="{{ f.isPhone }}" hint-placeholder-val="{{ true }}">
+                        <div style="position:relative">
+                          <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.AppBar" mode="brand" hint-size="100%,64px"></x-import>
+                          <sc-if value="{{ f.pillShow }}" hint-placeholder-val="{{ false }}">
+                            <div style="position:absolute;right:12px;top:14px">
+                              <button type="button" onClick="{{ f.onOpen }}" aria-label="{{ f.v.pillAria }}" style="display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 10px;border:none;border-radius:var(--radius-full);background:var(--md-focus);color:var(--md-on-focus);font:500 13px var(--font-sans);cursor:pointer;box-shadow:var(--md-shadow-1)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="10" x2="14" y1="2" y2="2"></line><line x1="12" x2="15" y1="14" y2="11"></line><circle cx="12" cy="14" r="8"></circle></svg>
+                                <span style="font-family:var(--font-mono);font-variant-numeric:tabular-nums">{{ f.v.timer }}</span>
+                                <span>E 212</span>
+                              </button>
+                            </div>
+                          </sc-if>
+                        </div>
+                      </sc-if>
+                      <div style="padding:20px 16px 8px;display:flex;align-items:center;gap:12px">
+                        <div style="flex:1;min-width:0">
+                          <div style="font-size:22px;font-weight:400">{{ f.s.listTitle }}</div>
+                          <div style="font-size:13px;color:var(--md-on-surface-variant);margin-top:2px">{{ f.s.listSub }}</div>
+                        </div>
+                        <sc-if value="{{ f.pillDesk }}" hint-placeholder-val="{{ false }}">
+                          <button type="button" aria-label="{{ f.v.pillAria }}" style="display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 10px;border:none;border-radius:var(--radius-full);background:var(--md-focus);color:var(--md-on-focus);font:500 13px var(--font-sans);cursor:pointer;box-shadow:var(--md-shadow-1)">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="10" x2="14" y1="2" y2="2"></line><line x1="12" x2="15" y1="14" y2="11"></line><circle cx="12" cy="14" r="8"></circle></svg>
+                            <span style="font-family:var(--font-mono);font-variant-numeric:tabular-nums">{{ f.v.timer }}</span>
+                            <span>E 212</span>
+                          </button>
+                        </sc-if>
+                      </div>
+                      <div style="flex:1;min-height:0;overflow-y:auto;padding:8px 16px 16px;display:flex;flex-direction:column;gap:8px">
+                        <sc-for list="{{ f.rooms }}" as="r" hint-placeholder-count="4">
+                          <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.RoomCard" name="{{ r.name }}" meta="{{ r.meta }}" status="{{ r.status }}" duration="{{ r.duration }}" onClick="{{ r.onClick }}" dc-props="{{ r.extra }}" hint-size="100%,68px"></x-import>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ f.showDetail }}" hint-placeholder-val="{{ true }}">
+                    <div style="flex:1;min-width:0;display:flex;flex-direction:column;min-height:0">
+                      <sc-if value="{{ f.isPhone }}" hint-placeholder-val="{{ true }}">
+                        <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.AppBar" mode="back" title="E 212" onBack="{{ f.onBack }}" hint-size="100%,64px"></x-import>
+                      </sc-if>
+                      <div style="flex:1;min-height:0;overflow-y:auto;padding:{{ f.detailPad }};display:flex;flex-direction:column;gap:16px">
+                        <sc-if value="{{ f.isDesktop }}" hint-placeholder-val="{{ false }}">
+                          <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+                            <h1 style="margin:0;font:400 32px var(--font-mono)">E 212</h1>
+                            <span style="font-size:14px;color:var(--md-on-surface-variant)">{{ f.s.buildingVal }} · {{ f.s.floorVal }}</span>
+                          </div>
+                        </sc-if>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;align-items:start">
+
+                          <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+                            <sc-if value="{{ f.v.fullStatus }}" hint-placeholder-val="{{ true }}">
+                              <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.StatusCard" status="{{ f.v.status }}" title="{{ f.v.statusTitle }}" sub="{{ f.v.statusSub }}" duration="{{ f.v.duration }}" hint-size="100%,76px"></x-import>
+                            </sc-if>
+                            <sc-if value="{{ f.v.compactStatus }}" hint-placeholder-val="{{ false }}">
+                              <div style="display:flex;align-items:center;gap:8px;padding:0 4px;font-size:14px;font-weight:500;color:var(--md-tertiary)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
+                                <span>{{ f.v.compactText }}</span>
+                              </div>
+                            </sc-if>
+
+                            <sc-if value="{{ f.v.showBatch }}" hint-placeholder-val="{{ false }}">
+                              <div role="status" style="display:flex;align-items:center;gap:12px;padding:12px 12px 12px 14px;border-radius:var(--radius-l);background:var(--md-focus-container);color:var(--md-on-focus-container)">
+                                <span style="width:36px;height:36px;border-radius:var(--radius-full);background:var(--md-focus);color:var(--md-on-focus);display:grid;place-items:center;flex-shrink:0">
+                                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                                </span>
+                                <div style="flex:1;min-width:0">
+                                  <div style="font-size:14px;font-weight:500">{{ f.v.batchTitle }}</div>
+                                  <div style="font-size:12px;margin-top:2px">{{ f.s.batchSub }}</div>
+                                </div>
+                                <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Button" variant="tonal" size="small" onClick="{{ f.onJoin }}" dc-props="{{ btn.join }}" hint-size="auto,44px">{{ f.s.join }}</x-import>
+                              </div>
+                            </sc-if>
+
+                            <sc-if value="{{ f.v.showClaim }}" hint-placeholder-val="{{ false }}">
+                              <div role="status" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius-l);background:var(--md-claimed-container);color:var(--md-on-claimed-container)">
+                                <span style="width:36px;height:36px;border-radius:var(--radius-full);background:var(--md-claimed);color:var(--md-on-claimed);display:grid;place-items:center;flex-shrink:0">
+                                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="5"></circle><path d="M20 21a8 8 0 0 0-16 0"></path></svg>
+                                </span>
+                                <div style="flex:1;min-width:0">
+                                  <div style="font-size:14px;font-weight:500">{{ f.s.claimTitle }}</div>
+                                  <div style="font-size:12px;margin-top:2px;line-height:1.4;text-wrap:pretty">{{ f.s.claimSub }}</div>
+                                </div>
+                              </div>
+                            </sc-if>
+
+                            <sc-if value="{{ f.v.showOffline }}" hint-placeholder-val="{{ false }}">
+                              <div role="status" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius-l);background:var(--md-surface-variant);color:var(--md-on-surface)">
+                                <span style="width:36px;height:36px;border-radius:var(--radius-full);background:var(--md-surface);color:var(--md-on-surface-variant);display:grid;place-items:center;flex-shrink:0">
+                                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h.01"></path><path d="M8.5 16.43a5 5 0 0 1 7 0"></path><path d="M5 12.86a10 10 0 0 1 5.17-2.69"></path><path d="M19 12.86a10 10 0 0 0-2-1.52"></path><path d="M2 8.82a15 15 0 0 1 4.18-2.64"></path><path d="M22 8.82a15 15 0 0 0-11.29-3.76"></path><path d="m2 2 20 20"></path></svg>
+                                </span>
+                                <div style="flex:1;min-width:0">
+                                  <div style="font-size:14px;font-weight:500">{{ f.s.offlineTitle }}</div>
+                                  <div style="font-size:12px;margin-top:2px;line-height:1.4;color:var(--md-on-surface-variant);text-wrap:pretty">{{ f.s.offlineSub }}</div>
+                                </div>
+                              </div>
+                            </sc-if>
+
+                            <sc-if value="{{ f.v.showLecture }}" hint-placeholder-val="{{ false }}">
+                              <div style="display:flex;gap:8px;align-items:flex-start;padding:0 4px;font-size:13px;line-height:1.45;color:var(--md-on-surface-variant)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+                                <span style="text-wrap:pretty">{{ f.s.lectureNote }}</span>
+                              </div>
+                            </sc-if>
+
+                            <sc-if value="{{ f.v.showSession }}" hint-placeholder-val="{{ false }}">
+                              <section aria-label="{{ f.s.focusSession }}" style="background:var(--md-focus-container);color:var(--md-on-focus-container);border-radius:var(--radius-l);box-shadow:var(--md-shadow-1);padding:16px;display:flex;flex-direction:column;gap:14px">
+                                <div style="display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500">
+                                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="10" x2="14" y1="2" y2="2"></line><line x1="12" x2="15" y1="14" y2="11"></line><circle cx="12" cy="14" r="8"></circle></svg>
+                                  <span>{{ f.s.focusSession }}</span>
+                                </div>
+                                <div>
+                                  <div role="timer" aria-label="{{ f.v.timerAria }}" style="font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:48px;font-weight:300;line-height:1">{{ f.v.timer }}</div>
+                                  <div style="font-size:13px;margin-top:8px">{{ f.v.plannedLine }}</div>
+                                </div>
+
+                                <sc-if value="{{ f.v.signedIn }}" hint-placeholder-val="{{ true }}">
+                                  <div style="display:flex;flex-direction:column;gap:10px">
+                                    <div role="radiogroup" aria-label="{{ f.s.visibility }}" style="display:flex;flex-wrap:wrap;padding:4px;gap:4px;border-radius:var(--radius-xl);background:color-mix(in srgb, var(--md-on-focus-container) 10%, transparent)">
+                                      <sc-if value="{{ f.v.isPrivate }}" hint-placeholder-val="{{ true }}">
+                                        <button type="button" role="radio" aria-checked="true" style="flex:1 1 auto;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:8px 14px;border:none;border-radius:var(--radius-xl);background:var(--md-focus);color:var(--md-on-focus);font:500 14px var(--font-sans);cursor:default">
+                                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>{{ f.s.private }}</button>
+                                      </sc-if>
+                                      <sc-if value="{{ f.v.notPrivate }}" hint-placeholder-val="{{ false }}">
+                                        <button type="button" role="radio" aria-checked="false" onClick="{{ f.onPrivate }}" style="flex:1 1 auto;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:8px 14px;border:none;border-radius:var(--radius-xl);background:transparent;color:var(--md-on-focus-container);font:500 14px var(--font-sans);cursor:pointer" style-hover="background:color-mix(in srgb, var(--md-on-focus-container) 8%, transparent)">
+                                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>{{ f.s.private }}</button>
+                                      </sc-if>
+                                      <sc-if value="{{ f.v.isPublic }}" hint-placeholder-val="{{ false }}">
+                                        <button type="button" role="radio" aria-checked="true" style="flex:1 1 auto;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:8px 14px;border:none;border-radius:var(--radius-xl);background:var(--md-focus);color:var(--md-on-focus);font:500 14px var(--font-sans);cursor:default">
+                                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>{{ f.v.publicLabel }}</button>
+                                      </sc-if>
+                                      <sc-if value="{{ f.v.notPublic }}" hint-placeholder-val="{{ true }}">
+                                        <button type="button" role="radio" aria-checked="false" onClick="{{ f.onPublic }}" style="flex:1 1 auto;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:8px 14px;border:none;border-radius:var(--radius-xl);background:transparent;color:var(--md-on-focus-container);font:500 14px var(--font-sans);cursor:pointer" style-hover="background:color-mix(in srgb, var(--md-on-focus-container) 8%, transparent)">
+                                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>{{ f.v.publicLabel }}</button>
+                                      </sc-if>
+                                    </div>
+                                    <p style="margin:0;font-size:13px;line-height:1.45;text-wrap:pretty">{{ f.v.explain }}</p>
+                                    <sc-if value="{{ f.v.isPublic }}" hint-placeholder-val="{{ false }}">
+                                      <button type="button" role="switch" aria-checked="{{ f.v.nameAria }}" onClick="{{ f.onToggleName }}" style="display:flex;align-items:center;gap:12px;min-height:44px;background:none;border:none;padding:0;color:inherit;text-align:left;cursor:pointer;font-family:var(--font-sans)">
+                                        <span style="flex:1;min-width:0">
+                                          <span style="display:block;font-size:14px;font-weight:500">{{ f.s.showName }}</span>
+                                          <span style="display:block;font-size:12px;margin-top:2px">{{ f.v.nameSub }}</span>
+                                        </span>
+                                        <sc-if value="{{ f.v.nameOn }}" hint-placeholder-val="{{ false }}">
+                                          <span style="width:52px;height:32px;border-radius:var(--radius-full);background:var(--md-focus);display:flex;align-items:center;justify-content:flex-end;padding:0 4px;flex-shrink:0"><span style="width:24px;height:24px;border-radius:var(--radius-full);background:var(--md-on-focus)"></span></span>
+                                        </sc-if>
+                                        <sc-if value="{{ f.v.nameOff }}" hint-placeholder-val="{{ true }}">
+                                          <span style="width:52px;height:32px;border-radius:var(--radius-full);border:2px solid var(--md-on-focus-container);display:flex;align-items:center;padding:0 6px;flex-shrink:0"><span style="width:16px;height:16px;border-radius:var(--radius-full);background:var(--md-on-focus-container)"></span></span>
+                                        </sc-if>
+                                      </button>
+                                    </sc-if>
+                                  </div>
+                                </sc-if>
+
+                                <sc-if value="{{ f.v.signedOut }}" hint-placeholder-val="{{ false }}">
+                                  <div style="display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:var(--radius-m);background:color-mix(in srgb, var(--md-on-focus-container) 8%, transparent)">
+                                    <div style="display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.45">
+                                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0;margin-top:1px"><rect width="14" height="20" x="5" y="2" rx="2"></rect><path d="M12 18h.01"></path></svg>
+                                      <span style="text-wrap:pretty">{{ f.s.signedOutExplain }} {{ f.s.signedOutPrompt }}</span>
+                                    </div>
+                                    <div style="margin-left:-12px">
+                                      <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Button" variant="text" size="small" onClick="{{ f.onSetup }}" dc-props="{{ btn.onFocusText }}" hint-size="auto,44px">{{ f.s.setup }}</x-import>
+                                    </div>
+                                  </div>
+                                </sc-if>
+
+                                <div style="display:flex;align-items:center;gap:12px">
+                                  <span style="flex:1;min-width:0;font-size:12px;line-height:1.4;text-wrap:pretty">{{ f.s.lockedNote }}</span>
+                                  <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Button" variant="outlined" onClick="{{ f.onEnd }}" dc-props="{{ btn.end }}" hint-size="auto,44px">{{ f.s.end }}</x-import>
+                                </div>
+                              </section>
+                            </sc-if>
+
+                            <sc-if value="{{ f.v.showSummary }}" hint-placeholder-val="{{ false }}">
+                              <section role="status" style="background:var(--md-focus-container);color:var(--md-on-focus-container);border-radius:var(--radius-l);box-shadow:var(--md-shadow-1);padding:16px 16px 8px;display:flex;flex-direction:column;gap:6px">
+                                <div style="display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500">
+                                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
+                                  <span>{{ f.s.ended }}</span>
+                                </div>
+                                <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-top:4px">
+                                  <span style="font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:36px;font-weight:300;line-height:1.1">{{ f.v.minsText }}</span>
+                                  <span style="font-size:14px">{{ f.s.added }}</span>
+                                </div>
+                                <div style="font-size:13px">{{ f.v.todayLine }}</div>
+                                <div style="margin-left:-12px">
+                                  <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Button" variant="text" size="small" dc-props="{{ btn.onFocusText }}" hint-size="auto,44px">{{ f.s.viewGraph }}</x-import>
+                                </div>
+                              </section>
+                            </sc-if>
+
+                            <sc-if value="{{ f.v.showStart }}" hint-placeholder-val="{{ true }}">
+                              <div style="display:flex;flex-direction:column;gap:8px">
+                                <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Button" variant="filled" size="large" icon="{{ icons.timer }}" onClick="{{ f.onStart }}" dc-props="{{ btn.full }}" hint-size="100%,48px">{{ f.s.startFocus }}</x-import>
+                                <div style="display:flex;gap:6px;align-items:flex-start;padding:0 4px;font-size:12px;line-height:1.4;color:var(--md-on-surface-variant)">
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0;margin-top:1px"><rect width="18" height="11" x="3" y="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                  <span style="text-wrap:pretty">{{ f.v.startNote }}</span>
+                                </div>
+                              </div>
+                            </sc-if>
+
+                            <div style="font-size:13px;color:var(--md-on-surface-variant);padding:0 4px">{{ f.s.facilities }}</div>
+                          </div>
+
+                          <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+                            <section style="display:flex;flex-direction:column;gap:8px">
+                              <h2 style="margin:0;padding:0 4px;font-size:15px;font-weight:500">{{ f.s.schedule }}</h2>
+                              <div style="background:var(--md-surface);box-shadow:var(--md-shadow-1);border-radius:var(--radius-l);overflow:hidden">
+                                <sc-for list="{{ f.v.schedule }}" as="e" hint-placeholder-count="3">
+                                  <sc-if value="{{ e.active }}" hint-placeholder-val="{{ false }}">
+                                    <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-top:{{ e.border }};font-size:14px;background:var(--md-error-container);color:var(--md-on-error-container)">
+                                      <span style="font:400 13px var(--font-mono);font-variant-numeric:tabular-nums;min-width:104px">{{ e.time }}</span>
+                                      <span style="font-weight:500;flex:1">{{ e.type }}</span>
+                                      <span style="font-size:12px;font-weight:500">{{ e.nowLabel }}</span>
+                                    </div>
+                                  </sc-if>
+                                  <sc-if value="{{ e.idle }}" hint-placeholder-val="{{ true }}">
+                                    <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-top:{{ e.border }};font-size:14px">
+                                      <span style="font:400 13px var(--font-mono);font-variant-numeric:tabular-nums;min-width:104px;color:var(--md-on-surface-variant)">{{ e.time }}</span>
+                                      <span style="font-weight:500;flex:1">{{ e.type }}</span>
+                                      <span style="font-size:12px;color:var(--md-on-surface-variant);background:var(--md-surface-variant);padding:2px 8px;border-radius:var(--radius-s)">{{ e.dur }}</span>
+                                    </div>
+                                  </sc-if>
+                                </sc-for>
+                              </div>
+                            </section>
+                            <section style="background:var(--md-surface);box-shadow:var(--md-shadow-1);border-radius:var(--radius-l);overflow:hidden;font-size:14px">
+                              <div style="display:flex;gap:12px;padding:12px 16px"><span style="min-width:84px;color:var(--md-on-surface-variant)">{{ f.s.building }}</span><span>{{ f.s.buildingVal }}</span></div>
+                              <div style="display:flex;gap:12px;padding:12px 16px;border-top:1px solid var(--md-outline-variant)"><span style="min-width:84px;color:var(--md-on-surface-variant)">{{ f.s.floor }}</span><span>{{ f.s.floorVal }}</span></div>
+                              <div style="display:flex;gap:12px;padding:12px 16px;border-top:1px solid var(--md-outline-variant)"><span style="min-width:84px;color:var(--md-on-surface-variant)">{{ f.s.facilitiesLabel }}</span><span>{{ f.s.facilitiesAll }}</span></div>
+                            </section>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+
+                <sc-if value="{{ f.isPhone }}" hint-placeholder-val="{{ true }}">
+                  <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.AdaptiveNav" variant="bar" items="{{ f.nav }}" active="rooms" hint-size="100%,80px"></x-import>
+                </sc-if>
+
+                <sc-if value="{{ f.v.showCheckin }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute;inset:0;z-index:5;background:rgba(0,0,0,.32);display:flex;align-items:{{ f.sheetAlign }};justify-content:center">
+                    <div role="dialog" aria-modal="true" aria-label="{{ f.s.checkinTitle }}" style="width:{{ f.sheetW }};background:var(--md-surface);color:var(--md-on-surface);border-radius:{{ f.sheetRadius }};box-shadow:var(--md-shadow-2);padding:24px;display:flex;flex-direction:column;gap:16px">
+                      <div style="display:flex;align-items:center;gap:12px">
+                        <span style="width:40px;height:40px;border-radius:var(--radius-full);background:var(--md-focus-container);color:var(--md-on-focus-container);display:grid;place-items:center;flex-shrink:0">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="10" x2="14" y1="2" y2="2"></line><line x1="12" x2="15" y1="14" y2="11"></line><circle cx="12" cy="14" r="8"></circle></svg>
+                        </span>
+                        <div style="min-width:0">
+                          <div style="font-size:20px;font-weight:400;line-height:1.25">{{ f.s.checkinTitle }}</div>
+                          <div style="font:400 13px var(--font-mono);font-variant-numeric:tabular-nums;color:var(--md-on-surface-variant);margin-top:2px">{{ f.v.timer }} · E 212</div>
+                        </div>
+                      </div>
+                      <p style="margin:0;font-size:14px;line-height:1.5;color:var(--md-on-surface-variant);text-wrap:pretty">{{ f.s.checkinBody }}</p>
+                      <div style="display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px">
+                        <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Button" variant="text" onClick="{{ f.onEnd }}" hint-size="auto,44px">{{ f.s.end }}</x-import>
+                        <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Button" variant="filled" onClick="{{ f.onKeep }}" hint-size="auto,44px">{{ f.s.keepGoing }}</x-import>
+                      </div>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </sc-for>
+
+  <sc-if value="{{ isComps }}" hint-placeholder-val="{{ false }}">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(440px,1fr));gap:24px;align-items:start">
+      <sc-for list="{{ comps }}" as="c" hint-placeholder-count="5">
+        <section style="background:var(--md-surface);border-radius:var(--radius-l);box-shadow:var(--md-shadow-1);padding:24px;display:flex;flex-direction:column;gap:16px;min-width:0">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+              <span style="font:500 18px var(--font-mono)">{{ c.name }}</span>
+              <span style="font-size:12px;font-weight:500;color:var(--md-on-surface-variant)">{{ c.kind }}</span>
+            </div>
+            <p style="margin:0;font-size:14px;line-height:1.5;color:var(--md-on-surface-variant);text-wrap:pretty">{{ c.purpose }}</p>
+          </div>
+          <div style="background:var(--md-bg);border-radius:var(--radius-m);padding:16px;display:flex;flex-direction:column;gap:12px">
+            <sc-if value="{{ c.isButton }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+                <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Button" variant="filled" size="large" icon="{{ icons.timer }}" hint-size="auto,48px">{{ cs.startFocus }}</x-import>
+                <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Button" variant="tonal" size="small" dc-props="{{ btn.join }}" hint-size="auto,44px">{{ cs.join }}</x-import>
+                <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Button" variant="filled" size="large" icon="{{ icons.timer }}" disabled="{{ true }}" hint-size="auto,48px">{{ cs.startFocus }}</x-import>
+              </div>
+            </sc-if>
+            <sc-if value="{{ c.isSeg }}" hint-placeholder-val="{{ false }}">
+              <div role="radiogroup" aria-label="{{ cs.visibility }}" style="display:flex;flex-wrap:wrap;padding:4px;gap:4px;border-radius:var(--radius-xl);background:var(--md-focus-container);color:var(--md-on-focus-container)">
+                <sc-for list="{{ segOpts }}" as="o" hint-placeholder-count="2">
+                  <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}">
+                    <button type="button" role="radio" aria-checked="true" style="flex:1 1 auto;min-height:40px;padding:8px 14px;border:none;border-radius:var(--radius-xl);background:var(--md-focus);color:var(--md-on-focus);font:500 14px var(--font-sans)">{{ o.label }}</button>
+                  </sc-if>
+                  <sc-if value="{{ o.off }}" hint-placeholder-val="{{ true }}">
+                    <button type="button" role="radio" aria-checked="false" onClick="{{ o.go }}" style="flex:1 1 auto;min-height:40px;padding:8px 14px;border:none;border-radius:var(--radius-xl);background:transparent;color:var(--md-on-focus-container);font:500 14px var(--font-sans);cursor:pointer">{{ o.label }}</button>
+                  </sc-if>
+                </sc-for>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;font-size:12px;color:var(--md-on-surface-variant)">
+                <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.LanguageToggle" value="{{ lang }}" onChange="{{ setLang }}" hint-size="190px,46px"></x-import>
+                <span>tone="primary" · the language toggle becomes an instance</span>
+              </div>
+            </sc-if>
+            <sc-if value="{{ c.isRow }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;align-items:center;gap:12px;padding:12px 12px 12px 14px;border-radius:var(--radius-l);background:var(--md-focus-container);color:var(--md-on-focus-container)">
+                <span style="width:36px;height:36px;border-radius:var(--radius-full);background:var(--md-focus);color:var(--md-on-focus);display:grid;place-items:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span>
+                <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500">{{ cv.batchTitle }}</div><div style="font-size:12px;margin-top:2px">{{ cs.batchSub }}</div></div>
+                <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Button" variant="tonal" size="small" dc-props="{{ btn.join }}" hint-size="auto,44px">{{ cs.join }}</x-import>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius-l);background:var(--md-claimed-container);color:var(--md-on-claimed-container)">
+                <span style="width:36px;height:36px;border-radius:var(--radius-full);background:var(--md-claimed);color:var(--md-on-claimed);display:grid;place-items:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="5"></circle><path d="M20 21a8 8 0 0 0-16 0"></path></svg></span>
+                <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500">{{ cs.claimTitle }}</div></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius-l);background:var(--md-surface-variant);color:var(--md-on-surface)">
+                <span style="width:36px;height:36px;border-radius:var(--radius-full);background:var(--md-surface);color:var(--md-on-surface-variant);display:grid;place-items:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h.01"></path><path d="M8.5 16.43a5 5 0 0 1 7 0"></path><path d="M5 12.86a10 10 0 0 1 5.17-2.69"></path><path d="M2 8.82a15 15 0 0 1 4.18-2.64"></path><path d="m2 2 20 20"></path></svg></span>
+                <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500">{{ cs.offlineTitle }}</div></div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ c.isPill }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+                <button type="button" aria-label="{{ cv.pillAria }}" style="display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 10px;border:none;border-radius:var(--radius-full);background:var(--md-focus);color:var(--md-on-focus);font:500 13px var(--font-sans);cursor:pointer;box-shadow:var(--md-shadow-1)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="10" x2="14" y1="2" y2="2"></line><line x1="12" x2="15" y1="14" y2="11"></line><circle cx="12" cy="14" r="8"></circle></svg>
+                  <span style="font-family:var(--font-mono);font-variant-numeric:tabular-nums">24:10</span><span>E 212</span>
+                </button>
+                <button type="button" aria-label="{{ cv.pillAria }}" style="display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 10px;border:none;border-radius:var(--radius-full);background:var(--md-focus);color:var(--md-on-focus);font:500 13px var(--font-sans);cursor:pointer;box-shadow:var(--md-shadow-1)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="10" x2="14" y1="2" y2="2"></line><line x1="12" x2="15" y1="14" y2="11"></line><circle cx="12" cy="14" r="8"></circle></svg>
+                  <span style="font-family:var(--font-mono);font-variant-numeric:tabular-nums">1:05:40</span><span>ITC1.07</span>
+                </button>
+              </div>
+            </sc-if>
+            <sc-if value="{{ c.isSurface }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;color:var(--md-on-surface-variant)">
+                <span>Rendered live in states</span>
+                <sc-for list="{{ surfaceLinks }}" as="l" hint-placeholder-count="4">
+                  <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Chip" onClick="{{ l.go }}" hint-size="auto,44px">{{ l.label }}</x-import>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+          <div style="display:flex;flex-direction:column;font-size:13px">
+            <sc-for list="{{ c.props }}" as="p" hint-placeholder-count="4">
+              <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) minmax(0,1.6fr);gap:12px;padding:8px 0;border-top:1px solid var(--md-outline-variant)">
+                <span style="font-family:var(--font-mono);font-weight:500">{{ p.n }}</span>
+                <span style="font-family:var(--font-mono);color:var(--md-on-surface-variant);word-break:break-word">{{ p.t }}</span>
+                <span style="color:var(--md-on-surface-variant);text-wrap:pretty">{{ p.d }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:1.45;color:var(--md-on-surface-variant)">
+            <sc-for list="{{ c.notes }}" as="n" hint-placeholder-count="2">
+              <li style="text-wrap:pretty">{{ n }}</li>
+            </sc-for>
+          </ul>
+        </section>
+      </sc-for>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;batch&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;AIN 7&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;capHours&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:4,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Behaviour&quot;},&quot;sessionStatus&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;full&quot;,&quot;compact&quot;],&quot;default&quot;:&quot;full&quot;,&quot;tsType&quot;:&quot;'full' | 'compact'&quot;,&quot;section&quot;:&quot;Behaviour&quot;}}">
+const P = (s, m) => s.replace(/\{(\w+)\}/g, (_, k) => (m[k] != null ? m[k] : ''));
+const pad = n => String(n).padStart(2, '0');
+const clock = m => pad(Math.floor(m / 60) % 24) + ':' + pad(Math.floor(m) % 60);
+const dur = m => { m = Math.round(m / 5) * 5; const h = Math.floor(m / 60), r = m % 60; return h ? (r ? `${h}h ${r}m` : `${h}h`) : `${r}m`; };
+const tmr = sec => { const h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), s = sec % 60; return h ? `${h}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`; };
+const mins = (m, lang) => { const h = Math.floor(m / 60), r = m % 60; const [H, M] = lang === 'de' ? ['Std.', 'Min.'] : ['h', 'min']; return h ? (r ? `${h} ${H} ${r} ${M}` : `${h} ${H}`) : `${r} ${M}`; };
+
+const S = {
+  en: {
+    freeNow: 'Free now', freeUntil: 'Free until 16:00', lectureNow: 'Lecture now', lectureSub: 'Until 09:30 · then free until 16:00',
+    startFocus: 'Start focus', join: 'Join', startNote: 'Private by default. Ends at the next lecture, after {cap} h at most.',
+    batchTitle: '{b} · 2 studying', batchSub: 'Public sessions · since 09:40',
+    claimTitle: 'Focus session · started 25 min ago', claimSub: 'Someone is studying here. A claim is not a booking, so you can still focus here.',
+    offlineTitle: 'Focus activity unknown', offlineSub: 'Offline · schedule cached at 09:55. A session you start runs on this device and syncs later.',
+    lectureNote: 'Focus sessions can’t start during a lecture. Free again at 09:30.',
+    focusSession: 'Focus session', plannedEnd: 'Planned end {t}', capNote: '{cap} h max', beforeLecture: 'before the 16:00 lecture',
+    visibility: 'Who sees this session', private: 'Private', public: 'Public · {b}',
+    privateExplain: 'Others see that someone is focusing here, not who.',
+    publicExplain: '{b} sees you here and can join. Everyone else sees a focus session.',
+    showName: 'Show my name', nameOff: 'Shown as “{b} student”', nameOn: 'Shown as Lena',
+    lockedNote: 'Keeps running when your phone is locked. We check in about once an hour.',
+    end: 'End', signedOutExplain: 'Only you see this timer; the room doesn’t show as claimed.', signedOutPrompt: 'Set up a study profile to share sessions with your batch.', setup: 'Set Up Study Profile',
+    checkinTitle: 'Still focusing in E 212?', checkinBody: 'We ask about once an hour so rooms don’t stay claimed after you leave. With no answer, the session ends in 10 min.', keepGoing: 'Keep Going',
+    ended: 'Session ended', added: 'added to your focus graph', todayLine: 'Today {t} · 4-day streak', viewGraph: 'View Focus Graph',
+    facilities: '60 seats · Beamer, Whiteboard, EDV +3', facilitiesLabel: 'Facilities', facilitiesAll: 'Beamer, Whiteboard, EDV, Audio, Camera, Sockets',
+    schedule: 'Schedule · Tue, 13 Oct', lecture: 'Lecture', exercise: 'Exercise', now: 'Now',
+    building: 'Building', buildingVal: 'Building E', floor: 'Floor', floorVal: '2nd floor', seats: 'seats',
+    nav: ['Campus', 'Rooms', 'Profile'], listTitle: 'Free now', listSub: 'Longest free first', pillLabel: 'Focus session in E 212, {t}. Open room.', elapsed: 'elapsed', bldg: 'Building',
+  },
+  de: {
+    freeNow: 'Jetzt frei', freeUntil: 'Frei bis 16:00', lectureNow: 'Vorlesung läuft', lectureSub: 'Bis 09:30 · danach frei bis 16:00',
+    startFocus: 'Fokus starten', join: 'Beitreten', startNote: 'Standardmäßig privat. Endet zur nächsten Vorlesung, spätestens nach {cap} Std.',
+    batchTitle: '{b} · 2 lernen hier', batchSub: 'Öffentliche Sessions · seit 09:40',
+    claimTitle: 'Fokus-Session · seit 25 Min.', claimSub: 'Hier lernt gerade jemand. Belegt heißt nicht gebucht – du kannst hier trotzdem lernen.',
+    offlineTitle: 'Fokus-Aktivität unbekannt', offlineSub: 'Offline · Belegung aus dem Cache von 09:55. Eine gestartete Session läuft auf diesem Gerät und wird später synchronisiert.',
+    lectureNote: 'Während einer Vorlesung kannst du keinen Fokus starten. Ab 09:30 wieder frei.',
+    focusSession: 'Fokus-Session', plannedEnd: 'Geplantes Ende {t}', capNote: 'max. {cap} Std.', beforeLecture: 'vor der Vorlesung um 16:00',
+    visibility: 'Wer diese Session sieht', private: 'Privat', public: 'Öffentlich · {b}',
+    privateExplain: 'Andere sehen, dass hier jemand lernt – aber nicht wer.',
+    publicExplain: '{b} sieht dich hier und kann beitreten. Alle anderen sehen nur eine Fokus-Session.',
+    showName: 'Meinen Namen zeigen', nameOff: 'Angezeigt als „Studi aus {b}“', nameOn: 'Angezeigt als Lena',
+    lockedNote: 'Läuft weiter, wenn dein Handy gesperrt ist. Etwa stündlich fragen wir kurz nach.',
+    end: 'Beenden', signedOutExplain: 'Nur du siehst diesen Timer; der Raum wird nicht als belegt angezeigt.', signedOutPrompt: 'Richte ein Studienprofil ein, um Sessions mit deinem Jahrgang zu teilen.', setup: 'Studienprofil einrichten',
+    checkinTitle: 'Lernst du noch in E 212?', checkinBody: 'Wir fragen etwa stündlich, damit Räume nicht belegt bleiben, wenn du gegangen bist. Ohne Antwort endet die Session in 10 Min.', keepGoing: 'Weiter lernen',
+    ended: 'Session beendet', added: 'zu deinem Fokus-Verlauf hinzugefügt', todayLine: 'Heute {t} · 4 Tage in Folge', viewGraph: 'Fokus-Verlauf ansehen',
+    facilities: '60 Plätze · Beamer, Whiteboard, EDV +3', facilitiesLabel: 'Ausstattung', facilitiesAll: 'Beamer, Whiteboard, EDV, Audio, Kamera, Steckdosen',
+    schedule: 'Belegung · Di, 13. Okt.', lecture: 'Vorlesung', exercise: 'Übung', now: 'Jetzt',
+    building: 'Gebäude', buildingVal: 'Gebäude E', floor: 'Etage', floorVal: '2. OG', seats: 'Plätze',
+    nav: ['Campus', 'Räume', 'Profil'], listTitle: 'Jetzt frei', listSub: 'Am längsten frei zuerst', pillLabel: 'Fokus-Session in E 212, {t}. Raum öffnen.', elapsed: 'vergangen', bldg: 'Gebäude',
+  },
+};
+
+const META = [
+  ['free', 'Free, no activity'], ['batch', 'Free, your batch is here'], ['claimed', 'Claimed by someone else'],
+  ['lecture', 'Lecture now'], ['offline', 'Activity unknown · offline'], ['private', 'Your session · Private'],
+  ['public', 'Your session · Public'], ['checkin', 'Check-in'], ['ended', 'Ended'], ['signedout', 'Signed out · local timer'],
+];
+const NUM = {}; const LABEL = {}; META.forEach(([k, l], i) => { NUM[k] = pad(i + 1); LABEL[k] = l; });
+const SESSION = new Set(['private', 'public', 'checkin', 'signedout']);
+const SC = {
+  free: { now: 600 }, batch: { now: 600 }, claimed: { now: 600 }, lecture: { now: 520 }, offline: { now: 600 },
+  private: { start: 576, el: 1450 }, public: { start: 576, el: 1534, mode: 'public' }, checkin: { start: 576, el: 3604 },
+  ended: { now: 661, start: 576, mins: 85 }, signedout: { start: 582, el: 1084 },
+};
+const scen = st => Object.assign({ now: 600, start: 576, el: 0, mins: 85, mode: 'private', showName: false }, SC[st]);
+
+const h = React.createElement;
+const ico = (kids, s = 22) => h('svg', { viewBox: '0 0 24 24', width: s, height: s, fill: 'none', stroke: 'currentColor', strokeWidth: 1.9, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true }, ...kids.map((k, i) => h(k[0], Object.assign({ key: i }, k[1]))));
+const ICONS = {
+  timer: ico([['line', { x1: 10, x2: 14, y1: 2, y2: 2 }], ['line', { x1: 12, x2: 15, y1: 14, y2: 11 }], ['circle', { cx: 12, cy: 14, r: 8 }]], 18),
+  map: ico([['path', { d: 'M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z' }], ['path', { d: 'M9 4v14' }], ['path', { d: 'M15 6v14' }]]),
+  rooms: ico([['path', { d: 'M4 6h16' }], ['path', { d: 'M4 12h16' }], ['path', { d: 'M4 18h16' }]]),
+  profile: ico([['circle', { cx: 12, cy: 8, r: 4 }], ['path', { d: 'M20 21a8 8 0 0 0-16 0' }]]),
+};
+
+class Component extends DCLogic {
+  state = { view: 'proto', theme: 'light', lang: 'en', seg: 'private', ps: Object.assign({ st: 'free', screen: 'detail' }, scen('free')) };
+
+  componentDidMount() {
+    document.documentElement.setAttribute('data-theme', 'light');
+    this.tick = setInterval(() => {
+      if (SESSION.has(this.state.ps.st)) this.setState(s => ({ ps: Object.assign({}, s.ps, { el: s.ps.el + 1 }) }));
+    }, 1000);
+  }
+  componentWillUnmount() { clearInterval(this.tick); }
+
+  opts() {
+    const p = this.props;
+    return { batch: p.batch || 'AIN 7', cap: p.capHours ?? 3, compact: (p.sessionStatus ?? 'full') === 'compact' };
+  }
+
+  jump = st => this.setState(s => ({ ps: Object.assign({ st, screen: s.ps.screen }, scen(st)) }));
+
+  act = name => this.setState(s0 => {
+    const p = Object.assign({}, s0.ps);
+    const nowRun = p.start + Math.floor(p.el / 60);
+    switch (name) {
+      case 'start': Object.assign(p, { st: 'private', mode: 'private', start: p.now, el: 0 }); break;
+      case 'join': Object.assign(p, { st: 'public', mode: 'public', start: p.now, el: 0 }); break;
+      case 'private': if (p.st === 'public') Object.assign(p, { st: 'private', mode: 'private' }); break;
+      case 'public': if (p.st === 'private') Object.assign(p, { st: 'public', mode: 'public' }); break;
+      case 'end': Object.assign(p, { st: 'ended', mins: Math.max(1, Math.round(p.el / 60)), now: nowRun }); break;
+      case 'keep': p.st = p.mode || 'private'; break;
+      case 'name': p.showName = !p.showName; break;
+      case 'setup': Object.assign(p, { st: 'private', mode: 'private' }); break;
+      case 'open': p.screen = 'detail'; break;
+      case 'back': p.screen = 'list'; break;
+    }
+    return { ps: p };
+  });
+
+  view(st, lang, o) {
+    const s = S[lang], b = o.batch, cap = o.cap;
+    const session = SESSION.has(st), lecture = st === 'lecture';
+    const now = session ? o.start + Math.floor(o.el / 60) : o.now;
+    const freeMin = 960 - now;
+    const planned = Math.min(o.start + cap * 60, 960);
+    const isPrivate = st === 'private' || (st === 'checkin' && o.mode !== 'public');
+    const isPublic = st === 'public' || (st === 'checkin' && o.mode === 'public');
+    const sched = [
+      { time: '08:00 – 09:30', type: s.lecture, dur: '90 min', active: lecture },
+      { time: '16:00 – 17:30', type: s.lecture, dur: '90 min', active: false },
+      { time: '17:45 – 19:15', type: s.exercise, dur: '90 min', active: false },
+    ].map((e, i) => Object.assign(e, { idle: !e.active, nowLabel: s.now, border: i ? '1px solid var(--md-outline-variant)' : 'none' }));
+    return {
+      clock: clock(now), net: st === 'offline' ? 'Offline' : '',
+      status: lecture ? 'occupied' : (freeMin <= 40 ? 'soon' : 'free'),
+      statusTitle: lecture ? s.lectureNow : s.freeNow,
+      statusSub: lecture ? s.lectureSub : s.freeUntil,
+      duration: lecture ? undefined : dur(freeMin),
+      fullStatus: !(session && o.compact), compactStatus: session && o.compact,
+      compactText: `${s.freeUntil} · ${dur(freeMin)}`,
+      showBatch: st === 'batch', batchTitle: P(s.batchTitle, { b }),
+      showClaim: st === 'claimed', showOffline: st === 'offline', showLecture: lecture,
+      showStart: ['free', 'batch', 'claimed', 'offline', 'ended'].includes(st),
+      startNote: P(s.startNote, { cap }),
+      showSession: session, signedIn: session && st !== 'signedout', signedOut: st === 'signedout',
+      isPrivate, isPublic, notPrivate: !isPrivate, notPublic: !isPublic,
+      publicLabel: P(s.public, { b }),
+      explain: isPublic ? P(s.publicExplain, { b }) : s.privateExplain,
+      nameOn: !!o.showName, nameOff: !o.showName, nameAria: o.showName ? 'true' : 'false',
+      nameSub: o.showName ? s.nameOn : P(s.nameOff, { b }),
+      timer: tmr(o.el), timerAria: `${mins(Math.floor(o.el / 60), lang)} ${s.elapsed}`,
+      plannedLine: P(s.plannedEnd, { t: clock(planned) }) + ' · ' + (planned === 960 ? s.beforeLecture : P(s.capNote, { cap })),
+      showCheckin: st === 'checkin',
+      showSummary: st === 'ended', minsText: mins(o.mins, lang), todayLine: P(s.todayLine, { t: mins(45 + o.mins, lang) }),
+      schedule: sched, pillAria: P(s.pillLabel, { t: tmr(o.el) }),
+    };
+  }
+
+  frame(st, { theme, lang, device, scale = 1, interactive = false, o, screen = 'detail', id }) {
+    const isPhone = device === 'phone';
+    const w = isPhone ? 380 : 1280, hh = isPhone ? 780 : 800;
+    const v = this.view(st, lang, o);
+    const s = S[lang];
+    const a = interactive ? this.act : () => {};
+    const navIcons = [ICONS.map, ICONS.rooms, ICONS.profile];
+    const rooms = [
+      ['E 212', `${s.bldg} E · 60 ${s.seats}`, 'free', '6h', true],
+      ['ITC1.07', `ITC 1 · 32 ${s.seats}`, 'free', '4h 30m'],
+      ['A 011', `${s.bldg} A · 48 ${s.seats}`, 'free', '2h 10m'],
+      ['C 104', `${s.bldg} C · 40 ${s.seats}`, 'soon', '35m'],
+    ].map(([name, meta, status, duration, sel]) => ({
+      name, meta, status, duration,
+      extra: sel && !isPhone ? { style: { outline: '2px solid var(--md-primary)', outlineOffset: '-2px' } } : {},
+      onClick: e => { e.preventDefault(); if (sel) a('open'); },
+    }));
+    return {
+      id, caption: LABEL[st], tag: `${isPhone ? 'Phone' : 'Desktop'} · ${theme} · ${lang.toUpperCase()}`, theme, lang,
+      isPhone, isDesktop: !isPhone, w, h: hh, scale, boxW: Math.round(w * scale), boxH: Math.round(hh * scale),
+      radius: isPhone ? 'var(--radius-xl)' : 'var(--radius-l)',
+      showList: !isPhone || screen === 'list', showDetail: !isPhone || screen === 'detail', listW: isPhone ? '100%' : '340px',
+      pillShow: v.showSession && isPhone && screen === 'list', pillDesk: v.showSession && !isPhone,
+      sheetAlign: isPhone ? 'flex-end' : 'center', sheetW: isPhone ? '100%' : '440px', sheetRadius: isPhone ? '28px 28px 0 0' : '28px',
+      detailPad: isPhone ? '16px 16px 24px' : '24px 24px 32px',
+      v, s, rooms,
+      nav: [{ id: 'campus', label: s.nav[0], icon: navIcons[0] }, { id: 'rooms', label: s.nav[1], icon: navIcons[1] }, { id: 'profile', label: s.nav[2], icon: navIcons[2] }],
+      onStart: () => a('start'), onJoin: () => a('join'), onPrivate: () => a('private'), onPublic: () => a('public'),
+      onEnd: () => a('end'), onKeep: () => a('keep'), onToggleName: () => a('name'), onSetup: () => a('setup'),
+      onOpen: () => a('open'), onBack: () => a('back'),
+    };
+  }
+
+  renderVals() {
+    const { view, theme, lang, ps } = this.state;
+    const base = this.opts();
+    const T = theme === 'dark' ? 'dark' : 'light';
+    let sections = [];
+    if (view === 'proto') {
+      const o = Object.assign({}, base, ps);
+      sections = [{
+        title: 'Live prototype',
+        sub: 'Phone and desktop share one session. Start focus, switch to Public, toggle your name, End. On the phone, tap back to see the focus pill in the app bar.',
+        frames: [
+          this.frame(ps.st, { theme: T, lang, device: 'phone', interactive: true, o, screen: ps.screen, id: 'P1' }),
+          this.frame(ps.st, { theme: T, lang, device: 'desktop', interactive: true, o, id: 'P2' }),
+        ],
+      }];
+    } else if (view === 'states') {
+      const mk = (device, scale) => META.map(([st]) => this.frame(st, { theme: T, lang, device, scale, o: Object.assign({}, base, scen(st)), id: NUM[st] + (device === 'phone' ? 'a' : 'b') }));
+      sections = [
+        { title: 'Phone · compact (380 × 780)', sub: 'All ten room-detail states. Start focus stays above the fold; facilities collapse to one line.', frames: mk('phone', 1) },
+        { title: 'Desktop · expanded (1280 × 800, shown at 50%)', sub: 'List-detail: drawer, free-room list with the focus pill, detail in two columns (status and focus left, schedule right).', frames: mk('desktop', 0.5) },
+      ];
+    } else if (view === 'matrix') {
+      const combos = [['light', 'en'], ['light', 'de'], ['dark', 'en'], ['dark', 'de']];
+      const o = Object.assign({}, base, scen(ps.st));
+      const mk = (device, scale) => combos.map(([t, l], i) => this.frame(ps.st, { theme: t, lang: l, device, scale, o, id: `M${i + 1}${device === 'phone' ? 'a' : 'b'}` }));
+      sections = [
+        { title: `${NUM[ps.st]} · ${LABEL[ps.st]} — phone`, sub: 'Light / dark × English / German side by side. German runs ~30 % longer; nothing has a fixed label width.', frames: mk('phone', 1) },
+        { title: 'Desktop (shown at 50%)', sub: 'Same state, same four combinations.', frames: mk('desktop', 0.5) },
+      ];
+    }
+
+    const cv = this.view('private', lang, Object.assign({}, base, scen('private')));
+    const cs = S[lang];
+    const goState = st => () => { this.setState({ view: 'states' }); setTimeout(() => { const el = document.getElementById(NUM[st] + 'a'); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 24, behavior: 'smooth' }); }, 60); };
+
+    return {
+      pageTheme: view === 'matrix' ? 'light' : T,
+      lang, setLang: l => this.setState({ lang: l }),
+      icons: ICONS,
+      btn: {
+        full: { style: { width: '100%' } },
+        join: { style: { background: 'var(--md-focus)', color: 'var(--md-on-focus)' } },
+        end: { style: { color: 'var(--md-on-focus-container)', border: '1px solid currentColor' } },
+        onFocusText: { style: { color: 'var(--md-on-focus-container)' } },
+      },
+      viewChips: [['proto', 'Prototype'], ['states', 'All states'], ['matrix', 'Theme × language'], ['comps', 'Components']].map(([id, label]) => ({ label, active: view === id, go: () => this.setState({ view: id }) })),
+      themeChips: [['light', 'Light'], ['dark', 'Dark']].map(([id, label]) => ({ label, active: theme === id, go: () => this.setState({ theme: id }) })),
+      showStateChips: view === 'proto' || view === 'matrix',
+      stateChipsTitle: view === 'proto' ? 'Jump to a state' : 'State to compare',
+      stateChips: META.map(([st, l]) => ({ label: `${NUM[st]} ${l}`, active: ps.st === st, go: () => this.jump(st) })),
+      sections,
+      isComps: view === 'comps',
+      cv, cs,
+      segOpts: [['private', cs.private], ['public', P(cs.public, { b: base.batch })]].map(([id, label]) => ({ label, on: this.state.seg === id, off: this.state.seg !== id, go: () => this.setState({ seg: id }) })),
+      surfaceLinks: ['private', 'public', 'checkin', 'signedout'].map(st => ({ label: `${NUM[st]} ${LABEL[st]}`, go: goState(st) })),
+      comps: [
+        { name: 'FocusButton', kind: 'Button variant · new tone', isButton: true,
+          purpose: 'The one action that starts or joins a session. Start is always filled primary blue; Join uses the focus role because it belongs to your batch.',
+          props: [{ n: 'tone', t: "'start' | 'join'", d: 'start → Button filled; join → focus fill, small' }, { n: 'children', t: 'string', d: 'Start focus / Join (EN/DE from caller)' }, { n: 'disabled', t: 'boolean', d: 'Never rendered during a lecture; disabled only while offline-starting' }, { n: 'onClick', t: '() => void', d: '' }],
+          notes: ['Hidden, not disabled, when a lecture runs: no focus action at all (rule: the schedule wins).', 'Start is full-width on compact and sits above the fold; desktop keeps full column width.'] },
+        { name: 'SegmentedControl', kind: 'New core component', isSeg: true,
+          purpose: 'Generic 2–3 option single-select. Private | Public on the focus surface; the EN/DE LanguageToggle becomes a primary-tone instance.',
+          props: [{ n: 'options', t: '{id, label, icon?}[]', d: 'Labels from caller; segments grow to fit (no fixed width)' }, { n: 'value', t: 'string', d: 'Selected id' }, { n: 'onChange', t: '(id) => void', d: '' }, { n: 'tone', t: "'focus' | 'primary'", d: 'focus: md-focus on focus-container; primary: md-primary on surface-variant' }, { n: 'label', t: 'string', d: 'aria-label of the radiogroup' }],
+          notes: ['role="radiogroup", each segment role="radio" + aria-checked; ←/→ move selection, Tab enters the group once.', 'Segments wrap to two lines rather than truncate (German “Öffentlich · AIN 7”).', 'Selection change: 150 ms background transition, none under reduced motion.'] },
+        { name: 'ActivityRow', kind: 'New', isRow: true,
+          purpose: 'Sits directly under the StatusCard and says who else is focusing in the room. Never replaces or recolours the status.',
+          props: [{ n: 'kind', t: "'batch' | 'claimed' | 'unknown'", d: 'batch = violet, claimed = dark purple, unknown = neutral (offline)' }, { n: 'title', t: 'string', d: '“AIN 7 · 2 studying” / “Focus session · started 25 min ago”' }, { n: 'sub', t: 'string?', d: 'One line of plain consequence' }, { n: 'action', t: 'ReactNode?', d: 'batch only: Join button' }],
+          notes: ['Always icon + words + colour; role="status" so screen readers announce changes.', 'Copy never says reserved or booked.'] },
+        { name: 'FocusPill', kind: 'New', isPill: true,
+          purpose: 'Compact control on every other screen while a session runs. Tap returns to the room.',
+          props: [{ n: 'elapsed', t: 'number (s)', d: 'Mono, tabular; h:mm:ss after an hour' }, { n: 'room', t: 'string', d: 'Room code, never translated' }, { n: 'onOpen', t: '() => void', d: 'Opens room detail' }],
+          notes: ['Phone: trailing slot of the brand AppBar. Desktop: header of the list pane, so it stays visible beside any detail.', 'aria-label reads the full sentence; the visible timer updates once per second but is not aria-live.'] },
+        { name: 'FocusSurface', kind: 'New', isSurface: true,
+          purpose: 'Your running session, in place of the Start button: timer, planned end, Private | Public, name toggle (public only), End.',
+          props: [{ n: 'elapsed', t: 'number (s)', d: '48 px mono light, role="timer"' }, { n: 'plannedEnd', t: 'string', d: 'Next lecture, capped at 3 h' }, { n: 'visibility', t: "'private' | 'public'", d: 'Default private' }, { n: 'batch', t: 'string?', d: '“AIN 7”; absent when signed out' }, { n: 'showName', t: 'boolean', d: 'Public only; default off' }, { n: 'signedIn', t: 'boolean', d: 'false → local timer + profile prompt, no toggle' }, { n: 'onVisibility / onShowName / onEnd / onSetup', t: 'callbacks', d: '' }],
+          notes: ['Explanation line always states what others see, in the current mode.', 'Focus order: timer → visibility → name switch → End. End is never the first focusable element.', 'Reduced motion: the timer still counts (it is text); no pulsing or progress animation.'] },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>
