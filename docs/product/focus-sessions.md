@@ -83,13 +83,21 @@ the status card so the Start focus action stays above the fold.
 
 Navigation becomes **Campus · Rooms · Profile**.
 
-| Section | Contents |
+The Profile shows three things; everything else lives in **Settings**, behind
+one gear icon.
+
+| Profile | Contents |
 |---|---|
-| Study profile | Programme (e.g. AIN), intake term → shown as "AIN 7", display name, default sharing mode |
-| Focus graph | 20 weeks of study days, streak, total hours, **Share** |
+| Header | Avatar initial, display name, batch chip ("AIN 7"), gear → Settings. Signed out: "Set Up Study Profile" |
+| Focus graph | GitHub-style contribution calendar: square cells, rows Mon–Sun, one column per week, current week rightmost, five levels from near-white to the darkest violet; streak and total; **Share** |
 | Saved rooms | Today's Saved list with live status (unchanged behaviour, new home) |
-| Appearance | Theme, language, personal focus accent (vetted swatches; meanings of free/soon/claimed/lecture stay fixed) |
-| Account | Sign in with email code, export focus history, delete profile |
+
+| Settings | Contents |
+|---|---|
+| Study profile | Programme (e.g. AIN), intake term → shown as "AIN 7", display name |
+| Sharing | Default mode (Private); the one place that explains what others see |
+| Appearance | Theme, language, personal focus accent (vetted swatches; meanings of free/soon/claimed/lecture stay fixed), quiet preference |
+| Account | Sign in with email code, export/import focus history, sign out, delete profile |
 
 ## Batches
 

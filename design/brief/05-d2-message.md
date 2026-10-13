@@ -1,74 +1,98 @@
-# D2 message — Profile tab and setup
+# D2 message — Profile tab and focus graph (redo)
 
-Paste into the same chat of **THD Room Finder — Focus (Phase 1)** after D1.
-Skills to attach: **Interactive prototype** and **Make tweakable**.
+The first D2 draft was rejected ([why](../exports/D2-draft/README.md)).
+Start a **new chat** in *THD Room Finder — Focus (Phase 1)* so the old
+direction does not carry over. Attach **Interactive prototype** and **Make
+tweakable**, add a screenshot of a GitHub contribution graph as a reference,
+and paste:
 
 ---
 
-D1 is approved, thank you. Decisions on your open questions:
+We are redoing **D2 — Profile tab** for THD Room Finder Phase 1 (focus
+sessions). Read `readme.md`, `brief/02-focus-layer.md`,
+`guidelines/focus-graph.html`, and look at `D1 Room Detail.dc.html` in this
+project, which is approved. Reuse D1's components and look; don't redesign
+them.
 
-- **Join** starts *my own* Public session in that room. **End only ends my
-  session**, never anyone else's: Phase 1 has no shared group. "AIN 7 ·
-  2 studying" is a count of individual Public sessions and disappears when the
-  last one ends. If the person I joined leaves, I keep going.
-- Signed-out timers claim nothing; your copy is right.
-- The check-in reminder comes ~10 min before the 60-min lease runs out, so
-  "ends in 10 min" stays. An expired session counts minutes up to the last
-  check-in or app visit.
-- Planned end is not editable in Phase 1.
-- German: "6h / 2h 10m" in compact UI, "6 Std." in sentences.
-- The list bucket label ("Belegt (Fokus)" or not) is decided in D3.
-- Start focus stays the standard full-width pill; we compare a larger hero
-  variant in D3.
+**Ignore `D2 Profile.dc.html`.** It was rejected: the profile was a crowded
+settings form, and the focus graph was a one-week bar strip. Build a new
+page, `D2 Profile v2.dc.html`, with the same views as D1 (Prototype · All
+states · Theme × language · Components) and the same tweak style.
 
-Now **D2 — Profile tab and setup** (`brief/03-sessions.md`). Keep D1's file
-untouched and build a new page, `D2 Profile.dc.html`, with the same views
-(Prototype · All states · Theme × language · Components) and the same tweak
-style. Reuse D1's components; don't redesign them.
+Decisions already made in D1, for context: Private is the default; Join
+starts your own Public session and End only ends yours; signed-out timers
+claim nothing; navigation is Campus · Rooms · **Profile** (Saved moves into
+Profile).
 
-**Navigation** becomes Campus · Rooms · **Profile** (Saved moves inside it).
+## 1 · The focus graph is the hero
 
-**Profile, top to bottom** (sections from the spec, Profile tab table):
+THD is a technical university: most students are engineers and know the
+**GitHub / GitLab contribution graph** by heart. Make exactly that, so it is
+recognisable from a screenshot (see the attached reference):
 
-1. **Study profile:** programme (e.g. AIN = Artificial Intelligence, English;
-   KI = Künstliche Intelligenz, German; they are different batches), intake
-   term → shown as "AIN 7" (semesters go up to 9), display name (optional,
-   only shown when a Public session has *Show my name* on), default sharing
-   mode (Private default). Make the wording say that the batch is
-   self-declared and exactly what others see in each mode.
-2. **Focus graph:** reserve the slot with a simple stand-in (this week's
-   minutes, streak, total, a Share button). D4 designs the real graph and the
-   share card.
-3. **Saved rooms:** today's Saved list with live status, unchanged behaviour,
-   new home. Include its empty state.
-4. **Appearance:** theme (system/light/dark), language (EN/DE, the D1
-   SegmentedControl), **personal focus accent** as a few vetted swatches (the
-   meanings of free/soon/claimed/lecture never change; show a live preview of
-   the FocusSurface and FocusPill in the chosen accent), and the **quiet
-   preference** ("Treat my batch's sessions as claimed", for people who want
-   to be alone).
-5. **Account:** sign in with an email code, export focus history (JSON),
-   import, sign out, delete profile (explain it ends any session and removes
-   identity; history on the device stays unless they clear it).
+- **Square cells** with small rounded corners, a small even gap.
+- **7 rows, Monday to Sunday**, top to bottom; day labels Mon · Wed · Fri on
+  the left. **One column per week**; month labels above.
+- **The rightmost column is the current week.** Today has a visible outline;
+  days after today in the current week are empty slots, not cells.
+- **Five levels.** No focus = near-white (`--md-surface-variant`-like, barely
+  there). Then faint violet → stronger → strong → the darkest, most saturated
+  violet. *More focus = darker* in light mode; in dark mode the empty cell is
+  a dark surface and more focus = brighter. Thresholds: 0 · < 30 · < 90 ·
+  < 180 · 180+ min. "Less ▢▢▢▢▢ More" legend under it.
+- Phone shows about 20 weeks, scrolled so the current week is at the right
+  edge; tablet and desktop show the full year.
+- One quiet stats line: "64 h this semester · 12-day streak". A **Share**
+  icon button (share card itself comes in D4).
+- Hover/tap a cell: "Tue 13 Oct · 1 h 25 min". Screen readers get a table
+  equivalent.
+- Propose the five ramp colours as tokens (`--md-graph-0` … `--md-graph-4`,
+  light and dark) with contrast noted against the card surface.
 
-**States to draw:**
+## 2 · Profile is three things, nothing else
 
-- Profile **signed out** (works without an account: Saved rooms, Appearance
-  and the local focus graph still work) and **signed in**.
-- **Setup sheet** (bottom sheet on phone, dialog on desktop), opened from
-  D1's "Set Up Study Profile" and from switching to Public without a profile:
-  email → code → programme → intake → optional display name → summary of
-  what others see. Include errors (wrong code, expired code) and the
-  "programme not listed" path.
-- **Delete profile** confirmation.
-- **Loading** states for Profile *and* for D1's room detail (D1 left this
-  out), plus **offline** for Profile.
-- A **medium (tablet)** layout this time, not just phone and desktop.
+1. **Header, one line:** avatar initial, display name, "AIN 7" chip, gear
+   icon (→ Settings).
+2. **Focus graph** card (above).
+3. **Saved rooms** with live status, as today. Include its empty state.
 
-Same rules as D1: phone + tablet + desktop, light + dark, EN + DE with German
-checked for overflow, tokens only (propose new ones explicitly), icon + words
-with every colour, focus order and screen-reader labels noted, reduced motion
-for transitions. Fake sample data only.
+No settings rows, no segmented controls, no privacy explanations on this
+screen. Lots of air.
+
+**Signed out:** the same screen. The header becomes "Not signed in" with a
+single "Set Up Study Profile" text button. The graph still works (it is local)
+and Saved rooms still work.
+
+## 3 · Settings (separate screen, behind the gear)
+
+A plain grouped list, Material 3 list rows, one line each:
+
+- **Study profile:** programme, intake (shown as "AIN 7"), display name.
+- **Sharing:** default mode (Private). The one place that explains what others
+  see, in two short lines.
+- **Appearance:** theme, language, focus accent, quiet preference ("Treat my
+  batch's sessions as claimed").
+- **Account:** export / import focus history, sign out, delete profile.
+
+## 4 · Setup sheet
+
+Bottom sheet on phone, dialog on desktop, opened from "Set Up Study Profile"
+or from switching to Public without a profile: email → code → programme →
+intake → optional display name → **one** summary of what others see. Keep
+each step to one question. Draw the wrong/expired code and "programme not
+listed" states.
+
+## 5 · States and rules
+
+Profile signed out, signed in, empty graph (new user), loading, offline;
+Settings; setup steps; delete confirmation; plus D1's room-detail loading
+state, which D1 left out. Phone, tablet and desktop; light
+and dark; English and German with German checked for overflow. Tokens only;
+icon + words with every colour; focus order and screen-reader labels noted;
+reduced motion. Fake sample data only.
+
+Keep it simple and minimal. If a screen feels busy, remove things rather than
+shrinking them.
 
 When D2 is done, write `HANDBACK-D2.md` in the format of
 `brief/04-handback.md`.
