@@ -1,0 +1,57 @@
+name: Bug report
+description: Something in the app is wrong or broken.
+title: "Bug: "
+labels: [type:bug, needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Room availability comes from THD's public THabella schedule; if a room shows **free** but a lecture is running, include the room code and the time you checked.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      placeholder: "E212 showed 'free 6h' at 10:15, but a lecture was running."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open Rooms
+        2. Filter building E
+        3. ...
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Where?
+      multiple: true
+      options:
+        - Web on a phone (browser or installed PWA)
+        - Web on a desktop
+        - Android app (APK)
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: App version or URL
+      description: Shown in the overflow menu; for the web, the page URL.
+  - type: input
+    id: when
+    attributes:
+      label: Date and time you checked
+      description: Needed to compare with the THabella schedule.
+  - type: textarea
+    id: media
+    attributes:
+      label: Screenshots or screen recording

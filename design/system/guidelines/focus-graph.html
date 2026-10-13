@@ -1,0 +1,53 @@
+<!-- @dsCard group="Focus" viewport="700x300" name="Focus graph and share card" subtitle="GitHub-style study days on a violet ramp, streak and totals; the share card is rendered on the device with no name or room." -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: var(--font-sans); background: var(--md-bg); color: var(--md-on-surface); padding: 18px; display: flex; gap: 18px; align-items: flex-start; }
+  .card { background: var(--md-surface); border-radius: var(--radius-l); box-shadow: var(--md-shadow-1); padding: 16px; }
+  .title { font-size: 14px; font-weight: 500; margin-bottom: 10px; display: flex; justify-content: space-between; gap: 12px; }
+  .stats { font-size: 12px; color: var(--md-on-surface-variant); }
+  #g { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 11px); gap: 3px; }
+  #g i { width: 11px; height: 11px; border-radius: 3px; display: block; }
+  .ramp { display: flex; gap: 3px; align-items: center; font-size: 11px; color: var(--md-on-surface-variant); margin-top: 10px; }
+  .ramp i { width: 11px; height: 11px; border-radius: 3px; display: block; }
+  .share { width: 240px; aspect-ratio: 1200 / 630; border-radius: var(--radius-m); background: var(--md-focus-container); color: var(--md-on-focus-container); padding: 12px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--md-shadow-2); }
+  .big { font-family: var(--font-mono); font-size: 26px; line-height: 1; }
+  .l0 { background: var(--md-surface-variant); }
+  .l1 { background: color-mix(in srgb, var(--md-focus) 25%, var(--md-surface)); }
+  .l2 { background: color-mix(in srgb, var(--md-focus) 50%, var(--md-surface)); }
+  .l3 { background: color-mix(in srgb, var(--md-focus) 75%, var(--md-surface)); }
+  .l4 { background: var(--md-focus); }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="title"><span>Focus graph</span><span class="stats">12-day streak · 64 h this semester</span></div>
+    <div id="g" aria-label="Study days over the last 20 weeks"></div>
+    <div class="ramp">less <i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i> more · 0 · &lt;30 · &lt;90 · &lt;180 · 180+ min</div>
+  </div>
+  <div>
+    <div class="share">
+      <span style="font-size: 12px; font-weight: 500;">Focus · winter 2026</span>
+      <div><div class="big">64 h</div><div style="font-size: 12px;">12-day streak · 41 sessions</div></div>
+      <span style="font-size: 10px; opacity: .8;">thd-room-finder.vercel.app</span>
+    </div>
+    <p class="stats" style="margin-top: 8px; max-width: 240px;">Share card · 1200×630 PNG ≤ 150 KB, made on the device. Name, room and programme are opt-in.</p>
+  </div>
+<script>
+  // Deterministic sample: 20 weeks × 7 days, weekdays busier than weekends.
+  const g = document.getElementById('g');
+  let seed = 7;
+  const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+  for (let w = 0; w < 20; w++) for (let d = 0; d < 7; d++) {
+    const weekend = d >= 5;
+    const r = rnd() * (weekend ? 0.6 : 1) + w / 60;
+    const level = r < .35 ? 0 : r < .55 ? 1 : r < .75 ? 2 : r < .9 ? 3 : 4;
+    const i = document.createElement('i'); i.className = 'l' + level; g.appendChild(i);
+  }
+</script>
+</body>
+</html>

@@ -37,7 +37,8 @@ public/icons/   # app icons
 shared/         # canonical room/building taxonomy (JSON)
 website/        # static marketing landing page (GitHub Pages)
 scripts/dev/    # Python helpers (taxonomy normalization, THabella snapshot)
-docs/           # GitHub wiki (submodule)
+docs/           # documentation: product/ architecture/ development/ contributing/
+design/         # Claude Design system mirror (system/) + design brief (brief/)
 ```
 
 ## Architecture
@@ -64,6 +65,7 @@ Base URL: `https://thabella.th-deg.de/thabella/opn/` — **no auth**.
 | `POST /room/findRooms` | `{}` | All rooms `RoomDto[]` |
 | `POST /period/findByDate/{dateTime}` | `{"sqlDate":"YYYY-MM-DD HH:mm"}` | A day's events `PeriodDto[]` |
 
+Full reference: `docs/architecture/thabella-api.md`.
 Gotchas: `room_ident` is a `Map<string,string>` (one period → N rooms). Public
 fields only; titles/organiser are null. **Undocumented, may change** — DTOs are
 fully nullable, unknown keys ignored. Cache aggressively (rooms 24h, events 5min,
@@ -120,9 +122,14 @@ Conventional Commits. Subject line: `type(optional-scope): summary`
 - **body**: required for substantive changes; use organized bullets explaining
   behavior, purpose and verification, wrapping near 72 columns.
 - **footer** (optional): `BREAKING CHANGE:` or issue refs (`Closes #12`).
-- Consolidate meaningful completed units; do not commit every edit or produce
-  a long WIP/fixup history. Prefer one commit for a small coherent PR; each
-  commit should build. Do not rewrite already shared history to reduce counts.
+- PRs are merged with **merge commits** (squash and rebase are off), so every
+  commit lands on `main` as written: make each one meaningful, buildable and
+  Conventional. Consolidate WIP/fixups on your own branch before review; never
+  rewrite already shared history. The PR title becomes the merge commit title.
+- Required for merge: a PR plus the Web and Android CI checks (PR conventions
+  once #41 is on `main`). No approval count: only the maintainer can merge.
+- Fork PRs from first-time contributors need the maintainer to approve their
+  Actions runs and authorize the Vercel preview; check the diff first.
 
 ### No co-authoring / no attribution
 
@@ -131,14 +138,19 @@ Do **not** add any AI or tool attribution to commits or PRs — no
 Commits are authored solely by the human maintainer.
 
 Author: `arudaev <hlexhelftd@gmail.com>`. Native stack, issue/sub-issue, project
-status and environment conventions are in [CONTRIBUTING.md](CONTRIBUTING.md).
+status and environment conventions are in [CONTRIBUTING.md](CONTRIBUTING.md) and
+`docs/contributing/`.
 Read [PROJECT-CHARTER.md](PROJECT-CHARTER.md) for selected scope. One branch/PR
 per coherent task; dependent tasks may form a stack. Agents never merge stacks,
 enable auto-merge, force-push shared history or publish releases.
 
 ## Current work authorization
 
-The current scope is documentation, research, issue/project workflows and
-environment or staging setup. Do not build interactive prototypes, application
-features or feature database changes without a separate explicit request.
-Tracked issues and requests to continue planning do not authorize implementation.
+Phase 1 = focus sessions (see `PROJECT-CHARTER.md`, `docs/product/focus-sessions.md`,
+`docs/architecture/adr/0002-focus-session-lifecycle.md`).
+
+Authorized now: documentation, research, design-system work in Claude Design
+(mirror in `design/`), issue/project workflows, repository settings, and local
+or staging environment setup. Application features, database migrations and
+hosted Supabase provisioning need a separate explicit request to implement a
+tracked issue; an issue on the board does not authorize implementing it.

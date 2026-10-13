@@ -1,0 +1,28 @@
+# Path-based area labels for pull requests (actions/labeler v5 syntax).
+area:docs:
+  - changed-files:
+      - any-glob-to-any-file: ['docs/**', '*.md']
+area:design-system:
+  - changed-files:
+      - any-glob-to-any-file: ['design/**', 'src/styles/**', 'src/components/core/**']
+area:delivery:
+  - changed-files:
+      - any-glob-to-any-file: ['.github/**', 'vercel.json', 'supabase/**']
+area:data:
+  - changed-files:
+      - any-glob-to-any-file: ['src/data/**', 'api/**', 'shared/**']
+area:rooms:
+  - changed-files:
+      - any-glob-to-any-file: ['src/domain/availability.ts', 'src/domain/teachingRooms.ts', 'src/domain/priority.ts', 'src/features/home/**', 'src/features/detail/**', 'src/features/rooms/**']
+area:maps:
+  - changed-files:
+      - any-glob-to-any-file: ['src/components/app/CampusMap/**', 'src/features/campus/**']
+area:focus:
+  - changed-files:
+      - any-glob-to-any-file: ['src/features/focus/**', 'src/domain/focus*']
+area:identity:
+  - changed-files:
+      - any-glob-to-any-file: ['src/features/profile/**', 'src/domain/identity*', 'src/domain/cohort*']
+area:android:
+  - changed-files:
+      - any-glob-to-any-file: ['android/**', 'capacitor.config.ts']

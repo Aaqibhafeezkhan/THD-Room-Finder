@@ -1,0 +1,32 @@
+<!-- @dsCard group="Focus" viewport="700x430" name="Room list — focus-aware ordering" subtitle="Free (incl. your batch) → closing soon → claimed → lecture; longest-free first within each bucket." -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: var(--font-sans); background: var(--md-bg); color: var(--md-on-surface); padding: 18px; display: flex; flex-direction: column; gap: 8px; }
+  .bucket { font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--md-on-surface-variant); margin-top: 6px; }
+  .card { display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: var(--radius-l); background: var(--md-surface); box-shadow: var(--md-shadow-1); }
+  .id { flex: 1; min-width: 0; }
+  .name { font-weight: 500; font-size: 15px; }
+  .meta { font-size: 12.5px; color: var(--md-on-surface-variant); margin-top: 2px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .hero { text-align: right; }
+  .over { font-size: 10.5px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; }
+  .dur { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 17px; font-weight: 500; line-height: 1.1; }
+  .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; padding: 1px 8px; border-radius: var(--radius-s); }
+</style>
+</head>
+<body>
+  <span class="bucket">1 · Free — no activity, or your batch is here</span>
+  <div class="card"><div class="id"><div class="name">E 212</div><div class="meta">Building E · 60 seats <span class="badge" style="background: var(--md-focus-container); color: var(--md-on-focus-container);">AIN 7 · 2 studying</span></div></div><div class="hero" style="color: var(--status-free);"><div class="over">free</div><div class="dur">6h</div></div></div>
+  <div class="card"><div class="id"><div class="name">I 112</div><div class="meta">ITC · 40 seats</div></div><div class="hero" style="color: var(--status-free);"><div class="over">free</div><div class="dur">3h 10m</div></div></div>
+  <span class="bucket">2 · Closing soon</span>
+  <div class="card"><div class="id"><div class="name">J 213</div><div class="meta">Building J · 30 seats</div></div><div class="hero" style="color: var(--status-soon);"><div class="over">closing</div><div class="dur">25m</div></div></div>
+  <span class="bucket">3 · Claimed by a focus session</span>
+  <div class="card"><div class="id"><div class="name">C 104</div><div class="meta">Building C · 45 seats <span class="badge" style="background: var(--md-claimed-container); color: var(--md-on-claimed-container);">Focus session · 40 min</span></div></div><div class="hero" style="color: var(--status-claimed);"><div class="over">claimed</div><div class="dur">4h</div></div></div>
+  <span class="bucket">4 · Lecture</span>
+  <div class="card"><div class="id"><div class="name">A 008</div><div class="meta">Building A · 120 seats</div></div><div class="hero" style="color: var(--status-occupied);"><div class="over">busy</div><div class="dur">until 11:30</div></div></div>
+</body>
+</html>

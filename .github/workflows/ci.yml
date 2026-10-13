@@ -2,12 +2,16 @@ name: CI
 
 on:
   push:
-    branches: [main, dev]
+    branches: [main]
   pull_request:
   merge_group:
 
 permissions:
   contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   web:
@@ -22,7 +26,8 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
-      - run: node --test .github/scripts/project-sync.checks.cjs
+      - name: Workflow script tests
+        run: node --test .github/scripts/*.checks.cjs
       - run: npm run build
 
   android:
