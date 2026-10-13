@@ -1,0 +1,6 @@
+# The maintainer reviews everything; add domain owners here as contributors take ownership.
+*                         @arudaev
+/.github/                 @arudaev
+/src/domain/              @arudaev
+/design/                  @arudaev
+/supabase/                @arudaev

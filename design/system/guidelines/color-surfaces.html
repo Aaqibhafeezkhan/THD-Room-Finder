@@ -1,0 +1,37 @@
+<!-- @dsCard group="Colors" viewport="700x190" name="Surfaces & Neutrals" subtitle="Cool-grey backgrounds, near-white cards, and the text/outline ramp" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: var(--font-sans); background: var(--md-bg); padding: 20px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .sw { flex: 1; min-width: 92px; border-radius: var(--radius-m); padding: 12px; border: 1px solid var(--md-outline-variant); display: flex; flex-direction: column; gap: 22px; min-height: 104px; }
+  .name { font-size: 12px; font-weight: 500; color: var(--md-on-surface); }
+  .hex { font-family: var(--font-mono); font-size: 11px; color: var(--md-on-surface-variant); }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="sw" style="background: var(--md-bg);">
+      <span class="name">Background</span><span class="hex">#F4F6FA</span>
+    </div>
+    <div class="sw" style="background: var(--md-surface);">
+      <span class="name">Surface</span><span class="hex">#FDFCFF</span>
+    </div>
+    <div class="sw" style="background: var(--md-surface-1);">
+      <span class="name">Surface-1</span><span class="hex">#EEF1FA</span>
+    </div>
+    <div class="sw" style="background: var(--md-surface-variant);">
+      <span class="name">Surface variant</span><span class="hex">#E1E2EC</span>
+    </div>
+    <div class="sw" style="background: var(--md-on-surface);">
+      <span class="name" style="color: var(--md-surface);">On surface</span>
+      <span class="hex" style="color: var(--md-outline-variant);">#1C1B1F</span>
+    </div>
+  </div>
+</body>
+</html>

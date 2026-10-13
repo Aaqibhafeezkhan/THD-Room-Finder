@@ -1,0 +1,25 @@
+<!-- @dsCard group="Spacing" viewport="700x170" name="Elevation — Shadows" subtitle="Two soft, neutral levels. Cards rest at 1; hover lifts to 2." -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: var(--font-sans); background: var(--md-bg); padding: 26px 28px; }
+  .row { display: flex; gap: 28px; flex-wrap: wrap; }
+  .card { width: 200px; height: 92px; background: var(--md-surface); border-radius: var(--radius-l); padding: 14px; display: flex; flex-direction: column; justify-content: space-between; }
+  .e1 { box-shadow: var(--md-shadow-1); }
+  .e2 { box-shadow: var(--md-shadow-2); }
+  .n { font-size: 13px; font-weight: 500; color: var(--md-on-surface); }
+  .v { font-family: var(--font-mono); font-size: 11px; color: var(--md-on-surface-variant); }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="card e1"><span class="n">Level 1 · resting</span><span class="v">--md-shadow-1 · cards, bars</span></div>
+    <div class="card e2"><span class="n">Level 2 · raised</span><span class="v">--md-shadow-2 · hover, sheets</span></div>
+  </div>
+</body>
+</html>

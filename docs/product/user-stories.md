@@ -1,0 +1,38 @@
+# User stories
+
+Phase 1 stories map to GitHub issues under epic
+[#16](https://github.com/arudaev/THD-Room-Finder/issues/16). IDs are stable
+references for design and tests; the issue is the source of truth for
+acceptance criteria.
+
+## Phase 1 — Focus sessions
+
+| ID | As a student, I want… | So that… | Issue |
+|---|---|---|---|
+| RF-01 | rooms ordered by how long they stay free, with claimed and lecture rooms lower | I find a room I can stay in | [#20](https://github.com/arudaev/THD-Room-Finder/issues/20) |
+| RF-02 | my saved rooms in my Profile with live status | my usual spot is one tap away | [#37](https://github.com/arudaev/THD-Room-Finder/issues/37) |
+| ID-01 | to set my programme and intake once and be shown as "AIN 7" | I never re-enter it each semester | [#18](https://github.com/arudaev/THD-Room-Finder/issues/18) |
+| ID-02 | to keep using the app without an account | trying it costs nothing | [#18](https://github.com/arudaev/THD-Room-Finder/issues/18) |
+| FS-01 | to start a focus session from room detail in one tap | starting is easier than not starting | [#19](https://github.com/arudaev/THD-Room-Finder/issues/19) |
+| FS-02 | my session to be private by default but still claim the room | others know the room is in use without knowing it is me | [#19](https://github.com/arudaev/THD-Room-Finder/issues/19) |
+| FS-03 | to switch my session to public for my batch | classmates can come and study with me | [#19](https://github.com/arudaev/THD-Room-Finder/issues/19), [#20](https://github.com/arudaev/THD-Room-Finder/issues/20) |
+| FS-04 | my session to keep running while my phone is locked | I can actually put the phone away | [#19](https://github.com/arudaev/THD-Room-Finder/issues/19) |
+| FS-05 | forgotten sessions to end on their own | rooms are not falsely claimed for hours | [#19](https://github.com/arudaev/THD-Room-Finder/issues/19) |
+| BS-01 | to see on the map where my batch is studying | I can join them | [#20](https://github.com/arudaev/THD-Room-Finder/issues/20) |
+| BS-02 | a quiet preference that treats all activity as claimed | I find rooms where I can be alone | [#20](https://github.com/arudaev/THD-Room-Finder/issues/20) |
+| FG-01 | a graph of my focus days with streak and totals | I see my consistency | [#38](https://github.com/arudaev/THD-Room-Finder/issues/38) |
+| FG-02 | to share my graph as an image without my profile | I can show my progress anywhere | [#38](https://github.com/arudaev/THD-Room-Finder/issues/38) |
+| AP-01 | to choose my personal focus accent | the app feels like mine | [#37](https://github.com/arudaev/THD-Room-Finder/issues/37) |
+| AX-01 | every map signal also in the list, labelled, keyboard and screen-reader friendly | I am not excluded by colour or touch | [#21](https://github.com/arudaev/THD-Room-Finder/issues/21), [#22](https://github.com/arudaev/THD-Room-Finder/issues/22) |
+| PV-01 | outsiders never to learn who is in a private session | sharing feels safe | [#17](https://github.com/arudaev/THD-Room-Finder/issues/17), [#22](https://github.com/arudaev/THD-Room-Finder/issues/22) |
+| OP-01 | (maintainer) bounded requests and a cost ceiling | the project stays affordable | [#17](https://github.com/arudaev/THD-Room-Finder/issues/17), [#22](https://github.com/arudaev/THD-Room-Finder/issues/22) |
+
+## Later phases (candidates)
+
+| ID | Story | Epic |
+|---|---|---|
+| GF-01 | Join a batchmate's session as a group that survives one person leaving | [#23](https://github.com/arudaev/THD-Room-Finder/issues/23) |
+| PF-01 | A unique handle and a display name, like Discord | [#23](https://github.com/arudaev/THD-Room-Finder/issues/23) |
+| OR-01 | (organization) announce a gathering with a verified tag | [#24](https://github.com/arudaev/THD-Room-Finder/issues/24) |
+| CT-01 | See what is happening in Deggendorf this weekend as yellow zones | [#25](https://github.com/arudaev/THD-Room-Finder/issues/25) |
+| CT-02 | Browse museum exhibitions with preview images | [#25](https://github.com/arudaev/THD-Room-Finder/issues/25) |

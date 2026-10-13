@@ -1,0 +1,25 @@
+<!-- @dsCard group="Type" viewport="700x150" name="Mono — Schedule Times" subtitle="Roboto Mono, tabular numerals for clock times and room codes" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: var(--font-sans); background: var(--md-surface); padding: 18px 24px; color: var(--md-on-surface); }
+  .rows { display: flex; flex-direction: column; gap: 8px; }
+  .ev { display: flex; align-items: center; gap: 14px; font-size: 0.875rem; }
+  .t { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--md-on-surface-variant); min-width: 118px; }
+  .code { font-family: var(--font-mono); background: var(--md-surface-variant); color: var(--md-on-surface-variant); padding: 2px 8px; border-radius: var(--radius-xs); font-size: 12px; }
+  .type { font-weight: 500; }
+</style>
+</head>
+<body>
+  <div class="rows">
+    <div class="ev"><span class="t">08:15–09:45</span><span class="type">Lecture</span><span class="code">A.011</span></div>
+    <div class="ev"><span class="t">10:00–11:30</span><span class="type">Lab</span><span class="code">ITC1.07</span></div>
+    <div class="ev"><span class="t">13:30–15:00</span><span class="type">Seminar</span><span class="code">B.204</span></div>
+  </div>
+</body>
+</html>

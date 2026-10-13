@@ -1,0 +1,21 @@
+# Architecture decision records
+
+An ADR records one significant decision: context, decision, consequences and
+the alternatives rejected. ADRs are never rewritten after acceptance. A later
+ADR **amends** or **supersedes** them, and the old one gets a pointer.
+
+| ADR | Title | Status |
+|---|---|---|
+| [0001](0001-study-presence.md) | Individual room study presence: identity, audience, data contract | Proposed contract; amended by 0002 |
+| [0002](0002-focus-session-lifecycle.md) | Focus session lifecycle, sharing modes and local history | Accepted; values provisional until [#39](https://github.com/arudaev/THD-Room-Finder/issues/39) |
+
+Operating limits and the hosted activation checklist live in
+[pilot verification](../pilot-verification.md).
+
+## Writing a new ADR
+
+1. Copy the header table from ADR 0002 and take the next number.
+2. Keep it to one decision. Link the issue it serves.
+3. Open it in the same PR as the change that needs it, or before it.
+4. If it changes an earlier ADR, add an "Amended by" note there; do not edit
+   the earlier decision text.

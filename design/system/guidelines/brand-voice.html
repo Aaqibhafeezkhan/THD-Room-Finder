@@ -1,0 +1,37 @@
+<!-- @dsCard group="Brand" viewport="700x260" name="Voice — No accounts. No backend." subtitle="Plain, confident, student-first. Short sentences. Benefit over feature." -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: var(--font-sans); background: var(--md-surface); padding: 24px; color: var(--md-on-surface); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 28px; }
+  .col h4 { font-size: 12px; font-weight: 500; text-transform: uppercase; color: var(--md-on-surface-variant); margin-bottom: 8px; }
+  .quote { font-size: 1.05rem; line-height: 1.5; font-weight: 400; }
+  .quote.big { font-size: 1.5rem; font-weight: 400; }
+  .do, .dont { display: flex; gap: 8px; font-size: 13px; line-height: 1.5; margin-bottom: 6px; }
+  .do span:first-child { color: var(--md-tertiary); font-weight: 700; }
+  .dont span:first-child { color: var(--md-error); font-weight: 700; }
+  .muted { color: var(--md-on-surface-variant); }
+</style>
+</head>
+<body>
+  <div class="grid">
+    <div class="col">
+      <h4>The line that sums it up</h4>
+      <p class="quote big">No accounts. No backend. No configuration.</p>
+      <p class="quote muted" style="margin-top:10px;">Just open the app and find a room.</p>
+    </div>
+    <div class="col">
+      <h4>How we write</h4>
+      <div class="do"><span>✓</span><span>"Find free study rooms — instantly."</span></div>
+      <div class="do"><span>✓</span><span>"See which rooms are free right now."</span></div>
+      <div class="dont"><span>✕</span><span class="muted">"Leverage our real-time availability engine."</span></div>
+      <div class="dont"><span>✕</span><span class="muted">Emoji in product UI, exclamation pile-ups.</span></div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!-- @dsCard group="Type" viewport="700x230" name="Headlines & Titles" subtitle="Roboto Regular for headlines, Medium 500 for titles and app-bar" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: var(--font-sans); background: var(--md-surface); padding: 22px 24px; color: var(--md-on-surface); }
+  .stack { display: flex; flex-direction: column; gap: 14px; }
+  .line { display: flex; align-items: baseline; gap: 14px; }
+  .spec { font-family: var(--font-mono); font-size: 11px; color: var(--md-on-surface-variant); white-space: nowrap; }
+  .h-display { font-size: 2.75rem; font-weight: 400; line-height: 1.15; }
+  .h-headline { font-size: 1.75rem; font-weight: 400; }
+  .h-title-l { font-size: 1.375rem; font-weight: 500; }
+  .h-title-m { font-size: 1rem; font-weight: 500; }
+</style>
+</head>
+<body>
+  <div class="stack">
+    <div class="line"><span class="h-display">THD Room Finder</span><span class="spec">400 · 44px</span></div>
+    <div class="line"><span class="h-headline">Everything a student needs</span><span class="spec">400 · 28px</span></div>
+    <div class="line"><span class="h-title-l">Free Rooms</span><span class="spec">500 · 22px · app bar</span></div>
+    <div class="line"><span class="h-title-m">Real-time Availability</span><span class="spec">500 · 16px · card title</span></div>
+  </div>
+</body>
+</html>

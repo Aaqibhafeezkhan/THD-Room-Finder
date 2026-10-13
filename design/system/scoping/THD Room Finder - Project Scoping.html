@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THD Room Finder — Project Scoping</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Original THD / Material 3 surfaces + THD blue */
+    --paper:#F4F6FA;        /* app/page background      */
+    --paper-2:#FDFCFF;      /* cards, bars, sheets      */
+    --sunken:#EEF1FA;       /* tinted summary surface   */
+    --ink:#1C1B1F;          /* primary text             */
+    --ink-2:#44464F;        /* secondary text           */
+    --ink-3:#74777F;        /* muted / captions         */
+    --rule:#C4C6D0;         /* hairline dividers        */
+    --rule-2:#B4BAC6;       /* stronger borders         */
+    --accent:#1565C0;       /* THD blue (md-primary)    */
+    --accent-soft:#D3E4FF;  /* primary container        */
+    --free:#00796B;         /* free / available         */
+    --free-soft:#B2DFDB;
+    --busy:#B3261E;         /* occupied                 */
+    --busy-soft:#F9DEDC;
+    --maxw:760px;
+  }
+  *{box-sizing:border-box;}
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Roboto", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size:18px;
+    line-height:1.6;
+    font-weight:400;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 28px 120px; }
+
+  /* ---- Type ---- */
+  h1,h2,h3{ font-family:"Roboto", system-ui, -apple-system, sans-serif; font-weight:500; letter-spacing:0; line-height:1.18; color:var(--ink); }
+  h1{ font-size:42px; font-weight:700; letter-spacing:-0.015em; margin:0; }
+  h2{ font-size:25px; margin:0 0 6px; }
+  h3{ font-size:18px; font-weight:500; margin:28px 0 4px; }
+  p{ margin:0 0 16px; text-wrap:pretty; }
+  strong{ font-weight:500; color:var(--ink); }
+  em{ font-style:italic; }
+  a{ color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accent-soft); }
+  code, .mono{ font-family:"Roboto Mono", ui-monospace, "SF Mono", monospace; font-size:0.86em; }
+
+  /* ---- Cover ---- */
+  .cover{ padding:88px 0 40px; border-bottom:2px solid var(--ink); }
+  .kicker{
+    font-size:12.5px; font-weight:500; letter-spacing:0.16em; text-transform:uppercase;
+    color:var(--accent); margin:0 0 22px;
+  }
+  .cover h1{ max-width:13ch; }
+  .lede{
+    font-size:22px; line-height:1.45; font-weight:400;
+    color:var(--ink-2); margin:22px 0 0; max-width:44ch;
+  }
+  .lede em{ color:var(--ink); font-style:italic; }
+  .meta{
+    display:flex; flex-wrap:wrap; gap:8px 34px; margin-top:34px;
+    font-size:12.5px; letter-spacing:0.02em; color:var(--ink-3); text-transform:uppercase;
+  }
+  .meta b{ display:block; color:var(--ink); font-weight:500; text-transform:none; letter-spacing:0; font-size:15px; margin-top:3px; }
+  .status-pill{
+    display:inline-block; font-size:12px; font-weight:500;
+    letter-spacing:0.03em; color:var(--accent); background:var(--accent-soft);
+    padding:5px 11px; border-radius:100px;
+  }
+
+  /* ---- Section ---- */
+  section{ padding:46px 0; border-bottom:1px solid var(--rule); }
+  .secnum{
+    font-size:12.5px; font-weight:500; letter-spacing:0.14em; color:var(--ink-3);
+    margin:0 0 18px; text-transform:uppercase;
+  }
+  .secnum b{ color:var(--accent); font-weight:700; }
+
+  /* ---- TLDR / move list ---- */
+  .moves{ margin:26px 0 0; counter-reset:m; display:flex; flex-direction:column; gap:0; }
+  .move{
+    display:grid; grid-template-columns:46px 1fr; gap:18px;
+    padding:20px 0; border-top:1px solid var(--rule);
+  }
+  .move:last-child{ border-bottom:1px solid var(--rule); }
+  .move .n{
+    font-weight:700; font-size:30px;
+    color:var(--rule-2); line-height:1; letter-spacing:-0.02em;
+  }
+  .move h3{ margin:0 0 4px; }
+  .move p{ margin:0; font-size:16.5px; color:var(--ink-2); }
+
+  /* ---- Two-up critique ---- */
+  .cols{ display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:22px; }
+  .card{
+    background:var(--paper-2); border:1px solid var(--rule); border-radius:14px; padding:20px 22px;
+  }
+  .col-h{ font-size:12.5px; font-weight:500; letter-spacing:0.07em; text-transform:uppercase; margin:0 0 12px; }
+  .col-h.good{ color:var(--free); }
+  .col-h.bad{ color:var(--busy); }
+  ul.ticks{ list-style:none; margin:0; padding:0; }
+  ul.ticks li{ position:relative; padding-left:26px; margin-bottom:11px; font-size:16px; line-height:1.45; color:var(--ink-2); }
+  ul.ticks li:last-child{ margin-bottom:0; }
+  ul.ticks li::before{
+    content:""; position:absolute; left:0; top:9px; width:10px; height:10px; border-radius:3px;
+  }
+  ul.ticks.good li::before{ background:var(--free); }
+  ul.ticks.bad li::before{ background:var(--busy); }
+
+  /* ---- JTBD ---- */
+  .jtbd{ display:flex; flex-direction:column; gap:14px; margin-top:22px; }
+  .job{
+    border-left:3px solid var(--accent); padding:4px 0 4px 20px;
+  }
+  .job .who{ font-size:12.5px; font-weight:500; letter-spacing:0.05em; text-transform:uppercase; color:var(--ink-3); margin-bottom:3px; }
+  .job p{ margin:0; font-size:17px; }
+  .job .q{ font-style:italic; color:var(--ink); }
+
+  /* ---- pull quote ---- */
+  blockquote{
+    margin:34px 0; padding:0; border:0;
+    font-size:27px; line-height:1.32; font-weight:300; font-style:italic; color:var(--ink);
+    letter-spacing:-0.005em; max-width:26ch;
+  }
+  blockquote .by{ display:block; font-style:normal; font-size:13px; font-weight:500; letter-spacing:0.03em; color:var(--ink-3); margin-top:14px; text-transform:uppercase; }
+
+  /* ---- scope table ---- */
+  .scope{ display:grid; grid-template-columns:1fr; gap:14px; margin-top:24px; }
+  .scope-band{ border-radius:14px; overflow:hidden; border:1px solid var(--rule); }
+  .scope-head{
+    display:flex; align-items:center; gap:12px; padding:13px 20px;
+    font-weight:500; font-size:14px; letter-spacing:0.01em;
+  }
+  .scope-head .dot{ width:11px; height:11px; border-radius:50%; }
+  .scope-head .sub{ font-weight:400; color:var(--ink-3); font-size:12.5px; margin-left:auto; letter-spacing:0.04em; text-transform:uppercase; }
+  .scope-body{ background:var(--paper-2); padding:8px 20px 16px; }
+  .scope-body .row{ display:flex; gap:12px; padding:9px 0; border-top:1px solid var(--rule); font-size:15.5px; line-height:1.4; }
+  .scope-body .row:first-child{ border-top:0; }
+  .scope-body .row .t{ font-weight:500; color:var(--ink); min-width:178px; flex-shrink:0; }
+  .scope-body .row .d{ color:var(--ink-2); }
+  .band-in .scope-head{ background:var(--free-soft); color:#004f49; }
+  .band-in .dot{ background:var(--free); }
+  .band-next .scope-head{ background:var(--accent-soft); color:#003063; }
+  .band-next .dot{ background:var(--accent); }
+  .band-out .scope-head{ background:var(--busy-soft); color:#8c1d18; }
+  .band-out .dot{ background:var(--busy); }
+
+  /* ---- direction / swatches ---- */
+  .swatches{ display:flex; flex-wrap:wrap; gap:10px; margin:18px 0 6px; }
+  .sw{ display:flex; flex-direction:column; gap:7px; }
+  .sw .chip{ width:84px; height:56px; border-radius:10px; border:1px solid rgba(0,0,0,.08); }
+  .sw .lab{ font-size:11px; color:var(--ink-3); letter-spacing:0.02em; }
+  .sw .lab b{ display:block; color:var(--ink); font-weight:500; font-family:"Roboto Mono",monospace; font-size:11px; }
+
+  .specimen{
+    background:var(--paper-2); color:var(--ink); border:1px solid var(--rule);
+    border-radius:16px; padding:26px 26px 28px; margin:22px 0 6px;
+    box-shadow:0 1px 2px rgba(0,0,0,.05), 0 6px 18px -10px rgba(28,27,31,.18);
+  }
+  .specimen .cap{ font-size:11px; letter-spacing:0.13em; text-transform:uppercase; color:var(--ink-3); margin-bottom:14px; }
+  .specimen .big{ font-size:64px; font-weight:300; letter-spacing:-0.02em; line-height:1; color:var(--accent); }
+  .specimen .big small{ font-size:17px; font-weight:400; color:var(--ink-2); letter-spacing:0; margin-left:6px; }
+  .specimen .rows{ margin-top:20px; display:flex; flex-direction:column; gap:0; }
+  .specimen .rrow{
+    display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
+    padding:11px 0; border-top:1px solid var(--rule);
+    font-family:"Roboto Mono", monospace; font-size:14px; color:var(--ink-2); letter-spacing:0.01em;
+  }
+  .specimen .rrow b{ color:var(--ink); font-weight:500; min-width:64px; }
+  .specimen .rrow .dur{ color:var(--free); font-weight:500; }
+  .specimen .rrow .dur.soon{ color:#A8741A; }
+
+  /* ---- phases ---- */
+  .phases{ counter-reset:p; margin-top:22px; }
+  .phase{ display:grid; grid-template-columns:120px 1fr; gap:20px; padding:18px 0; border-top:1px solid var(--rule); }
+  .phase:last-child{ border-bottom:1px solid var(--rule); }
+  .phase .ph b{ display:block; font-size:14px; font-weight:500; color:var(--accent); letter-spacing:0.01em; }
+  .phase .ph span{ font-size:12.5px; color:var(--ink-3); }
+  .phase .pd h3{ margin:0 0 4px; }
+  .phase .pd p{ margin:0; font-size:16px; color:var(--ink-2); }
+
+  /* ---- decisions ---- */
+  .decisions{ margin-top:22px; display:flex; flex-direction:column; gap:0; }
+  .dec{ display:grid; grid-template-columns:30px 1fr; gap:14px; padding:18px 0; border-top:1px solid var(--rule); }
+  .dec:last-child{ border-bottom:1px solid var(--rule); }
+  .dec .box{ width:20px; height:20px; border:2px solid var(--rule-2); border-radius:5px; margin-top:3px; }
+  .dec .q{ font-weight:500; font-size:16.5px; margin:0 0 4px; }
+  .dec .o{ font-size:15px; color:var(--ink-2); margin:0; }
+  .dec .o b{ color:var(--accent); font-weight:500; }
+
+  .note{ font-size:14.5px; color:var(--ink-3); font-style:italic; margin-top:30px; }
+
+  @media (max-width:640px){
+    body{ font-size:16.5px; }
+    h1{ font-size:32px; }
+    .cover{ padding:56px 0 32px; }
+    .cols{ grid-template-columns:1fr; }
+    .phase{ grid-template-columns:1fr; gap:6px; }
+    .scope-body .row{ flex-direction:column; gap:2px; }
+    .scope-body .row .t{ min-width:0; }
+  }
+
+  @media print{
+    :root{ --paper:#fff; }
+    body{ background:#fff; font-size:11.5pt; }
+    .wrap{ max-width:none; padding:0; }
+    section{ break-inside:avoid; padding:22px 0; }
+    .cover{ padding:0 0 24px; }
+    blockquote{ break-inside:avoid; }
+    .move,.phase,.dec,.scope-band{ break-inside:avoid; }
+    a{ border:0; color:var(--ink); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- COVER -->
+  <header class="cover" data-screen-label="Cover">
+    <p class="kicker">Project Scoping Document · v2 Draft</p>
+    <h1>THD Room Finder: Redesign &amp; Rescope</h1>
+    <p class="lede">Turning a competent room database into the <em>fastest answer on campus</em> to one question — <em>where can I sit, right now, for as long as I need?</em></p>
+    <div class="meta">
+      <div>Prepared for<b>The Maintainer</b></div>
+      <div>Discipline<b>Product &amp; Visual Design</b></div>
+      <div>Date<b>26 June 2026</b></div>
+      <div>Status<b><span class="status-pill">Awaiting approval</span></b></div>
+    </div>
+  </header>
+
+  <!-- 00 TLDR -->
+  <section data-screen-label="TL;DR">
+    <p class="secnum"><b>00</b> &nbsp;The short version</p>
+    <h2>One job, done in a glance</h2>
+    <p>Room Finder already does something genuinely useful: it tells a student which of THD's ~289 classrooms are free, using only public THabella data, with no account and no backend. That's the right product. But today it <em>looks and behaves like a database browser</em> — an alphabetical list keyed by room code, a binary free/occupied banner. It answers <em>"which rooms are empty?"</em> when the question a student actually has is more specific: <em>"which room is free, and for how long?"</em></p>
+    <p>This project keeps the scope tight and the THD identity intact — same THD blue, same Roboto, same Material foundation — then sharpens two things:</p>
+
+    <div class="moves">
+      <div class="move">
+        <div class="n">01</div>
+        <div>
+          <h3>Duration is the headline</h3>
+          <p>Every room answers <strong>"free for how long"</strong> — <span class="mono">free 2h 10m</span> — not just a binary empty/occupied. Students need to know if they can finish, not just start.</p>
+        </div>
+      </div>
+      <div class="move">
+        <div class="n">02</div>
+        <div>
+          <h3>From database browser to a clear answer</h3>
+          <p>The home count flows into a <strong>confident, glanceable list</strong> ranked by how long each room stays free and filtered by building — not an alphabetical room-code dump that leaves the work to you.</p>
+        </div>
+      </div>
+    </div>
+
+    <p style="margin-top:24px">We considered ranking rooms by <em>proximity</em>, but it doesn't earn its place here. THD's campus is compact — roughly <strong>eight minutes' walk</strong> from the main campus to the furthest building in town — so <em>where</em> a free room is matters far less than <em>how long</em> it's free. Distance is out; duration is in.</p>
+  </section>
+
+  <!-- 01 TODAY -->
+  <section data-screen-label="Today">
+    <p class="secnum"><b>01</b> &nbsp;Where it is today</p>
+    <h2>An honest snapshot</h2>
+    <p>The current product is a native Android/iOS app plus a static PWA, recreated here faithfully. The flow is three screens: a <strong>home</strong> screen with a large count of rooms free now; a <strong>list</strong> of free rooms with building-filter chips and a datetime lookup; and a <strong>room detail</strong> with a free/occupied banner and the day's schedule.</p>
+    <p>Visually it is textbook Material 3 — Roboto, THD blue <code>#1565C0</code>, teal "free" <code>#00796B</code> / red "occupied" <code>#B3261E</code>, soft elevated cards, a 64px app bar. It is clean, competent, and unmistakably THD. The problem isn't the look — it's the <em>hierarchy</em>: the screen leads with a count and a code, and buries the one fact a student is really after.</p>
+    <blockquote>It answers correctly. It just answers the question one step removed from the one you're really asking.<span class="by">— The design problem in one line</span></blockquote>
+  </section>
+
+  <!-- 02 CRITIQUE -->
+  <section data-screen-label="Critique">
+    <p class="secnum"><b>02</b> &nbsp;Design critique</p>
+    <h2>What to keep, what's holding it back</h2>
+    <div class="cols">
+      <div class="card">
+        <p class="col-h good">Keep / protect</p>
+        <ul class="ticks good">
+          <li>The radical simplicity — no accounts, no backend, no config.</li>
+          <li>The big-number home screen. Glanceable and confident.</li>
+          <li>THD blue, Roboto, and the Material foundation — the identity is fine; keep it.</li>
+          <li>Green = free / red = occupied. Learned, load-bearing, never touch.</li>
+          <li>Honest data: real room codes, real German building names.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p class="col-h bad">Holding it back</p>
+        <ul class="ticks bad">
+          <li>Lists sort by room code, not by what you need — how long it's free.</li>
+          <li>"Free / occupied" is binary; hides the crucial <em>duration</em>.</li>
+          <li>No sense of start vs finish — can I settle in, or just pass through?</li>
+          <li>The home count is a dead-end; the list below feels disconnected from it.</li>
+          <li>Type hierarchy is flat — everything shouts, so nothing leads.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 WHO -->
+  <section data-screen-label="Users">
+    <p class="secnum"><b>03</b> &nbsp;Who it's for</p>
+    <h2>Three students, one app</h2>
+    <p>The redesign is anchored to concrete moments, not personas-in-the-abstract. Every screen should serve at least one of these.</p>
+    <div class="jtbd">
+      <div class="job">
+        <div class="who">The gap-filler · between classes</div>
+        <p class="q">"I've got 50 minutes free. Which empty room can I actually settle into for the whole time, not get kicked out of in ten?"</p>
+      </div>
+      <div class="job">
+        <div class="who">The planner · the night before</div>
+        <p class="q">"Our group needs a room Thursday at 14:00 for two hours. What'll be free, and big enough for six?"</p>
+      </div>
+      <div class="job">
+        <div class="who">The regular · same spot, every day</div>
+        <p class="q">"Is my usual quiet room on the second floor of J open right now?"</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 THESIS -->
+  <section data-screen-label="Thesis">
+    <p class="secnum"><b>04</b> &nbsp;Design thesis</p>
+    <h2>Answer-first, not browse-first</h2>
+    <p>The mental model is a transit departure board crossed with a calm weather app: <strong>authoritative, instantly scannable, and trustworthy at a glance.</strong> You don't <em>browse</em> a departure board — you find your answer in under a second and move. Room Finder should feel the same — rendered entirely in THD's own Material system, just with a sharper spine.</p>
+    <p>Concretely, that means an information hierarchy that always leads with <em>how long</em> a room is free, status you can read peripherally, and a count that flows directly into a ranked, scannable list. The product stays resolutely flat and data-driven — no stock photos of students laughing at laptops, no re-skin away from THD blue — but every screen earns its glance.</p>
+    <blockquote>Open, glance, go. If a student needs more than one tap to know whether a room fits their hour, we've failed.<span class="by">— Success, defined</span></blockquote>
+  </section>
+
+  <!-- 05 MOVES -->
+  <section data-screen-label="Direction">
+    <p class="secnum"><b>05</b> &nbsp;Visual &amp; interaction direction</p>
+    <h2>What the redesign looks like</h2>
+
+    <h3>Lead with the answer</h3>
+    <p>The home count stays — Roboto's light display weight, THD blue — but it no longer dead-ends. It flows straight into a list of free rooms, each row leading with <strong>how long it's free</strong> and its seat count, ranked longest-free first. Room code and building stay legible but step back in the hierarchy.</p>
+
+    <div class="specimen">
+      <p class="cap">Home — answer first</p>
+      <div class="big">42<small>rooms free right now</small></div>
+      <div class="rows">
+        <div class="rrow"><b>B.204</b> <span class="dur">free 2h 10m</span> · seats 45 · Bldg B</div>
+        <div class="rrow"><b>ITC1.07</b> <span class="dur">free all day</span> · seats 24 · ITC</div>
+        <div class="rrow"><b>J.213</b> <span class="dur soon">free 25m</span> · seats 30 · Bldg J</div>
+      </div>
+    </div>
+
+    <h3>Palette — THD's own, formalized</h3>
+    <p>No new brand colour. We keep THD blue as the accent and the learned green/red status, and simply <em>tokenize</em> them so they're applied consistently — including a third state for "free, but closing soon." Same Material surfaces, just used with more intent.</p>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:#1565C0"></div><div class="lab">THD blue<b>#1565C0</b></div></div>
+      <div class="sw"><div class="chip" style="background:#D3E4FF"></div><div class="lab">Blue container<b>#D3E4FF</b></div></div>
+      <div class="sw"><div class="chip" style="background:#00796B"></div><div class="lab">Free<b>#00796B</b></div></div>
+      <div class="sw"><div class="chip" style="background:#B3261E"></div><div class="lab">Occupied<b>#B3261E</b></div></div>
+      <div class="sw"><div class="chip" style="background:#FDFCFF;border-color:#C4C6D0"></div><div class="lab">Surface<b>#FDFCFF</b></div></div>
+      <div class="sw"><div class="chip" style="background:#F4F6FA;border-color:#C4C6D0"></div><div class="lab">Background<b>#F4F6FA</b></div></div>
+    </div>
+
+    <h3>Motion &amp; surface</h3>
+    <p>Stay flat and fast — short 120–160ms transitions, no glassmorphism, no gradients, Material elevation kept light. The one new texture is a subtle "board" rhythm in how rows tick over when data refreshes. Full dark theme, as today.</p>
+  </section>
+
+  <!-- 06 SCOPE -->
+  <section data-screen-label="Scope">
+    <p class="secnum"><b>06</b> &nbsp;Feature scope</p>
+    <h2>What's in, what's later, what's out</h2>
+    <p>Deliberately conservative. The product's value is its focus; new features earn their place or wait.</p>
+
+    <div class="scope">
+      <div class="scope-band band-in">
+        <div class="scope-head"><span class="dot"></span> In scope — this redesign <span class="sub">core</span></div>
+        <div class="scope-body">
+          <div class="row"><div class="t">Free-for-duration</div><div class="d">Each room shows how long it stays free — and flags "closing soon" — not just a binary state.</div></div>
+          <div class="row"><div class="t">Duration-ranked list</div><div class="d">Free rooms ordered by how long they stay open, longest-free first; the count flows straight into it.</div></div>
+          <div class="row"><div class="t">Building filter</div><div class="d">Fast chips, now the primary way to narrow — the natural axis once distance is off the table.</div></div>
+          <div class="row"><div class="t">Time-travel lookup</div><div class="d">Pick any future date/time to check ahead — kept and made prominent.</div></div>
+          <div class="row"><div class="t">Room detail + schedule</div><div class="d">Status banner, seats/facilities/contact, the day's timeline.</div></div>
+          <div class="row"><div class="t">Full dark theme + PWA</div><div class="d">Offline-friendly, installable, OS-matched.</div></div>
+        </div>
+      </div>
+
+      <div class="scope-band band-next">
+        <div class="scope-head"><span class="dot"></span> Phase 2 — design now, build if validated <span class="sub">consider</span></div>
+        <div class="scope-body">
+          <div class="row"><div class="t">Campus map view</div><div class="d">Rooms plotted by building — a locator for "which building is this in?", not a routing tool.</div></div>
+          <div class="row"><div class="t">Saved rooms</div><div class="d">Favorite a room; a "free now?" home-screen widget / Shortcut.</div></div>
+          <div class="row"><div class="t">Capacity &amp; equipment filters</div><div class="d">"Seats 6+", "has projector" for the group-work job.</div></div>
+          <div class="row"><div class="t">"Free for next N hours"</div><div class="d">Duration filter for longer study sessions.</div></div>
+        </div>
+      </div>
+
+      <div class="scope-band band-out">
+        <div class="scope-head"><span class="dot"></span> Out of scope — for now <span class="sub">won't</span></div>
+        <div class="scope-body">
+          <div class="row"><div class="t">Proximity / routing</div><div class="d">Campus is too compact (~8 min end to end) for distance to matter. Cut.</div></div>
+          <div class="row"><div class="t">Accounts / login</div><div class="d">Violates the core promise. Never.</div></div>
+          <div class="row"><div class="t">Booking / reservation</div><div class="d">THD owns scheduling; we read, we don't write.</div></div>
+          <div class="row"><div class="t">Crowd-sourced occupancy</div><div class="d">Interesting, but data-integrity risk — revisit after Phase 2.</div></div>
+          <div class="row"><div class="t">Social / chat / profiles</div><div class="d">Not the job. Adds weight, removes focus.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 SYSTEM -->
+  <section data-screen-label="System">
+    <p class="secnum"><b>07</b> &nbsp;What the design system must contain</p>
+    <h2>From "Material clone" to an owned, documented system</h2>
+    <p>Once the direction is approved, the design system gets formalized around the thesis — keeping THD blue, Roboto, and Material roles, but encoding the duration-first hierarchy as real tokens and components:</p>
+    <ul class="ticks good" style="margin-top:14px">
+      <li><strong>Tokens</strong> — the existing THD blue palette and Roboto type scale, formalized; light Material elevation; a 4px grid retained.</li>
+      <li><strong>Status as a first-class token set</strong> — free / occupied / closing-soon, with the free-for-duration formatting baked in.</li>
+      <li><strong>Components</strong> — Home count, Room row (status + duration), Status banner, Time picker, Filter chips, App bar, Map pin (Phase 2).</li>
+      <li><strong>UI kits</strong> — the redesigned mobile flow and a refreshed marketing page, both as live, tweakable templates.</li>
+    </ul>
+  </section>
+
+  <!-- 08 PLAN -->
+  <section data-screen-label="Plan">
+    <p class="secnum"><b>08</b> &nbsp;Plan &amp; deliverables</p>
+    <h2>How we get there</h2>
+    <div class="phases">
+      <div class="phase">
+        <div class="ph"><b>Phase 0</b><span>This document</span></div>
+        <div class="pd"><h3>Align on direction</h3><p>You approve the scope and the duration-first reframe (and confirm dropping proximity). We lock the thesis before pixels.</p></div>
+      </div>
+      <div class="phase">
+        <div class="ph"><b>Phase 1</b><span>Foundations</span></div>
+        <div class="pd"><h3>Formalize the token + type system</h3><p>THD palette, Roboto scale, status semantics with duration, elevation, motion — as design-system tokens and specimen cards.</p></div>
+      </div>
+      <div class="phase">
+        <div class="ph"><b>Phase 2</b><span>Components</span></div>
+        <div class="pd"><h3>Core components</h3><p>Home count, room row, status banner, time picker, chips, app bar — each a documented component.</p></div>
+      </div>
+      <div class="phase">
+        <div class="ph"><b>Phase 3</b><span>Kits</span></div>
+        <div class="pd"><h3>Redesigned app + site templates</h3><p>The duration-first mobile flow and a refreshed landing page as live, tweakable templates.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 DECISIONS -->
+  <section data-screen-label="Decisions" style="border-bottom:0;">
+    <p class="secnum"><b>09</b> &nbsp;Decisions I need from you</p>
+    <h2>Approve, adjust, or redirect</h2>
+    <p>Tick these off (or tell me where I've got it wrong) and I'll start Phase 1.</p>
+    <div class="decisions">
+      <div class="dec">
+        <div class="box"></div>
+        <div>
+          <p class="q">Is "lead with duration (free-for-how-long)" the right reframe?</p>
+          <p class="o">This is the core bet of the redesign. <b>My recommendation: yes.</b></p>
+        </div>
+      </div>
+      <div class="dec">
+        <div class="box"></div>
+        <div>
+          <p class="q">Drop proximity entirely, given the compact campus?</p>
+          <p class="o">Confirmed per your note — ~8 min end to end. <b>Proximity is cut</b>; the list ranks by duration, narrowed by building.</p>
+        </div>
+      </div>
+      <div class="dec">
+        <div class="box"></div>
+        <div>
+          <p class="q">Keep THD blue, Roboto, and Material — sharpen in place, no re-skin?</p>
+          <p class="o">Confirmed per your note. <b>We keep the original palette and fonts</b> and formalize them as tokens.</p>
+        </div>
+      </div>
+      <div class="dec">
+        <div class="box"></div>
+        <div>
+          <p class="q">Is the in-scope / Phase-2 / out split right?</p>
+          <p class="o">Especially: campus map (as a locator) and saved rooms as Phase 2, no booking. Move anything across the lines?</p>
+        </div>
+      </div>
+      <div class="dec">
+        <div class="box"></div>
+        <div>
+          <p class="q">Anything sacred I should not touch?</p>
+          <p class="o">Beyond green/red status and the no-account promise — any screen or detail you're attached to?</p>
+        </div>
+      </div>
+    </div>
+    <p class="note">Nothing here is built yet — this is the alignment artifact. On your approval, I'll rebuild the design system Phase by Phase, starting with the token + type foundations.</p>
+  </section>
+
+</div>
+</body>
+</html>

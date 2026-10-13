@@ -1,0 +1,82 @@
+/* ============================================================
+   THD Room Finder — Breakpoints & Responsive Layout
+   Material 3 window size classes, mapped to the three targets this
+   product ships to: phone (compact) · tablet (medium) · desktop
+   (expanded). The same values drive the adaptive navigation:
+     compact  → bottom navigation bar
+     medium   → navigation rail
+     expanded → navigation drawer (sidebar) + list-detail panes
+   Mobile-first: base styles are compact; min-width queries layer up.
+   ============================================================ */
+
+:root {
+  /* ── Window size-class breakpoints (min-width) ────── */
+  --bp-compact:   0;       /* @kind other */ /* phones — < 600px, single col   */
+  --bp-medium:    600px;   /* @kind other */ /* tablet portrait / foldable      */
+  --bp-expanded:  840px;   /* @kind other */ /* tablet landscape / desktop      */
+  --bp-large:     1240px;  /* @kind other */ /* large desktop — centered shell  */
+
+  /* ── Adaptive navigation metrics (Material spec) ──── */
+  --nav-bar-height:  80px;   /* bottom navigation bar (compact)   */
+  --nav-rail-width:  80px;   /* navigation rail (medium)          */
+  --nav-drawer-width: 280px; /* navigation drawer / sidebar (exp) */
+
+  /* ── Responsive page gutters (screen inset) ───────── */
+  --gutter-compact:  16px;   /* phone screen inset                */
+  --gutter-medium:   24px;   /* tablet                            */
+  --gutter-expanded: 32px;   /* desktop                           */
+
+  /* ── Content & pane widths ────────────────────────── */
+  --pane-list:    360px;   /* list pane in a list-detail layout   */
+  --content-max:  1280px;  /* desktop app-shell max width         */
+  /* (legacy hero/feature widths live in spacing.css:
+     --content-narrow 560px · --content-wide 920px)            */
+
+  /* ── Fluid gutter — clamps across the whole range ─── */
+  --gutter-fluid: clamp(var(--gutter-compact), 4vw, var(--gutter-expanded));
+}
+
+/* ============================================================
+   Helper classes (optional). Components style inline, but these
+   give plain-HTML screens a ready responsive scaffold that
+   matches the tokens above.
+   ============================================================ */
+
+/* App shell: nav region + content region. Stacks on compact
+   (content first, bottom bar after), goes side-by-side ≥ medium. */
+.rf-shell {
+  display: grid;
+  grid-template-rows: 1fr auto;        /* content, then bottom bar */
+  grid-template-columns: 1fr;
+  min-height: 100%;
+}
+@media (min-width: 600px) {
+  .rf-shell {
+    grid-template-rows: 1fr;
+    grid-template-columns: var(--nav-rail-width) 1fr;  /* rail | content */
+  }
+}
+@media (min-width: 840px) {
+  .rf-shell {
+    grid-template-columns: var(--nav-drawer-width) 1fr; /* drawer | content */
+  }
+}
+
+/* List-detail: single column on compact/medium, two panes ≥ expanded. */
+.rf-list-detail {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 840px) {
+  .rf-list-detail {
+    grid-template-columns: var(--pane-list) 1fr;
+  }
+}
+
+/* Centered content column that grows with the window, capped. */
+.rf-container {
+  width: 100%;
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter-fluid);
+}

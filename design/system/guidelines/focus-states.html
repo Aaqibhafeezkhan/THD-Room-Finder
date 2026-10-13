@@ -1,0 +1,76 @@
+<!-- @dsCard group="Focus" viewport="760x520" name="Focus session — room detail states" subtitle="Start (blue) → active Private (default) → active Public to your batch; how a claimed room looks to others. Concept for design session D1." -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: var(--font-sans); background: var(--md-bg); color: var(--md-on-surface); padding: 18px; }
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .phone { background: var(--md-surface); border-radius: var(--radius-l); box-shadow: var(--md-shadow-1); padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .cap { font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--md-on-surface-variant); }
+  .room { font-size: 18px; font-weight: 500; font-family: var(--font-mono); }
+  .status { display: flex; justify-content: space-between; align-items: baseline; padding: 12px 14px; border-radius: var(--radius-l); }
+  .status b { font-weight: 500; font-size: 14px; }
+  .dur { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 24px; line-height: 1; }
+  .facts { font-size: 12px; color: var(--md-on-surface-variant); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: none; border-radius: var(--radius-xl); padding: 10px 20px; font: 500 14px var(--font-sans); min-height: 44px; }
+  .focus { background: var(--md-focus-container); color: var(--md-on-focus-container); border-radius: var(--radius-l); padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .timer { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 32px; line-height: 1; }
+  .seg { display: flex; border-radius: var(--radius-xl); overflow: hidden; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--md-on-focus-container) 30%, transparent); }
+  .seg span { flex: 1; text-align: center; font-size: 13px; font-weight: 500; padding: 8px 0; }
+  .seg .on { background: var(--md-focus); color: var(--md-on-focus); }
+  .meta { font-size: 12px; opacity: .9; }
+  .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .claim { display: flex; align-items: center; gap: 8px; background: var(--md-claimed-container); color: var(--md-on-claimed-container); border-radius: var(--radius-m); padding: 10px 12px; font-size: 13px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--md-claimed); flex: none; }
+  svg { flex: none; }
+</style>
+</head>
+<body>
+<div class="grid">
+  <div class="phone">
+    <span class="cap">1 · Free room</span>
+    <span class="room">E 212</span>
+    <div class="status" style="background: var(--md-tertiary-container); color: var(--md-on-tertiary-container);"><b>Free until 16:00</b><span class="dur">6h</span></div>
+    <span class="facts">60 seats · Beamer, Whiteboard, EDV +3</span>
+    <button class="btn" style="background: var(--md-primary); color: var(--md-on-primary);">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/></svg>
+      Start focus
+    </button>
+  </div>
+
+  <div class="phone">
+    <span class="cap">2 · Active · Private (default)</span>
+    <span class="room">E 212</span>
+    <div class="focus">
+      <div class="row"><span class="timer">42:10</span><span class="meta">until 13:15</span></div>
+      <div class="seg"><span class="on">Private</span><span>Public · AIN 7</span></div>
+      <span class="meta">Others see that this room has a focus session, not who.</span>
+      <div class="row"><span class="meta">Locked phone keeps running · check in hourly</span><button class="btn" style="background: transparent; color: var(--md-on-focus-container); padding: 6px 12px; min-height: 36px; box-shadow: inset 0 0 0 1px currentColor;">End</button></div>
+    </div>
+  </div>
+
+  <div class="phone">
+    <span class="cap">3 · Active · Public to your batch</span>
+    <span class="room">E 212</span>
+    <div class="focus">
+      <div class="row"><span class="timer">1:05:40</span><span class="meta">until 13:15</span></div>
+      <div class="seg"><span>Private</span><span class="on">Public · AIN 7</span></div>
+      <span class="meta">AIN 7 sees you studying here and can join. Everyone else sees a focus session.</span>
+      <div class="row"><span class="meta">Show my name: off</span><button class="btn" style="background: transparent; color: var(--md-on-focus-container); padding: 6px 12px; min-height: 36px; box-shadow: inset 0 0 0 1px currentColor;">End</button></div>
+    </div>
+  </div>
+
+  <div class="phone">
+    <span class="cap">4 · How others see claimed rooms</span>
+    <span class="room">C 104</span>
+    <div class="status" style="background: var(--md-tertiary-container); color: var(--md-on-tertiary-container);"><b>Free until 15:30</b><span class="dur">4h</span></div>
+    <div class="claim"><span class="dot"></span>Focus session in progress · started 40 min ago</div>
+    <span class="facts">Schedule wins: a lecture would show red and end the session.</span>
+    <button class="btn" style="background: var(--md-secondary-container); color: var(--md-on-secondary-container);">Start focus here too</button>
+  </div>
+</div>
+</body>
+</html>
