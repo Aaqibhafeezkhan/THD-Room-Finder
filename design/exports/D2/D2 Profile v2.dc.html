@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/tokens/colors.css">
+<link rel="stylesheet" href="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/tokens/typography.css">
+<link rel="stylesheet" href="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/tokens/breakpoints.css">
+<link rel="stylesheet" href="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/tokens/elevation.css">
+<link rel="stylesheet" href="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/styles.css">
+<link rel="stylesheet" href="d2-graph-tokens.css">
+<script src="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/_ds_bundle.js"></script>
+<style>
+html, body { margin: 0; background: var(--md-bg); }
+* { box-sizing: border-box; }
+a { color: var(--md-primary); }
+a:hover { color: var(--md-on-primary-container); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+</helmet>
+
+<div data-theme="{{ pageTheme }}" style="min-height:100vh;background:var(--md-bg);color:var(--md-on-surface);font-family:var(--font-sans);padding:32px 40px 80px;display:flex;flex-direction:column;gap:32px">
+
+  <header style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:24px">
+    <div style="display:flex;flex-direction:column;gap:6px;max-width:640px">
+      <div style="font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--md-on-surface-variant)">Phase 1 · Design session D2 · v2</div>
+      <h1 style="margin:0;font-size:32px;font-weight:400;line-height:1.2">Profile, focus graph and settings</h1>
+      <p style="margin:0;font-size:14px;line-height:1.5;color:var(--md-on-surface-variant);text-wrap:pretty">Profile holds only what you check daily: who you are in one line, your focus graph, your saved rooms. Everything you set once a semester lives behind the gear.</p>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <sc-for list="{{ viewChips }}" as="c" hint-placeholder-count="4">
+          <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Chip" active="{{ c.active }}" onClick="{{ c.go }}" hint-size="auto,44px">{{ c.label }}</x-import>
+        </sc-for>
+      </div>
+      <div style="display:flex;gap:8px">
+        <sc-for list="{{ themeChips }}" as="c" hint-placeholder-count="2">
+          <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Chip" active="{{ c.active }}" onClick="{{ c.go }}" hint-size="auto,44px">{{ c.label }}</x-import>
+        </sc-for>
+      </div>
+      <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.LanguageToggle" value="{{ lang }}" onChange="{{ setLang }}" hint-size="190px,46px"></x-import>
+    </div>
+  </header>
+
+  <sc-if value="{{ showStateChips }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--md-on-surface-variant)">{{ stateChipsTitle }}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <sc-for list="{{ stateChips }}" as="c" hint-placeholder-count="18">
+          <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Chip" active="{{ c.active }}" onClick="{{ c.go }}" hint-size="auto,44px">{{ c.label }}</x-import>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-for list="{{ sections }}" as="sec" hint-placeholder-count="1">
+    <section style="display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <h2 style="margin:0;font-size:20px;font-weight:400">{{ sec.title }}</h2>
+        <p style="margin:0;font-size:13px;color:var(--md-on-surface-variant);max-width:720px;text-wrap:pretty">{{ sec.sub }}</p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start">
+        <sc-for list="{{ sec.frames }}" as="f" hint-placeholder-count="2">
+          <div id="{{ f.id }}" style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;gap:8px;max-width:{{ f.boxW }}px;flex-wrap:wrap">
+              <span style="font:500 12px var(--font-mono);padding:2px 8px;border-radius:var(--radius-xs);background:var(--md-on-surface);color:var(--md-surface)">{{ f.id }}</span>
+              <span style="font-size:13px;font-weight:500;white-space:nowrap">{{ f.caption }}</span>
+              <span style="font-size:12px;color:var(--md-on-surface-variant)">{{ f.tag }}</span>
+            </div>
+            <div style="width:{{ f.boxW }}px;height:{{ f.boxH }}px;overflow:hidden;border-radius:{{ f.radius }};box-shadow:var(--md-shadow-2)">
+              <div data-theme="{{ f.theme }}" lang="{{ f.lang }}" data-screen-label="{{ f.id }} {{ f.caption }}" style="width:{{ f.w }}px;height:{{ f.h }}px;transform:scale({{ f.scale }});transform-origin:0 0;position:relative;display:flex;flex-direction:column;background:var(--md-bg);color:var(--md-on-surface);font-family:var(--font-sans);overflow:hidden">
+
+                <sc-if value="{{ f.isPhone }}" hint-placeholder-val="{{ true }}">
+                  <div style="height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:13px;font-weight:500;background:var(--md-surface);color:var(--md-on-surface)">
+                    <span style="font-family:var(--font-mono);font-variant-numeric:tabular-nums">10:00</span>
+                    <span style="font-size:12px;color:var(--md-on-surface-variant)">{{ f.net }}</span>
+                  </div>
+                </sc-if>
+
+                <div style="flex:1;min-height:0;display:flex">
+                  <sc-if value="{{ f.isDesktop }}" hint-placeholder-val="{{ false }}">
+                    <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.AdaptiveNav" variant="drawer" items="{{ f.nav }}" active="{{ f.navActive }}" hint-size="280px,100%"></x-import>
+                  </sc-if>
+                  <sc-if value="{{ f.isTablet }}" hint-placeholder-val="{{ false }}">
+                    <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.AdaptiveNav" variant="rail" items="{{ f.nav }}" active="{{ f.navActive }}" hint-size="80px,100%"></x-import>
+                  </sc-if>
+
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;min-height:0">
+                    <sc-if value="{{ f.phoneBrand }}" hint-placeholder-val="{{ true }}">
+                      <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.AppBar" mode="brand" hint-size="100%,64px"></x-import>
+                    </sc-if>
+                    <sc-if value="{{ f.phoneBack }}" hint-placeholder-val="{{ false }}">
+                      <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.AppBar" mode="back" title="{{ f.backTitle }}" onBack="{{ f.onBack }}" hint-size="100%,64px"></x-import>
+                    </sc-if>
+
+                    <sc-if value="{{ f.isProfile }}" hint-placeholder-val="{{ true }}">
+                      <div style="flex:1;min-height:0;overflow-y:auto">
+                        <div style="max-width:{{ f.maxW }};margin:0 auto;padding:{{ f.pad }};display:flex;flex-direction:column;gap:{{ f.gapY }}">
+
+                          <div style="display:flex;align-items:center;gap:12px">
+                            <sc-if value="{{ f.signedIn }}" hint-placeholder-val="{{ true }}">
+                              <span aria-hidden="true" style="width:40px;height:40px;border-radius:var(--radius-full);background:var(--md-primary-container);color:var(--md-on-primary-container);display:grid;place-items:center;flex-shrink:0;font-size:18px;font-weight:500">L</span>
+                              <div style="flex:1;min-width:0;display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px">
+                                <span style="font-size:20px;font-weight:400">Lena</span>
+                                <span aria-label="{{ f.batchAria }}" style="display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px;border-radius:var(--radius-s);background:var(--md-focus-container);color:var(--md-on-focus-container);font-size:12px;font-weight:500;white-space:nowrap">
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>{{ f.batch }}</span>
+                              </div>
+                            </sc-if>
+                            <sc-if value="{{ f.signedOut }}" hint-placeholder-val="{{ false }}">
+                              <span aria-hidden="true" style="width:40px;height:40px;border-radius:var(--radius-full);background:var(--md-surface-variant);color:var(--md-on-surface-variant);display:grid;place-items:center;flex-shrink:0">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"></circle><path d="M20 21a8 8 0 0 0-16 0"></path></svg>
+                              </span>
+                              <div style="flex:1;min-width:0;display:flex;align-items:center;flex-wrap:wrap;gap:0 4px">
+                                <span style="font-size:16px;color:var(--md-on-surface-variant);margin-right:4px;white-space:nowrap">{{ f.s.notSignedIn }}</span>
+                                <div style="margin-left:-12px">
+                                  <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Button" variant="text" size="small" onClick="{{ f.onSetup }}" hint-size="auto,44px">{{ f.s.setup }}</x-import>
+                                </div>
+                              </div>
+                            </sc-if>
+                            <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.IconButton" label="{{ f.s.settings }}" onClick="{{ f.onGear }}" hint-size="44px,44px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg></x-import>
+                          </div>
+
+                          <section aria-label="{{ f.g.aria }}" style="background:var(--md-surface);border-radius:var(--radius-l);box-shadow:var(--md-shadow-1);padding:{{ f.cardPad }};display:flex;flex-direction:column;gap:10px;min-width:0;position:relative">
+                            <div style="display:flex;align-items:center;gap:8px;min-height:44px">
+                              <p style="margin:0;flex:1;min-width:0;font-size:14px;line-height:1.4;color:var(--md-on-surface-variant);text-wrap:pretty">{{ f.g.stats }}</p>
+                              <sc-if value="{{ f.g.canShare }}" hint-placeholder-val="{{ true }}">
+                                <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.IconButton" label="{{ f.s.share }}" hint-size="44px,44px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg></x-import>
+                              </sc-if>
+                            </div>
+                            <div style="direction:rtl;overflow-x:{{ f.g.ovf }};overflow-y:hidden;scrollbar-width:thin;padding:3px 3px 6px 0">
+                              {{ f.g.grid }}
+                            </div>
+                            <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:4px 12px;font-size:12px;color:var(--md-on-surface-variant)">
+                              <sc-if value="{{ f.g.thresholds }}" hint-placeholder-val="{{ false }}">
+                                <span style="flex:1;min-width:0;font-family:var(--font-mono);font-size:11px">{{ f.s.thresholds }}</span>
+                              </sc-if>
+                              <div aria-hidden="true" style="display:flex;align-items:center;gap:3px">
+                                <span style="margin-right:4px">{{ f.s.less }}</span>
+                                <i style="width:11px;height:11px;border-radius:2px;background:var(--md-graph-0)"></i>
+                                <i style="width:11px;height:11px;border-radius:2px;background:var(--md-graph-1)"></i>
+                                <i style="width:11px;height:11px;border-radius:2px;background:var(--md-graph-2)"></i>
+                                <i style="width:11px;height:11px;border-radius:2px;background:var(--md-graph-3)"></i>
+                                <i style="width:11px;height:11px;border-radius:2px;background:var(--md-graph-4)"></i>
+                                <span style="margin-left:4px">{{ f.s.more }}</span>
+                              </div>
+                            </div>
+                            {{ f.g.table }}
+                          </section>
+
+                          <section style="display:flex;flex-direction:column;gap:8px">
+                            <h2 style="margin:0;padding:0 4px;font-size:16px;font-weight:500">{{ f.s.saved }}</h2>
+                            <sc-if value="{{ f.savedOffline }}" hint-placeholder-val="{{ false }}">
+                              <div role="status" style="display:flex;align-items:center;gap:8px;padding:0 4px 4px;font-size:13px;color:var(--md-on-surface-variant)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M12 20h.01"></path><path d="M8.5 16.43a5 5 0 0 1 7 0"></path><path d="M5 12.86a10 10 0 0 1 5.17-2.69"></path><path d="M19 12.86a10 10 0 0 0-2-1.52"></path><path d="M2 8.82a15 15 0 0 1 4.18-2.64"></path><path d="M22 8.82a15 15 0 0 0-11.29-3.76"></path><path d="m2 2 20 20"></path></svg>
+                                <span style="text-wrap:pretty">{{ f.s.offline }}</span>
+                              </div>
+                            </sc-if>
+                            <sc-if value="{{ f.savedList }}" hint-placeholder-val="{{ true }}">
+                              <div style="display:grid;grid-template-columns:{{ f.savedCols }};gap:8px">
+                                <sc-for list="{{ f.rooms }}" as="r" hint-placeholder-count="4">
+                                  <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.RoomCard" name="{{ r.name }}" meta="{{ r.meta }}" status="{{ r.status }}" duration="{{ r.duration }}" onClick="{{ r.onClick }}" hint-size="100%,68px"></x-import>
+                                </sc-for>
+                              </div>
+                            </sc-if>
+                            <sc-if value="{{ f.savedLoading }}" hint-placeholder-val="{{ false }}">
+                              <div aria-busy="true" style="display:grid;grid-template-columns:{{ f.savedCols }};gap:8px">
+                                <span role="status" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">{{ f.s.loading }}</span>
+                                <sc-for list="{{ f.skel }}" as="k" hint-placeholder-count="3">
+                                  <div style="height:68px;border-radius:var(--radius-l);background:var(--md-surface);box-shadow:var(--md-shadow-1);padding:14px 16px;display:flex;align-items:center;gap:12px">
+                                    <div style="flex:1;display:flex;flex-direction:column;gap:8px"><div style="width:72px;height:14px;border-radius:var(--radius-xs);background:var(--md-surface-variant)"></div><div style="width:128px;height:10px;border-radius:var(--radius-xs);background:var(--md-surface-variant)"></div></div>
+                                    <div style="width:48px;height:22px;border-radius:var(--radius-xs);background:var(--md-surface-variant)"></div>
+                                  </div>
+                                </sc-for>
+                              </div>
+                            </sc-if>
+                            <sc-if value="{{ f.savedEmpty }}" hint-placeholder-val="{{ false }}">
+                              <div style="border-radius:var(--radius-l);background:var(--md-surface);box-shadow:var(--md-shadow-1);padding:24px 20px;display:flex;align-items:flex-start;gap:16px">
+                                <span aria-hidden="true" style="width:40px;height:40px;border-radius:var(--radius-full);background:var(--md-surface-variant);color:var(--md-on-surface-variant);display:grid;place-items:center;flex-shrink:0">
+                                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path></svg>
+                                </span>
+                                <div style="min-width:0">
+                                  <div style="font-size:15px;font-weight:500">{{ f.s.savedEmptyT }}</div>
+                                  <div style="font-size:13px;line-height:1.45;margin-top:4px;color:var(--md-on-surface-variant);text-wrap:pretty">{{ f.s.savedEmptyB }}</div>
+                                </div>
+                              </div>
+                            </sc-if>
+                          </section>
+                        </div>
+                      </div>
+                    </sc-if>
+
+                    <sc-if value="{{ f.isSettings }}" hint-placeholder-val="{{ false }}">
+                      <div style="flex:1;min-height:0;overflow-y:auto">
+                        <div style="max-width:640px;margin:0 auto;padding:{{ f.pad }};display:flex;flex-direction:column;gap:24px">
+                          <sc-if value="{{ f.wideBack }}" hint-placeholder-val="{{ false }}">
+                            <div style="display:flex;align-items:center;gap:8px;margin-left:-8px">
+                              <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.IconButton" label="{{ f.s.back }}" onClick="{{ f.onBack }}" hint-size="44px,44px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg></x-import>
+                              <h1 style="margin:0;font-size:24px;font-weight:400">{{ f.s.settings }}</h1>
+                            </div>
+                          </sc-if>
+                          <sc-for list="{{ f.groups }}" as="g" hint-placeholder-count="4">
+                            <section style="display:flex;flex-direction:column;gap:8px">
+                              <h2 style="margin:0;padding:0 16px;font-size:14px;font-weight:500;color:var(--md-primary)">{{ g.title }}</h2>
+                              <div style="background:var(--md-surface);border-radius:var(--radius-l);box-shadow:var(--md-shadow-1);overflow:hidden">
+                                <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="3">
+                                  <sc-if value="{{ r.isNav }}" hint-placeholder-val="{{ true }}">
+                                    <button type="button" onClick="{{ r.go }}" style="width:100%;display:flex;align-items:center;gap:16px;min-height:56px;padding:8px 16px;border:none;border-top:{{ r.border }};background:transparent;color:{{ r.color }};font-family:var(--font-sans);text-align:left;cursor:pointer" style-hover="background:color-mix(in srgb, var(--md-on-surface) 6%, transparent)">
+                                      <span style="display:grid;place-items:center;flex-shrink:0;color:{{ r.iconColor }}">{{ r.icon }}</span>
+                                      <span style="flex:1 1 50%;min-width:0;font-size:16px;line-height:1.35">{{ r.label }}</span>
+                                      <sc-if value="{{ r.swatch }}" hint-placeholder-val="{{ false }}">
+                                        <span aria-hidden="true" style="width:14px;height:14px;border-radius:var(--radius-full);background:var(--md-focus);flex-shrink:0"></span>
+                                      </sc-if>
+                                      <span style="flex:0 1 auto;max-width:48%;font-size:14px;color:var(--md-on-surface-variant);text-align:right;text-wrap:pretty">{{ r.value }}</span>
+                                      <sc-if value="{{ r.chevron }}" hint-placeholder-val="{{ true }}">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0;color:var(--md-on-surface-variant)"><path d="m9 18 6-6-6-6"></path></svg>
+                                      </sc-if>
+                                    </button>
+                                  </sc-if>
+                                  <sc-if value="{{ r.isSwitch }}" hint-placeholder-val="{{ false }}">
+                                    <button type="button" role="switch" aria-checked="{{ r.aria }}" onClick="{{ r.go }}" style="width:100%;display:flex;align-items:center;gap:16px;min-height:56px;padding:8px 16px;border:none;border-top:{{ r.border }};background:transparent;color:var(--md-on-surface);font-family:var(--font-sans);text-align:left;cursor:pointer" style-hover="background:color-mix(in srgb, var(--md-on-surface) 6%, transparent)">
+                                      <span style="display:grid;place-items:center;flex-shrink:0;color:var(--md-on-surface-variant)">{{ r.icon }}</span>
+                                      <span style="flex:1;min-width:0;font-size:16px;line-height:1.35">{{ r.label }}</span>
+                                      <sc-if value="{{ r.on }}" hint-placeholder-val="{{ false }}">
+                                        <span style="width:52px;height:32px;border-radius:var(--radius-full);background:var(--md-primary);display:flex;align-items:center;justify-content:flex-end;padding:0 4px;flex-shrink:0"><span style="width:24px;height:24px;border-radius:var(--radius-full);background:var(--md-on-primary)"></span></span>
+                                      </sc-if>
+                                      <sc-if value="{{ r.off }}" hint-placeholder-val="{{ true }}">
+                                        <span style="width:52px;height:32px;border-radius:var(--radius-full);border:2px solid var(--md-outline);background:var(--md-surface-variant);display:flex;align-items:center;padding:0 6px;flex-shrink:0"><span style="width:16px;height:16px;border-radius:var(--radius-full);background:var(--md-outline)"></span></span>
+                                      </sc-if>
+                                    </button>
+                                  </sc-if>
+                                  <sc-if value="{{ r.isNote }}" hint-placeholder-val="{{ false }}">
+                                    <div style="padding:0 16px 14px 56px;display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:1.45;color:var(--md-on-surface-variant)">
+                                      <sc-for list="{{ r.lines }}" as="l" hint-placeholder-count="2">
+                                        <span style="text-wrap:pretty">{{ l }}</span>
+                                      </sc-for>
+                                    </div>
+                                  </sc-if>
+                                </sc-for>
+                              </div>
+                            </section>
+                          </sc-for>
+                        </div>
+                      </div>
+                    </sc-if>
+
+                    <sc-if value="{{ f.isRoom }}" hint-placeholder-val="{{ false }}">
+                      <div style="flex:1;min-height:0;display:flex">
+                        <sc-if value="{{ f.isDesktop }}" hint-placeholder-val="{{ false }}">
+                          <div style="width:340px;flex-shrink:0;display:flex;flex-direction:column;min-height:0;border-right:1px solid var(--md-outline-variant)">
+                            <div style="padding:20px 16px 8px">
+                              <div style="font-size:22px;font-weight:400">{{ f.s.listTitle }}</div>
+                              <div style="font-size:13px;color:var(--md-on-surface-variant);margin-top:2px">{{ f.s.listSub }}</div>
+                            </div>
+                            <div style="flex:1;min-height:0;overflow-y:auto;padding:8px 16px 16px;display:flex;flex-direction:column;gap:8px">
+                              <sc-for list="{{ f.listRooms }}" as="r" hint-placeholder-count="4">
+                                <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.RoomCard" name="{{ r.name }}" meta="{{ r.meta }}" status="{{ r.status }}" duration="{{ r.duration }}" dc-props="{{ r.extra }}" hint-size="100%,68px"></x-import>
+                              </sc-for>
+                            </div>
+                          </div>
+                        </sc-if>
+                        <div aria-busy="true" style="flex:1;min-width:0;overflow:hidden;padding:{{ f.detailPad }};display:flex;flex-direction:column;gap:16px">
+                          <span role="status" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">{{ f.s.roomLoading }}</span>
+                          <sc-if value="{{ f.isDesktop }}" hint-placeholder-val="{{ false }}">
+                            <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+                              <h1 style="margin:0;font:400 32px var(--font-mono)">E 212</h1>
+                              <div style="width:140px;height:12px;border-radius:var(--radius-xs);background:var(--md-surface-variant)"></div>
+                            </div>
+                          </sc-if>
+                          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;align-items:start">
+                            <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+                              <div style="height:76px;border-radius:var(--radius-l);background:var(--md-surface);box-shadow:var(--md-shadow-1);padding:16px;display:flex;align-items:center;gap:12px">
+                                <div style="flex:1;display:flex;flex-direction:column;gap:10px"><div style="width:40%;height:14px;border-radius:var(--radius-xs);background:var(--md-surface-variant)"></div><div style="width:64%;height:10px;border-radius:var(--radius-xs);background:var(--md-surface-variant)"></div></div>
+                                <div style="width:56px;height:28px;border-radius:var(--radius-xs);background:var(--md-surface-variant)"></div>
+                              </div>
+                              <div style="height:48px;border-radius:var(--radius-full);background:var(--md-surface-variant)"></div>
+                              <div style="display:flex;align-items:center;gap:8px;padding:0 4px;font-size:13px;color:var(--md-on-surface-variant)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                <span style="text-wrap:pretty">{{ f.s.schedLoading }}</span>
+                              </div>
+                            </div>
+                            <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+                              <h2 style="margin:0;padding:0 4px;font-size:15px;font-weight:500">{{ f.s.schedule }}</h2>
+                              <div style="background:var(--md-surface);box-shadow:var(--md-shadow-1);border-radius:var(--radius-l);overflow:hidden">
+                                <sc-for list="{{ f.skel }}" as="k" hint-placeholder-count="3">
+                                  <div style="display:flex;align-items:center;gap:12px;padding:16px;border-top:{{ k.border }}">
+                                    <div style="width:96px;height:12px;border-radius:var(--radius-xs);background:var(--md-surface-variant)"></div>
+                                    <div style="flex:1;height:12px;max-width:120px;border-radius:var(--radius-xs);background:var(--md-surface-variant)"></div>
+                                  </div>
+                                </sc-for>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </sc-if>
+                  </div>
+                </div>
+
+                <sc-if value="{{ f.isPhone }}" hint-placeholder-val="{{ true }}">
+                  <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.AdaptiveNav" variant="bar" items="{{ f.nav }}" active="{{ f.navActive }}" hint-size="100%,80px"></x-import>
+                </sc-if>
+
+                <sc-if value="{{ f.hasSheet }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute;inset:0;z-index:5;background:rgba(0,0,0,.32);display:flex;align-items:{{ f.sheetAlign }};justify-content:center">
+                    <div role="dialog" aria-modal="true" aria-label="{{ f.st.title }}" style="width:{{ f.sheetW }};max-height:94%;overflow-y:auto;background:var(--md-surface);color:var(--md-on-surface);border-radius:{{ f.sheetRadius }};box-shadow:var(--md-shadow-2);padding:{{ f.sheetPad }};display:flex;flex-direction:column;gap:20px">
+                      <sc-if value="{{ f.isPhone }}" hint-placeholder-val="{{ true }}">
+                        <div aria-hidden="true" style="width:32px;height:4px;border-radius:var(--radius-full);background:var(--md-outline);opacity:.5;margin:-8px auto -8px"></div>
+                      </sc-if>
+                      <div style="display:flex;align-items:center;gap:8px;margin-right:-8px">
+                        <span style="flex:1;font-size:12px;font-weight:500;color:var(--md-on-surface-variant)">{{ f.st.stepLabel }}</span>
+                        <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.IconButton" label="{{ f.s.close }}" onClick="{{ f.onClose }}" hint-size="44px,44px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></x-import>
+                      </div>
+                      <div style="display:flex;flex-direction:column;gap:8px;margin-top:-12px">
+                        <h2 style="margin:0;font-size:24px;font-weight:400;line-height:1.25;text-wrap:pretty">{{ f.st.title }}</h2>
+                        <p style="margin:0;font-size:14px;line-height:1.5;color:var(--md-on-surface-variant);text-wrap:pretty">{{ f.st.body }}</p>
+                      </div>
+
+                      <sc-if value="{{ f.st.isEmail }}" hint-placeholder-val="{{ false }}">
+                        <div style="position:relative;border:2px solid var(--md-primary);border-radius:var(--radius-xs);padding:15px 14px;font-size:16px;overflow-wrap:anywhere">
+                          <span style="position:absolute;top:-9px;left:10px;padding:0 4px;background:var(--md-surface);font-size:12px;color:var(--md-primary)">{{ f.s.emailL }}</span>lena.huber@stud.th-deg.de</div>
+                      </sc-if>
+
+                      <sc-if value="{{ f.st.isCode }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;flex-direction:column;gap:10px">
+                          <div role="group" aria-label="{{ f.s.codeL }}" style="display:flex;gap:8px">
+                            <sc-for list="{{ f.st.digits }}" as="d" hint-placeholder-count="6">
+                              <div style="flex:1 1 0;max-width:48px;height:56px;border-radius:var(--radius-xs);border:{{ d.bd }};display:grid;place-items:center;font:400 24px var(--font-mono);color:{{ d.color }}">{{ d.v }}</div>
+                            </sc-for>
+                          </div>
+                          <sc-if value="{{ f.st.err }}" hint-placeholder-val="{{ false }}">
+                            <div role="alert" style="display:flex;align-items:flex-start;gap:6px;font-size:13px;line-height:1.4;color:var(--md-error)">
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line></svg>
+                              <span>{{ f.st.errText }}</span>
+                            </div>
+                          </sc-if>
+                        </div>
+                      </sc-if>
+
+                      <sc-if value="{{ f.st.isProg }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;flex-direction:column;gap:12px">
+                          <sc-if value="{{ f.st.hasSearch }}" hint-placeholder-val="{{ false }}">
+                            <div style="display:flex;align-items:center;gap:10px;height:48px;padding:0 14px;border-radius:var(--radius-full);background:var(--md-surface-variant);color:var(--md-on-surface-variant);font-size:15px">
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                              <span style="color:{{ f.st.qColor }}">{{ f.st.query }}</span>
+                            </div>
+                          </sc-if>
+                          <sc-if value="{{ f.st.hasList }}" hint-placeholder-val="{{ true }}">
+                            <div role="radiogroup" aria-label="{{ f.st.title }}" style="display:flex;flex-direction:column">
+                              <sc-for list="{{ f.st.opts }}" as="o" hint-placeholder-count="4">
+                                <button type="button" role="radio" aria-checked="{{ o.aria }}" onClick="{{ o.go }}" style="display:flex;align-items:center;gap:14px;min-height:48px;padding:4px 4px;border:none;border-top:{{ o.border }};background:transparent;color:var(--md-on-surface);font-family:var(--font-sans);text-align:left;cursor:pointer">
+                                  <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}">
+                                    <span style="width:20px;height:20px;border-radius:var(--radius-full);border:2px solid var(--md-primary);display:grid;place-items:center;flex-shrink:0"><span style="width:10px;height:10px;border-radius:var(--radius-full);background:var(--md-primary)"></span></span>
+                                  </sc-if>
+                                  <sc-if value="{{ o.off }}" hint-placeholder-val="{{ true }}">
+                                    <span style="width:20px;height:20px;border-radius:var(--radius-full);border:2px solid var(--md-on-surface-variant);flex-shrink:0"></span>
+                                  </sc-if>
+                                  <span style="flex:1;min-width:0;font-size:15px;line-height:1.35">{{ o.label }}</span>
+                                  <span style="font:500 13px var(--font-mono);color:var(--md-on-surface-variant)">{{ o.code }}</span>
+                                </button>
+                              </sc-for>
+                            </div>
+                          </sc-if>
+                          <sc-if value="{{ f.st.missing }}" hint-placeholder-val="{{ false }}">
+                            <div role="status" style="display:flex;flex-direction:column;gap:6px;padding:14px 16px;border-radius:var(--radius-m);background:var(--md-surface-variant);color:var(--md-on-surface)">
+                              <div style="display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path><path d="m8.5 8.5 5 5"></path><path d="m13.5 8.5-5 5"></path></svg>
+                                <span>{{ f.s.missT }}</span>
+                              </div>
+                              <span style="font-size:13px;line-height:1.45;color:var(--md-on-surface-variant);text-wrap:pretty">{{ f.s.missB }}</span>
+                            </div>
+                          </sc-if>
+                        </div>
+                      </sc-if>
+
+                      <sc-if value="{{ f.st.isName }}" hint-placeholder-val="{{ false }}">
+                        <div style="position:relative;border:2px solid var(--md-primary);border-radius:var(--radius-xs);padding:15px 14px;font-size:16px">
+                          <span style="position:absolute;top:-9px;left:10px;padding:0 4px;background:var(--md-surface);font-size:12px;color:var(--md-primary)">{{ f.s.nameL }}</span>Lena</div>
+                      </sc-if>
+
+                      <sc-if value="{{ f.st.isSummary }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;flex-direction:column;gap:12px">
+                          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                            <span style="display:flex;align-items:center;gap:8px;flex:1;min-width:140px;font-size:14px;font-weight:500">
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>{{ f.s.sumPriv }}</span>
+                            <span style="display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:var(--radius-s);background:var(--md-claimed-container);color:var(--md-on-claimed-container);font-size:13px;font-weight:500">
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="5"></circle><path d="M20 21a8 8 0 0 0-16 0"></path></svg>{{ f.s.sumPrivSees }}</span>
+                          </div>
+                          <div style="height:1px;background:var(--md-outline-variant)"></div>
+                          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                            <span style="display:flex;align-items:center;gap:8px;flex:1;min-width:140px;font-size:14px;font-weight:500">
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>{{ f.st.pubLabel }}</span>
+                            <span style="display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:var(--radius-s);background:var(--md-focus-container);color:var(--md-on-focus-container);font-size:13px;font-weight:500">
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>{{ f.st.pubSees }}</span>
+                          </div>
+                          <span style="font-size:13px;color:var(--md-on-surface-variant)">{{ f.s.sumNote }}</span>
+                        </div>
+                      </sc-if>
+
+                      <div style="display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px">
+                        <sc-if value="{{ f.st.hasAlt }}" hint-placeholder-val="{{ false }}">
+                          <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Button" variant="text" onClick="{{ f.onAlt }}" hint-size="auto,44px">{{ f.st.alt }}</x-import>
+                        </sc-if>
+                        <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Button" variant="{{ f.st.mainVariant }}" disabled="{{ f.st.mainDisabled }}" onClick="{{ f.onNext }}" hint-size="auto,44px">{{ f.st.main }}</x-import>
+                      </div>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ f.hasDel }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute;inset:0;z-index:5;background:rgba(0,0,0,.32);display:flex;align-items:center;justify-content:center;padding:24px">
+                    <div role="alertdialog" aria-modal="true" aria-label="{{ f.s.delT }}" style="width:100%;max-width:400px;background:var(--md-surface);color:var(--md-on-surface);border-radius:28px;box-shadow:var(--md-shadow-2);padding:24px;display:flex;flex-direction:column;gap:16px">
+                      <span aria-hidden="true" style="width:40px;height:40px;border-radius:var(--radius-full);background:var(--md-error-container);color:var(--md-on-error-container);display:grid;place-items:center;align-self:center">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                      </span>
+                      <h2 style="margin:0;font-size:24px;font-weight:400;text-align:center;text-wrap:pretty">{{ f.s.delT }}</h2>
+                      <p style="margin:0;font-size:14px;line-height:1.5;color:var(--md-on-surface-variant);text-wrap:pretty">{{ f.s.delB }}</p>
+                      <div style="display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px">
+                        <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Button" variant="text" onClick="{{ f.onCancelDel }}" hint-size="auto,44px">{{ f.s.cancel }}</x-import>
+                        <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Button" variant="filled" onClick="{{ f.onConfirmDel }}" dc-props="{{ btn.danger }}" hint-size="auto,44px">{{ f.s.delete }}</x-import>
+                      </div>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </sc-for>
+
+  <sc-if value="{{ isComps }}" hint-placeholder-val="{{ false }}">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(440px,1fr));gap:24px;align-items:start">
+      <sc-for list="{{ comps }}" as="c" hint-placeholder-count="5">
+        <section style="background:var(--md-surface);border-radius:var(--radius-l);box-shadow:var(--md-shadow-1);padding:24px;display:flex;flex-direction:column;gap:16px;min-width:0">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+              <span style="font:500 18px var(--font-mono)">{{ c.name }}</span>
+              <span style="font-size:12px;font-weight:500;color:var(--md-on-surface-variant)">{{ c.kind }}</span>
+            </div>
+            <p style="margin:0;font-size:14px;line-height:1.5;color:var(--md-on-surface-variant);text-wrap:pretty">{{ c.purpose }}</p>
+          </div>
+          <sc-if value="{{ c.isTokens }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;font-size:13px;border-radius:var(--radius-m);overflow:hidden">
+              <div style="display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.7fr) minmax(0,1.5fr) minmax(0,1.5fr);gap:12px;padding:8px 12px;background:var(--md-bg);font-size:12px;font-weight:500;color:var(--md-on-surface-variant)"><span>Token</span><span>Minutes</span><span>Light · on surface</span><span>Dark · on surface</span></div>
+              <sc-for list="{{ tokens }}" as="t" hint-placeholder-count="5">
+                <div style="display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.7fr) minmax(0,1.5fr) minmax(0,1.5fr);gap:12px;padding:8px 12px;border-top:1px solid var(--md-outline-variant);align-items:center">
+                  <span style="font-family:var(--font-mono);font-size:12px">{{ t.n }}</span>
+                  <span style="font-family:var(--font-mono);font-size:12px">{{ t.range }}</span>
+                  <span data-theme="light" style="display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:var(--radius-xs);background:var(--md-surface);color:var(--md-on-surface)"><i style="width:16px;height:16px;border-radius:2px;flex-shrink:0;background:{{ t.v }}"></i><span style="font-family:var(--font-mono);font-size:11px">{{ t.l }} · {{ t.lc }}</span></span>
+                  <span data-theme="dark" style="display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:var(--radius-xs);background:var(--md-surface);color:var(--md-on-surface)"><i style="width:16px;height:16px;border-radius:2px;flex-shrink:0;background:{{ t.v }}"></i><span style="font-family:var(--font-mono);font-size:11px">{{ t.d }} · {{ t.dc }}</span></span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ c.hasLinks }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;color:var(--md-on-surface-variant);background:var(--md-bg);border-radius:var(--radius-m);padding:12px 16px">
+              <span>Rendered live in</span>
+              <sc-for list="{{ c.links }}" as="l" hint-placeholder-count="3">
+                <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Chip" onClick="{{ l.go }}" hint-size="auto,44px">{{ l.label }}</x-import>
+              </sc-for>
+            </div>
+          </sc-if>
+          <div style="display:flex;flex-direction:column;font-size:13px">
+            <sc-for list="{{ c.props }}" as="p" hint-placeholder-count="4">
+              <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) minmax(0,1.6fr);gap:12px;padding:8px 0;border-top:1px solid var(--md-outline-variant)">
+                <span style="font-family:var(--font-mono);font-weight:500">{{ p.n }}</span>
+                <span style="font-family:var(--font-mono);color:var(--md-on-surface-variant);word-break:break-word">{{ p.t }}</span>
+                <span style="color:var(--md-on-surface-variant);text-wrap:pretty">{{ p.d }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:1.45;color:var(--md-on-surface-variant)">
+            <sc-for list="{{ c.notes }}" as="n" hint-placeholder-count="2">
+              <li style="text-wrap:pretty">{{ n }}</li>
+            </sc-for>
+          </ul>
+        </section>
+      </sc-for>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;batch&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;AIN 7&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;phoneRange&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;year, scrolled&quot;,&quot;19 weeks&quot;],&quot;default&quot;:&quot;year, scrolled&quot;,&quot;tsType&quot;:&quot;'year, scrolled' | '19 weeks'&quot;,&quot;section&quot;:&quot;Focus graph&quot;},&quot;showThresholds&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Focus graph&quot;}}">
+const P = (s, m) => s.replace(/\{(\w+)\}/g, (_, k) => (m[k] != null ? m[k] : ''));
+const pad = n => String(n).padStart(2, '0');
+const mins = (m, lang) => { const h = Math.floor(m / 60), r = m % 60; const [H, M] = lang === 'de' ? ['Std.', 'Min.'] : ['h', 'min']; return h ? (r ? `${h} ${H} ${r} ${M}` : `${h} ${H}`) : `${r} ${M}`; };
+
+const DAY = { en: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], de: ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'] };
+const MON = { en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], de: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'] };
+const MON_DE = ['Jan.', 'Feb.', 'März', 'Apr.', 'Mai', 'Juni', 'Juli', 'Aug.', 'Sept.', 'Okt.', 'Nov.', 'Dez.'];
+const WEEKS = 53, TODAY = 365, SEM0 = 353; // Mon 13 Oct 2025 … today Tue 13 Oct 2026; semester from 1 Oct 2026
+const dayDate = i => new Date(2025, 9, 13 + i);
+const ts = (y, m, d) => new Date(y, m, d).getTime();
+const intensity = d => { const t = d.getTime();
+  if (t >= ts(2025, 11, 22) && t <= ts(2026, 0, 6)) return 0.12;
+  if (t < ts(2026, 0, 24)) return 0.55; if (t < ts(2026, 1, 14)) return 0.9; if (t < ts(2026, 2, 16)) return 0.15;
+  if (t < ts(2026, 6, 4)) return 0.55; if (t < ts(2026, 6, 25)) return 0.9; if (t < ts(2026, 9, 1)) return 0.1; return 0.6; };
+const DATA = (() => { let seed = 11; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280; const a = [];
+  for (let i = 0; i <= TODAY; i++) { const d = dayDate(i), we = d.getDay() === 0 || d.getDay() === 6;
+    const k = intensity(d) * (we ? 0.45 : 1), r1 = rnd(), r2 = rnd();
+    a.push(r1 < k ? Math.round((15 + r2 * (50 + 260 * k)) / 5) * 5 : 0); }
+  a[SEM0] = 0; for (let i = SEM0 + 1; i < TODAY; i++) if (a[i] < 25) a[i] = 25 + (i % 4) * 30; a[TODAY] = 85; return a; })();
+const STREAK = (() => { let n = 0; for (let i = TODAY; i >= 0 && DATA[i] > 0; i--) n++; return n; })();
+const SEM_H = Math.round(DATA.slice(SEM0).reduce((x, y) => x + y, 0) / 60);
+const level = m => (m === 0 ? 0 : m < 30 ? 1 : m < 90 ? 2 : m < 180 ? 3 : 4);
+const dateLabel = (d, lang) => (lang === 'de' ? `${DAY.de[(d.getDay() + 6) % 7]} ${d.getDate()}. ${MON_DE[d.getMonth()]}` : `${DAY.en[(d.getDay() + 6) % 7]} ${d.getDate()} ${MON.en[d.getMonth()]}`);
+const GCACHE = {};
+const buildGraph = (lang, empty, shown) => {
+  const key = `${lang}|${empty}|${shown}`; if (GCACHE[key]) return GCACHE[key];
+  const w0 = WEEKS - shown, items = [], rows = [], none = lang === 'de' ? 'Kein Fokus' : 'No focus';
+  items.push({ isDay: true, label: '' });
+  DAY[lang].forEach((d, i) => items.push({ isDay: true, label: i % 2 === 0 && i < 6 ? d : '' }));
+  for (let w = w0; w < WEEKS; w++) {
+    const mon = dayDate(w * 7), prev = dayDate((w - 1) * 7);
+    let lab = mon.getMonth() !== prev.getMonth() ? MON[lang][mon.getMonth()] : '';
+    if (w === w0) { const nx = dayDate((w + 2) * 7); lab = nx.getMonth() === mon.getMonth() && dayDate((w + 1) * 7).getMonth() === mon.getMonth() ? MON[lang][mon.getMonth()] : ''; }
+    items.push({ isMonth: true, label: lab });
+    const vals = [];
+    for (let d = 0; d < 7; d++) { const i = w * 7 + d;
+      if (i > TODAY) { items.push({ isSlot: true }); vals.push('—'); continue; }
+      const m = empty ? 0 : DATA[i];
+      items.push({ isCell: true, r: d, bg: `var(--md-graph-${level(m)})`, ol: i === TODAY ? '1.5px solid var(--md-on-surface)' : 'none', tip: `${dateLabel(dayDate(i), lang)} · ${m ? mins(m, lang) : none}` });
+      vals.push(m ? String(m) : '0'); }
+    rows.push({ label: dateLabel(mon, lang), vals });
+  }
+  return (GCACHE[key] = { items, rows: rows.reverse() });
+};
+const hideAllTips = () => document.querySelectorAll('[data-tip]').forEach(t => { t.style.display = 'none'; t.__cell = null; });
+const tipShow = e => {
+  e.stopPropagation && e.stopPropagation();
+  const c = e.currentTarget, g = c.parentElement, t = g && g.querySelector('[data-tip]'); if (!t) return;
+  if (e.type === 'click' && t.__cell === c && t.style.display === 'block') { hideAllTips(); return; }
+  hideAllTips(); t.__cell = c;
+  t.textContent = c.getAttribute('data-t'); t.style.display = 'block';
+  const tw = t.offsetWidth, th = t.offsetHeight;
+  t.style.left = Math.max(0, Math.min(c.offsetLeft + c.offsetWidth / 2 - tw / 2, g.scrollWidth - tw)) + 'px';
+  t.style.top = (+c.getAttribute('data-r') < 3 ? c.offsetTop + c.offsetHeight + 6 : c.offsetTop - th - 6) + 'px';
+};
+const tipHide = e => { const g = e.currentTarget.parentElement, t = g && g.querySelector('[data-tip]'); if (t) t.style.display = 'none'; };
+const ECACHE = {};
+const graphEls = (lang, empty, shown, device, s) => {
+  const key = `${lang}|${empty}|${shown}|${device}`; if (ECACHE[key]) return ECACHE[key];
+  const G = buildGraph(lang, empty, shown), e = React.createElement, phone = device === 'phone';
+  const kids = G.items.map((it, i) => {
+    if (it.isMonth) return e('div', { key: i, style: { height: 16, fontSize: 11, lineHeight: '14px', color: 'var(--md-on-surface-variant)', whiteSpace: 'nowrap' } }, it.label);
+    if (it.isDay) return e('div', { key: i, style: { position: 'sticky', left: 0, zIndex: 1, alignSelf: 'stretch', minWidth: 26, background: 'var(--md-surface)' } },
+      e('span', { style: { position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', fontSize: 11, lineHeight: 1, color: 'var(--md-on-surface-variant)', whiteSpace: 'nowrap' } }, it.label));
+    if (it.isSlot) return e('div', { key: i, style: { width: '100%', aspectRatio: '1', alignSelf: 'start' } });
+    return e('div', { key: i, 'data-t': it.tip, 'data-r': it.r, onMouseEnter: tipShow, onMouseLeave: tipHide, onClick: tipShow,
+      style: { width: '100%', aspectRatio: '1', alignSelf: 'start', borderRadius: 2, background: it.bg, outline: it.ol, outlineOffset: 1 } });
+  });
+  kids.push(e('div', { key: 'tip', 'data-tip': '1', style: { position: 'absolute', display: 'none', zIndex: 2, pointerEvents: 'none', whiteSpace: 'nowrap', padding: '5px 8px', borderRadius: 'var(--radius-xs)', background: 'var(--md-on-surface)', color: 'var(--md-surface)', font: '500 12px var(--font-sans)', boxShadow: 'var(--md-shadow-1)' } }));
+  const grid = e('div', { 'aria-hidden': true, style: { direction: 'ltr', position: 'relative', display: 'grid', gridAutoFlow: 'column', gridTemplateRows: 'auto repeat(7,auto)',
+    gridTemplateColumns: phone ? `auto repeat(${shown},11px)` : `auto repeat(${WEEKS},minmax(0,1fr))`, gap: device === 'tablet' ? 2 : 3, width: phone ? 'max-content' : '100%' } }, kids);
+  const table = e('table', { style: { position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)', whiteSpace: 'nowrap' } },
+    e('caption', null, s.tableCap),
+    e('thead', null, e('tr', null, e('th', { scope: 'col' }, s.week), ...DAY[lang].map(d => e('th', { key: d, scope: 'col' }, d)))),
+    e('tbody', null, G.rows.map((r, i) => e('tr', { key: i }, e('th', { scope: 'row' }, r.label), r.vals.map((v, j) => e('td', { key: j }, v))))));
+  return (ECACHE[key] = { grid, table });
+};
+
+const S = {
+  en: {
+    nav: ['Campus', 'Rooms', 'Profile'], notSignedIn: 'Not signed in', setup: 'Set Up Study Profile', settings: 'Settings', back: 'Back', share: 'Share focus graph',
+    stats: '{h} this semester · {n}-day streak', hUnit: 'h', emptyStats: 'No focus yet. Start a session in any free room.',
+    graphAria: 'Focus graph, last {w} weeks. {stats} Table of daily minutes follows.', tableCap: 'Focus minutes per day, newest week first', week: 'Week of',
+    less: 'Less', more: 'More', thresholds: '0 · <30 · <90 · <180 · 180+ min', batchAria: 'Batch {b}',
+    saved: 'Saved rooms', savedEmptyT: 'No saved rooms yet', savedEmptyB: 'Tap the bookmark on any room to see its live status here.', loading: 'Checking room status…', offline: 'Offline · status from 09:55. It may have changed.',
+    bldg: 'Building', seats: 'seats', until: 'until 11:30',
+    gStudy: 'Study profile', programme: 'Programme', intake: 'Intake', dname: 'Display name', gShare: 'Sharing', mode: 'Default mode', private: 'Private',
+    notePriv: 'Private: others see that someone is focusing here, not who.', notePub: 'Public: {b} sees you and can join.', notePubOut: 'Public: needs a study profile.',
+    gLook: 'Appearance', theme: 'Theme', system: 'System', language: 'Language', langVal: 'English', accent: 'Focus accent', violet: 'Violet', quiet: 'Treat my batch’s sessions as claimed',
+    gAcct: 'Account', export: 'Export focus history', import: 'Import focus history', signout: 'Sign out', del: 'Delete profile',
+    stepOf: 'Step {n} of 6', close: 'Close', next: 'Next', skip: 'Skip', done: 'Done',
+    emailT: 'What’s your THD email?', emailB: 'We send you a 6-digit code. No password.', emailL: 'THD email', sendCode: 'Send Code',
+    codeT: 'Enter the code', codeB: 'Sent to lena.huber@stud.th-deg.de', codeL: '6-digit code', resend: 'Resend Code', codeWrong: 'That code doesn’t match. 2 tries left.', codeExpired: 'This code has expired. Send a new one.', sendNew: 'Send New Code',
+    progT: 'What do you study?', progB: 'Your programme and intake make your batch.', search: 'Search programmes', missQ: 'Robotik dual', missT: 'No programme matches “Robotik dual”', missB: 'Choose Other to continue. Focus sessions still work; sharing with a batch needs a listed programme.', other: 'Choose Other', report: 'Report Missing',
+    intakeT: 'When did you start?', intakeB: 'Your batch is everyone in your programme who started with you.',
+    nameT: 'What should your batch call you?', nameB: 'Optional. Only shown in a Public session when you turn on “Show my name”.', nameL: 'Display name',
+    sumT: 'This is what others see', sumB: 'Private is the default. You choose per session.', sumPriv: 'Private · default', sumPrivSees: 'Focus session', sumPub: 'Public · {b}', sumPubSees: '{b} student', sumNote: 'Your name shows only if you turn it on. Change this anytime in Settings.',
+    delT: 'Delete study profile?', delB: 'Your profile and any public session are removed. Your focus graph stays on this device.', cancel: 'Cancel', delete: 'Delete',
+    roomLoading: 'Loading E 212…', schedLoading: 'Loading schedule from THabella…', listTitle: 'Free now', listSub: 'Longest free first', schedule: 'Schedule · Tue, 13 Oct',
+    progs: [['AIN', 'Applied Computer Science'], ['KI', 'Artificial Intelligence'], ['MEC', 'Mechatronics'], ['WIF', 'Business Informatics']],
+    intakes: [['Winter 2023/24', 7], ['Summer 2024', 6], ['Winter 2024/25', 5], ['Summer 2025', 4]],
+  },
+  de: {
+    nav: ['Campus', 'Räume', 'Profil'], notSignedIn: 'Nicht angemeldet', setup: 'Studienprofil einrichten', settings: 'Einstellungen', back: 'Zurück', share: 'Fokus-Verlauf teilen',
+    stats: '{h} in diesem Semester · {n} Tage in Folge', hUnit: 'Std.', emptyStats: 'Noch kein Fokus. Starte eine Session in einem freien Raum.',
+    graphAria: 'Fokus-Verlauf, letzte {w} Wochen. {stats} Danach folgt eine Tabelle der Minuten pro Tag.', tableCap: 'Fokus-Minuten pro Tag, neueste Woche zuerst', week: 'Woche ab',
+    less: 'Weniger', more: 'Mehr', thresholds: '0 · <30 · <90 · <180 · 180+ Min.', batchAria: 'Jahrgang {b}',
+    saved: 'Gespeicherte Räume', savedEmptyT: 'Noch keine gespeicherten Räume', savedEmptyB: 'Tippe bei einem Raum auf das Lesezeichen, um hier seinen Live-Status zu sehen.', loading: 'Raumstatus wird geladen …', offline: 'Offline · Stand 09:55. Der Status kann sich geändert haben.',
+    bldg: 'Gebäude', seats: 'Plätze', until: 'bis 11:30',
+    gStudy: 'Studienprofil', programme: 'Studiengang', intake: 'Jahrgang', dname: 'Anzeigename', gShare: 'Teilen', mode: 'Standardmodus', private: 'Privat',
+    notePriv: 'Privat: Andere sehen, dass hier jemand lernt – aber nicht wer.', notePub: 'Öffentlich: {b} sieht dich und kann beitreten.', notePubOut: 'Öffentlich: braucht ein Studienprofil.',
+    gLook: 'Darstellung', theme: 'Design', system: 'System', language: 'Sprache', langVal: 'Deutsch', accent: 'Fokusfarbe', violet: 'Violett', quiet: 'Sessions meines Jahrgangs als belegt anzeigen',
+    gAcct: 'Konto', export: 'Fokus-Verlauf exportieren', import: 'Fokus-Verlauf importieren', signout: 'Abmelden', del: 'Profil löschen',
+    stepOf: 'Schritt {n} von 6', close: 'Schließen', next: 'Weiter', skip: 'Überspringen', done: 'Fertig',
+    emailT: 'Wie lautet deine THD-E-Mail?', emailB: 'Wir schicken dir einen 6-stelligen Code. Kein Passwort.', emailL: 'THD-E-Mail', sendCode: 'Code senden',
+    codeT: 'Code eingeben', codeB: 'Gesendet an lena.huber@stud.th-deg.de', codeL: '6-stelliger Code', resend: 'Code erneut senden', codeWrong: 'Der Code stimmt nicht. Noch 2 Versuche.', codeExpired: 'Der Code ist abgelaufen. Fordere einen neuen an.', sendNew: 'Neuen Code senden',
+    progT: 'Was studierst du?', progB: 'Studiengang und Jahrgang ergeben deinen Jahrgang in der App.', search: 'Studiengänge durchsuchen', missQ: 'Robotik dual', missT: 'Kein Studiengang passt zu „Robotik dual“', missB: 'Wähle „Anderer“, um weiterzumachen. Fokus-Sessions funktionieren trotzdem; Teilen mit dem Jahrgang braucht einen gelisteten Studiengang.', other: '„Anderer“ wählen', report: 'Fehlenden melden',
+    intakeT: 'Wann hast du angefangen?', intakeB: 'Dein Jahrgang sind alle aus deinem Studiengang, die mit dir angefangen haben.',
+    nameT: 'Wie soll dein Jahrgang dich nennen?', nameB: 'Optional. Nur in einer öffentlichen Session sichtbar, wenn du „Meinen Namen zeigen“ einschaltest.', nameL: 'Anzeigename',
+    sumT: 'Das sehen andere', sumB: 'Privat ist der Standard. Du wählst pro Session.', sumPriv: 'Privat · Standard', sumPrivSees: 'Fokus-Session', sumPub: 'Öffentlich · {b}', sumPubSees: 'Studi aus {b}', sumNote: 'Dein Name erscheint nur, wenn du ihn einschaltest. Jederzeit in den Einstellungen änderbar.',
+    delT: 'Studienprofil löschen?', delB: 'Dein Profil und laufende öffentliche Sessions werden entfernt. Dein Fokus-Verlauf bleibt auf diesem Gerät.', cancel: 'Abbrechen', delete: 'Löschen',
+    roomLoading: 'E 212 wird geladen …', schedLoading: 'Belegung wird aus THabella geladen …', listTitle: 'Jetzt frei', listSub: 'Am längsten frei zuerst', schedule: 'Belegung · Di, 13. Okt.',
+    progs: [['AIN', 'Angewandte Informatik'], ['KI', 'Künstliche Intelligenz'], ['MEC', 'Mechatronik'], ['WIF', 'Wirtschaftsinformatik']],
+    intakes: [['Wintersemester 2023/24', 7], ['Sommersemester 2024', 6], ['Wintersemester 2024/25', 5], ['Sommersemester 2025', 4]],
+  },
+};
+
+const META = [
+  ['in', 'Profile · signed in'], ['out', 'Profile · signed out'], ['new', 'Profile · new user'], ['loading', 'Profile · loading'], ['offline', 'Profile · offline'],
+  ['settings', 'Settings · signed in'], ['settingsOut', 'Settings · signed out'],
+  ['email', 'Setup 1 · email'], ['code', 'Setup 2 · code'], ['codeWrong', 'Setup 2 · wrong code'], ['codeExpired', 'Setup 2 · code expired'],
+  ['prog', 'Setup 3 · programme'], ['progMissing', 'Setup 3 · not listed'], ['intake', 'Setup 4 · intake'], ['name', 'Setup 5 · display name'], ['summary', 'Setup 6 · what others see'],
+  ['delete', 'Delete confirmation'], ['roomLoading', 'D1 · room detail loading'],
+];
+const NUM = {}, LABEL = {}; META.forEach(([k, l], i) => { NUM[k] = pad(i + 1); LABEL[k] = l; });
+const SHEETS = ['email', 'code', 'codeWrong', 'codeExpired', 'prog', 'progMissing', 'intake', 'name', 'summary'];
+const STEPN = { email: 1, code: 2, codeWrong: 2, codeExpired: 2, prog: 3, progMissing: 3, intake: 4, name: 5, summary: 6 };
+const scen = st => {
+  const c = { st, screen: 'profile', signedIn: true, graph: 'full', saved: 'full', sheet: null, del: false, quiet: false, prog: 'AIN', intake: 0 };
+  if (st === 'out') c.signedIn = false;
+  if (st === 'new') Object.assign(c, { graph: 'empty', saved: 'empty' });
+  if (st === 'loading') c.saved = 'loading';
+  if (st === 'offline') c.saved = 'offline';
+  if (st === 'settings') c.screen = 'settings';
+  if (st === 'settingsOut') Object.assign(c, { screen: 'settings', signedIn: false });
+  if (SHEETS.includes(st)) Object.assign(c, { signedIn: false, sheet: st });
+  if (st === 'delete') Object.assign(c, { screen: 'settings', del: true });
+  if (st === 'roomLoading') c.screen = 'room';
+  return c;
+};
+
+const h = React.createElement;
+const ico = (kids, s = 22) => h('svg', { viewBox: '0 0 24 24', width: s, height: s, fill: 'none', stroke: 'currentColor', strokeWidth: 1.9, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true }, ...kids.map((k, i) => h(k[0], Object.assign({ key: i }, k[1]))));
+const I = {
+  map: ico([['path', { d: 'M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z' }], ['path', { d: 'M9 4v14' }], ['path', { d: 'M15 6v14' }]]),
+  rooms: ico([['path', { d: 'M4 6h16' }], ['path', { d: 'M4 12h16' }], ['path', { d: 'M4 18h16' }]]),
+  profile: ico([['circle', { cx: 12, cy: 8, r: 4 }], ['path', { d: 'M20 21a8 8 0 0 0-16 0' }]]),
+  cap: ico([['path', { d: 'M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z' }], ['path', { d: 'M22 10v6' }], ['path', { d: 'M6 12.5V16a6 3 0 0 0 12 0v-3.5' }]], 20),
+  cal: ico([['rect', { x: 3, y: 4, width: 18, height: 18, rx: 2 }], ['path', { d: 'M16 2v4' }], ['path', { d: 'M8 2v4' }], ['path', { d: 'M3 10h18' }]], 20),
+  user: ico([['circle', { cx: 12, cy: 8, r: 5 }], ['path', { d: 'M20 21a8 8 0 0 0-16 0' }]], 20),
+  userPlus: ico([['path', { d: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2' }], ['circle', { cx: 9, cy: 7, r: 4 }], ['path', { d: 'M19 8v6' }], ['path', { d: 'M22 11h-6' }]], 20),
+  lock: ico([['rect', { width: 18, height: 11, x: 3, y: 11, rx: 2 }], ['path', { d: 'M7 11V7a5 5 0 0 1 10 0v4' }]], 20),
+  contrast: ico([['circle', { cx: 12, cy: 12, r: 10 }], ['path', { d: 'M12 2a10 10 0 0 0 0 20z' }]], 20),
+  globe: ico([['circle', { cx: 12, cy: 12, r: 10 }], ['path', { d: 'M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20' }], ['path', { d: 'M2 12h20' }]], 20),
+  drop: ico([['path', { d: 'M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z' }]], 20),
+  users: ico([['path', { d: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2' }], ['circle', { cx: 9, cy: 7, r: 4 }], ['path', { d: 'M22 21v-2a4 4 0 0 0-3-3.87' }], ['path', { d: 'M16 3.13a4 4 0 0 1 0 7.75' }]], 20),
+  down: ico([['path', { d: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4' }], ['path', { d: 'm7 10 5 5 5-5' }], ['path', { d: 'M12 15V3' }]], 20),
+  up: ico([['path', { d: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4' }], ['path', { d: 'm17 8-5-5-5 5' }], ['path', { d: 'M12 3v12' }]], 20),
+  out: ico([['path', { d: 'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4' }], ['path', { d: 'm16 17 5-5-5-5' }], ['path', { d: 'M21 12H9' }]], 20),
+  trash: ico([['path', { d: 'M3 6h18' }], ['path', { d: 'M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6' }], ['path', { d: 'M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2' }]], 20),
+};
+
+const GROUPS = {
+  profile: ['Profile', ['in', 'out', 'new', 'loading', 'offline']],
+  settings: ['Settings + delete', ['settings', 'settingsOut', 'delete']],
+  setup1: ['Setup · sign-in', ['email', 'code', 'codeWrong', 'codeExpired']],
+  setup2: ['Setup · profile', ['prog', 'progMissing', 'intake', 'name', 'summary']],
+  room: ['D1 room loading', ['roomLoading']],
+};
+const GROUP_OF = {}; Object.keys(GROUPS).forEach(g => GROUPS[g][1].forEach(st => { GROUP_OF[st] = g; }));
+const DEV = { phone: [380, 780], tablet: [768, 1024], desktop: [1280, 800] };
+// Built at load (outside render) so the elements carry no render owner.
+['en', 'de'].forEach(l => [false, true].forEach(em => { ['tablet', 'desktop'].forEach(d => graphEls(l, em, WEEKS, d, S[l])); [WEEKS, 19].forEach(n => graphEls(l, em, n, 'phone', S[l])); }));
+const BORDER = i => (i ? '1px solid var(--md-outline-variant)' : 'none');
+
+class Component extends DCLogic {
+  state = { view: 'proto', theme: 'light', lang: 'en', group: 'profile', ps: scen('in') };
+
+  componentDidMount() {
+    document.documentElement.setAttribute('data-theme', 'light');
+    this.onDown = e => { if (!(e.target.closest && e.target.closest('[data-t]'))) hideAllTips(); };
+    document.addEventListener('pointerdown', this.onDown);
+  }
+  componentDidUpdate() { hideAllTips(); }
+  componentWillUnmount() { document.removeEventListener('pointerdown', this.onDown); }
+
+
+  jump = st => this.setState({ ps: scen(st) });
+
+  act = (name, arg) => this.setState(s0 => {
+    const p = Object.assign({}, s0.ps, { st: null });
+    const flow = { email: 'code', code: 'prog', codeWrong: 'prog', codeExpired: 'code', prog: 'intake', progMissing: 'intake', intake: 'name', name: 'summary' };
+    switch (name) {
+      case 'gear': p.screen = 'settings'; break;
+      case 'back': p.screen = 'profile'; break;
+      case 'setup': p.sheet = 'email'; break;
+      case 'close': p.sheet = null; break;
+      case 'next': if (p.sheet === 'summary') Object.assign(p, { sheet: null, signedIn: true }); else if (p.sheet === 'progMissing') Object.assign(p, { prog: 'other', sheet: 'intake' }); else p.sheet = flow[p.sheet]; break;
+      case 'alt': if (p.sheet === 'name') p.sheet = 'summary'; else if (/^code/.test(p.sheet)) p.sheet = 'code'; break;
+      case 'prog': p.prog = arg; break;
+      case 'intake': p.intake = arg; break;
+      case 'quiet': p.quiet = !p.quiet; break;
+      case 'del': p.del = true; break;
+      case 'cancelDel': p.del = false; break;
+      case 'confirmDel': Object.assign(p, { del: false, signedIn: false, screen: 'profile' }); break;
+      case 'signout': Object.assign(p, { signedIn: false, screen: 'profile' }); break;
+    }
+    return { ps: p };
+  });
+
+  sheet(c, s, b, a) {
+    const k = c.sheet; if (!k) return {};
+    const n = STEPN[k], st = { stepLabel: P(s.stepOf, { n }), mainVariant: 'filled', mainDisabled: false };
+    const code = ['4', '8', '1', '0', '2', '7'];
+    if (k === 'email') Object.assign(st, { isEmail: true, title: s.emailT, body: s.emailB, main: s.sendCode });
+    if (/^code/.test(k)) {
+      const wrong = k === 'codeWrong', exp = k === 'codeExpired';
+      Object.assign(st, { isCode: true, title: s.codeT, body: s.codeB, err: wrong || exp, errText: wrong ? s.codeWrong : s.codeExpired,
+        digits: code.map((v, i) => ({ v, bd: wrong ? '2px solid var(--md-error)' : (i === 5 && !exp ? '2px solid var(--md-primary)' : '1px solid var(--md-outline)'), color: exp ? 'var(--md-on-surface-variant)' : 'var(--md-on-surface)' })),
+        main: exp ? s.sendNew : s.next, hasAlt: !exp, alt: s.resend });
+    }
+    if (/^prog/.test(k)) {
+      const miss = k === 'progMissing';
+      Object.assign(st, { isProg: true, hasSearch: true, title: s.progT, body: s.progB, query: miss ? s.missQ : s.search, qColor: miss ? 'var(--md-on-surface)' : 'var(--md-on-surface-variant)',
+        hasList: !miss, missing: miss, main: miss ? s.other : s.next, mainVariant: miss ? 'tonal' : 'filled', hasAlt: miss, alt: s.report,
+        opts: s.progs.map(([code2, label], i) => ({ label, code: code2, on: c.prog === code2, off: c.prog !== code2, aria: c.prog === code2 ? 'true' : 'false', border: BORDER(i), go: () => a('prog', code2) })) });
+    }
+    if (k === 'intake') {
+      const pc = c.prog === 'other' ? '' : (c.prog || 'AIN');
+      Object.assign(st, { isProg: true, hasList: true, title: s.intakeT, body: s.intakeB, query: '', main: s.next,
+        opts: s.intakes.map(([label, sem], i) => ({ label, code: pc ? `${pc} ${sem}` : `${sem}`, on: c.intake === i, off: c.intake !== i, aria: c.intake === i ? 'true' : 'false', border: BORDER(i), go: () => a('intake', i) })) });
+      st.hasSearch = false;
+    }
+    if (k === 'name') Object.assign(st, { isName: true, title: s.nameT, body: s.nameB, main: s.next, hasAlt: true, alt: s.skip });
+    if (k === 'summary') Object.assign(st, { isSummary: true, title: s.sumT, body: s.sumB, main: s.done, pubLabel: P(s.sumPub, { b }), pubSees: P(s.sumPubSees, { b }) });
+    return st;
+  }
+
+  groups(c, s, b, a, lang, theme) {
+    const nav = (icon, label, value, go, x = {}) => Object.assign({ isNav: true, icon, label, value, go, chevron: true, color: 'var(--md-on-surface)', iconColor: 'var(--md-on-surface-variant)' }, x);
+    const progName = (s.progs.find(p => p[0] === c.prog) || s.progs[0])[1];
+    const g = [];
+    g.push({ title: s.gStudy, rows: c.signedIn
+      ? [nav(I.cap, s.programme, progName), nav(I.cal, s.intake, b), nav(I.user, s.dname, 'Lena')]
+      : [nav(I.userPlus, s.setup, '', () => a('setup'), { color: 'var(--md-primary)', iconColor: 'var(--md-primary)' })] });
+    g.push({ title: s.gShare, rows: [nav(I.lock, s.mode, s.private, undefined, { chevron: c.signedIn }), { isNote: true, lines: [s.notePriv, c.signedIn ? P(s.notePub, { b }) : s.notePubOut] }] });
+    const look = [nav(I.contrast, s.theme, s.system), nav(I.globe, s.language, s.langVal), nav(I.drop, s.accent, s.violet, undefined, { swatch: true })];
+    if (c.signedIn) look.push({ isSwitch: true, icon: I.users, label: s.quiet, on: c.quiet, off: !c.quiet, aria: c.quiet ? 'true' : 'false', go: () => a('quiet') });
+    g.push({ title: s.gLook, rows: look });
+    const acct = [nav(I.down, s.export, '', undefined, { chevron: false }), nav(I.up, s.import, '', undefined, { chevron: false })];
+    if (c.signedIn) acct.push(nav(I.out, s.signout, '', () => a('signout'), { chevron: false }), nav(I.trash, s.del, '', () => a('del'), { chevron: false, color: 'var(--md-error)', iconColor: 'var(--md-error)' }));
+    g.push({ title: s.gAcct, rows: acct });
+    g.forEach(gr => gr.rows.forEach((r, i) => { r.border = BORDER(i && !r.isNote ? 1 : 0); }));
+    return g;
+  }
+
+  frame(c, { theme, lang, device, scale = 1, interactive = false, id }) {
+    const [w, hh] = DEV[device], o = this.opts(), b = o.batch, s = S[lang];
+    const isPhone = device === 'phone', isTablet = device === 'tablet', isDesktop = device === 'desktop';
+    const a = interactive ? this.act : () => {};
+    const shown = isPhone && o.range !== 'year, scrolled' ? 19 : WEEKS;
+    const GE = graphEls(lang, c.graph === 'empty', shown, device, s);
+    const statsText = c.graph === 'empty' ? s.emptyStats : P(s.stats, { h: `${SEM_H} ${s.hUnit}`, n: STREAK });
+    const screen = c.screen;
+    const rooms = [
+      ['E 212', `${s.bldg} E · 60 ${s.seats}`, 'free', '6h'], ['ITC1.07', `ITC 1 · 32 ${s.seats}`, 'free', '4h 30m'],
+      ['C 104', `${s.bldg} C · 40 ${s.seats}`, 'soon', '35m'], ['A 011', `${s.bldg} A · 48 ${s.seats}`, 'occupied', s.until],
+    ].map(([name, meta, status, duration]) => ({ name, meta, status, duration, onClick: e => e && e.preventDefault && e.preventDefault() }));
+    const listRooms = [
+      ['E 212', `${s.bldg} E · 60 ${s.seats}`, 'free', '6h', true], ['ITC1.07', `ITC 1 · 32 ${s.seats}`, 'free', '4h 30m'],
+      ['A 011', `${s.bldg} A · 48 ${s.seats}`, 'free', '2h 10m'], ['C 104', `${s.bldg} C · 40 ${s.seats}`, 'soon', '35m'],
+    ].map(([name, meta, status, duration, sel]) => ({ name, meta, status, duration, extra: sel ? { style: { outline: '2px solid var(--md-primary)', outlineOffset: '-2px' } } : {} }));
+    return {
+      id, caption: LABEL[c.st] || 'Live', tag: `${device[0].toUpperCase() + device.slice(1)} · ${theme} · ${lang.toUpperCase()}`, theme, lang,
+      isPhone, isTablet, isDesktop, w, h: hh, scale, boxW: Math.round(w * scale), boxH: Math.round(hh * scale),
+      radius: isPhone ? 'var(--radius-xl)' : 'var(--radius-l)', net: c.saved === 'offline' ? 'Offline' : '',
+      nav: [{ id: 'campus', label: s.nav[0], icon: I.map }, { id: 'rooms', label: s.nav[1], icon: I.rooms }, { id: 'profile', label: s.nav[2], icon: I.profile }],
+      navActive: screen === 'room' ? 'rooms' : 'profile',
+      phoneBrand: isPhone && screen === 'profile', phoneBack: isPhone && screen !== 'profile', backTitle: screen === 'room' ? 'E 212' : s.settings,
+      wideBack: !isPhone && screen === 'settings',
+      isProfile: screen === 'profile', isSettings: screen === 'settings', isRoom: screen === 'room',
+      signedIn: c.signedIn, signedOut: !c.signedIn, batch: b, batchAria: P(s.batchAria, { b }),
+      maxW: isPhone ? 'none' : isTablet ? '640px' : '960px',
+      pad: isPhone ? '16px 16px 24px' : isTablet ? '32px 24px 40px' : '40px 40px 48px', gapY: isPhone ? '24px' : '32px',
+      cardPad: isPhone ? '8px 16px 16px' : '12px 24px 20px', detailPad: isPhone ? '16px 16px 24px' : '24px 24px 32px',
+      g: {
+        stats: statsText, canShare: c.graph !== 'empty', aria: P(s.graphAria, { w: shown, stats: statsText }),
+        grid: GE.grid, table: interactive ? GE.table : null, thresholds: !!o.thresholds, ovf: isPhone && shown > 19 ? 'auto' : 'hidden',
+      },
+      savedList: c.saved === 'full' || c.saved === 'offline', savedOffline: c.saved === 'offline', savedLoading: c.saved === 'loading', savedEmpty: c.saved === 'empty',
+      savedCols: isDesktop ? 'repeat(auto-fill,minmax(280px,1fr))' : 'minmax(0,1fr)',
+      rooms, listRooms, skel: [0, 1, 2].map(i => ({ border: BORDER(i) })),
+      groups: screen === 'settings' ? this.groups(c, s, b, a, lang, theme) : [],
+      s, hasSheet: !!c.sheet, st: this.sheet(c, s, b, a), hasDel: !!c.del,
+      sheetAlign: isPhone ? 'flex-end' : 'center', sheetW: isPhone ? '100%' : '480px', sheetRadius: isPhone ? '28px 28px 0 0' : '28px', sheetPad: isPhone ? '20px 24px 24px' : '24px',
+      onGear: () => a('gear'), onBack: () => a('back'), onSetup: () => a('setup'), onClose: () => a('close'),
+      onNext: () => a('next'), onAlt: () => a('alt'), onCancelDel: () => a('cancelDel'), onConfirmDel: () => a('confirmDel'),
+    };
+  }
+
+  opts() { const p = this.props; return { batch: p.batch || 'AIN 7', range: p.phoneRange ?? 'year, scrolled', thresholds: p.showThresholds ?? false }; }
+
+  renderVals() {
+    const { view, theme, lang, ps } = this.state;
+    const T = theme === 'dark' ? 'dark' : 'light';
+    const fr = (st, device, scale, idSuffix, tt = T, ll = lang) => this.frame(scen(st), { theme: tt, lang: ll, device, scale, id: NUM[st] + idSuffix });
+    let sections = [];
+    if (view === 'proto') {
+      sections = [{ title: 'Live prototype', sub: 'Phone and desktop share one state. Tap the gear for Settings, Set Up Study Profile to run the setup, hover or tap a graph cell for its day. Delete or sign out from Settings.',
+        frames: [this.frame(ps, { theme: T, lang, device: 'phone', interactive: true, id: 'P1' }), this.frame(ps, { theme: T, lang, device: 'desktop', interactive: true, id: 'P2' })] }];
+    } else if (view === 'states') {
+      const all = GROUPS[this.state.group][1];
+      sections = [
+        { title: 'Phone · compact (380 × 780)', sub: 'On the phone the graph shows ~20 weeks, scrolled so this week sits at the right edge; swipe left for the rest of the year.', frames: all.map(st => fr(st, 'phone', 1, 'a')) },
+        { title: 'Tablet · medium (768 × 1024, shown at 60%)', sub: 'Navigation rail; one centred 640 px column. The full year fits; cells shrink, the gap stays even.', frames: all.slice(0, 3).map(st => fr(st, 'tablet', 0.6, 'c')) },
+        { title: 'Desktop · expanded (1280 × 800, shown at 50%)', sub: 'Drawer; 960 px column. Setup becomes a centred dialog; saved rooms flow into a grid.', frames: all.map(st => fr(st, 'desktop', 0.5, 'b')) },
+      ];
+    } else if (view === 'matrix') {
+      const st = ps.st || 'in';
+      const combos = [['light', 'en'], ['light', 'de'], ['dark', 'en'], ['dark', 'de']];
+      const mk = (device, scale, sfx) => combos.map(([t, l], i) => Object.assign(this.frame(scen(st), { theme: t, lang: l, device, scale, id: `M${i + 1}${sfx}` })));
+      sections = [
+        { title: `${NUM[st]} · ${LABEL[st]} — phone`, sub: 'Light / dark × English / German. German runs ~30 % longer: header text button wraps under “Nicht angemeldet”, list rows grow to two lines, nothing truncates.', frames: mk('phone', 1, 'a') },
+        { title: 'Desktop (shown at 50%)', sub: 'Same state, same four combinations.', frames: mk('desktop', 0.5, 'b') },
+      ];
+    }
+    const goState = st => () => { this.setState({ view: 'states', group: GROUP_OF[st] }); setTimeout(() => { const el = document.getElementById(NUM[st] + 'a'); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 24, behavior: 'smooth' }); }, 80); };
+    const links = sts => sts.map(st => ({ label: `${NUM[st]} ${LABEL[st]}`, go: goState(st) }));
+    const RAMP = [['#EFEEF5', '1.13', '#2B2930', '1.19', '0'], ['#D8CCF6', '1.48', '#3D2D6E', '1.47', '< 30'], ['#AE95E8', '2.49', '#5B3FAD', '2.25', '< 90'], ['#7E5BCC', '4.83', '#9479E6', '5.01', '< 180'], ['#4A2A91', '10.11', '#D3C2FF', '10.55', '180+']];
+    return {
+      pageTheme: view === 'matrix' ? 'light' : T,
+      lang, setLang: l => this.setState({ lang: l }),
+      btn: { danger: { style: { background: 'var(--md-error)', color: 'var(--md-on-error)' } } },
+      viewChips: [['proto', 'Prototype'], ['states', 'All states'], ['matrix', 'Theme × language'], ['comps', 'Components']].map(([id, label]) => ({ label, active: view === id, go: () => this.setState({ view: id }) })),
+      themeChips: [['light', 'Light'], ['dark', 'Dark']].map(([id, label]) => ({ label, active: theme === id, go: () => this.setState({ theme: id }) })),
+      showStateChips: view !== 'comps',
+      stateChipsTitle: view === 'proto' ? 'Jump to a state' : view === 'states' ? 'State group' : 'State to compare',
+      stateChips: view === 'states'
+        ? Object.keys(GROUPS).map(g => ({ label: `${GROUPS[g][0]} · ${GROUPS[g][1].map(st => NUM[st]).join(' ')}`, active: this.state.group === g, go: () => this.setState({ group: g }) }))
+        : META.map(([st, l]) => ({ label: `${NUM[st]} ${l}`, active: ps.st === st, go: () => this.jump(st) })),
+      sections, isComps: view === 'comps',
+      tokens: RAMP.map(([l, lc, d, dc, range], i) => ({ n: `--md-graph-${i}`, v: `var(--md-graph-${i})`, l, lc, d, dc, range })),
+      comps: [
+        { name: 'FocusGraph', kind: 'New · the Profile hero', isTokens: true,
+          purpose: 'Contribution-style year of focus. 7 rows Mon–Sun, one column per week, current week rightmost, today outlined, future days left as empty slots. Ramp proposed as five tokens (d2-graph-tokens.css); contrast against the card surface below.',
+          props: [{ n: 'days', t: '{date, minutes}[]', d: 'Local history; newest last' }, { n: 'today', t: 'Date', d: 'Gets a 1.5 px on-surface outline' }, { n: 'weeks', t: 'number', d: 'Rendered weeks: 53; compact scrolls to the right edge on mount' }, { n: 'stats', t: 'string', d: 'One quiet line: “26 h this semester · 12-day streak”' }, { n: 'onShare', t: '() => void', d: 'Share icon button; hidden with no history. Share card is D4' }],
+          notes: ['Levels: 0 · <30 · <90 · <180 · 180+ min. Light: more focus = darker. Dark: empty is a dark surface, more focus = brighter.', 'Levels 0–2 are under 3:1 by design (the GitHub look). Value is never colour-only: hover/tap label “Tue 13 Oct · 1 h 25 min”, the Less→More legend, and a visually hidden table (rows = weeks, columns = Mon–Sun, minutes).', 'The cell grid is aria-hidden and not tabbable (371 cells would be 371 tab stops); the card is one region whose label carries the stats, followed by the table.', 'No animation: cells paint once. Tooltip appears instantly; nothing to collapse under reduced motion.'] },
+        { name: 'ProfileHeader', kind: 'New', hasLinks: true, links: links(['in', 'out']),
+          purpose: 'One line: avatar initial, display name, batch chip, gear. Signed out: “Not signed in” plus one text button.',
+          props: [{ n: 'name', t: 'string?', d: 'Initial from name; person icon when absent' }, { n: 'batch', t: 'string?', d: 'Violet chip with group icon + words, e.g. AIN 7' }, { n: 'signedIn', t: 'boolean', d: 'false → “Not signed in” + Set Up Study Profile' }, { n: 'onSetup / onSettings', t: '() => void', d: 'Gear stays available signed out (theme, language)' }],
+          notes: ['Focus order: name (read as heading) → batch chip → Set Up (signed out) → gear.', 'German wraps the text button under the label rather than shrinking it.'] },
+        { name: 'SettingsList', kind: 'New · grouped M3 list', hasLinks: true, links: links(['settings', 'settingsOut', 'delete']),
+          purpose: 'Plain grouped list behind the gear. One row per setting; a note row only under Sharing, the single place that explains what others see.',
+          props: [{ n: 'groups', t: '{title, rows}[]', d: 'Study profile · Sharing · Appearance · Account' }, { n: 'row.kind', t: "'nav' | 'switch' | 'danger' | 'note'", d: 'danger = error colour + trash icon + words' }, { n: 'row.value', t: 'string?', d: 'Trailing supporting text, never truncated' }],
+          notes: ['Rows are buttons (≥ 56 px); the switch is role="switch" with aria-checked.', 'Delete opens an alertdialog; focus starts on Cancel.'] },
+        { name: 'SetupSheet', kind: 'New', hasLinks: true, links: links(['email', 'code', 'codeWrong', 'codeExpired', 'prog', 'progMissing', 'intake', 'name', 'summary']),
+          purpose: 'Bottom sheet on compact, 480 px dialog on medium/expanded. Six steps, one question each. Opened from Set Up Study Profile or from Public without a profile.',
+          props: [{ n: 'step', t: "'email' | 'code' | 'programme' | 'intake' | 'name' | 'summary'", d: 'Step label “Step 2 of 6”' }, { n: 'error', t: "'wrongCode' | 'expired' | 'notListed'?", d: 'role="alert" line with icon + words' }, { n: 'onDone', t: '(profile) => void', d: 'Returns to where it was opened; Public resumes if that started it' }],
+          notes: ['Focus moves to the step title on each step; Close is reachable but not first.', 'Sheet slide-in is 150 ms standard easing; under reduced motion it appears without movement.'] },
+        { name: 'Skeleton', kind: 'Loading pattern', hasLinks: true, links: links(['loading', 'roomLoading']),
+          purpose: 'Static placeholder blocks in surface-variant at the real sizes of what will load. No shimmer, so nothing to reduce.',
+          props: [{ n: 'aria-busy', t: 'true', d: 'On the loading region' }, { n: 'status', t: 'string', d: 'Visually hidden role="status": “Loading E 212…”' }],
+          notes: ['Profile: header and graph are local and render at once; only saved-room status waits.', 'Room detail: Start focus stays hidden until the status loads, because a lecture means no action.'] },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

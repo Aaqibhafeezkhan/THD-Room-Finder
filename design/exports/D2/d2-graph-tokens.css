@@ -1,0 +1,12 @@
+/* D2 proposal · focus graph ramp (not yet in tokens/colors.css).
+   Levels by daily focus minutes: 0 · <30 · <90 · <180 · 180+.
+   Contrast vs card surface (#FDFCFF light / #1C1B1F dark):
+   light 1.13 · 1.48 · 2.49 · 4.83 · 10.11   dark 1.19 · 1.47 · 2.25 · 5.01 · 10.55
+   Levels 0–2 sit below 3:1 on purpose (contribution-graph look); value is also
+   carried by the hover/tap label, the legend and the screen-reader table. */
+:root, [data-theme="light"] {
+  --md-graph-0: #EFEEF5; --md-graph-1: #D8CCF6; --md-graph-2: #AE95E8; --md-graph-3: #7E5BCC; --md-graph-4: #4A2A91;
+}
+[data-theme="dark"] {
+  --md-graph-0: #2B2930; --md-graph-1: #3D2D6E; --md-graph-2: #5B3FAD; --md-graph-3: #9479E6; --md-graph-4: #D3C2FF;
+}
