@@ -25,6 +25,12 @@ Actions.
   `persist-credentials: false` and never execute code from a pull request.
   That is what makes `pull_request_target` safe for fork PRs here.
 - Permissions are declared per workflow and kept to the minimum.
+- Fork PRs: the default `GITHUB_TOKEN` is read-only, Actions cannot approve
+  PRs, and runs from first-time contributors wait for the maintainer's
+  approval (*Approve and run workflows*). Approve only after reading the diff;
+  changes to `.github/`, `package.json` or build scripts execute in CI.
+- Vercel previews of fork PRs need authorization by a Vercel team member. The
+  Vercel check is informational, not required for merge.
 - Script logic lives in `.github/scripts/*.cjs` with tests in
   `*.checks.cjs`, run by CI.
 

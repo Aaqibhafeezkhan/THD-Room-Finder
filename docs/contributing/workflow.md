@@ -114,6 +114,13 @@ reaches every THD student with one maintained app. Fork contributors open
 ordinary PRs from their fork; native stacks need branches in this repository,
 so ask for collaborator access if you plan stacked work.
 
+**Your first PR from a fork** will show pending or failed checks at first.
+That is expected: GitHub holds the Actions runs of first-time contributors
+until the maintainer approves them, and Vercel only builds previews of fork
+PRs after a team member authorizes them. Vercel is not a required check.
+After your first merged PR, active contributors are invited as
+collaborators.
+
 ## AI-assisted contributions
 
 Using AI tools is fine. You are responsible for every line you submit: run it,

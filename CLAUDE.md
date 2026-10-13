@@ -122,9 +122,14 @@ Conventional Commits. Subject line: `type(optional-scope): summary`
 - **body**: required for substantive changes; use organized bullets explaining
   behavior, purpose and verification, wrapping near 72 columns.
 - **footer** (optional): `BREAKING CHANGE:` or issue refs (`Closes #12`).
-- Consolidate meaningful completed units; do not commit every edit or produce
-  a long WIP/fixup history. Prefer one commit for a small coherent PR; each
-  commit should build. Do not rewrite already shared history to reduce counts.
+- PRs are merged with **merge commits** (squash and rebase are off), so every
+  commit lands on `main` as written: make each one meaningful, buildable and
+  Conventional. Consolidate WIP/fixups on your own branch before review; never
+  rewrite already shared history. The PR title becomes the merge commit title.
+- Required for merge: a PR plus the Web and Android CI checks (PR conventions
+  once #41 is on `main`). No approval count: only the maintainer can merge.
+- Fork PRs from first-time contributors need the maintainer to approve their
+  Actions runs and authorize the Vercel preview; check the diff first.
 
 ### No co-authoring / no attribution
 

@@ -82,8 +82,16 @@ A signed release APK needs `android/keystore.properties` (see the `.example`).
   `github/gh-stack` extension and [CONTRIBUTING.md](CONTRIBUTING.md).
 - Use `main` as production trunk; PR-specific previews provide integration
   testing. Do not require a permanent `dev` branch or alter existing dev work.
-- Use sensible, consolidated commits for meaningful completed units. Do not
-  commit every small edit or leave a long chain of WIP/fixup checkpoints.
+- `main` is merged with **merge commits** (not squash): every commit in a PR
+  lands on `main` unchanged and counts on its author's contribution graph. So
+  each commit must be meaningful, build on its own and follow the subject
+  format below. Do not commit every small edit or leave WIP/fixup chains; tidy
+  your own unpublished branch before review. The PR title becomes the merge
+  commit's title.
+- External contributors work from forks. Their first PR's Actions runs wait
+  for the maintainer's approval, and Vercel needs a team member to authorize
+  fork previews. Review the diff before approving: changes under `.github/`,
+  `package.json`, scripts or build config run code in CI.
 - Standardize subjects as `feat(scope): imperative summary` (or fix/docs/chore/
   refactor/test/ci/perf), at most 72 characters. Substantive commits need an
   organized body, normally bullets covering behavior, purpose and verification.
