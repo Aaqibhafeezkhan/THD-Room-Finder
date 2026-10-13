@@ -1,0 +1,45 @@
+name: User story
+description: One user-visible behaviour that can ship in a single reviewable PR.
+title: "[M?-S?] "
+labels: [type:story, needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A story is the size of **one PR**. If it needs several PRs, it is an epic; if it is invisible to users, it is a task.
+        Title: `[M1-S11] Imperative outcome` (milestone, next free number). See [writing issues](https://github.com/arudaev/THD-Room-Finder/blob/main/docs/contributing/writing-issues.md).
+  - type: textarea
+    id: story
+    attributes:
+      label: User story
+      description: Who wants what, and why.
+      placeholder: As a student looking for a room, I want to see where my batch is studying, so that I can join them.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Observable behaviour as a checklist, including failure and empty states.
+      value: |
+        - [ ] 
+        - [ ] 
+    validations:
+      required: true
+  - type: textarea
+    id: design
+    attributes:
+      label: Design, data and privacy
+      description: Design session or spec, tokens/components, data read or written, who can see it.
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Parent epic and blocking issues. Also set them with the native Relationships panel.
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification
+      description: Tests to add and manual/device checks (EN/DE, light/dark, phone/desktop).
+    validations:
+      required: true

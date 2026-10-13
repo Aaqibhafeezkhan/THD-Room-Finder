@@ -1,65 +1,82 @@
-# Contributing and delivery
+# Contributing to THD Room Finder
 
-Read [PROJECT-CHARTER.md](PROJECT-CHARTER.md), [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md). The selected first milestone is individual room-linked focus and cohort-aware discovery. Group coordination and organization events are later scope.
+THD Room Finder is an open-source (GPL-3.0) student project that helps people at
+Technische Hochschule Deggendorf find a free room, and, from Phase 1 on, focus
+in it alone or with their batch. Contributions of code, design, research and
+documentation are welcome. Forks are allowed by the license; improvements sent
+back upstream reach every THD student.
 
-## Issues and project board
+This page is the short version. The details live in
+[`docs/contributing/`](docs/contributing/README.md).
 
-Use the repository's Campus Study project. Titles follow `[M1] Outcome` for an epic and `[M1-S1] Concrete behavior` for a story/task. Epics describe outcome, scope/non-goals and completion criteria; children contain a user story or technical problem, acceptance criteria, dependencies, design/data implications and verification. Avoid one issue per tiny edit.
+## Five-minute setup
 
-Use native parent/sub-issue relationships, not only checkbox links. Record blocking dependencies explicitly; an epic relationship and a dependency are different. Use `epic`, `story` or `task`, plus a relevant area and `needs-design` where required. Priority and milestone belong in project fields; labels do not need to duplicate every status.
-
-Project states: **Backlog → Ready → In progress → In review → Done**, with **Blocked** for an identified dependency. Ready means scope/acceptance are clear. Draft PR means work in progress; review-ready PR means In review. Done means accepted/merged implementation (or a completed non-code task), not an opened PR or passed CI. Deployment verification belongs in the acceptance checklist. An epic closes only after its children and outcome are complete.
-
-Assign a person only when they take ownership. Record start/target/completion dates when known rather than inventing deadlines. Branch creation alone is not proof work has started; use a draft PR or project update. Linked PRs, parent issue and progress fields provide traceability.
-
-## Branches, previews and native stacks
-
-`main` is production trunk. This project uses PR previews rather than requiring a permanent `dev` branch. Existing historical dev work is not deleted or reset. Use `feature/<issue>-<description>`, `fix/<issue>-<description>`, `docs/<issue>-<description>` or `chore/<issue>-<description>`. Keep one branch/PR per coherent issue; review fixes update that branch.
-
-Native GitHub stacks are supported by the official **github/gh-stack** CLI extension, verified locally at v0.2.1 on 10 October 2026. It was already installed and has been upgraded. Installation elsewhere: `gh extension install github/gh-stack`. Stacks are generally available as of October 6, not a third-party workaround. [GitHub announcement](https://github.blog/changelog/2026-10-06-stacked-pull-requests-generally-available/).
-
-Example for real dependent work, using actual issue numbers in place of placeholders:
+Requires Node 20+.
 
 ```bash
-gh stack init --base main feature/<issue-a>-study-identity
-# Implement, verify and commit the coherent first layer.
-gh stack add feature/<issue-b>-focus-presence
-# Implement, verify and commit the dependent layer.
-gh stack add feature/<issue-c>-cohort-room-signals
-gh stack submit --auto
-gh stack view
+git clone https://github.com/arudaev/THD-Room-Finder.git
+cd THD-Room-Finder
+npm install
+npm run dev          # http://localhost:5173, live THabella data through a dev proxy
 ```
 
-`submit --auto` creates drafts by default; inspect and rewrite generated titles/bodies with `gh pr edit --body-file` before requesting review. Layer 1 targets main, layer 2 targets layer 1, and so on. Each diff contains only its own work, while its Vercel preview includes ancestors. Parallel independent tasks should not be forced into a stack. Prefer a few meaningful layers over a six-layer stack of tiny changes.
+Before every push: `npm run typecheck && npm test && npm run build`.
+Android, Supabase and release setup are in
+[docs/development](docs/development/README.md).
 
-Explicitly link every PR to its own issue using the Development relationship or a supported closing reference. Ancestor-base PR closing references may not close an issue until code reaches the default branch; do not assume every intermediary merge completes delivery. Describe stack/base, outcome, tests, preview and remaining acceptance checks. Do not copy the epic's closing keyword into every child PR.
+## How work flows
 
-Agents must not run stack merge, enable auto-merge, merge PRs or publish releases. `gh stack sync/rebase/push/submit` may rewrite branch history: inspect behavior before using them on published/shared layers, and do not force-push shared history. Maintainer handles any necessary shared-stack restacking. Never automatically delete another contributor's branches. All branches in native stacks must be in the same repository; fork contributions can use ordinary PRs. [Stack creation reference](https://docs.github.com/en/pull-requests/how-tos/create-pull-requests/creating-stacked-pull-requests).
-
-## Sensible commits
-
-Commit meaningful completed units, not every file/edit or a stream of WIP checkpoints. Prefer one commit per small coherent PR; use additional commits only for distinct reviewable changes. Do not rewrite already shared history simply to meet a numerical target.
-
-Format: `feat(scope): imperative summary` (also `fix`, `docs`, `chore`, `refactor`, `test`, `ci`, `perf`), subject at most 72 characters. Include an organized body explaining behavior, purpose and verification for substantive changes:
-
-```text
-feat(focus): publish expiring room study signals
-
-- Keep personal timers usable without sharing.
-- Limit cohort summaries to the permitted audience.
-- Verify expiry and room-ranking boundaries with domain tests.
-
-Refs #<issue>
+```mermaid
+flowchart LR
+  A[Issue in Ready] -->|comment /take| B[Assigned to you]
+  B --> C[Branch from main]
+  C --> D[Draft PR<br/>Closes #n]
+  D -->|board: In progress| E[Ready for review]
+  E -->|board: In review| F[Maintainer review]
+  F -->|squash merge| G[Done]
 ```
 
-Author: `arudaev <hlexhelftd@gmail.com>`. No co-author trailers, generated-by messages, bot signatures, tool attribution or session IDs in commits/PRs. Never put credentials in messages or documentation. Set authorship explicitly for this repository before committing.
+1. **Pick an issue.** Look at the **Ready** column of the
+   [project board](https://github.com/users/arudaev/projects/8), or filter by
+   [`good first issue`](https://github.com/arudaev/THD-Room-Finder/labels/good%20first%20issue).
+   Comment **`/take`** to assign yourself (**`/drop`** to let it go). Epics
+   are not taken directly; take one of their sub-issues.
+2. **Branch from `main`:** `feature/<issue>-<slug>`, `fix/…`, `docs/…` or
+   `chore/…`. The `/take` reply suggests a name.
+3. **Open a draft PR early** with `Closes #<issue>` in the description. The
+   board moves the card for you.
+4. **Mark it ready for review** when the acceptance criteria are met and the
+   checks pass. The maintainer reviews and merges (squash).
 
-## Checks, environments and project automation
+No issue for what you want to do? Start a
+[discussion](https://github.com/arudaev/THD-Room-Finder/discussions) or open
+an issue with one of the forms. The maintainer triages it into a milestone.
 
-Run `npm run typecheck`, `npm test`, `npm run build`. UI/service work additionally needs live-data/device checks, audience/expiry tests and abuse/request-budget verification. CI applies to every PR base, including feature branches in a stack. Do not weaken checks because a PR is an intermediate layer.
+## Rules that keep `main` releasable
 
-Vercel previews test each PR's cumulative tree; `main` remains the production deployment source. Fake student identities/data belong only in isolated preview/local Supabase environments. New database migrations and seeded environments need their own review and budget check; branch entitlement and usage charges are not inferred from a paid-account nickname.
+| Rule | Why |
+|---|---|
+| PR titles follow [Conventional Commits](https://www.conventionalcommits.org/) (`feat(focus): start a private session`), at most 72 characters | The title becomes the squash commit on `main`; CI checks it |
+| Every PR links an issue (`Closes #n` or `Refs #n`) | Traceability and automatic board updates; CI checks it |
+| One issue per PR; dependent work may form a [native stack](docs/contributing/workflow.md#stacked-pull-requests) | Small, reviewable diffs |
+| Business rules go in `src/domain/` with a Vitest test | The domain layer is the trusted core |
+| Style with design tokens, never hard-coded colours; strings via `t(en, de)` | One design system, two languages |
+| Never translate room or building codes (`A.011`, `ITC1.07`) | They are identifiers |
+| Design changes go through [Claude Design](design/README.md) first | Keeps design and code in sync |
+| No secrets, real student data or production credentials in commits, issues or previews | Privacy |
 
-The project uses native GitHub workflows where possible. Account-owned Projects cannot be updated using the repository's ordinary GITHUB_TOKEN alone; any future custom automation needs a narrowly scoped GitHub App/token, not a copied administrator credential. Configure and verify built-in rules before claiming automated transitions; document any remaining manual action honestly.
+Commits are authored by the person who wrote them. Do not add AI co-author
+trailers or "generated with" lines to commits or PRs.
 
-Wiki content lives in a separate repository. Its task-branch commit must be pushed before a parent gitlink can reference it. Review the snapshot through the parent PR; the maintainer separately publishes the wiki default branch after acceptance. Do not silently push wiki default while opening a review PR.
+## For maintainers and AI agents
+
+[AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md) hold the agent rules: agents
+open PRs but never merge, enable auto-merge, force-push shared branches or
+publish releases.
+
+## More
+
+- [Workflow in detail](docs/contributing/workflow.md): issue lifecycle, stacks, reviews
+- [Writing good issues](docs/contributing/writing-issues.md): epics, stories, tasks, bugs, spikes
+- [Project board](docs/contributing/project-board.md): views, fields and automation
+- [Code of conduct](CODE_OF_CONDUCT.md) · [Security policy](SECURITY.md)
