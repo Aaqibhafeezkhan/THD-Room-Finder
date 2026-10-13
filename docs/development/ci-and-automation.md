@@ -13,7 +13,6 @@
 | Project sync | `project-sync.yml` | Issues, PRs, manual | Draft/ready → board status, start/completion dates. Inactive until `PROJECTS_TOKEN` exists ([#26](https://github.com/arudaev/THD-Room-Finder/issues/26)) | — |
 | Release | `release.yml` | Tag `v*`, manual | Signed APK and GitHub release | — |
 | Pages | `pages.yml` | Push to `main` | Deploys `website/` | — |
-| Dependabot | `.github/dependabot.yml` | Monthly | Grouped npm and Actions updates | — |
 
 Vercel builds previews and production through its GitHub integration, outside
 Actions.
@@ -33,6 +32,10 @@ Actions.
   Vercel check is informational, not required for merge.
 - Script logic lives in `.github/scripts/*.cjs` with tests in
   `*.checks.cjs`, run by CI.
+- Dependency updates are manual. Dependabot version updates and security
+  update PRs are both off, because automatic bumps have broken builds
+  before. Dependabot *alerts* stay on: check the Security tab, then upgrade
+  deliberately in a normal PR and test it on web and Android.
 
 ## Repository rules
 
