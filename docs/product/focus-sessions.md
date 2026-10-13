@@ -146,6 +146,22 @@ carrier of meaning: every signal also has a label and an icon.
 - Signed out or offline: a local timer that publishes nothing but still counts
   for the focus graph.
 
+### Joining and ending
+
+Phase 1 has **no shared group object**. Every session belongs to one person.
+
+| Action | What happens |
+|---|---|
+| **Join** on a batch row | Starts *your own* session in that room, **Public**. Your planned end comes from the same rules as Start (next lecture, 3 h cap), not from the person you joined |
+| **End** | Ends **only your** session. Nobody else's timer changes |
+| The person you joined ends | Your session keeps running. The batch row's count drops by one |
+| Last Public session in the room ends | The violet batch row disappears; remaining Private sessions still show as a claim |
+| Switch to Private after joining | Allowed; you leave the batch count and show as a claim |
+| Check-in expiry | The reminder comes about 10 minutes before the lease runs out. An expired session counts minutes up to the last check-in or app visit |
+
+Groups that outlive any one member, with a shared timer, are Phase 2
+([later phases](later-phases.md)).
+
 ## Privacy promises
 
 | Promise | How it is kept |

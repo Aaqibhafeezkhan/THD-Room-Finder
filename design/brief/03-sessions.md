@@ -11,6 +11,9 @@ note ([04](04-handback.md)).
 | **D3 · List and map signals** | Make batch activity catch the eye without hiding lectures | `guidelines/focus-ordering.html`, `focus-map-signal.html`; `RoomCard`, `CampusMap` | List with all four buckets; map with batch ring vs. full violet fill compared; legend; list equivalents | One map option chosen and justified |
 | **D4 · Focus graph and share card** | Make consistency visible and shareable | `guidelines/focus-graph.html` | `FocusGraph` in Profile; share card 1200×630 in light and dark; empty state; export/import entry | Card readable as a small social preview |
 
+**Status:** D1 delivered and approved ([export](../exports/D1/README.md)).
+D2 next; its message is [05 · D2 message](05-d2-message.md).
+
 **Order:** D1 first (it defines the focus surface every other session reuses),
 then D2 and D3 in either order, then D4.
 

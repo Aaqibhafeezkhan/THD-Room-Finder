@@ -78,6 +78,13 @@ At start, at server time `s`:
 - Expired sessions cannot be resurrected by a late request. Restarting is a
   new session, in line with ADR 0001's no-resurrection rule.
 
+**Joining is not a shared session.** *Join* on a batch row starts the
+joiner's own Public session in that room; *End* only ends the caller's own
+session. Batch signals are counts of individual Public sessions. When a
+session expires, the minutes recorded locally run to the last renewal
+(check-in or visible-app activity), not to `leaseUntil`. Shared groups are
+Phase 2.
+
 Unchanged from ADR 0001: one active session per identity, server time only,
 idempotent start and end, a single renewing tab per device, and summaries
 bounded to visible rooms.

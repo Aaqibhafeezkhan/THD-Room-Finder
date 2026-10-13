@@ -11,6 +11,7 @@ Finder Design System* starts with the same context.
 | [02 · Focus layer](02-focus-layer.md) | States, colours with contrast, components to add, rules that never bend |
 | [03 · Sessions](03-sessions.md) | Design sessions D1–D4: goal, inputs, deliverables, done-when |
 | [04 · Handback](04-handback.md) | How an export becomes tokens, components and a PR |
+| [05 · D2 message](05-d2-message.md) | D1 decisions and the D2 (Profile tab) prompt, for the same design chat |
 
 **Source of truth for behaviour:**
 [focus sessions spec](https://github.com/arudaev/THD-Room-Finder/blob/main/docs/product/focus-sessions.md)
