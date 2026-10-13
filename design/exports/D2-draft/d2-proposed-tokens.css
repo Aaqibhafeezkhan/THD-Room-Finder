@@ -1,0 +1,15 @@
+/* D2 proposal · personal focus accent (not yet in tokens/colors.css).
+   Scope with [data-focus-accent] on the app root. Only the focus role changes;
+   free / soon / claimed / lecture roles are never overridden.
+   Aliases (--focus-own, --focus-batch) are re-declared in scope because
+   var() resolves where it is declared. */
+[data-focus-accent] {
+  --focus-own: var(--md-focus); --focus-own-bg: var(--md-focus-container);
+  --focus-batch: var(--md-focus); --focus-batch-bg: var(--md-focus-container);
+}
+[data-focus-accent="violet"] { --md-focus: #6A4BA8; --md-on-focus: #FFFFFF; --md-focus-container: #EBE0FF; --md-on-focus-container: #2D1A5C; }
+[data-focus-accent="indigo"] { --md-focus: #4355B9; --md-on-focus: #FFFFFF; --md-focus-container: #DEE0FF; --md-on-focus-container: #00105C; }
+[data-focus-accent="orchid"] { --md-focus: #8B3F86; --md-on-focus: #FFFFFF; --md-focus-container: #FFD7F5; --md-on-focus-container: #390036; }
+[data-theme="dark"][data-focus-accent="violet"], [data-theme="dark"] [data-focus-accent="violet"] { --md-focus: #D0BCFF; --md-on-focus: #381E72; --md-focus-container: #4F378B; --md-on-focus-container: #EADDFF; }
+[data-theme="dark"][data-focus-accent="indigo"], [data-theme="dark"] [data-focus-accent="indigo"] { --md-focus: #BAC3FF; --md-on-focus: #08218A; --md-focus-container: #293CA0; --md-on-focus-container: #DEE0FF; }
+[data-theme="dark"][data-focus-accent="orchid"], [data-theme="dark"] [data-focus-accent="orchid"] { --md-focus: #FFABF3; --md-on-focus: #5B005B; --md-focus-container: #71296D; --md-on-focus-container: #FFD7F5; }
