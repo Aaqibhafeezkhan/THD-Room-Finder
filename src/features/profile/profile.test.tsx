@@ -7,6 +7,10 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from
 import { ThemeProvider } from '../../lib/theme';
 import { MapPrefsProvider } from '../../lib/mapPrefs';
 import { I18nProvider } from '../../i18n';
+import { memoryStore } from '../../data/focusHistoryStore';
+import type { FocusHistoryStore } from '../../data/focusHistoryStore';
+import { exportHistory } from '../../domain/focusHistory';
+import { FocusHistoryProvider } from '../focus/FocusHistoryContext';
 import { SettingsScreen } from './SettingsScreen';
 
 let container: HTMLDivElement;
@@ -31,17 +35,33 @@ afterEach(async () => {
   container.remove();
 });
 
-function Providers({ children, path }: { children: ReactNode; path: string }) {
+function Providers({ children, path, store = memoryStore() }: { children: ReactNode; path: string; store?: FocusHistoryStore }) {
   return (
     <MemoryRouter initialEntries={[path]}>
       <ThemeProvider>
         <MapPrefsProvider>
-          <I18nProvider>{children}</I18nProvider>
+          <I18nProvider>
+            <FocusHistoryProvider store={store}>{children}</FocusHistoryProvider>
+          </I18nProvider>
         </MapPrefsProvider>
       </ThemeProvider>
     </MemoryRouter>
   );
 }
+
+function button(name: string): HTMLButtonElement {
+  const el = [...container.querySelectorAll<HTMLButtonElement>('button')].find((b) => b.textContent?.trim() === name);
+  if (!el) throw new Error(`no button ${name}`);
+  return el;
+}
+
+const session = {
+  id: 's1',
+  startedAt: '2026-10-13T08:00:00.000Z',
+  endedAt: '2026-10-13T09:25:00.000Z',
+  minutes: 85,
+  room: 'E 212',
+};
 
 async function render(node: ReactNode) {
   await act(async () => root.render(node));
@@ -87,5 +107,41 @@ describe('Settings', () => {
     );
     await act(async () => radio('Deutsch').click());
     expect(container.textContent).toContain('Darstellung');
+  });
+});
+
+describe('Focus history settings', () => {
+  it('imports an exported file into the device store', async () => {
+    const store = memoryStore();
+    await render(
+      <Providers path="/profile/settings" store={store}>
+        <SettingsScreen />
+      </Providers>,
+    );
+    const input = container.querySelector<HTMLInputElement>('input[type="file"]')!;
+    const file = new File([exportHistory([session], new Date())], 'h.json', { type: 'application/json' });
+    Object.defineProperty(input, 'files', { value: [file] });
+    await act(async () => {
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    await act(async () => {
+      for (let i = 0; i < 5; i++) await new Promise((r) => setTimeout(r, 0));
+    });
+    expect(await store.all()).toEqual([session]);
+    expect(container.textContent).toContain('1 session imported');
+  });
+
+  it('clears the history only after confirming', async () => {
+    const store = memoryStore([session]);
+    await render(
+      <Providers path="/profile/settings" store={store}>
+        <SettingsScreen />
+      </Providers>,
+    );
+    await act(async () => button('Clear history').click());
+    expect(await store.all()).toHaveLength(1);
+    await act(async () => button('Clear').click());
+    expect(await store.all()).toHaveLength(0);
+    expect(container.textContent).toContain('0 sessions');
   });
 });

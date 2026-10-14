@@ -1,6 +1,9 @@
+import { useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AppBar, SegmentedControl, Switch } from '../../components';
+import { AppBar, Button, ConfirmDialog, SegmentedControl, Snackbar, Switch } from '../../components';
+import { exportHistory } from '../../domain/focusHistory';
+import { useFocusHistory } from '../focus/FocusHistoryContext';
 import type { Accent, Theme } from '../../lib/theme';
 import { useTheme } from '../../lib/theme';
 import { useMapPrefs } from '../../lib/mapPrefs';
@@ -10,8 +13,7 @@ import { Page } from '../shared/ui';
 /**
  * Settings behind the Profile gear (D2): a plain grouped list, one setting per
  * row, at least 56 px tall. Values wrap rather than truncate, so German fits.
- * Study profile and account groups join when sign-in and the local history
- * land.
+ * The focus history group exports, imports and clears the device-only history.
  */
 export function SettingsGroup({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -72,6 +74,109 @@ export function SettingsRow({ label, sub, children, divider = false }: {
   );
 }
 
+function downloadText(text: string, filename: string) {
+  const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function readText(file: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsText(file);
+  });
+}
+
+/** Export, import and clear the device-only focus history (#38). */
+function HistoryGroup({ onMessage }: { onMessage: (m: string) => void }) {
+  const { t } = useI18n();
+  const { entries, importFile, clear } = useFocusHistory();
+  const [confirm, setConfirm] = useState(false);
+  const input = useRef<HTMLInputElement>(null);
+
+  const onFile = async (file: File | undefined) => {
+    if (!file) return;
+    try {
+      const added = await importFile(await readText(file));
+      onMessage(
+        t(
+          added === 1 ? '1 session imported' : `${added} sessions imported`,
+          added === 1 ? '1 Session importiert' : `${added} Sessions importiert`,
+        ),
+      );
+    } catch {
+      onMessage(t("That file isn't a focus history export.", 'Diese Datei ist kein exportierter Fokus-Verlauf.'));
+    }
+    if (input.current) input.current.value = '';
+  };
+
+  return (
+    <SettingsGroup title={t('Focus history', 'Fokus-Verlauf')}>
+      <SettingsRow
+        label={t('Stored on this device only', 'Nur auf diesem Gerät gespeichert')}
+        sub={t(
+          `${entries.length} sessions. Export them before you switch phones.`,
+          `${entries.length} Sessions. Exportiere sie, bevor du das Handy wechselst.`,
+        )}
+      />
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, padding: '4px 0 12px' }}>
+        <Button
+          variant="tonal"
+          disabled={entries.length === 0}
+          onClick={() =>
+            downloadText(exportHistory(entries, new Date()), `thd-focus-history-${new Date().toISOString().slice(0, 10)}.json`)
+          }
+        >
+          {t('Export', 'Exportieren')}
+        </Button>
+        <Button variant="tonal" onClick={() => input.current?.click()}>
+          {t('Import', 'Importieren')}
+        </Button>
+        <Button
+          variant="text"
+          disabled={entries.length === 0}
+          onClick={() => setConfirm(true)}
+          style={{ color: 'var(--md-error)' }}
+        >
+          {t('Clear history', 'Verlauf löschen')}
+        </Button>
+        <input
+          ref={input}
+          type="file"
+          accept="application/json,.json"
+          aria-label={t('Import focus history file', 'Datei mit Fokus-Verlauf importieren')}
+          onChange={(e) => onFile(e.target.files?.[0])}
+          style={{ display: 'none' }}
+        />
+      </div>
+      <ConfirmDialog
+        open={confirm}
+        tone="danger"
+        title={t('Clear focus history?', 'Fokus-Verlauf löschen?')}
+        body={t(
+          'Every session on this device is removed and your focus graph starts empty. Export first if you want to keep it.',
+          'Alle Sessions auf diesem Gerät werden entfernt und dein Fokus-Verlauf beginnt leer. Exportiere ihn vorher, wenn du ihn behalten willst.',
+        )}
+        confirmLabel={t('Clear', 'Löschen')}
+        cancelLabel={t('Cancel', 'Abbrechen')}
+        onCancel={() => setConfirm(false)}
+        onConfirm={async () => {
+          setConfirm(false);
+          await clear();
+          onMessage(t('Focus history cleared', 'Fokus-Verlauf gelöscht'));
+        }}
+      />
+    </SettingsGroup>
+  );
+}
+
 function Swatch({ accent, dark }: { accent: Accent; dark: boolean }) {
   // The swatch shows the ramp's strongest step for that graph colour. Accent
   // ramps resolve per theme only where data-theme and data-accent meet.
@@ -90,6 +195,7 @@ export function SettingsScreen({ children }: { children?: ReactNode }) {
   const { t, locale, setLocale } = useI18n();
   const { theme, setTheme, accent, setAccent } = useTheme();
   const { showGlyphs, setShowGlyphs } = useMapPrefs();
+  const [snack, setSnack] = useState('');
   const dark =
     theme === 'dark' ||
     (theme === 'system' && typeof matchMedia === 'function' && matchMedia('(prefers-color-scheme: dark)').matches);
@@ -154,7 +260,9 @@ export function SettingsScreen({ children }: { children?: ReactNode }) {
             />
           </div>
         </SettingsGroup>
+        <HistoryGroup onMessage={setSnack} />
       </Page>
+      <Snackbar message={snack} onClose={() => setSnack('')} bottom={96} />
     </>
   );
 }

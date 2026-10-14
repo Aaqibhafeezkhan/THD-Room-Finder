@@ -1,11 +1,13 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FocusGraph, ProfileHeader } from '../../components';
-import { dayKey } from '../../components/focus/FocusGraph';
+import { FocusGraph, ProfileHeader, Snackbar } from '../../components';
 import { useI18n } from '../../i18n';
 import { useWindowClass } from '../../lib/useWindowClass';
 import { BrandHeader } from '../shared/BrandHeader';
 import { Page } from '../shared/ui';
-import { graphText } from '../focus/copy';
+import { graphText, statsLine } from '../focus/copy';
+import { ShareSheet } from '../focus/ShareSheet';
+import { useFocusStats } from '../focus/useFocusStats';
 import { SavedRooms } from './SavedRooms';
 
 /**
@@ -19,11 +21,11 @@ export function ProfileScreen() {
   const { t, locale } = useI18n();
   const cls = useWindowClass();
   const compact = cls === 'compact';
+  const focus = useFocusStats();
+  const [sharing, setSharing] = useState(false);
+  const [snack, setSnack] = useState('');
 
-  const stats = t(
-    'No focus yet. Start a session in any free room.',
-    'Noch kein Fokus. Starte eine Session in einem freien Raum.',
-  );
+  const stats = statsLine(t, locale, focus.semesterMinutes, focus.streak);
 
   return (
     <>
@@ -38,16 +40,19 @@ export function ProfileScreen() {
           onSettings={() => navigate('/profile/settings')}
         />
         <FocusGraph
-          days={[]}
-          today={dayKey(new Date())}
+          days={focus.days}
+          today={focus.today}
           weeks={53}
           compact={compact}
           stats={stats}
           label={`${t('Focus graph', 'Fokus-Verlauf')}. ${stats}`}
           text={graphText(t, locale)}
+          onShare={focus.hasHistory ? () => setSharing(true) : undefined}
         />
         <SavedRooms grid={cls === 'expanded'} />
       </Page>
+      <ShareSheet open={sharing} onClose={() => setSharing(false)} onDone={setSnack} />
+      <Snackbar message={snack} onClose={() => setSnack('')} bottom={compact ? 96 : 24} />
     </>
   );
 }

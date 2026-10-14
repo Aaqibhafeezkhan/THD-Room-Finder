@@ -4,6 +4,7 @@ import { I18nProvider } from './i18n';
 import { RoomDataProvider } from './features/rooms/RoomDataContext';
 import { RoomFilterProvider } from './features/rooms/RoomFilterContext';
 import { FavoritesProvider } from './features/favorites/favorites';
+import { FocusHistoryProvider } from './features/focus/FocusHistoryContext';
 import { AppShell } from './app/AppShell';
 
 /**
@@ -12,6 +13,7 @@ import { AppShell } from './app/AppShell';
  *   I18nProvider   → EN/DE
  *   RoomDataProvider → THabella data, teaching filter, time-travel, auto-refresh
  *   FavoritesProvider → saved rooms
+ *   FocusHistoryProvider → focus history, on this device only
  */
 export default function App() {
   return (
@@ -21,7 +23,9 @@ export default function App() {
           <RoomDataProvider>
             <RoomFilterProvider>
               <FavoritesProvider>
-                <AppShell />
+                <FocusHistoryProvider>
+                  <AppShell />
+                </FocusHistoryProvider>
               </FavoritesProvider>
             </RoomFilterProvider>
           </RoomDataProvider>

@@ -54,3 +54,19 @@ export function graphText(t: Translate, locale: Locale): FocusGraphText {
     weekLabel: (d) => `${d.getDate()}${locale === 'de' ? '.' : ''} ${months[d.getMonth()]}`,
   };
 }
+
+/** Whole hours from an hour up ("21 h" / "21 Std."), minutes below. */
+export function formatHours(minutes: number, locale: Locale): string {
+  if (minutes < 60) return formatMinutes(minutes, locale);
+  const h = Math.round(minutes / 60);
+  return locale === 'de' ? `${h} Std.` : `${h} h`;
+}
+
+/** "21 h this semester · 12-day streak" (D2), or the new-user line. */
+export function statsLine(t: Translate, locale: Locale, semesterMinutes: number, streakDays: number): string {
+  if (semesterMinutes <= 0 && streakDays <= 0) {
+    return t('No focus yet. Start a session in any free room.', 'Noch kein Fokus. Starte eine Session in einem freien Raum.');
+  }
+  const h = formatHours(semesterMinutes, locale);
+  return t(`${h} this semester · ${streakDays}-day streak`, `${h} in diesem Semester · ${streakDays} Tage in Folge`);
+}
