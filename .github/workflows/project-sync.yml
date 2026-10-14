@@ -4,8 +4,10 @@ on:
   issues:
     types: [opened, reopened, closed, assigned, labeled]
   pull_request_target:
-    types: [opened, reopened, ready_for_review, converted_to_draft, closed, edited]
+    types: [opened, reopened, ready_for_review, converted_to_draft, closed, edited, synchronize]
   workflow_dispatch:
+  schedule:
+    - cron: '23 5 * * *'
 
 permissions:
   contents: read
@@ -13,7 +15,7 @@ permissions:
   pull-requests: read
 
 concurrency:
-  group: project-sync-${{ github.event.issue.number || github.event.pull_request.number || 'reconcile' }}
+  group: project-sync
   cancel-in-progress: false
 
 jobs:
@@ -24,7 +26,9 @@ jobs:
     steps:
       - name: Explain credential requirement
         if: ${{ env.PROJECTS_TOKEN == '' }}
-        run: echo 'Native project workflows remain active. Custom ready-for-review synchronization needs a scoped PROJECTS_TOKEN; no administrator token is copied automatically.'
+        run: |
+          echo '::error::PROJECTS_TOKEN is missing. Native workflows remain active, but custom project synchronization cannot run.'
+          exit 1
       # Never check out or execute the PR head with a privileged token.
       - uses: actions/checkout@v4
         if: ${{ env.PROJECTS_TOKEN != '' }}

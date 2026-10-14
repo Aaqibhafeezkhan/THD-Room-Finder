@@ -42,6 +42,17 @@ flowchart LR
   S5 --> S6
 ```
 
+**Prototype progress:** [the Prototype view](https://github.com/users/arudaev/projects/8/views/2)
+tracks D1 [#58](https://github.com/arudaev/THD-Room-Finder/issues/58),
+D2 [#59](https://github.com/arudaev/THD-Room-Finder/issues/59),
+D3 [#60](https://github.com/arudaev/THD-Room-Finder/issues/60) and
+D4 [#61](https://github.com/arudaev/THD-Room-Finder/issues/61) separately under
+#21. The reusable-component handoff is
+[#62](https://github.com/arudaev/THD-Room-Finder/issues/62). The latest design
+stack (#54 → #55 → #57) moves the focus graph into D2 and narrows D4 to the
+share card. Design approval, export delivery and application implementation
+are separate acceptance steps; see the [board guide](../contributing/project-board.md).
+
 **Parallel tracks.** Design (#21) starts immediately and does not wait for the
 backend. The taxonomy (#40) and the background spike (#39) are independent and
 ideal first contributions. The backend chain #17 → #18 → #19 → #20 is
