@@ -26,9 +26,10 @@ import { useTheme } from '../../lib/theme';
 
 /**
  * Development-only specimen of the focus-layer components (D1–D4) with fake,
- * deterministic data. Reached at /dev/focus in `npm run dev`; it is not routed
- * in production builds. Used to check light/dark and EN/DE before the screens
- * that use these components are built.
+ * deterministic data. Reached at /dev/focus in `npm run dev` and in Vercel
+ * preview deployments; it is not routed in production builds. Used to check
+ * light/dark and EN/DE before the screens that use these components are
+ * built.
  */
 
 const TODAY = '2026-10-13';

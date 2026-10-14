@@ -11,9 +11,10 @@ import { CampusScreen } from '../features/campus/CampusScreen';
 import { FavoritesScreen } from '../features/favorites/FavoritesScreen';
 import { RoomDetailScreen } from '../features/detail/RoomDetailScreen';
 
-// Component specimen for development only; the import is dropped from
-// production builds because the condition is a build-time constant.
-const FocusGallery = import.meta.env.DEV
+// Component specimen for `npm run dev` and Vercel previews; the import is
+// dropped from production builds because the condition is a build-time
+// constant.
+const FocusGallery = import.meta.env.DEV || __DEV_GALLERY__
   ? lazy(() => import('../features/dev/FocusGallery').then((m) => ({ default: m.FocusGallery })))
   : null;
 

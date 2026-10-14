@@ -62,6 +62,11 @@ function devThabellaApi(): Plugin {
 }
 
 export default defineConfig({
+  // Vercel sets VERCEL_ENV at build time. Previews (never production) route
+  // the /dev/focus component gallery so designs can be reviewed on a phone.
+  define: {
+    __DEV_GALLERY__: JSON.stringify(process.env.VERCEL_ENV === 'preview'),
+  },
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
