@@ -99,7 +99,7 @@ if they pass the same test.
 |---|---|
 | Study profile | Programme (e.g. AIN), intake term → shown as "AIN 7", display name |
 | Sharing | Default mode (Private); the one place that explains what others see |
-| Appearance | Theme, language, personal focus accent (vetted swatches, each with its own five-step graph ramp; the focus graph follows it; free/soon/claimed/lecture colours never change), quiet preference |
+| Appearance | Theme, language, graph colour (Violet, Orchid or Graphite, each with a hand-tuned ramp; it colours the focus graph and share card only, while session and batch signals stay violet and free/soon/claimed/lecture never change), quiet preference |
 | Account | Sign in with email code, export/import focus history, sign out, delete profile |
 
 ### Sharing the focus graph
