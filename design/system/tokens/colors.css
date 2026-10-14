@@ -4,13 +4,17 @@
    Tertiary green signals "free / available"; error red signals
    "occupied". Sponsor pink is reserved for the iOS-funding CTA only.
 
+   Scopes: the light block also matches any [data-theme] element,
+   so a nested light or dark frame re-resolves every alias; the
+   dark blocks below then override the raw values for dark.
+
    Naming:
    • --md-*  : Material 3 role tokens (matches the native Android/iOS
                theme and the original website 1:1 — do not rename).
    • Semantic aliases below map friendly names onto those roles.
    ============================================================ */
 
-:root {
+:root, [data-theme] {
   /* ── Primary — THD blue ───────────────────────────── */
   --md-primary:               #1565C0;
   --md-on-primary:            #FFFFFF;
@@ -55,7 +59,7 @@
   --sponsor:            #D81B60;
   --sponsor-container:  #FCE4EC;
 
-  /* ── Focus layer (Phase 1 · concept, not yet in src/) ──
+  /* ── Focus layer (Phase 1, approved in D1–D4) ─────────
      Violet  = you and your batch: your active session, a
                batchmate's public session, the batch map marker.
      Claimed = dark, muted purple: someone else's focus session
@@ -76,6 +80,23 @@
   --md-on-event:               #FFFFFF;
   --md-event-container:        #F7E886;
   --md-on-event-container:     #221B00;
+
+  /* ── Focus graph ramp (D2) ────────────────────────────
+     Daily focus minutes → level: 0 · <30 · <90 · <180 · 180+.
+     Light: more focus = darker. Contrast vs --md-surface:
+     1.13 · 1.48 · 2.49 · 4.83 · 10.11. Levels 0–2 stay under
+     3:1 on purpose (contribution-graph look); the value is
+     also in the tooltip, legend and screen-reader table.
+     Other graph colours: [data-accent] at the end of file. */
+  --md-graph-0:                #EFEEF5;
+  --md-graph-1:                #D8CCF6;
+  --md-graph-2:                #AE95E8;
+  --md-graph-3:                #7E5BCC;
+  --md-graph-4:                #4A2A91;
+
+  /* ── Inverse surface (M3 snackbar, D4): on-surface / surface swapped */
+  --md-inverse-surface:        #1C1B1F;
+  --md-inverse-on-surface:     #FDFCFF;
 
   /* ── Semantic aliases (friendly names → roles) ────── */
   --color-brand:          var(--md-primary);
@@ -101,6 +122,8 @@
   --status-claimed-bg:    var(--md-claimed-container);
   --event:                var(--md-event);
   --event-bg:             var(--md-event-container);
+  /* Hover/track tint inside violet surfaces (D1). */
+  --focus-state-layer:    color-mix(in srgb, var(--md-on-focus-container) 8%, transparent);
 }
 
 /* ============================================================
@@ -158,6 +181,13 @@
     --md-on-event:               #373100;
     --md-event-container:        #504600;
     --md-on-event-container:     #F7E886;
+    --md-graph-0:                #2B2930;
+    --md-graph-1:                #3D2D6E;
+    --md-graph-2:                #5B3FAD;
+    --md-graph-3:                #9479E6;
+    --md-graph-4:                #D3C2FF;
+    --md-inverse-surface:        #E6E1E5;
+    --md-inverse-on-surface:     #1C1B1F;
   }
 }
 
@@ -205,4 +235,43 @@
   --md-on-event:               #373100;
   --md-event-container:        #504600;
   --md-on-event-container:     #F7E886;
+  --md-graph-0:                #2B2930;
+  --md-graph-1:                #3D2D6E;
+  --md-graph-2:                #5B3FAD;
+  --md-graph-3:                #9479E6;
+  --md-graph-4:                #D3C2FF;
+  --md-inverse-surface:        #E6E1E5;
+  --md-inverse-on-surface:     #1C1B1F;
+}
+
+/* ============================================================
+   Graph colour (D4) — a personal setting that recolours ONLY
+   the focus graph and the share card. Session surface, focus
+   pill, batch badges and map rings stay violet: violet means
+   "you and your batch" everywhere. Put data-accent on the same
+   element as data-theme. Level 0 (no focus) is shared.
+   Not allowed: blue (actions), teal, amber, red, claimed purple.
+   Contrast vs surface, levels 1–4:
+   orchid   light 1.42 · 2.26 · 4.55 · 8.90   dark 1.36 · 2.19 · 4.72 · 10.72
+   graphite light 1.41 · 2.40 · 4.96 · 12.52  dark 1.66 · 2.69 · 6.04 · 13.37
+   ============================================================ */
+[data-accent="orchid"] {
+  --md-graph-1: #F1CBE7; --md-graph-2: #DE92CB; --md-graph-3: #B24FA0; --md-graph-4: #7E1F6E;
+}
+[data-accent="graphite"] {
+  --md-graph-1: #D6D7DC; --md-graph-2: #A3A5AE; --md-graph-3: #6C6E78; --md-graph-4: #303239;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-accent="orchid"] {
+    --md-graph-1: #4F2346; --md-graph-2: #7B3A70; --md-graph-3: #BE68AE; --md-graph-4: #F3BCE6;
+  }
+  :root:not([data-theme="light"])[data-accent="graphite"] {
+    --md-graph-1: #3F4047; --md-graph-2: #5D5F68; --md-graph-3: #9799A3; --md-graph-4: #E2E3E8;
+  }
+}
+[data-theme="dark"][data-accent="orchid"] {
+  --md-graph-1: #4F2346; --md-graph-2: #7B3A70; --md-graph-3: #BE68AE; --md-graph-4: #F3BCE6;
+}
+[data-theme="dark"][data-accent="graphite"] {
+  --md-graph-1: #3F4047; --md-graph-2: #5D5F68; --md-graph-3: #9799A3; --md-graph-4: #E2E3E8;
 }

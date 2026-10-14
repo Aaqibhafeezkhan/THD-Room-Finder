@@ -15,5 +15,15 @@ overline label.
   `"until 11:30"` for occupied.
 - Rank a list longest-free first so the answer sits at the top. Lifts to
   elevation 2 on hover.
-- Legacy `availText` / `badgeTone` / `badgeText` are still accepted and mapped
-  onto `status` / `duration`.
+- Focus layer (D3): `status="claimed"` tints the overline and duration dark
+  purple but keeps the real free duration (a claim is not a booking). `focus`
+  adds one badge under the meta: `{ kind: 'own' | 'batch' | 'claimed', label }`.
+  A claimed room that is also closing soon keeps `status="soon"` with a
+  claimed badge, so the duration stays amber.
+
+```jsx
+<RoomCard name="A 008" meta="Building A · 45 seats" status="free" duration="4h 30m"
+  focus={{ kind: 'batch', label: 'AIN 7 · 2 studying' }} />
+<RoomCard name="ITC 2.01" meta="ITC 2 · 30 seats" status="claimed" duration="4h"
+  focus={{ kind: 'claimed', label: 'Focus session · 40 min' }} />
+```

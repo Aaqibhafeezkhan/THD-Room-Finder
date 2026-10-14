@@ -21,6 +21,10 @@ flowchart LR
    cards into `guidelines/`.
 4. **Port to the app**: tokens into `src/styles/tokens/`, components into
    `src/components/` as TypeScript, mirroring the design-system props 1:1.
+   Once a component lives in the app, the TypeScript is the source:
+   `node design/mirror-components.mjs` regenerates its `.jsx` and `.d.ts` in
+   `design/system/` (D1–D4 went this way: port first, then mirror, as two
+   stacked PRs).
 5. **Open a PR** with before/after screenshots in light/dark and EN/DE.
 6. **Sync** the Claude Design project from `design/system/` after merge
    (`design/system/README-SYNC.md`).
