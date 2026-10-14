@@ -1,0 +1,15 @@
+/* D4 proposal · share card + accent ramp (not yet in tokens/colors.css).
+   1. Non-violet focus accents: the graph ramp follows the accent with the
+      guideline formula (accent mixed into surface at 25 / 50 / 75 / 100 %).
+      Violet keeps the tuned D2 hex ramp (d2-graph-tokens.css).
+   2. Snackbar aliases (M3 inverse surface) — the system has none yet. */
+[data-accent="blue"] {
+  --md-graph-1: color-mix(in srgb, var(--md-primary) 25%, var(--md-surface));
+  --md-graph-2: color-mix(in srgb, var(--md-primary) 50%, var(--md-surface));
+  --md-graph-3: color-mix(in srgb, var(--md-primary) 75%, var(--md-surface));
+  --md-graph-4: var(--md-primary);
+}
+:root, [data-theme] {
+  --md-inverse-surface: var(--md-on-surface);
+  --md-inverse-on-surface: var(--md-surface);
+}

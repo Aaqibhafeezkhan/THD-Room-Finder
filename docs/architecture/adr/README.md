@@ -7,7 +7,8 @@ ADR **amends** or **supersedes** them, and the old one gets a pointer.
 | ADR | Title | Status |
 |---|---|---|
 | [0001](0001-study-presence.md) | Individual room study presence: identity, audience, data contract | Proposed contract; amended by 0002 |
-| [0002](0002-focus-session-lifecycle.md) | Focus session lifecycle, sharing modes and local history | Accepted; values provisional until [#39](https://github.com/arudaev/THD-Room-Finder/issues/39) |
+| [0002](0002-focus-session-lifecycle.md) | Focus session lifecycle, sharing modes and local history | Accepted; values provisional until [#39](https://github.com/arudaev/THD-Room-Finder/issues/39); §3 amended by 0003 |
+| [0003](0003-focus-graph-share-links.md) | Focus graph share links with a stateless preview | Proposed |
 
 Operating limits and the hosted activation checklist live in
 [pilot verification](../pilot-verification.md).

@@ -73,9 +73,10 @@ the status card so the Start focus action stays above the fold.
   claim tints the overline and duration dark purple and moves the row into the
   claimed bucket ([ordering](#ordering)).
 - Map buildings keep the teal availability tint. A building with a public
-  session of your batch gets a **violet marker** (ring or badge; the design
-  session decides) with the count. Claims show as a small dark-purple dot
-  count. **No focus signal ever recolours lecture occupancy.**
+  session of your batch gets a **violet ring** on its roof; claims show as a
+  small dark-purple dot with a count. Text labels ("AIN 7 · 2") appear only
+  on the **tapped building**, so the overview stays quiet on small screens.
+  **No focus signal ever recolours lecture occupancy.**
 - Every map signal has a list equivalent for screen readers and colour-blind
   users.
 
@@ -83,13 +84,32 @@ the status card so the Start focus action stays above the fold.
 
 Navigation becomes **Campus · Rooms · Profile**.
 
-| Section | Contents |
+The Profile holds only what a student checks or updates **almost daily**:
+their focus graph and saved rooms. Everything set once a semester or less
+lives in **Settings**, behind one gear icon. Later phases add to Profile only
+if they pass the same test.
+
+| Profile | Contents |
 |---|---|
-| Study profile | Programme (e.g. AIN), intake term → shown as "AIN 7", display name, default sharing mode |
-| Focus graph | 20 weeks of study days, streak, total hours, **Share** |
+| Header | Avatar initial, display name, batch chip ("AIN 7"), gear → Settings. Signed out: "Set Up Study Profile" |
+| Focus graph | GitHub-style contribution calendar: square cells, rows Mon–Sun, one column per week, current week rightmost, five levels from near-white to the darkest violet; streak and total; **Share** |
 | Saved rooms | Today's Saved list with live status (unchanged behaviour, new home) |
-| Appearance | Theme, language, personal focus accent (vetted swatches; meanings of free/soon/claimed/lecture stay fixed) |
-| Account | Sign in with email code, export focus history, delete profile |
+
+| Settings | Contents |
+|---|---|
+| Study profile | Programme (e.g. AIN), intake term → shown as "AIN 7", display name |
+| Sharing | Default mode (Private); the one place that explains what others see |
+| Appearance | Theme, language, personal focus accent (vetted swatches, each with its own five-step graph ramp; the focus graph follows it; free/soon/claimed/lecture colours never change), quiet preference |
+| Account | Sign in with email code, export/import focus history, sign out, delete profile |
+
+### Sharing the focus graph
+
+| Action | What happens |
+|---|---|
+| **Share link** (main) | The app builds a link that carries a snapshot of the current semester's graph. Chat apps show the card as the link preview; the friend opens a page with the card and a way into the app. Nothing is stored on a server ([ADR 0003](../architecture/adr/0003-focus-graph-share-links.md), proposed) |
+| **Save image** | The same card as a PNG (1080×1080, ≤ 150 KB), for stories and apps without link previews |
+| Card contents | Hours this semester, streak, the semester grid (first week of the semester on the left, future days blank), app name and URL. Name and batch only if switched on |
+| Theme and accent | The sender's app theme (light/dark) and focus accent at the moment of sharing |
 
 ## Batches
 
@@ -112,7 +132,7 @@ the required duration are applied first. Then:
 |---|---|---|
 | 1 | Free, no focus activity, **or** your batch is studying there publicly | Longest free first; main campus tiebreak |
 | 2 | Closing soon (free ≤ 40 min) | Longest free first |
-| 3 | Claimed by a focus session (private, or another batch's public session) | Longest free first |
+| 3 | Claimed by a focus session (private, or another batch's public session); a claimed room closing soon stays here with an amber duration | Longest free first |
 | 4 | Lecture now | Soonest free first |
 
 A **quiet preference** (Profile → Appearance) treats your own batch's sessions
@@ -145,6 +165,22 @@ carrier of meaning: every signal also has a label and an icon.
 - A lecture starting in the room ends the session.
 - Signed out or offline: a local timer that publishes nothing but still counts
   for the focus graph.
+
+### Joining and ending
+
+Phase 1 has **no shared group object**. Every session belongs to one person.
+
+| Action | What happens |
+|---|---|
+| **Join** on a batch row | Starts *your own* session in that room, **Public**. Your planned end comes from the same rules as Start (next lecture, 3 h cap), not from the person you joined |
+| **End** | Ends **only your** session. Nobody else's timer changes |
+| The person you joined ends | Your session keeps running. The batch row's count drops by one |
+| Last Public session in the room ends | The violet batch row disappears; remaining Private sessions still show as a claim |
+| Switch to Private after joining | Allowed; you leave the batch count and show as a claim |
+| Check-in expiry | The reminder comes about 10 minutes before the lease runs out. An expired session counts minutes up to the last check-in or app visit |
+
+Groups that outlive any one member, with a shared timer, are Phase 2
+([later phases](later-phases.md)).
 
 ## Privacy promises
 
