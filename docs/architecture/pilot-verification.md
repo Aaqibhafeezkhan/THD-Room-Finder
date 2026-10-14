@@ -59,4 +59,12 @@ A PR preview contains all ancestor stack code but receives its own approved prev
 
 ## Evidence log for this pass
 
+14 October 2026: an isolated staging project (Frankfurt, free plan) was
+created for previews, the focus migration and synthetic seed were applied,
+and the publishable URL and key were set for Vercel Preview only. Checked over
+HTTP with the publishable key: anonymous claims only, `start_focus` refused,
+`focus` schema not exposed. Budget, mail sender and production remain open.
+
+Earlier pass:
+
 Confirmed: planning PR web/Android CI and Vercel preview passed; linked hosting project resolves; authenticated Supabase project inventory is available; no THD-specific Supabase instance/link was found. No hosted database, branch, auth provider, mail sender, migration, firewall rule, billing setting or production credential was changed. Plan/branch entitlement and billing limits remain unverified; leave #17's corresponding acceptance item unchecked.
