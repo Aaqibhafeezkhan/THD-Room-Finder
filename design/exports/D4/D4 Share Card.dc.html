@@ -34,7 +34,7 @@ a:hover { color: var(--md-on-primary-container); }
     <div style="display:flex;flex-direction:column;gap:6px;max-width:640px">
       <div style="font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--md-on-surface-variant)">Phase 1 · Design session D4</div>
       <h1 style="margin:0;font-size:32px;font-weight:400;line-height:1.2">Focus graph share card</h1>
-      <p style="margin:0;font-size:14px;line-height:1.5;color:var(--md-on-surface-variant);text-wrap:pretty">One image a student sends to friends: the graph, two numbers, the wordmark. Drawn on the device with canvas; every card on this page is the real PNG.</p>
+      <p style="margin:0;font-size:14px;line-height:1.5;color:var(--md-on-surface-variant);text-wrap:pretty">A link a student sends to friends. The chat shows the card as the link's preview; the friend taps it and lands on one simple page. Every card on this page is the real PNG, drawn with canvas.</p>
     </div>
     <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px">
       <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -88,52 +88,48 @@ a:hover { color: var(--md-on-primary-container); }
         </div>
       </sc-if>
 
-      <sc-if value="{{ sec.hasChats }}" hint-placeholder-val="{{ false }}">
+      <sc-if value="{{ sec.hasMocks }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
-          <sc-for list="{{ sec.chats }}" as="k" hint-placeholder-count="4">
-            <div id="{{ k.id }}" style="display:flex;flex-direction:column;gap:10px;width:348px">
+          <sc-for list="{{ sec.mocks }}" as="k" hint-placeholder-count="4">
+            <div id="{{ k.id }}" style="display:flex;flex-direction:column;gap:10px;width:420px">
               <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                 <span style="font:500 12px var(--font-mono);padding:2px 8px;border-radius:var(--radius-xs);background:var(--md-on-surface);color:var(--md-surface)">{{ k.id }}</span>
                 <span style="font-size:13px;font-weight:500">{{ k.caption }}</span>
                 <span style="font-size:12px;color:var(--md-on-surface-variant)">{{ k.tag }}</span>
               </div>
-              <div data-theme="{{ k.theme }}" lang="{{ k.lang }}" style="padding:16px;background:var(--md-bg);border-radius:var(--radius-l);box-shadow:var(--md-shadow-1);display:flex;flex-direction:column;align-items:flex-end;gap:6px">
-                <div style="align-self:flex-start;max-width:260px;padding:8px 12px;border-radius:16px 16px 16px 4px;background:var(--md-surface);color:var(--md-on-surface);font-size:14px;line-height:1.4">{{ k.msg }}</div>
-                <div style="padding:4px;border-radius:16px 16px 4px 16px;background:var(--md-primary-container)">
-                  <div style="width:300px;height:{{ k.h }}px;border-radius:12px;overflow:hidden;background:var(--md-surface-variant)">
-                    <sc-if value="{{ k.ready }}" hint-placeholder-val="{{ false }}">
-                      <div role="img" aria-label="{{ k.alt }}" style="width:100%;height:100%;background:center / 100% 100% no-repeat url({{ k.url }})"></div>
-                    </sc-if>
+              <div data-theme="{{ k.theme }}" lang="{{ k.lang }}" style="padding:16px;background:var(--md-bg);color:var(--md-on-surface);border-radius:var(--radius-l);box-shadow:var(--md-shadow-1);display:flex;flex-direction:column;gap:6px;font-family:var(--font-sans)">
+                <sc-if value="{{ k.isMsg }}" hint-placeholder-val="{{ true }}">
+                  <div style="align-self:flex-end;width:308px;padding:4px;border-radius:16px 16px 4px 16px;background:var(--md-primary-container);color:var(--md-on-primary-container);display:flex;flex-direction:column;gap:4px">
+                    <div style="border-radius:12px;overflow:hidden;background:var(--md-surface);display:flex;flex-direction:column">
+                      <div style="width:300px;height:{{ k.h }}px;background:var(--md-surface-variant)"><sc-if value="{{ k.ready }}" hint-placeholder-val="{{ false }}"><div role="img" aria-label="{{ k.alt }}" style="width:100%;height:100%;background:center / 100% 100% no-repeat url({{ k.url }})"></div></sc-if></div>
+                      <div style="padding:8px 10px 10px;display:flex;flex-direction:column;gap:2px">
+                        <span style="font-size:14px;font-weight:500;line-height:1.35;color:var(--md-on-surface)">{{ k.ogTitle }}</span>
+                        <span style="font-size:13px;line-height:1.35;color:var(--md-on-surface-variant)">{{ k.ogDesc }}</span>
+                        <span style="font-size:12px;color:var(--md-on-surface-variant)">{{ k.domain }}</span>
+                      </div>
+                    </div>
+                    <span style="padding:2px 8px 4px;font-size:14px;line-height:1.4;text-decoration:underline;word-break:break-all">{{ k.link }}</span>
                   </div>
-                </div>
-                <span style="font:400 12px var(--font-mono);color:var(--md-on-surface-variant)">10:02</span>
+                  <span style="align-self:flex-end;font:400 12px var(--font-mono);color:var(--md-on-surface-variant)">10:02</span>
+                </sc-if>
+                <sc-if value="{{ k.isEmbed }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;gap:12px;align-items:flex-start">
+                    <span aria-hidden="true" style="width:40px;height:40px;border-radius:var(--radius-full);background:var(--md-surface-variant);flex-shrink:0"></span>
+                    <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+                      <div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:15px;font-weight:500">{{ k.sender }}</span><span style="font:400 12px var(--font-mono);color:var(--md-on-surface-variant)">10:02</span></div>
+                      <span style="font-size:14px;line-height:1.4;color:var(--md-primary);text-decoration:underline;word-break:break-all">{{ k.link }}</span>
+                      <div style="width:324px;max-width:100%;padding:12px;border-radius:var(--radius-s);background:var(--md-surface);outline:1px solid var(--md-outline-variant);display:flex;flex-direction:column;gap:6px">
+                        <span style="font-size:12px;color:var(--md-on-surface-variant)">{{ k.domain }}</span>
+                        <span style="font-size:15px;font-weight:500;line-height:1.35;color:var(--md-primary)">{{ k.ogTitle }}</span>
+                        <span style="font-size:13px;line-height:1.4">{{ k.ogDesc }}</span>
+                        <div style="width:300px;height:{{ k.h }}px;border-radius:var(--radius-xs);overflow:hidden;background:var(--md-surface-variant)"><sc-if value="{{ k.ready }}" hint-placeholder-val="{{ false }}"><div role="img" aria-label="{{ k.alt }}" style="width:100%;height:100%;background:center / 100% 100% no-repeat url({{ k.url }})"></div></sc-if></div>
+                      </div>
+                    </div>
+                  </div>
+                </sc-if>
               </div>
             </div>
           </sc-for>
-        </div>
-      </sc-if>
-
-      <sc-if value="{{ sec.hasDecision }}" hint-placeholder-val="{{ false }}">
-        <div style="max-width:960px;background:var(--md-surface);border-radius:var(--radius-l);box-shadow:var(--md-shadow-1);padding:24px;display:flex;flex-direction:column;gap:20px">
-          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-            <span style="display:inline-flex;align-items:center;height:28px;padding:0 12px;border-radius:var(--radius-s);background:var(--md-primary-container);color:var(--md-on-primary-container);font-size:13px;font-weight:500">Chosen</span>
-            <span style="font-size:22px;font-weight:400">B · 1080 × 1080, last 20 weeks</span>
-          </div>
-          <div style="display:flex;flex-direction:column;font-size:13px">
-            <div style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr);gap:12px;padding:8px 0;font-size:12px;font-weight:500;color:var(--md-on-surface-variant)"><span>At 300 px in a chat</span><span>A · 1200 × 630</span><span>B · 1080 × 1080</span></div>
-            <sc-for list="{{ sec.metrics }}" as="m" hint-placeholder-count="6">
-              <div style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr);gap:12px;padding:8px 0;border-top:1px solid var(--md-outline-variant)">
-                <span>{{ m.k }}</span>
-                <span style="font-family:var(--font-mono);color:var(--md-on-surface-variant)">{{ m.a }}</span>
-                <span style="font-family:var(--font-mono);font-weight:500">{{ m.b }}</span>
-              </div>
-            </sc-for>
-          </div>
-          <ol style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px;font-size:14px;line-height:1.5">
-            <sc-for list="{{ sec.reasons }}" as="r" hint-placeholder-count="4">
-              <li style="text-wrap:pretty">{{ r }}</li>
-            </sc-for>
-          </ol>
         </div>
       </sc-if>
 
@@ -155,6 +151,8 @@ a:hover { color: var(--md-on-primary-container); }
                     </div>
                   </sc-if>
 
+                  <sc-if value="{{ f.isApp }}" hint-placeholder-val="{{ true }}">
+                  <div style="flex:1;min-height:0;display:flex;flex-direction:column">
                   <div style="flex:1;min-height:0;display:flex">
                     <sc-if value="{{ f.isDesktop }}" hint-placeholder-val="{{ false }}">
                       <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.AdaptiveNav" variant="drawer" items="{{ f.nav }}" active="profile" hint-size="280px,100%"></x-import>
@@ -219,6 +217,33 @@ a:hover { color: var(--md-on-primary-container); }
                   <sc-if value="{{ f.isPhone }}" hint-placeholder-val="{{ true }}">
                     <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.AdaptiveNav" variant="bar" items="{{ f.nav }}" active="profile" hint-size="100%,80px"></x-import>
                   </sc-if>
+                  </div>
+                  </sc-if>
+
+                  <sc-if value="{{ f.isLanding }}" hint-placeholder-val="{{ false }}">
+                    <div style="flex:1;min-height:0;overflow-y:auto;display:flex;background:var(--md-bg)">
+                      <main style="margin:auto;width:100%;max-width:{{ f.lp.maxW }};padding:{{ f.lp.pad }};display:flex;flex-direction:{{ f.lp.dir }};align-items:{{ f.lp.align }};gap:{{ f.lp.gap }}">
+                        <div style="width:{{ f.lp.cardW }};max-width:100%;flex-shrink:0;aspect-ratio:1 / 1;border-radius:var(--radius-l);overflow:hidden;box-shadow:var(--md-shadow-1);background:var(--md-surface-variant)">
+                          <sc-if value="{{ f.lp.card.ready }}" hint-placeholder-val="{{ false }}"><div role="img" aria-label="{{ f.lp.card.alt }}" style="width:100%;height:100%;background:center / 100% 100% no-repeat url({{ f.lp.card.url }})"></div></sc-if>
+                        </div>
+                        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:20px">
+                          <sc-if value="{{ f.lp.hasWho }}" hint-placeholder-val="{{ false }}">
+                            <span style="font-size:14px;font-weight:500;color:var(--md-on-surface-variant)">{{ f.lp.who }}</span>
+                          </sc-if>
+                          <div style="display:flex;flex-wrap:wrap;gap:12px 40px">
+                            <sc-for list="{{ f.lp.figs }}" as="x" hint-placeholder-count="2">
+                              <div style="display:flex;flex-direction:column;gap:2px">
+                                <span style="display:flex;align-items:baseline;gap:6px;font-size:{{ f.lp.numPx }};font-weight:300;line-height:1.1;font-variant-numeric:tabular-nums"><span>{{ x.num }}</span><span style="font-size:22px;font-weight:400">{{ x.unit }}</span></span>
+                                <span style="font-size:14px;color:var(--md-on-surface-variant)">{{ x.label }}</span>
+                              </div>
+                            </sc-for>
+                          </div>
+                          <h1 style="margin:0;font-size:22px;font-weight:400;line-height:1.3;text-wrap:pretty">{{ f.s.landLine }}</h1>
+                          <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Button" variant="filled" dc-props="{{ f.lp.btnProps }}" hint-size="100%,48px">{{ f.s.open }}</x-import>
+                        </div>
+                      </main>
+                    </div>
+                  </sc-if>
 
                   <sc-if value="{{ f.hasSheet }}" hint-placeholder-val="{{ false }}">
                     <div style="position:absolute;inset:0;z-index:5;background:rgba(0,0,0,.32);display:flex;align-items:{{ f.sheetAlign }};justify-content:center">
@@ -252,11 +277,9 @@ a:hover { color: var(--md-on-primary-container); }
                           </sc-for>
                           <span style="padding-top:4px;font-size:13px;line-height:1.45;color:var(--md-on-surface-variant);text-wrap:pretty">{{ f.s.privacy }}</span>
                         </div>
-                        <div style="display:flex;flex-direction:column;gap:8px;padding-top:4px">
+                        <div style="display:flex;flex-direction:column;gap:4px;padding-top:4px">
                           <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Button" variant="filled" disabled="{{ f.mainDisabled }}" onClick="{{ f.onMain }}" dc-props="{{ f.mainProps }}" hint-size="100%,48px">{{ f.mainLabel }}</x-import>
-                          <sc-if value="{{ f.fb }}" hint-placeholder-val="{{ false }}">
-                            <span style="font-size:13px;line-height:1.4;color:var(--md-on-surface-variant);text-align:center;text-wrap:pretty">{{ f.s.noShare }}</span>
-                          </sc-if>
+                          <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Button" variant="text" disabled="{{ f.mainDisabled }}" onClick="{{ f.onSave }}" dc-props="{{ f.mainProps }}" hint-size="100%,48px">{{ f.s.saveImg }}</x-import>
                         </div>
                       </div>
                     </div>
@@ -268,6 +291,7 @@ a:hover { color: var(--md-on-primary-container); }
                         <div style="display:flex;flex-direction:column;gap:4px">
                           <span style="font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase">{{ f.s.osT }}</span>
                           <span style="font-size:13px;line-height:1.45;text-wrap:pretty">{{ f.s.osB }}</span>
+                          <span style="font:400 13px var(--font-mono);color:var(--md-on-surface);word-break:break-all">{{ f.linkDisp }}</span>
                         </div>
                         <div style="display:flex;gap:16px">
                           <sc-for list="{{ f.osDots }}" as="d" hint-placeholder-count="4">
@@ -326,6 +350,16 @@ a:hover { color: var(--md-on-primary-container); }
                 </div>
               </sc-for>
             </div>
+            <div style="display:flex;flex-direction:column;font-size:13px;border-radius:var(--radius-m);overflow:hidden">
+              <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(0,1.3fr);gap:12px;padding:8px 12px;background:var(--md-bg);font-size:12px;font-weight:500;color:var(--md-on-surface-variant)"><span>Accent · --md-graph-0…4</span><span>Light</span><span>Dark</span></div>
+              <sc-for list="{{ accents }}" as="a" hint-placeholder-count="3">
+                <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(0,1.3fr);gap:12px;padding:8px 12px;border-top:1px solid var(--md-outline-variant);align-items:center">
+                  <span style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:500">{{ a.name }}</span><span style="font-size:11px;color:var(--md-on-surface-variant)">{{ a.note }}</span></span>
+                  <span data-theme="light" data-accent="{{ a.acc }}" style="display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:var(--radius-xs);background:var(--md-surface);color:var(--md-on-surface)"><span style="display:flex;gap:3px"><i style="width:20px;height:20px;border-radius:3px;background:var(--md-graph-0)"></i><i style="width:20px;height:20px;border-radius:3px;background:var(--md-graph-1)"></i><i style="width:20px;height:20px;border-radius:3px;background:var(--md-graph-2)"></i><i style="width:20px;height:20px;border-radius:3px;background:var(--md-graph-3)"></i><i style="width:20px;height:20px;border-radius:3px;background:var(--md-graph-4)"></i></span><span style="font-family:var(--font-mono);font-size:10px;word-break:break-word">{{ a.l }}</span></span>
+                  <span data-theme="dark" data-accent="{{ a.acc }}" style="display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:var(--radius-xs);background:var(--md-surface);color:var(--md-on-surface)"><span style="display:flex;gap:3px"><i style="width:20px;height:20px;border-radius:3px;background:var(--md-graph-0)"></i><i style="width:20px;height:20px;border-radius:3px;background:var(--md-graph-1)"></i><i style="width:20px;height:20px;border-radius:3px;background:var(--md-graph-2)"></i><i style="width:20px;height:20px;border-radius:3px;background:var(--md-graph-3)"></i><i style="width:20px;height:20px;border-radius:3px;background:var(--md-graph-4)"></i></span><span style="font-family:var(--font-mono);font-size:10px;word-break:break-word">{{ a.d }}</span></span>
+                </div>
+              </sc-for>
+            </div>
           </sc-if>
           <sc-if value="{{ c.hasLinks }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;color:var(--md-on-surface-variant);background:var(--md-bg);border-radius:var(--radius-m);padding:12px 16px">
@@ -355,68 +389,83 @@ a:hover { color: var(--md-on-primary-container); }
   </sc-if>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;format&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;B · 1080 square&quot;,&quot;A · 1200 × 630&quot;],&quot;default&quot;:&quot;B · 1080 square&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Share card&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Violet&quot;,&quot;Blue&quot;],&quot;default&quot;:&quot;Violet&quot;,&quot;tsType&quot;:&quot;'Violet' | 'Blue'&quot;,&quot;section&quot;:&quot;Share card&quot;},&quot;webShare&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Share flow&quot;},&quot;displayName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Lena&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;batch&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;AIN 7&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Violet&quot;,&quot;Orchid&quot;,&quot;Graphite&quot;],&quot;default&quot;:&quot;Violet&quot;,&quot;tsType&quot;:&quot;'Violet' | 'Orchid' | 'Graphite'&quot;,&quot;section&quot;:&quot;Share card&quot;},&quot;webShare&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Share flow&quot;},&quot;displayName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Lena&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;batch&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;AIN 7&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;}}">
 const P = (s, m) => s.replace(/\{(\w+)\}/g, (_, k) => (m[k] != null ? m[k] : ''));
 const pad = n => String(n).padStart(2, '0');
 
-// ── Sample data: identical to D2 Profile v2 so stats match ───────────────
+// ── Sample data: identical to D2 Profile v2 (today Tue 13 Oct 2026) ──────
 const DAY = { en: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], de: ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'] };
 const MON = { en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], de: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'] };
-const WEEKS = 53, TODAY = 365, SEM0 = 353;
+const WEEKS = 53, TODAY = 365, SEM0 = 353, W0 = 50, SEMW = 26; // semester grid: week of 1 Oct (Mon 28 Sep) + 26 weeks
 const dayDate = i => new Date(2025, 9, 13 + i);
 const ts = (y, m, d) => new Date(y, m, d).getTime();
 const intensity = d => { const t = d.getTime();
   if (t >= ts(2025, 11, 22) && t <= ts(2026, 0, 6)) return 0.12;
   if (t < ts(2026, 0, 24)) return 0.55; if (t < ts(2026, 1, 14)) return 0.9; if (t < ts(2026, 2, 16)) return 0.15;
   if (t < ts(2026, 6, 4)) return 0.55; if (t < ts(2026, 6, 25)) return 0.9; if (t < ts(2026, 9, 1)) return 0.1; return 0.6; };
-const DATA = (() => { let seed = 11; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280; const a = [];
-  for (let i = 0; i <= TODAY; i++) { const d = dayDate(i), we = d.getDay() === 0 || d.getDay() === 6;
-    const k = intensity(d) * (we ? 0.45 : 1), r1 = rnd(), r2 = rnd();
-    a.push(r1 < k ? Math.round((15 + r2 * (50 + 260 * k)) / 5) * 5 : 0); }
-  a[SEM0] = 0; for (let i = SEM0 + 1; i < TODAY; i++) if (a[i] < 25) a[i] = 25 + (i % 4) * 30; a[TODAY] = 85; return a; })();
+const gen = (seed, from, to, a, kOf) => { const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+  for (let i = from; i <= to; i++) { const d = dayDate(i), we = d.getDay() === 0 || d.getDay() === 6, k = kOf(d) * (we ? 0.45 : 1), r1 = rnd(), r2 = rnd();
+    a[i] = r1 < k ? Math.round((15 + r2 * (50 + 260 * k)) / 5) * 5 : 0; } return a; };
+const DATA = (() => { const a = gen(11, 0, TODAY, [], intensity); a[SEM0] = 0; for (let i = SEM0 + 1; i < TODAY; i++) if (a[i] < 25) a[i] = 25 + (i % 4) * 30; a[TODAY] = 85; return a; })();
+const LATE_T = (W0 + 19) * 7 + 3; // Thu of week 20 (11 Feb 2027): a filled-in sample
+const LATE = (() => { const a = gen(7, TODAY + 1, LATE_T, DATA.slice(), d => (d.getTime() >= ts(2026, 11, 21) && d.getTime() <= ts(2027, 0, 6) ? 0.12 : 0.65));
+  for (let i = LATE_T - 8; i <= LATE_T; i++) if (a[i] < 25) a[i] = 40; return a; })();
 const FEW = Array(TODAY + 1).fill(0); FEW[TODAY - 2] = 30; FEW[TODAY - 1] = 95; FEW[TODAY] = 45;
 const NONE = Array(TODAY + 1).fill(0);
-const SERIES = { full: DATA, few: FEW, none: NONE };
-const statsOf = a => { let n = 0; for (let i = TODAY; i >= 0 && a[i] > 0; i--) n++; return { semMin: a.slice(SEM0).reduce((x, y) => x + y, 0), streak: n }; };
-const STATS = { full: statsOf(DATA), few: statsOf(FEW), none: statsOf(NONE) };
+const SERIES = { full: DATA, few: FEW, none: NONE, late: LATE };
+const TODAYS = { full: TODAY, few: TODAY, none: TODAY, late: LATE_T };
+const statsOf = (a, t) => { let n = 0; for (let i = t; i >= 0 && a[i] > 0; i--) n++; return { semMin: a.slice(SEM0, t + 1).reduce((x, y) => x + y, 0), streak: n }; };
+const STATS = {}; Object.keys(SERIES).forEach(k => { STATS[k] = statsOf(SERIES[k], TODAYS[k]); });
+const weekOf = k => Math.floor((TODAYS[k] - W0 * 7) / 7) + 1;
 const level = m => (m === 0 ? 0 : m < 30 ? 1 : m < 90 ? 2 : m < 180 ? 3 : 4);
 
+const LINK_DISP = 'thd-room-finder.vercel.app/f/k7Qm2xP9…', LINK_FULL = 'https://thd-room-finder.vercel.app/f/k7Qm2xP9';
 const S = {
   en: {
     nav: ['Campus', 'Rooms', 'Profile'], settings: 'Settings', share: 'Share focus graph', close: 'Close',
     stats: '{h} this semester · {n}-day streak', hUnit: 'h', minUnit: 'min', emptyStats: 'No focus yet. Start a session in any free room.',
     graphAria: 'Focus graph, last 53 weeks. {stats}', less: 'Less', more: 'More', batchAria: 'Batch {b}',
     saved: 'Saved rooms', bldg: 'Building', seats: 'seats', until: 'until 11:30',
-    optName: 'Show my name', optBatch: 'Show my batch', privacy: 'The image never shows rooms, times or your programme.',
-    shareBtn: 'Share', sharing: 'Opening Share…', download: 'Download Image', noShare: 'Sharing isn’t available in this browser.',
-    shared: 'Focus graph shared', savedSnack: 'Image saved · focus-graph.png', file: 'focus-graph.png',
-    osT: 'System share sheet', osB: 'Shown by the device, not the app: WhatsApp, Instagram, Discord, LinkedIn…',
+    optName: 'Show my name', optBatch: 'Show my batch', privacy: 'Anyone with the link sees this card. It never shows rooms, times or your programme.',
+    shareBtn: 'Share Link', sharing: 'Opening Share…', copy: 'Copy Link', saveImg: 'Save Image',
+    shared: 'Link shared', copied: 'Link copied', savedSnack: 'Image saved · focus-graph.png', file: 'focus-graph.png',
+    osT: 'System share sheet', osB: 'Shown by the device, not the app. It shares the link:',
     cardSem: 'this semester', streakLab: n => 'day streak',
-    alt: 'Focus graph image{who}: {h} this semester, {n}-day streak. Grid of the last {w} weeks with focus on {d} days. THD Room Finder, thd-room-finder.vercel.app.',
+    alt: 'Focus graph image{who}: {h} this semester, {n}-day streak. Grid of the {w} weeks of this semester, now in week {k}, with focus on {d} days. THD Room Finder, thd-room-finder.vercel.app.',
     altWho: ' of {x}', hWords: '{n} hours', mWords: '{n} minutes',
-    msg: 'two weeks in, not bad',
+    ogTitle: 'Focus graph · THD Room Finder', ogDesc: '{h} this semester · {n}-day streak',
+    landLine: 'Focus sessions in free rooms at THD', open: 'Open THD Room Finder',
   },
   de: {
     nav: ['Campus', 'Räume', 'Profil'], settings: 'Einstellungen', share: 'Fokus-Verlauf teilen', close: 'Schließen',
     stats: '{h} in diesem Semester · {n} Tage in Folge', hUnit: 'Std.', minUnit: 'Min.', emptyStats: 'Noch kein Fokus. Starte eine Session in einem freien Raum.',
     graphAria: 'Fokus-Verlauf, letzte 53 Wochen. {stats}', less: 'Weniger', more: 'Mehr', batchAria: 'Jahrgang {b}',
     saved: 'Gespeicherte Räume', bldg: 'Gebäude', seats: 'Plätze', until: 'bis 11:30',
-    optName: 'Meinen Namen zeigen', optBatch: 'Meinen Jahrgang zeigen', privacy: 'Räume, Uhrzeiten und dein Studiengang stehen nie im Bild.',
-    shareBtn: 'Teilen', sharing: 'Teilen wird geöffnet …', download: 'Bild herunterladen', noShare: 'Teilen ist in diesem Browser nicht verfügbar.',
-    shared: 'Fokus-Verlauf geteilt', savedSnack: 'Bild gespeichert · fokus-verlauf.png', file: 'fokus-verlauf.png',
-    osT: 'Teilen-Menü des Geräts', osB: 'Vom Gerät angezeigt, nicht von der App: WhatsApp, Instagram, Discord, LinkedIn …',
+    optName: 'Meinen Namen zeigen', optBatch: 'Meinen Jahrgang zeigen', privacy: 'Alle mit dem Link sehen diese Karte. Sie zeigt nie Räume, Uhrzeiten oder deinen Studiengang.',
+    shareBtn: 'Link teilen', sharing: 'Teilen wird geöffnet …', copy: 'Link kopieren', saveImg: 'Bild speichern',
+    shared: 'Link geteilt', copied: 'Link kopiert', savedSnack: 'Bild gespeichert · fokus-verlauf.png', file: 'fokus-verlauf.png',
+    osT: 'Teilen-Menü des Geräts', osB: 'Vom Gerät angezeigt, nicht von der App. Geteilt wird der Link:',
     cardSem: 'in diesem Semester', streakLab: n => (n === 1 ? 'Tag in Folge' : 'Tage in Folge'),
-    alt: 'Bild des Fokus-Verlaufs{who}: {h} in diesem Semester, {n} Tage in Folge. Raster der letzten {w} Wochen mit Fokus an {d} Tagen. THD Room Finder, thd-room-finder.vercel.app.',
+    alt: 'Bild des Fokus-Verlaufs{who}: {h} in diesem Semester, {n} Tage in Folge. Raster der {w} Wochen dieses Semesters, jetzt Woche {k}, mit Fokus an {d} Tagen. THD Room Finder, thd-room-finder.vercel.app.',
     altWho: ' von {x}', hWords: '{n} Stunden', mWords: '{n} Minuten',
-    msg: 'zwei Wochen drin, läuft',
+    ogTitle: 'Fokus-Verlauf · THD Room Finder', ogDesc: '{h} in diesem Semester · {n} Tage in Folge',
+    landLine: 'Fokus-Sessions in freien Räumen der THD', open: 'THD Room Finder öffnen',
   },
 };
 const hoursShort = (m, s) => (m < 60 ? `${m} ${s.minUnit}` : `${Math.round(m / 60)} ${s.hUnit}`);
+const figsOf = (kind, s) => { const st = STATS[kind], hm = st.semMin < 60 ? [String(st.semMin), s.minUnit] : [String(Math.round(st.semMin / 60)), s.hUnit];
+  return [{ num: hm[0], unit: hm[1], label: s.cardSem }, { num: String(st.streak), unit: '', label: s.streakLab(st.streak) }]; };
 
-// ── Share card: drawn with Canvas 2D, exported as PNG ────────────────────
+// ── Share card: Canvas 2D → PNG. B is the card; A is the wide link-preview variant ──
 const FMT = {
-  B: { w: 1080, h: 1080, weeks: 20, pad: 88, num: 156, unit: 56, lab: 42, month: 38, foot: 38, gap: 6, label: 'B · 1080 × 1080' },
-  A: { w: 1200, h: 630, weeks: 53, pad: 64, num: 100, unit: 38, lab: 32, month: 26, foot: 30, gap: 3, label: 'A · 1200 × 630' },
+  B: { w: 1080, h: 1080, pad: 64, num: 156, unit: 56, lab: 42, month: 38, foot: 38, gap: 6, label: 'B · 1080 × 1080' },
+  A: { w: 1200, h: 630, pad: 56, num: 104, unit: 40, lab: 32, month: 28, foot: 30, gap: 5, label: 'A · 1200 × 630' },
+};
+const geom = (F, hasWho) => {
+  const inner = F.w - 2 * F.pad, y0 = F.pad + (hasWho ? F.lab * 1.9 : 0), base = y0 + F.num * 0.72, figEnd = base + F.lab * 1.75;
+  const footY = F.h - F.pad, gBot = footY - F.foot * 1.2 - F.pad * 0.6, monH = F.month * 1.4, top = figEnd + F.pad * 0.5;
+  const pitch = Math.min((inner + F.gap) / SEMW, (gBot - top - monH + F.gap) / 7), cell = pitch - F.gap, gH = 7 * pitch - F.gap;
+  return { inner, y0, base, footY, pitch, cell, gTop: top + monH + Math.max(0, (gBot - top - monH - gH) / 2) };
 };
 const URL_TXT = 'thd-room-finder.vercel.app';
 let LOGO = null, LOGO_P = null;
@@ -442,56 +491,52 @@ const CARDS = {}, QUEUE = {};
 const rr = (x, X, Y, W, H, r) => { x.beginPath(); if (x.roundRect) x.roundRect(X, Y, W, H, r); else x.rect(X, Y, W, H); };
 async function renderCard(o) {
   await fontsReady(); await logoReady();
-  const F = FMT[o.fmt], C = palette(o.theme, o.accent), s = S[o.lang], series = SERIES[o.kind], st = STATS[o.kind];
+  const F = FMT[o.fmt], C = palette(o.theme, o.accent), s = S[o.lang], series = SERIES[o.kind], T = TODAYS[o.kind];
+  const who = [o.name, o.batch].filter(Boolean).join(' · '), G = geom(F, !!who);
   const cv = document.createElement('canvas'); cv.width = F.w; cv.height = F.h;
-  const x = cv.getContext('2d'), font = (w, px) => `${w} ${px}px ${C.sans}`, inner = F.w - 2 * F.pad;
+  const x = cv.getContext('2d'), font = (w, px) => `${w} ${px}px ${C.sans}`;
   x.fillStyle = C.surface; x.fillRect(0, 0, F.w, F.h); x.textBaseline = 'alphabetic';
-  let y = F.pad;
-  const who = [o.name, o.batch].filter(Boolean).join(' · ');
   if (who) {
     let px = F.lab; x.font = font(500, px);
-    while (x.measureText(who).width > inner && px > F.lab * 0.75) { px -= 1; x.font = font(500, px); }
-    let t = who; while (x.measureText(t + '…').width > inner && t.length > 1) t = t.slice(0, -1);
-    x.fillStyle = C.on; x.fillText(t === who ? who : t + '…', F.pad, y + F.lab * 0.8); y += F.lab * 1.9;
+    while (x.measureText(who).width > G.inner && px > F.lab * 0.75) { px -= 1; x.font = font(500, px); }
+    let t = who; while (x.measureText(t + '…').width > G.inner && t.length > 1) t = t.slice(0, -1);
+    x.fillStyle = C.on; x.fillText(t === who ? who : t + '…', F.pad, F.pad + F.lab * 0.8);
   }
-  const hm = st.semMin < 60 ? [String(st.semMin), s.minUnit] : [String(Math.round(st.semMin / 60)), s.hUnit];
-  const figs = [{ num: hm[0], unit: hm[1], label: s.cardSem }, { num: String(st.streak), unit: '', label: s.streakLab(st.streak) }];
-  const base = y + F.num * 0.72; let fx = F.pad;
-  figs.forEach(f => {
-    x.fillStyle = C.on; x.font = font(300, F.num); x.fillText(f.num, fx, base); let w = x.measureText(f.num).width;
-    if (f.unit) { x.font = font(400, F.unit); x.fillText(f.unit, fx + w + F.unit * 0.25, base); w += F.unit * 0.25 + x.measureText(f.unit).width; }
-    x.font = font(400, F.lab); x.fillStyle = C.onVar; x.fillText(f.label, fx, base + F.lab * 1.45); w = Math.max(w, x.measureText(f.label).width);
+  let fx = F.pad;
+  figsOf(o.kind, s).forEach(f => {
+    x.fillStyle = C.on; x.font = font(300, F.num); x.fillText(f.num, fx, G.base); let w = x.measureText(f.num).width;
+    if (f.unit) { x.font = font(400, F.unit); x.fillText(f.unit, fx + w + F.unit * 0.25, G.base); w += F.unit * 0.25 + x.measureText(f.unit).width; }
+    x.font = font(400, F.lab); x.fillStyle = C.onVar; x.fillText(f.label, fx, G.base + F.lab * 1.45); w = Math.max(w, x.measureText(f.label).width);
     fx += w + F.pad;
   });
-  const pitch = (inner + F.gap) / F.weeks, cell = pitch - F.gap, gH = 7 * pitch - F.gap;
-  const footY = F.h - F.pad, gTop = footY - F.foot * 1.2 - F.pad * 0.8 - gH, w0 = WEEKS - F.weeks;
-  x.font = font(400, F.month); x.fillStyle = C.onVar; let last = -9;
-  for (let w = w0; w < WEEKS; w++) {
-    const mon = dayDate(w * 7), prev = dayDate((w - 1) * 7);
-    const show = w === w0 ? dayDate((w + 2) * 7).getMonth() === mon.getMonth() && dayDate((w + 1) * 7).getMonth() === mon.getMonth() : mon.getMonth() !== prev.getMonth();
-    if (show && w - last >= 3) { x.fillText(MON[o.lang][mon.getMonth()], F.pad + (w - w0) * pitch, gTop - F.month * 0.55); last = w; }
+  x.font = font(400, F.month); x.fillStyle = C.onVar;
+  for (let w = 0; w < SEMW; w++) {
+    const m = dayDate((W0 + w) * 7 + 3).getMonth();
+    if (w === 0 || m !== dayDate((W0 + w - 1) * 7 + 3).getMonth()) x.fillText(MON[o.lang][m], F.pad + w * G.pitch, G.gTop - F.month * 0.5);
   }
-  const r = Math.max(2, cell * 0.16);
-  for (let w = w0; w < WEEKS; w++) for (let d = 0; d < 7; d++) {
-    const i = w * 7 + d; if (i > TODAY) continue;
-    const X = F.pad + (w - w0) * pitch, Y = gTop + d * pitch;
-    x.fillStyle = C.ramp[level(series[i])]; rr(x, X, Y, cell, cell, r); x.fill();
-    if (i === TODAY) { const lw = Math.max(2, cell * 0.07), off = lw * 0.5 + 1; x.strokeStyle = C.on; x.lineWidth = lw; rr(x, X - off, Y - off, cell + off * 2, cell + off * 2, r + off); x.stroke(); }
+  const r = Math.max(2, G.cell * 0.16), lw = Math.max(2, G.cell * 0.08);
+  for (let w = 0; w < SEMW; w++) for (let d = 0; d < 7; d++) {
+    const i = (W0 + w) * 7 + d, X = F.pad + w * G.pitch, Y = G.gTop + d * G.pitch;
+    if (i > T) { x.strokeStyle = C.ramp[0]; x.lineWidth = lw; rr(x, X + lw / 2, Y + lw / 2, G.cell - lw, G.cell - lw, r); x.stroke(); continue; }
+    x.fillStyle = C.ramp[level(series[i] || 0)]; rr(x, X, Y, G.cell, G.cell, r); x.fill();
+    if (i === T) { const tw = Math.max(2, G.cell * 0.07), off = tw * 0.5 + 1; x.strokeStyle = C.on; x.lineWidth = tw; rr(x, X - off, Y - off, G.cell + off * 2, G.cell + off * 2, r + off); x.stroke(); }
   }
-  const L = F.foot * 1.4, mid = footY - F.foot * 0.36;
+  const L = F.foot * 1.4, mid = G.footY - F.foot * 0.36;
   if (LOGO) x.drawImage(LOGO, F.pad, mid - L / 2, L, L);
-  x.fillStyle = C.on; x.font = font(500, F.foot); x.fillText('THD Room Finder', F.pad + (LOGO ? L + F.foot * 0.4 : 0), footY);
-  x.fillStyle = C.onVar; x.font = font(400, F.foot * 0.92); x.textAlign = 'right'; x.fillText(URL_TXT, F.w - F.pad, footY); x.textAlign = 'left';
+  x.fillStyle = C.on; x.font = font(500, F.foot); x.fillText('THD Room Finder', F.pad + (LOGO ? L + F.foot * 0.4 : 0), G.footY);
+  x.fillStyle = C.onVar; x.font = font(400, F.foot * 0.92); x.textAlign = 'right'; x.fillText(URL_TXT, F.w - F.pad, G.footY); x.textAlign = 'left';
   const blob = await new Promise(res => cv.toBlob(res, 'image/png'));
   return { url: URL.createObjectURL(blob), kb: Math.round(blob.size / 102.4) / 10 };
 }
 const altOf = o => {
-  const s = S[o.lang], st = STATS[o.kind], F = FMT[o.fmt], a = SERIES[o.kind];
-  let d = 0; for (let i = (WEEKS - F.weeks) * 7; i <= TODAY; i++) if (a[i] > 0) d++;
+  const s = S[o.lang], st = STATS[o.kind], a = SERIES[o.kind];
+  let d = 0; for (let i = W0 * 7; i <= TODAYS[o.kind]; i++) if (a[i] > 0) d++;
   const who = [o.name, o.batch].filter(Boolean).join(', ');
   const h = st.semMin < 60 ? P(s.mWords, { n: st.semMin }) : P(s.hWords, { n: Math.round(st.semMin / 60) });
-  return P(s.alt, { who: who ? P(s.altWho, { x: who }) : '', h, n: st.streak, w: F.weeks, d });
+  return P(s.alt, { who: who ? P(s.altWho, { x: who }) : '', h, n: st.streak, w: SEMW, k: weekOf(o.kind), d });
 };
+const ogOf = o => { const s = S[o.lang], st = STATS[o.kind], who = [o.name, o.batch].filter(Boolean).join(' · ');
+  return { title: who ? `${who} · ${s.ogTitle}` : s.ogTitle, desc: P(s.ogDesc, { h: hoursShort(st.semMin, s), n: st.streak }) }; };
 
 // ── Profile graph (D2 FocusGraph, unchanged look) ───────────────────────
 const GE = {};
@@ -527,36 +572,43 @@ const I = {
 
 const META = [
   ['entry', 'Profile · Share entry'], ['sheet', 'Share sheet · preview'], ['optin', 'Share sheet · name + batch on'],
-  ['sharing', 'Sharing · system sheet open'], ['shared', 'Shared · confirmation'],
-  ['fallback', 'No Web Share · Download'], ['saved', 'Downloaded · confirmation'],
+  ['sharing', 'Share Link · system sheet open'], ['shared', 'Shared · confirmation'], ['saved', 'Save Image · confirmation'],
+  ['fallback', 'No share sheet · Copy Link'], ['copied', 'Link copied · confirmation'],
   ['fewProfile', 'New student · Profile'], ['few', 'New student · share sheet'], ['none', 'No history · Share hidden'],
+  ['landing', 'Friend · landing page'], ['landingName', 'Friend · landing, name + batch'], ['landingFew', 'Friend · landing, new student'],
 ];
 const NUM = {}, LABEL = {}; META.forEach(([k, l], i) => { NUM[k] = pad(i + 1); LABEL[k] = l; });
 const scen = st => {
-  const c = { st, data: 'full', sheet: null, snack: null, optName: false, optBatch: false, fallback: undefined, ring: false };
+  const c = { st, page: 'app', data: 'full', sheet: null, snack: null, optName: false, optBatch: false, fallback: undefined, ring: false };
   if (st === 'entry') c.ring = true;
   if (st === 'sheet') c.sheet = 'open';
   if (st === 'optin') Object.assign(c, { sheet: 'open', optName: true, optBatch: true });
   if (st === 'sharing') Object.assign(c, { sheet: 'sharing', fallback: false });
   if (st === 'shared') Object.assign(c, { snack: 'shared', fallback: false });
+  if (st === 'saved') c.snack = 'saved';
   if (st === 'fallback') Object.assign(c, { sheet: 'open', fallback: true });
-  if (st === 'saved') Object.assign(c, { snack: 'saved', fallback: true });
+  if (st === 'copied') Object.assign(c, { snack: 'copied', fallback: true });
   if (st === 'fewProfile') Object.assign(c, { data: 'few', ring: true });
   if (st === 'few') Object.assign(c, { data: 'few', sheet: 'open' });
   if (st === 'none') c.data = 'none';
+  if (st === 'landing') c.page = 'landing';
+  if (st === 'landingName') Object.assign(c, { page: 'landing', optName: true, optBatch: true });
+  if (st === 'landingFew') Object.assign(c, { page: 'landing', data: 'few' });
   return c;
 };
 const GROUPS = {
-  formats: ['Format A vs B', []],
+  card: ['Card + link previews', []],
   flow1: ['Entry + sheet', ['entry', 'sheet', 'optin', 'fewProfile', 'few', 'none']],
-  flow2: ['Share + fallback', ['sharing', 'shared', 'fallback', 'saved']],
+  flow2: ['Share + fallback', ['sharing', 'shared', 'saved', 'fallback', 'copied']],
+  landing: ['Landing page', ['landing', 'landingName', 'landingFew']],
 };
 const GROUP_OF = {}; Object.keys(GROUPS).forEach(g => GROUPS[g][1].forEach(st => { GROUP_OF[st] = g; }));
 const DEV = { phone: [380, 780], tablet: [768, 1024], desktop: [1280, 800] };
 const BORDER = i => (i ? '1px solid var(--md-outline-variant)' : 'none');
+const ACC = { Orchid: 'orchid', Graphite: 'graphite' };
 
 class Component extends DCLogic {
-  state = { view: 'proto', theme: 'light', lang: 'en', group: 'formats', ps: scen('entry'), tick: 0 };
+  state = { view: 'proto', theme: 'light', lang: 'en', group: 'card', ps: scen('entry'), tick: 0 };
 
   componentDidMount() { document.documentElement.setAttribute('data-theme', 'light'); this.flush(); }
   componentDidUpdate() { this.flush(); }
@@ -582,29 +634,27 @@ class Component extends DCLogic {
     return { ready: !!(c && c.url), url: c ? c.url : '', kb: c ? c.kb : null, w: dispW, h: Math.round(dispW * F.h / F.w), ratio: `${F.w} / ${F.h}`, alt: altOf(o), key };
   }
 
-  opts() { const p = this.props; return {
-    fmt: String(p.format ?? 'B').startsWith('A') ? 'A' : 'B', accent: p.accent === 'Blue' ? 'blue' : 'violet',
-    webShare: p.webShare ?? true, name: p.displayName ?? 'Lena', batch: p.batch ?? 'AIN 7' }; }
+  opts() { const p = this.props; return { accent: ACC[p.accent] || 'violet', webShare: p.webShare ?? true, name: p.displayName ?? 'Lena', batch: p.batch ?? 'AIN 7' }; }
 
   jump = st => { clearTimeout(this.t1); clearTimeout(this.t2); this.setState({ ps: scen(st) }); };
   snackLater() { clearTimeout(this.t2); this.t2 = setTimeout(() => this.setState(s => ({ ps: Object.assign({}, s.ps, { snack: null }) })), 4000); }
   download() {
     const p = this.state.ps, o = this.opts(), lang = this.state.lang;
-    const c = CARDS[cardKey({ fmt: o.fmt, theme: this.state.theme, lang, accent: o.accent, kind: p.data, name: p.optName ? o.name : '', batch: p.optBatch ? o.batch : '' })];
+    const c = CARDS[cardKey({ fmt: 'B', theme: this.state.theme, lang, accent: o.accent, kind: p.data, name: p.optName ? o.name : '', batch: p.optBatch ? o.batch : '' })];
     if (!c || !c.url) return;
     try { const a = document.createElement('a'); a.href = c.url; a.download = S[lang].file; document.body.appendChild(a); a.click(); a.remove(); } catch (e) {}
   }
   act = name => {
-    const p0 = this.state.ps;
+    const p0 = this.state.ps, done = snack => { this.setState({ ps: Object.assign({}, p0, { st: null, sheet: null, snack }) }); this.snackLater(); };
     if (name === 'main') {
-      const fb = p0.fallback ?? !this.opts().webShare;
-      if (fb) { this.download(); this.setState({ ps: Object.assign({}, p0, { st: null, sheet: null, snack: 'saved' }) }); this.snackLater(); }
+      if (p0.fallback ?? !this.opts().webShare) { try { navigator.clipboard.writeText(LINK_FULL).catch(() => {}); } catch (e) {} done('copied'); }
       else {
         this.setState({ ps: Object.assign({}, p0, { st: null, sheet: 'sharing' }) });
         clearTimeout(this.t1); this.t1 = setTimeout(() => { this.setState(s => ({ ps: Object.assign({}, s.ps, { sheet: null, snack: 'shared' }) })); this.snackLater(); }, 1600);
       }
       return;
     }
+    if (name === 'save') { this.download(); done('saved'); return; }
     this.setState(s0 => { const p = Object.assign({}, s0.ps, { st: null, ring: false });
       if (name === 'share') Object.assign(p, { sheet: 'open', snack: null });
       if (name === 'close') { clearTimeout(this.t1); p.sheet = null; }
@@ -615,11 +665,12 @@ class Component extends DCLogic {
 
   frame(c, { theme, lang, device, scale = 1, interactive = false, id }) {
     const [w, hh] = DEV[device], o = this.opts(), s = S[lang];
-    const isPhone = device === 'phone', isTablet = device === 'tablet', isDesktop = device === 'desktop';
+    const isPhone = device === 'phone', isTablet = device === 'tablet', isDesktop = device === 'desktop', isLanding = c.page === 'landing';
     const a = interactive ? this.act : () => {};
     const st = STATS[c.data], fb = c.fallback ?? !o.webShare;
+    const nm = c.optName ? o.name : '', bt = c.optBatch ? o.batch : '';
     const statsText = c.data === 'none' ? s.emptyStats : P(s.stats, { h: hoursShort(st.semMin, s), n: st.streak });
-    const card = c.sheet ? this.card({ fmt: o.fmt, theme, lang, accent: o.accent, kind: c.data, name: c.optName ? o.name : '', batch: c.optBatch ? o.batch : '' }, isPhone ? 340 : 392) : {};
+    const card = c.sheet ? this.card({ fmt: 'B', theme, lang, accent: o.accent, kind: c.data, name: nm, batch: bt }, isPhone ? 340 : 392) : {};
     const sw = [];
     if (o.name) sw.push({ label: s.optName, value: o.name, on: c.optName, go: () => a('name') });
     if (o.batch) sw.push({ label: s.optBatch, value: o.batch, on: c.optBatch, go: () => a('batch') });
@@ -628,9 +679,18 @@ class Component extends DCLogic {
       ['E 212', `${s.bldg} E · 60 ${s.seats}`, 'free', '6h'], ['ITC1.07', `ITC 1 · 32 ${s.seats}`, 'free', '4h 30m'],
       ['C 104', `${s.bldg} C · 40 ${s.seats}`, 'soon', '35m'], ['A 011', `${s.bldg} A · 48 ${s.seats}`, 'occupied', s.until],
     ].map(([name, meta, status, duration]) => ({ name, meta, status, duration }));
+    const who = [nm, bt].filter(Boolean).join(' · ');
+    const lp = isLanding ? {
+      card: this.card({ fmt: 'B', theme, lang, accent: o.accent, kind: c.data, name: nm, batch: bt }, isDesktop ? 440 : 348),
+      who, hasWho: !!who, figs: figsOf(c.data, s),
+      maxW: isPhone ? 'none' : isTablet ? '488px' : '1000px', pad: isPhone ? '24px 16px 32px' : '48px 24px',
+      dir: isDesktop ? 'row' : 'column', align: isDesktop ? 'center' : 'stretch', gap: isPhone ? '24px' : isDesktop ? '56px' : '32px',
+      cardW: isDesktop ? '440px' : '100%', numPx: isPhone ? '45px' : '57px',
+      btnProps: { style: isDesktop ? { alignSelf: 'flex-start' } : { width: '100%' } },
+    } : {};
     return {
       id, caption: LABEL[c.st] || 'Live', tag: `${device[0].toUpperCase() + device.slice(1)} · ${theme} · ${lang.toUpperCase()}`, theme, lang, accent: o.accent,
-      isPhone, isTablet, isDesktop, w, h: hh, scale, boxW: Math.round(w * scale), boxH: Math.round(hh * scale),
+      isPhone, isTablet, isDesktop, isApp: !isLanding, isLanding, lp, w, h: hh, scale, boxW: Math.round(w * scale), boxH: Math.round(hh * scale),
       radius: isPhone ? 'var(--radius-xl)' : 'var(--radius-l)',
       nav: [{ id: 'campus', label: s.nav[0], icon: I.map }, { id: 'rooms', label: s.nav[1], icon: I.rooms }, { id: 'profile', label: s.nav[2], icon: I.profile }],
       name: o.name || '—', initial: (o.name || '?')[0].toUpperCase(), batch: o.batch, batchAria: P(s.batchAria, { b: o.batch }),
@@ -639,83 +699,78 @@ class Component extends DCLogic {
       cardPad: isPhone ? '8px 16px 16px' : '12px 24px 20px',
       shareRing: c.ring ? '2px solid var(--md-primary)' : 'none',
       g: { stats: statsText, canShare: c.data !== 'none', aria: P(s.graphAria, { stats: statsText }), grid: graphEls(lang, c.data, device), ovf: isPhone ? 'auto' : 'hidden' },
-      savedCols: isDesktop ? 'repeat(auto-fill,minmax(280px,1fr))' : 'minmax(0,1fr)', rooms, s,
+      savedCols: isDesktop ? 'repeat(auto-fill,minmax(280px,1fr))' : 'minmax(0,1fr)', rooms, s, linkDisp: LINK_DISP,
       hasSheet: !!c.sheet, card, switches: sw, fb,
-      mainLabel: c.sheet === 'sharing' ? s.sharing : fb ? s.download : s.shareBtn, mainDisabled: c.sheet === 'sharing', mainProps: { style: { width: '100%' } },
+      mainLabel: c.sheet === 'sharing' ? s.sharing : fb ? s.copy : s.shareBtn, mainDisabled: c.sheet === 'sharing', mainProps: { style: { width: '100%' } },
       osOpen: c.sheet === 'sharing', osW: isPhone ? '100%' : '360px', osDots: [0, 1, 2, 3],
       sheetAlign: isPhone ? 'flex-end' : 'center', sheetW: isPhone ? '100%' : '440px', sheetRadius: isPhone ? '28px 28px 0 0' : '28px', sheetPad: isPhone ? '12px 20px 20px' : '20px 24px 24px',
-      hasSnack: !!c.snack, snack: c.snack === 'saved' ? s.savedSnack : s.shared, snackBottom: isPhone ? '96px' : '24px',
-      onShare: () => a('share'), onClose: () => a('close'), onMain: () => a('main'),
+      hasSnack: !!c.snack, snack: { saved: s.savedSnack, copied: s.copied, shared: s.shared }[c.snack] || '', snackBottom: isPhone ? '96px' : '24px',
+      onShare: () => a('share'), onClose: () => a('close'), onMain: () => a('main'), onSave: () => a('save'),
     };
   }
 
-  formats(lang, o) {
-    const s = S[lang];
-    const base = { lang, accent: o.accent, name: '', batch: '' };
+  cardsView(lang, o) {
+    const base = { lang, name: '', batch: '' };
     const kbTxt = k => (k.kb != null ? `PNG ${k.kb} KB` : 'PNG …');
-    const spec = (fmt, th, id) => { const F = FMT[fmt], k = this.card(Object.assign({}, base, { fmt, theme: th, kind: 'full' }), F.w);
-      return Object.assign(k, { id, caption: `${F.label}${fmt === 'B' ? ' · chosen' : ''}`, tag: `${F.weeks} weeks · ${th} · ${kbTxt(k)}` }); };
-    const chat = (fmt, th, id, kind = 'full') => { const F = FMT[fmt], k = this.card(Object.assign({}, base, { fmt, theme: th, kind }), 300);
-      return Object.assign(k, { id, theme: th, lang, msg: s.msg, caption: `${F.label}`, tag: `${th}${kind === 'few' ? ' · new student' : ''} · ${kbTxt(k)}` }); };
-    const m = f => { const F = FMT[f], k = 300 / F.w, cell = ((F.w - 2 * F.pad + F.gap) / F.weeks - F.gap) * k;
-      return { cell: `${cell.toFixed(1)} px`, num: `${Math.round(F.num * k)} px`, lab: `${(F.lab * k).toFixed(1)} px`, small: `${(Math.min(F.month, F.foot) * k).toFixed(1)} px`, h: `${Math.round(F.h * k)} px` }; };
-    const A = m('A'), B = m('B');
-    const kb = (f, th) => { const c = CARDS[cardKey(Object.assign({}, base, { fmt: f, theme: th, kind: 'full' }))]; return c && c.kb != null ? `${c.kb}` : '…'; };
+    const cellAt = (f, w) => { const F = FMT[f]; return (geom(F, false).cell * w / F.w).toFixed(1); };
+    const big = (fmt, th, id) => { const F = FMT[fmt], k = this.card(Object.assign({}, base, { fmt, theme: th, accent: o.accent, kind: 'full' }), F.w / 2);
+      return Object.assign(k, { id, caption: F.label + (fmt === 'B' ? ' · share card' : ' · wide link preview'), tag: `${th} · shown at 50% · ${kbTxt(k)}` }); };
+    const small = (acc, th, kind, id, cap) => { const k = this.card(Object.assign({}, base, { fmt: 'B', theme: th, accent: acc, kind }), 300);
+      return Object.assign(k, { id, caption: cap, tag: `${th} · 300 px · ${kbTxt(k)}` }); };
+    const og = ogOf(Object.assign({}, base, { kind: 'full' }));
+    const mock = (style, fmt, th, id) => { const k = this.card(Object.assign({}, base, { fmt, theme: th, accent: o.accent, kind: 'full' }), 300);
+      return Object.assign(k, { id, theme: th, lang, isMsg: style === 'msg', isEmbed: style === 'embed', ogTitle: og.title, ogDesc: og.desc, domain: 'thd-room-finder.vercel.app', link: LINK_DISP, sender: o.name || 'Lena',
+        caption: fmt === 'A' ? 'Wide preview · 1200 × 630' : 'Square preview · 1080 × 1080', tag: th }); };
+    const accName = { violet: 'Violet', orchid: 'Orchid', graphite: 'Graphite' };
     return [
-      { title: 'Full size · light', sub: 'Same sample data in both: 21 h this semester, 12-day streak, today outlined. A shows the full year, B the last 20 weeks. Real PNGs drawn on canvas; sizes are measured.', hasCards: true, cards: [spec('A', 'light', 'F1'), spec('B', 'light', 'F2')] },
-      { title: 'Full size · dark', sub: 'Dark uses the same tokens in their dark values: empty cells are a dark surface, more focus is brighter.', hasCards: true, cards: [spec('A', 'dark', 'F3'), spec('B', 'dark', 'F4')] },
-      { title: 'Chat preview · 300 px wide', sub: 'How the card lands in a chat bubble. Readability here decides the format. C5–C6: a new student with three days of focus.', hasChats: true,
-        chats: [chat('A', 'light', 'C1'), chat('B', 'light', 'C2'), chat('A', 'dark', 'C3'), chat('B', 'dark', 'C4'), chat('A', 'light', 'C5', 'few'), chat('B', 'light', 'C6', 'few')] },
-      { title: 'Decision', sub: 'Measured at 300 px wide, the size of a chat preview.', hasDecision: true,
-        metrics: [
-          { k: 'Weeks shown', a: '53', b: '20' }, { k: 'One day (cell)', a: A.cell, b: B.cell },
-          { k: 'Hours / streak numbers', a: A.num, b: B.num }, { k: 'Labels under the numbers', a: A.lab, b: B.lab },
-          { k: 'Smallest text (months, URL)', a: A.small, b: B.small }, { k: 'Height in the bubble', a: A.h, b: B.h },
-          { k: 'PNG light / dark (≤ 150 KB)', a: `${kb('A', 'light')} / ${kb('A', 'dark')} KB`, b: `${kb('B', 'light')} / ${kb('B', 'dark')} KB` },
-        ],
-        reasons: [
-          `At 300 px a B cell is ${B.cell}, the same size as a cell in the Profile graph, so single days still read. A's ${A.cell} cells blur into texture: you see a year but no day in it.`,
-          `B's smallest text is ${B.small} in the preview; A's is ${A.small}, smaller than anything the app shows.`,
-          `B fills a 300 × 300 bubble. A is 300 × ${A.h.replace(' px', '')}, half the area at the same width, and the brief notes square shows whole in all four target chats.`,
-          'Twenty weeks hold a whole semester. Most students share during the semester, when most of a year view is still empty (see C5 vs C6).',
-          'Cost: no full year on the card. The year stays on Profile.',
-        ] },
+      { title: 'Share card · B · 1080 × 1080', hasCards: true, cards: [big('B', 'light', 'F1'), big('B', 'dark', 'F2')],
+        sub: `The semester grid: 26 weeks from Mon 28 Sep, the week of 1 Oct, so it matches “this semester”. Days still to come are empty slots, so the card keeps one shape all semester. Cells are as large as the width allows: ${cellAt('B', 1080)} px at full size, ${cellAt('B', 300)} px in a 300 px chat preview.` },
+      { title: 'Through the semester', hasCards: true, sub: 'Week 3 (today in the sample), week 20, and a new student with three days. The shape never changes.',
+        cards: [small(o.accent, 'light', 'full', 'S1', 'Week 3 · sample'), small(o.accent, 'light', 'late', 'S2', 'Week 20'), small(o.accent, 'light', 'few', 'S3', 'New student · 3 days')] },
+      { title: 'Accents', hasCards: true, sub: 'Three hand-tuned five-step ramps, shown in week 20 so every step appears. Violet is D2’s ramp. No blue (the action colour), teal, amber, red or claimed purple.',
+        cards: ['violet', 'orchid', 'graphite'].flatMap((acc, i) => ['light', 'dark'].map((th, j) => small(acc, th, 'late', `A${i * 2 + j + 1}`, accName[acc] + (acc === 'violet' ? ' · default' : '')))) },
+      { title: 'Wide link preview · A · 1200 × 630', hasCards: true, cards: [big('A', 'light', 'L1'), big('A', 'dark', 'L2')],
+        sub: `The same drawing in the wide link-preview shape, for chat apps that show 1200 × 630 large. Same 26 weeks; cells ${cellAt('A', 1200)} px at full size, ${cellAt('A', 300)} px at 300 px.` },
+      { title: 'In a chat · messenger style (as in WhatsApp)', hasMocks: true, sub: 'Schematic, drawn with our tokens. The preview sits in the bubble above the link. Both shapes are drawn; engineering tests which one each app shows large.',
+        mocks: [mock('msg', 'A', 'light', 'W1'), mock('msg', 'B', 'light', 'W2'), mock('msg', 'A', 'dark', 'W3'), mock('msg', 'B', 'dark', 'W4')] },
+      { title: 'In a chat · embed style (as in Discord)', hasMocks: true, sub: 'Schematic. The link as text, then an embed with site, title, description and image.',
+        mocks: [mock('embed', 'A', 'light', 'D1'), mock('embed', 'B', 'light', 'D2'), mock('embed', 'A', 'dark', 'D3'), mock('embed', 'B', 'dark', 'D4')] },
     ];
   }
 
   renderVals() {
     const { view, theme, lang, ps } = this.state;
     const T = theme === 'dark' ? 'dark' : 'light', o = this.opts();
-    const fr = (st, device, scale, sfx, tt = T, ll = lang) => this.frame(scen(st), { theme: tt, lang: ll, device, scale, id: NUM[st] + sfx });
+    const fr = (st, device, scale, sfx) => this.frame(scen(st), { theme: T, lang, device, scale, id: NUM[st] + sfx });
     let sections = [];
     if (view === 'proto') {
-      sections = [{ title: 'Live prototype', hasFrames: true, sub: 'Phone and desktop share one state. Tap Share on the graph card, flip the switches, then Share. Turn off “webShare” in Tweaks for the Download Image fallback (it saves the real PNG).',
+      sections = [{ title: 'Live prototype', hasFrames: true, sub: 'Phone and desktop share one state. Tap Share on the graph card, flip the switches, then Share Link or Save Image. Turn off “webShare” in Tweaks for the Copy Link fallback. States 12–14 show what the friend sees.',
         frames: [this.frame(ps, { theme: T, lang, device: 'phone', interactive: true, id: 'P1' }), this.frame(ps, { theme: T, lang, device: 'desktop', interactive: true, id: 'P2' })] }];
     } else if (view === 'states') {
-      if (this.state.group === 'formats') sections = this.formats(lang, o);
+      if (this.state.group === 'card') sections = this.cardsView(lang, o);
       else {
-        const all = GROUPS[this.state.group][1];
+        const all = GROUPS[this.state.group][1], isL = this.state.group === 'landing';
         sections = [
-          { title: 'Phone · compact (380 × 780)', hasFrames: true, sub: 'Bottom sheet over Profile. The preview is the PNG that will be sent, at sheet width.', frames: all.map(st => fr(st, 'phone', 1, 'a')) },
-          { title: 'Tablet · medium (768 × 1024, shown at 60%)', hasFrames: true, sub: 'Rail; the sheet becomes a 440 px dialog.', frames: all.slice(0, 3).map(st => fr(st, 'tablet', 0.6, 'c')) },
-          { title: 'Desktop · expanded (1280 × 800, shown at 50%)', hasFrames: true, sub: 'Drawer; same 440 px dialog, centred.', frames: all.map(st => fr(st, 'desktop', 0.5, 'b')) },
+          { title: 'Phone · compact (380 × 780)', hasFrames: true, sub: isL ? 'The friend’s browser after tapping the link. No app bar, no sign-in.' : 'Bottom sheet over Profile. The preview is the card the link will show.', frames: all.map(st => fr(st, 'phone', 1, 'a')) },
+          { title: 'Tablet · medium (768 × 1024, shown at 60%)', hasFrames: true, sub: isL ? 'One column, card at 440 px.' : 'Rail; the sheet becomes a 440 px dialog.', frames: (isL ? all : all.slice(0, 3)).map(st => fr(st, 'tablet', 0.6, 'c')) },
+          { title: 'Desktop · expanded (1280 × 800, shown at 50%)', hasFrames: true, sub: isL ? 'Card left, figures and the one action right.' : 'Drawer; same 440 px dialog, centred.', frames: all.map(st => fr(st, 'desktop', 0.5, 'b')) },
         ];
       }
     } else if (view === 'matrix') {
       const st = ps.st || 'optin';
       const combos = [['light', 'en'], ['light', 'de'], ['dark', 'en'], ['dark', 'de']];
       const mk = (device, scale, sfx) => combos.map(([t, l], i) => this.frame(scen(st), { theme: t, lang: l, device, scale, id: `M${i + 1}${sfx}` }));
-      const cards = combos.map(([t, l], i) => { const k = this.card({ fmt: o.fmt, theme: t, lang: l, accent: o.accent, kind: 'full', name: o.name, batch: o.batch }, FMT[o.fmt].w / 2);
-        return Object.assign(k, { id: `M${i + 1}k`, caption: `${FMT[o.fmt].label} · name + batch on`, tag: `${t} · ${l.toUpperCase()} · shown at 50% · ${k.kb != null ? k.kb + ' KB' : '…'}` }); });
+      const cards = combos.map(([t, l], i) => { const k = this.card({ fmt: 'B', theme: t, lang: l, accent: o.accent, kind: 'full', name: o.name, batch: o.batch }, 540);
+        return Object.assign(k, { id: `M${i + 1}k`, caption: 'B · name + batch on', tag: `${t} · ${l.toUpperCase()} · shown at 50% · ${k.kb != null ? k.kb + ' KB' : '…'}` }); });
       sections = [
-        { title: `${NUM[st]} · ${LABEL[st]} — phone`, hasFrames: true, sub: 'Light / dark × English / German. German switch labels and the fallback line wrap; the sheet still fits without scrolling.', frames: mk('phone', 1, 'a') },
+        { title: `${NUM[st]} · ${LABEL[st]} — phone`, hasFrames: true, sub: 'Light / dark × English / German. German labels and the privacy line wrap; nothing clips.', frames: mk('phone', 1, 'a') },
         { title: 'Desktop (shown at 50%)', hasFrames: true, sub: 'Same state, same four combinations.', frames: mk('desktop', 0.5, 'b') },
-        { title: 'Card text in four combinations', hasCards: true, sub: 'Longest case: name and batch on. German labels (“in diesem Semester”, “Tage in Folge”, “Std.”) fit in their columns; long display names shrink to 75 % and then end in “…”.', cards },
+        { title: 'Card text in four combinations', hasCards: true, sub: 'Longest case: name and batch on. German labels (“in diesem Semester”, “Tage in Folge”, “Std.”, “Okt”) fit; long display names shrink to 75 % and then end in “…”.', cards },
       ];
     }
     const goState = st => () => { this.setState({ view: 'states', group: GROUP_OF[st] }); setTimeout(() => { const el = document.getElementById(NUM[st] + 'a'); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 24, behavior: 'smooth' }); }, 80); };
     const links = sts => sts.map(st => ({ label: `${NUM[st]} ${LABEL[st]}`, go: goState(st) }));
-    const compCard = this.card({ fmt: o.fmt, theme: T, lang, accent: o.accent, kind: 'full', name: '', batch: '' }, 300);
+    const compCard = this.card({ fmt: 'B', theme: T, lang, accent: o.accent, kind: 'full', name: '', batch: '' }, 300);
     return {
       pageTheme: view === 'matrix' ? 'light' : T,
       lang, setLang: l => this.setState({ lang: l }),
@@ -724,35 +779,46 @@ class Component extends DCLogic {
       showStateChips: view !== 'comps',
       stateChipsTitle: view === 'proto' ? 'Jump to a state' : view === 'states' ? 'State group' : 'State to compare',
       stateChips: view === 'states'
-        ? Object.keys(GROUPS).map(g => ({ label: g === 'formats' ? GROUPS[g][0] : `${GROUPS[g][0]} · ${GROUPS[g][1].map(st => NUM[st]).join(' ')}`, active: this.state.group === g, go: () => this.setState({ group: g }) }))
+        ? Object.keys(GROUPS).map(g => ({ label: g === 'card' ? GROUPS[g][0] : `${GROUPS[g][0]} · ${GROUPS[g][1].map(st => NUM[st]).join(' ')}`, active: this.state.group === g, go: () => this.setState({ group: g }) }))
         : META.map(([st, l]) => ({ label: `${NUM[st]} ${l}`, active: ps.st === st, go: () => this.jump(st) })),
       sections, isComps: view === 'comps',
       tokens: [
         { n: '--md-surface', use: 'Card background', v: 'var(--md-surface)', l: '#FDFCFF', d: '#1C1B1F', acc: 'violet' },
         { n: '--md-on-surface', use: 'Numbers, wordmark, today outline', v: 'var(--md-on-surface)', l: '#1C1B1F', d: '#E6E1E5', acc: 'violet' },
         { n: '--md-on-surface-variant', use: 'Labels, months, URL', v: 'var(--md-on-surface-variant)', l: '#44464F', d: '#C4C6D0', acc: 'violet' },
-        ...[['#EFEEF5', '#2B2930', '0 min'], ['#D8CCF6', '#3D2D6E', '< 30'], ['#AE95E8', '#5B3FAD', '< 90'], ['#7E5BCC', '#9479E6', '< 180'], ['#4A2A91', '#D3C2FF', '180+']]
-          .map(([l, d, r], i) => ({ n: `--md-graph-${i}`, use: `Cells · ${r} (D2)`, v: `var(--md-graph-${i})`, l, d, acc: 'violet' })),
-        ...[1, 2, 3, 4].map(i => ({ n: `[data-accent=blue] --md-graph-${i}`, use: `Proposed · accent ${i * 25}% into surface`, v: `var(--md-graph-${i})`, l: `mix ${i * 25}%`, d: `mix ${i * 25}%`, acc: 'blue' })),
+        { n: '--md-graph-0', use: 'Empty cells; outline of days to come', v: 'var(--md-graph-0)', l: '#EFEEF5', d: '#2B2930', acc: 'violet' },
         { n: '--md-inverse-surface', use: 'Proposed · snackbar (= on-surface)', v: 'var(--md-inverse-surface)', l: '#1C1B1F', d: '#E6E1E5', acc: 'violet' },
+      ],
+      accents: [
+        { name: 'Violet', acc: 'violet', note: 'Default · D2 ramp', l: '#EFEEF5 #D8CCF6 #AE95E8 #7E5BCC #4A2A91', d: '#2B2930 #3D2D6E #5B3FAD #9479E6 #D3C2FF' },
+        { name: 'Orchid', acc: 'orchid', note: 'Proposed', l: '#EFEEF5 #F1CBE7 #DE92CB #B24FA0 #7E1F6E', d: '#2B2930 #4F2346 #7B3A70 #BE68AE #F3BCE6' },
+        { name: 'Graphite', acc: 'graphite', note: 'Proposed', l: '#EFEEF5 #D6D7DC #A3A5AE #6C6E78 #303239', d: '#2B2930 #3F4047 #5D5F68 #9799A3 #E2E3E8' },
       ],
       comps: [
         { name: 'ShareCard', kind: 'New · canvas render target', hasCard: true, card: compCard, isTokens: true,
-          purpose: 'The image. Format B, 1080 × 1080: optional name · batch line, two figures (hours this semester, streak), the last 20 weeks of the graph, wordmark and URL. Drawn with Canvas 2D from tokens read at draw time, exported as PNG.',
-          props: [{ n: 'days', t: '{date, minutes}[]', d: 'Same history as FocusGraph; last 20 weeks drawn' }, { n: 'stats', t: '{semMin, streak}', d: '< 60 min shows “40 min”, else whole hours' }, { n: 'theme', t: "'light' | 'dark'", d: 'Follows the app theme' }, { n: 'accent', t: 'string', d: 'Ramp from --md-graph-* under data-accent' }, { n: 'name? / batch?', t: 'string', d: 'Opt-in; omitted when off' }, { n: 'toBlob()', t: 'Promise<Blob>', d: 'PNG, measured ~85–95 KB (budget 150 KB)' }],
-          notes: ['Metrics at 1080: padding 88 · figures 156 px Roboto 300, unit 56 · labels 42 · months 38 · footer 38 · cells 39.5 px, gap 6, radius 16 %. Nothing under 10 px at 300 px preview.', 'Fonts are awaited (document.fonts.load) before drawing so the PNG never falls back to a system face.', 'Flat fills only: no gradients, shadows or photos, which keeps the PNG small.', 'Long display names shrink to 75 % then end in “…”; they never push the figures.'] },
-        { name: 'ShareSheet', kind: 'New', hasLinks: true, links: links(['sheet', 'optin', 'sharing', 'fallback', 'few']),
-          purpose: 'Bottom sheet on compact, 440 px dialog on medium/expanded. Title, live preview (the exact PNG), two opt-in switches, one privacy line, one main action.',
-          props: [{ n: 'card', t: 'ShareCardProps', d: 'Re-rendered on every switch change' }, { n: 'canShare', t: 'boolean', d: 'navigator.canShare({files}); false → Download Image' }, { n: 'onShare', t: '() => Promise', d: 'navigator.share({files:[png]}); AbortError returns to the sheet silently' }, { n: 'onDownload', t: '() => void', d: '<a download> with the same blob' }],
-          notes: ['Focus order: title → Close → preview image (alt text) → Show my name → Show my batch → Share / Download Image. Focus starts on the title; Escape and Close return focus to the Share icon on Profile.', 'Preview alt (EN): “Focus graph image: 21 hours this semester, 12-day streak. Grid of the last 20 weeks with focus on {d} days. THD Room Finder, thd-room-finder.vercel.app.” It names name/batch when they are on.', 'Switches are role="switch" with aria-checked; both off every time the sheet opens.', 'Reduced motion: sheet appears without sliding; preview swaps without a fade.'] },
-        { name: 'Snackbar', kind: 'New · M3', hasLinks: true, links: links(['shared', 'saved']),
-          purpose: 'Brief confirmation after the sheet closes: “Focus graph shared” or “Image saved · focus-graph.png”. 4 s, no action.',
-          props: [{ n: 'message', t: 'string', d: 'One line, wraps in German' }, { n: 'role', t: '"status"', d: 'Announced politely; focus does not move' }],
-          notes: ['Uses proposed --md-inverse-surface / --md-inverse-on-surface (aliases of on-surface / surface).', 'Sits above the bottom bar on phone; bottom-centre on larger windows.'] },
+          purpose: 'The image: optional name · batch line, two figures (hours this semester, streak), the semester grid (26 weeks from the week of 1 Oct), wordmark and URL. B 1080 × 1080 is the card; A 1200 × 630 is the same drawing for wide link previews. Canvas 2D from tokens read at draw time, PNG.',
+          props: [{ n: 'days', t: '{date, minutes}[]', d: 'Same history as FocusGraph; semester weeks drawn' }, { n: 'semesterStart', t: 'Date', d: 'Grid starts on the Monday of its week (winter: 1 Oct)' }, { n: 'stats', t: '{semMin, streak}', d: '< 60 min shows “40 min”, else whole hours' }, { n: 'format', t: "'square' | 'wide'", d: 'B 1080² card, A 1200 × 630 preview' }, { n: 'theme / accent', t: 'string', d: 'App theme; ramp from --md-graph-* under data-accent' }, { n: 'name? / batch?', t: 'string', d: 'Opt-in; omitted when off' }],
+          notes: ['B metrics: padding 64 · figures 156 px Roboto 300 · labels 42 · months 38 · footer 38 · cells 30.8 px, gap 6. Cell size = (width − 2 × padding) / 26.', 'Days still to come: empty slots outlined in --md-graph-0. Today: outlined in on-surface.', 'Fonts are awaited before drawing. Flat fills only.'] },
+        { name: 'ShareSheet', kind: 'Changed', hasLinks: true, links: links(['sheet', 'optin', 'sharing', 'fallback', 'few']),
+          purpose: 'Bottom sheet on compact, 440 px dialog on medium/expanded. Title, live preview (the card the link shows), two opt-in switches, one privacy line, Share Link, and a text action Save Image.',
+          props: [{ n: 'link', t: 'string', d: 'Built from the graph on the device; changes with the switches' }, { n: 'canShare', t: 'boolean', d: '!!navigator.share; false → Copy Link' }, { n: 'onShare', t: '() => Promise', d: 'navigator.share({ url }); AbortError returns to the sheet' }, { n: 'onCopy', t: '() => Promise', d: 'navigator.clipboard.writeText(link)' }, { n: 'onSave', t: '() => void', d: 'Saves the B PNG, as before' }],
+          notes: ['Focus order: title → Close → preview (alt) → Show my name → Show my batch → Share Link / Copy Link → Save Image. Escape and Close return focus to the Share icon on Profile.', 'Switches are role="switch" with aria-checked; both off each time the sheet opens.', 'Reduced motion: sheet appears without sliding; preview swaps without a fade.'] },
+        { name: 'LinkPreview', kind: 'New · metadata, not UI', hasLinks: true, links: links(['shared']),
+          purpose: 'What the link tells chat apps: og:image (A or B PNG, engineering tests which), og:title “Focus graph · THD Room Finder”, og:description “21 h this semester · 12-day streak”, og:image:alt = the card alt.',
+          props: [{ n: 'og:title', t: 'string', d: 'Prefixed with name · batch only if opted in' }, { n: 'og:image', t: 'PNG ≤ 150 KB', d: '1080² or 1200 × 630' }, { n: 'og:locale', t: "'en' | 'de'", d: 'The sharer’s language' }],
+          notes: ['Mock-ups are schematic, drawn with our tokens: see All states → Card + link previews.'] },
+        { name: 'LandingPage', kind: 'New · web', hasLinks: true, links: links(['landing', 'landingName', 'landingFew']),
+          purpose: 'What the friend sees after tapping: the card, the two figures, one line and one action. No sign-in, no app bar.',
+          props: [{ n: 'card', t: 'ShareCardProps', d: 'Decoded from the link' }, { n: 'lang', t: "'en' | 'de'", d: 'From the friend’s browser' }, { n: 'onOpen', t: '() => void', d: 'Opens the app (installed PWA / Android) or the web app' }],
+          notes: ['Order: card (alt) → figures → h1 “Focus sessions in free rooms at THD” → Open THD Room Finder. Page title: og:title.', 'Figures are real text, so they read without the image.'] },
+        { name: 'Snackbar', kind: 'M3', hasLinks: true, links: links(['shared', 'saved', 'copied']),
+          purpose: '“Link shared”, “Link copied” or “Image saved · focus-graph.png”. 4 s, no action.',
+          props: [{ n: 'message', t: 'string', d: 'One line, wraps in German' }, { n: 'role', t: '"status"', d: 'Polite; focus does not move' }],
+          notes: ['Above the bottom bar on phone; bottom-centre on larger windows.'] },
         { name: 'FocusGraph', kind: 'Reused from D2, unchanged', hasLinks: true, links: links(['entry', 'fewProfile', 'none']),
-          purpose: 'Profile hero. Its Share icon button opens ShareSheet. Hidden when there is no history at all.',
-          props: [{ n: 'onShare', t: '() => void', d: 'Opens ShareSheet; focus returns here on close' }],
-          notes: ['A few days of focus is enough to show Share (state 08).'] },
+          purpose: 'Profile hero. Its Share icon opens ShareSheet. Hidden with no history at all. The ramp follows the accent.',
+          props: [{ n: 'onShare', t: '() => void', d: 'Opens ShareSheet; focus returns here' }],
+          notes: ['A few days of focus is enough to show Share.'] },
       ],
     };
   }
