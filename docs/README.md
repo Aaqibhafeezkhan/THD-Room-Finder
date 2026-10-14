@@ -29,6 +29,7 @@ flowchart LR
     O[overview] --> API[thabella-api]
     O --> ADR[adr/0001 · 0002]
     ADR --> PV[pilot-verification]
+    ADR --> FSV[focus-service]
   end
   subgraph Development
     GS[getting-started] --> ENV[environments]
@@ -58,7 +59,8 @@ flowchart LR
 **Architecture**
 - [Overview](architecture/overview.md): layers, data flow, caching, routes
 - [THabella API](architecture/thabella-api.md)
-- [Decision records](architecture/adr/README.md): [0001 study presence](architecture/adr/0001-study-presence.md), [0002 focus lifecycle](architecture/adr/0002-focus-session-lifecycle.md)
+- [Focus service](architecture/focus-service.md): the Supabase contract for identities, sessions and room summaries
+- [Decision records](architecture/adr/README.md): [0001 study presence](architecture/adr/0001-study-presence.md), [0002 focus lifecycle](architecture/adr/0002-focus-session-lifecycle.md), [0003 share links](architecture/adr/0003-focus-graph-share-links.md)
 - [Pilot verification](architecture/pilot-verification.md): operating limits and hosted activation checklist
 
 **Development**

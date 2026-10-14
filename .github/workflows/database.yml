@@ -1,0 +1,36 @@
+name: Database
+
+on:
+  pull_request:
+    paths:
+      - 'supabase/**'
+      - '.github/workflows/database.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: database-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contract:
+    name: Database — migrations and contract tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.120.0
+      # Postgres only: applies supabase/migrations and supabase/seed.sql.
+      - run: supabase db start
+      - run: supabase test db
+      - name: Generated types are up to date
+        run: |
+          supabase gen types typescript --local --schema public > /tmp/types.ts
+          { head -2 src/data/supabase.types.ts; cat /tmp/types.ts; } > /tmp/expected.ts
+          diff -u src/data/supabase.types.ts /tmp/expected.ts

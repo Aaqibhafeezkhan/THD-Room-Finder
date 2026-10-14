@@ -32,9 +32,10 @@ flowchart LR
 | Credentials | Local defaults printed by the CLI | Preview-scoped env vars in Vercel | Production env vars in Vercel |
 | Migrations | `supabase db reset` freely | Applied by the maintainer | Applied by the maintainer after review |
 
-**Status today:** the local Supabase configuration is being scaffolded under
-[#17](https://github.com/arudaev/THD-Room-Finder/issues/17). No hosted
-Supabase project exists for THD Room Finder yet; hosted activation follows the
+**Status today:** the local stack runs the focus service: schema, functions,
+seed and contract tests ([#17](https://github.com/arudaev/THD-Room-Finder/issues/17),
+[contract](../architecture/focus-service.md)). No hosted Supabase project
+exists for THD Room Finder yet; hosted activation follows the
 [pilot checklist](../architecture/pilot-verification.md).
 
 ## Run Supabase locally
@@ -62,7 +63,38 @@ npx supabase stop       # stop the containers (data persists)
 ```
 
 Sign-in emails never leave your machine locally: open Inbucket to read the
-one-time code.
+6-digit code (valid for 10 minutes).
+
+### Seeded people
+
+`supabase/seed.sql` creates synthetic people, five placeholder programmes
+(until the #40 taxonomy exists), a few sample rooms and two live sessions
+(Max, Public with his name in A 008; Mia, Private in ITC 2.01). Sign in as any of them with the code from
+Inbucket.
+
+| Person | Email | Study profile | Sees a Public session of Lena's as |
+|---|---|---|---|
+| Lena | `lena@example.test` | AIN, winter 2023 | (her own) |
+| Max | `max@example.test` | AIN, winter 2023 | Same batch: "AIN 7 · studying" |
+| Jonas | `jonas@example.test` | AIN, winter 2024 | Anonymous claim |
+| Mia | `mia@example.test` | KI, winter 2023 | Anonymous claim |
+| Sam | `sam@example.test` | none (Private only) | Anonymous claim |
+| signed out | (publishable key) | none | Anonymous claim |
+
+### Contract tests
+
+```bash
+npx supabase test db    # pgTAP: access, audience, lease and lifecycle rules
+```
+
+After changing a migration, regenerate the app's types and commit them with
+the migration (the Database workflow checks this):
+
+```bash
+npx supabase gen types typescript --local --schema public
+```
+
+The output goes into `src/data/supabase.types.ts` below its two header lines.
 
 ## Rules
 
