@@ -18,8 +18,8 @@ create schema if not exists focus;
 revoke all on schema focus from public, anon, authenticated;
 
 -- ── Catalogue ───────────────────────────────────────────────────────────
--- Programmes come from the THD taxonomy (#40, shared/programmes.json); ids
--- match its `id` field. Only listed, active programmes can share Public.
+-- Programmes come from the THD programme taxonomy (#40, not built yet); ids
+-- are stable slugs. Only listed, active programmes can share Public.
 create table focus.programme (
   id text primary key check (id ~ '^[a-z0-9-]{3,80}$'),
   code text not null check (char_length(code) between 1 and 16),

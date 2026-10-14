@@ -10,7 +10,7 @@
 --   Sam     sam@example.test     no study profile     anonymous claim, Private only
 --   (signed out, anon key)                           anonymous claim
 
--- Programmes: a subset of the THD taxonomy (#40, shared/programmes.json).
+-- Programmes: synthetic placeholders until the #40 taxonomy exists.
 insert into focus.programme (id, code, name_en, name_de, intake_terms) values
   ('bachelor-ain-deggendorf-ft', 'AIN', 'Artificial Intelligence', 'Artificial Intelligence', '{winter}'),
   ('bachelor-ki-deggendorf-ft', 'KI', 'Artificial Intelligence', 'Künstliche Intelligenz', '{winter}'),
