@@ -102,6 +102,15 @@ if they pass the same test.
 | Appearance | Theme, language, personal focus accent (vetted swatches, each with its own five-step graph ramp; the focus graph follows it; free/soon/claimed/lecture colours never change), quiet preference |
 | Account | Sign in with email code, export/import focus history, sign out, delete profile |
 
+### Sharing the focus graph
+
+| Action | What happens |
+|---|---|
+| **Share link** (main) | The app builds a link that carries a snapshot of the current semester's graph. Chat apps show the card as the link preview; the friend opens a page with the card and a way into the app. Nothing is stored on a server ([ADR 0003](../architecture/adr/0003-focus-graph-share-links.md), proposed) |
+| **Save image** | The same card as a PNG (1080×1080, ≤ 150 KB), for stories and apps without link previews |
+| Card contents | Hours this semester, streak, the semester grid (first week of the semester on the left, future days blank), app name and URL. Name and batch only if switched on |
+| Theme and accent | The sender's app theme (light/dark) and focus accent at the moment of sharing |
+
 ## Batches
 
 A **batch** is a programme plus an intake term: *AIN, winter 2023*. The app

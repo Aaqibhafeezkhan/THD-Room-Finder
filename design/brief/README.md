@@ -14,6 +14,7 @@ Finder Design System* starts with the same context.
 | [05 · D2 message](05-d2-message.md) | The D2 redo prompt (Profile tab and focus graph), for a fresh design chat |
 | [06 · D3 message](06-d3-message.md) | The D3 prompt (list and map signals), for a fresh design chat |
 | [07 · D4 message](07-d4-message.md) | The D3 map fix and the D4 prompt (share card) |
+| [08 · D4 revision](08-d4-revision.md) | Share as a link with the card as its preview; semester grid; accents |
 
 **Source of truth for behaviour:**
 [focus sessions spec](https://github.com/arudaev/THD-Room-Finder/blob/main/docs/product/focus-sessions.md)

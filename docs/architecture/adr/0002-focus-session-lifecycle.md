@@ -101,6 +101,11 @@ The share card is a PNG of about 1200×630 and at most 150 KB, generated with
 contains the graph, streak and totals only; name, room and programme are
 opt-in.
 
+> **Amended by [ADR 0003](0003-focus-graph-share-links.md) (proposed):** the
+> card is shared as a link whose social preview is rendered statelessly from
+> the link itself; the PNG stays as "Save image". D4 chose 1080×1080 for the
+> image.
+
 ### 4. Ordering and signals
 
 Applied after THabella eligibility and duration rules, duration-first within
