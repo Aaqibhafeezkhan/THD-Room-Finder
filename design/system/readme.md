@@ -22,7 +22,7 @@ Change the repository first, then sync this project
 (`design/system/README-SYNC.md`).
 
 - **Repository:** https://github.com/arudaev/THD-Room-Finder (GPL-3.0)
-  - `src/styles/tokens/` — the tokens the app ships (same files as `tokens/` here, minus Phase 1 concepts)
+  - `src/styles/tokens/` — the tokens the app ships (same `colors.css` as `tokens/` here)
   - `src/components/` — TypeScript ports of the components in `components/`
   - `docs/product/focus-sessions.md` — the Phase 1 product specification
   - `design/brief/` — the design brief and the sessions to run
@@ -129,14 +129,17 @@ implemented in one React codebase for the PWA and the Android app.
 
 ## Focus layer (Phase 1)
 
-Concept tokens and cards for focus sessions. They live **only in this design
-system** until design sessions D1–D4 (see `brief/03-sessions.md`) approve them;
-then they move into the app's tokens.
+Tokens, components and cards for focus sessions, approved in design sessions
+D1–D4 (`brief/03-sessions.md`) and shipped in the app's tokens and
+`src/components/`. The components in `components/focus/` are mirrored from the
+app (`design/mirror-components.mjs`), so they render exactly as the app does.
 
 | Meaning | Token | Light | Dark | Use |
 |---|---|---|---|---|
 | You & your batch | `--md-focus` / `-container` | `#6A4BA8` / `#EBE0FF` | `#D0BCFF` / `#4F378B` | Your active session surface; a batchmate's public session; batch map ring |
 | Claimed by someone else | `--md-claimed` / `-container` | `#4E4060` / `#E6E0EC` | `#CFC0DC` / `#43384F` | Anonymous claim row, claimed bucket, map dot. "Grey, but for focus" |
+| Focus graph, levels 0–4 | `--md-graph-0…4` | `#EFEEF5 #D8CCF6 #AE95E8 #7E5BCC #4A2A91` | `#2B2930 #3D2D6E #5B3FAD #9479E6 #D3C2FF` | Daily minutes 0 · <30 · <90 · <180 · 180+. Levels 0–2 stay under 3:1 on purpose; values are also in the tooltip, legend and a hidden table |
+| Snackbar | `--md-inverse-surface` / `-on-surface` | `#1C1B1F` / `#FDFCFF` | `#E6E1E5` / `#1C1B1F` | One-line status ("Link copied") |
 | City events (reserved, Phase 3) | `--md-event` / `-container` | `#6B5E00` / `#F7E886` | `#DCCB5C` / `#504600` | Not used before M4; kept distinct from amber "closing soon" |
 
 Semantic aliases: `--focus-own`, `--focus-batch`, `--status-claimed`,
@@ -154,15 +157,24 @@ Semantic aliases: `--focus-own`, `--focus-batch`, `--status-claimed`,
   or make an occupied room look free.
 - **Ordering:** free (incl. your batch) → closing soon → claimed → lecture,
   longest-free first within each.
-- **Map:** availability tint stays; your batch adds a violet ring + count;
-  claims add a small dark-purple count dot.
-- **Focus graph:** five steps on a violet ramp
-  (`color-mix(in srgb, var(--md-focus) 25|50|75%, var(--md-surface))`).
-- **Personalisation:** students may pick their own focus accent from vetted
-  swatches; free / soon / claimed / lecture meanings are fixed.
+- **Map (option A · ring):** availability tint stays; at rest your batch adds
+  only a violet roof outline and claims a small dark-purple dot, no text. The
+  label ("AIN 7 · 2", "You") and the claim count appear on the tapped building.
+  The building list says every mark in words.
+- **Focus graph:** a contribution graph (square cells, Mon → Sun, current week
+  rightmost, today outlined) on `--md-graph-0…4`.
+- **Graph colour:** Violet (default), Orchid or Graphite, set with
+  `data-accent="orchid|graphite"` on the same element as `data-theme`. It
+  recolours **only** the focus graph and the share card; sessions, batch
+  badges and map rings stay violet. Blue, teal, amber, red and claimed purple
+  are never offered.
+- **Share card:** 1080 × 1080, the current semester's weeks, drawn on the
+  device from the tokens. Shared as a link whose preview is the card (ADR
+  0003); name and batch opt-in, never rooms, times or programme.
 
 Cards: `guidelines/color-focus.html`, `focus-states.html`,
-`focus-ordering.html`, `focus-map-signal.html`, `focus-graph.html`.
+`focus-ordering.html`, `focus-map-signal.html`, `focus-graph.html`, and
+`components/focus/focus.card.html` for the components.
 
 ---
 
@@ -203,8 +215,8 @@ Cards: `guidelines/color-focus.html`, `focus-states.html`,
 **Foundation cards** (`guidelines/`, shown on the Design System tab)
 - Colors: primary, status, surfaces, sponsor, **focus layer** · Type: display,
   headings, body, mono · Spacing: scale, radius, elevation · Brand: logo, voice.
-- **Focus** (Phase 1 concept): room-detail states, focus-aware list ordering,
-  map signals, focus graph and share card.
+- **Focus** (Phase 1, approved): room-detail states, focus-aware list
+  ordering, map signals, focus graph and share card.
 - **Layout** (new): `layout-responsive.html` — the three Material window size
   classes (compact / medium / expanded → phone / tablet / desktop) and the same
   `AdaptiveNav` shown as bottom bar, rail and drawer · `bilingual.html` — one UI
@@ -212,7 +224,12 @@ Cards: `guidelines/color-focus.html`, `focus-states.html`,
   longer) reflows without clipping.
 
 **Components** (`components/`, exported on `window.THDRoomFinderDesignSystem_de229b`)
-- `core/` — `Button`, `Chip`, `Badge`, `Card`, `IconButton`, **`LanguageToggle`**
+- `core/` — `Button`, `Chip`, `Badge`, `Card`, `IconButton`, **`LanguageToggle`**,
+  `SegmentedControl`, `Switch`, `Sheet`, `ConfirmDialog`, `Snackbar`, `Skeleton`
+- `focus/` — `ActivityRow`, `FocusButton`, `FocusSurface`, `FocusPill`,
+  `FocusSummary`, `CheckInSheet`, `FocusBadge`, `FocusGraph`, `ShareCard`
+  (+ `renderShareCard`), `ProfileHeader`, `ListNotice`, `MapLegend`,
+  `BuildingRow` (mirrored from the app)
   (EN/DE segmented control — the single in-app locale switch; small pill for an
   app bar, medium row for settings)
 - `app/` — `Logo`, `AppBar`, `RoomCard` (answer-first list row — leads with the
