@@ -73,9 +73,10 @@ the status card so the Start focus action stays above the fold.
   claim tints the overline and duration dark purple and moves the row into the
   claimed bucket ([ordering](#ordering)).
 - Map buildings keep the teal availability tint. A building with a public
-  session of your batch gets a **violet marker** (ring or badge; the design
-  session decides) with the count. Claims show as a small dark-purple dot
-  count. **No focus signal ever recolours lecture occupancy.**
+  session of your batch gets a **violet ring** on its roof; claims show as a
+  small dark-purple dot with a count. Text labels ("AIN 7 · 2") appear only
+  on the **tapped building**, so the overview stays quiet on small screens.
+  **No focus signal ever recolours lecture occupancy.**
 - Every map signal has a list equivalent for screen readers and colour-blind
   users.
 
@@ -122,7 +123,7 @@ the required duration are applied first. Then:
 |---|---|---|
 | 1 | Free, no focus activity, **or** your batch is studying there publicly | Longest free first; main campus tiebreak |
 | 2 | Closing soon (free ≤ 40 min) | Longest free first |
-| 3 | Claimed by a focus session (private, or another batch's public session) | Longest free first |
+| 3 | Claimed by a focus session (private, or another batch's public session); a claimed room closing soon stays here with an amber duration | Longest free first |
 | 4 | Lecture now | Soonest free first |
 
 A **quiet preference** (Profile → Appearance) treats your own batch's sessions

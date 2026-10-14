@@ -11,7 +11,7 @@ design/
   build-ds-bundle.sh   assembles the upload for the design-system project
   system/              mirror of the design-system project (tokens, components, cards, kits)
   brief/               the Phase 1 design brief; also uploaded into the project
-  exports/             session exports as delivered, one folder per session (D1, D2; D2-draft is a rejected record)
+  exports/             session exports as delivered, one folder per session (D1–D3; D2-draft is a rejected record)
 ```
 
 ## Claude Design projects

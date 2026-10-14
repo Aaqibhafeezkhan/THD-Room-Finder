@@ -13,6 +13,7 @@ Finder Design System* starts with the same context.
 | [04 · Handback](04-handback.md) | How an export becomes tokens, components and a PR |
 | [05 · D2 message](05-d2-message.md) | The D2 redo prompt (Profile tab and focus graph), for a fresh design chat |
 | [06 · D3 message](06-d3-message.md) | The D3 prompt (list and map signals), for a fresh design chat |
+| [07 · D4 message](07-d4-message.md) | The D3 map fix and the D4 prompt (share card) |
 
 **Source of truth for behaviour:**
 [focus sessions spec](https://github.com/arudaev/THD-Room-Finder/blob/main/docs/product/focus-sessions.md)
