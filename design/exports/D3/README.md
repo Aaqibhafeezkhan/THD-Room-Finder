@@ -6,7 +6,7 @@
 | Claude Design project | [THD Room Finder — Focus (Phase 1)](https://claude.ai/design/p/79245808-3482-40bf-a5f4-eb70ee8e78a5?file=D3+Signals.dc.html) |
 | Imported | 2026-10-14 |
 | Issue | [#21](https://github.com/arudaev/THD-Room-Finder/issues/21) |
-| Status | **Approved with one change:** map labels appear on tap only (below) |
+| Status | **Approved.** Map labels on tap only, applied in a revision on 2026-10-14 |
 
 ## Files
 
@@ -23,7 +23,7 @@
 
 - **List, all states, theme × language:** approved as delivered.
 - **Map option A · Ring:** approved, for the reasons in the handback.
-- **Change: map labels on tap only.** In scenarios 13–16 the "AIN 7 · 2"
+- **Change (applied): map labels on tap only.** In scenarios 13–16 the "AIN 7 · 2"
   pills on several buildings are too loud and crowd small phones and even
   desktop, and they make buildings hard to tap. Passive state: the violet
   ring and the claim dot only, no text. Tapping a building shows its label

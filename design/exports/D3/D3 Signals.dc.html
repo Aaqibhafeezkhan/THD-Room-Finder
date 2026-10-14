@@ -102,8 +102,13 @@ a:hover { color: var(--md-on-primary-container); }
                         <sc-if value="{{ f.phoneBack }}" hint-placeholder-val="{{ false }}">
                           <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.AppBar" mode="back" title="{{ f.backTitle }}" onBack="{{ f.onBack }}" hint-size="100%,64px"></x-import>
                         </sc-if>
+                        <sc-if value="{{ f.gearPhone }}" hint-placeholder-val="{{ false }}">
+                          <div style="position:absolute;right:8px;top:10px">
+                            <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.IconButton" label="{{ f.s.gear }}" onClick="{{ f.onGear }}" hint-size="44px,44px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="21" x2="14" y1="4" y2="4"></line><line x1="10" x2="3" y1="4" y2="4"></line><line x1="21" x2="12" y1="12" y2="12"></line><line x1="8" x2="3" y1="12" y2="12"></line><line x1="21" x2="16" y1="20" y2="20"></line><line x1="12" x2="3" y1="20" y2="20"></line><line x1="14" x2="14" y1="2" y2="6"></line><line x1="8" x2="8" y1="10" y2="14"></line><line x1="16" x2="16" y1="18" y2="22"></line></svg></x-import>
+                          </div>
+                        </sc-if>
                         <sc-if value="{{ f.pillPhone }}" hint-placeholder-val="{{ false }}">
-                          <div style="position:absolute;right:12px;top:14px">
+                          <div style="position:absolute;right:{{ f.pillRight }};top:14px">
                             <button type="button" aria-label="{{ f.pillAria }}" style="display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 10px;border:none;border-radius:var(--radius-full);background:var(--md-focus);color:var(--md-on-focus);font:500 13px var(--font-sans);cursor:pointer;box-shadow:var(--md-shadow-1)">
                               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="10" x2="14" y1="2" y2="2"></line><line x1="12" x2="15" y1="14" y2="11"></line><circle cx="12" cy="14" r="8"></circle></svg>
                               <span style="font-family:var(--font-mono);font-variant-numeric:tabular-nums">24:10</span>
@@ -121,6 +126,12 @@ a:hover { color: var(--md-on-primary-container); }
                           <div aria-hidden="true" data-sig="{{ f.sig }}" style="position:absolute;inset:0">
                             <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.CampusMap" campus="{{ campus }}" context="{{ ctx }}" mode="{{ f.theme }}" selected-key="{{ f.selKey }}" onSelect="{{ f.onBld }}" interactive="{{ f.mapInteractive }}" show-trees="{{ false }}" hint-size="100%,100%"></x-import>
                           </div>
+                          <sc-if value="{{ f.gearWide }}" hint-placeholder-val="{{ false }}">
+                            <div style="position:absolute;top:12px;right:12px;border-radius:var(--radius-full);background:var(--md-surface);box-shadow:var(--md-shadow-1)">
+                              <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.IconButton" label="{{ f.s.gear }}" onClick="{{ f.onGear }}" hint-size="44px,44px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="21" x2="14" y1="4" y2="4"></line><line x1="10" x2="3" y1="4" y2="4"></line><line x1="21" x2="12" y1="12" y2="12"></line><line x1="8" x2="3" y1="12" y2="12"></line><line x1="21" x2="16" y1="20" y2="20"></line><line x1="12" x2="3" y1="20" y2="20"></line><line x1="14" x2="14" y1="2" y2="6"></line><line x1="8" x2="8" y1="10" y2="14"></line><line x1="16" x2="16" y1="18" y2="22"></line></svg></x-import>
+                            </div>
+                          </sc-if>
+                          <sc-if value="{{ f.showLegend }}" hint-placeholder-val="{{ true }}">
                           <div style="position:absolute;left:12px;bottom:12px;max-width:calc(100% - 24px);display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:8px 12px;border-radius:var(--radius-m);background:var(--md-surface);color:var(--md-on-surface);box-shadow:var(--md-shadow-1);font-size:12px;line-height:1.3">
                             <span style="display:inline-flex;align-items:center;gap:6px"><i aria-hidden="true" style="width:16px;height:12px;border-radius:3px;flex-shrink:0;background:var(--md-tertiary-container);box-shadow:inset 0 0 0 1.5px var(--md-tertiary)"></i>{{ f.s.legFree }}</span>
                             <sc-if value="{{ f.legLive }}" hint-placeholder-val="{{ true }}">
@@ -135,11 +146,12 @@ a:hover { color: var(--md-on-primary-container); }
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>{{ f.legNoteText }}</span>
                             </sc-if>
                           </div>
+                          </sc-if>
                         </div>
                       </sc-if>
 
                       <sc-if value="{{ f.showList }}" hint-placeholder-val="{{ true }}">
-                        <div style="order:{{ f.listOrder }};flex:{{ f.listFlex }};min-width:0;min-height:0;overflow-y:auto;border-right:{{ f.listBorder }};background:var(--md-bg)">
+                        <div style="order:{{ f.listOrder }};flex:{{ f.listFlex }};min-width:0;min-height:0;overflow-y:auto;scrollbar-width:thin;border-right:{{ f.listBorder }};background:var(--md-bg)">
                           <div style="max-width:{{ f.listMax }};margin:0 auto;padding:{{ f.listPad }};display:flex;flex-direction:column;gap:16px">
 
                             <sc-if value="{{ f.hdrShow }}" hint-placeholder-val="{{ true }}">
@@ -325,6 +337,29 @@ a:hover { color: var(--md-on-primary-container); }
                   </div>
                 </div>
 
+                <sc-if value="{{ f.menuOpen }}" hint-placeholder-val="{{ false }}">
+                  <div role="dialog" aria-label="{{ f.s.gear }}" style="position:absolute;z-index:6;top:{{ f.menuTop }};right:{{ f.menuRight }};width:280px;max-width:calc(100% - 16px);padding:16px;border-radius:var(--radius-l);background:var(--md-surface);color:var(--md-on-surface);box-shadow:var(--md-shadow-2);display:flex;flex-direction:column;gap:16px">
+                    <sc-for list="{{ f.menuRows }}" as="m" hint-placeholder-count="4">
+                      <div role="radiogroup" aria-label="{{ m.head }}" style="display:flex;flex-direction:column;gap:8px">
+                        <span style="font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--md-on-surface-variant)">{{ m.head }}</span>
+                        <div style="display:inline-flex;align-self:flex-start;flex-wrap:wrap;gap:4px;padding:4px;border-radius:var(--radius-full);background:var(--md-surface-variant)">
+                          <sc-for list="{{ m.opts }}" as="o" hint-placeholder-count="2">
+                            <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}">
+                              <button type="button" role="radio" aria-checked="true" onClick="{{ o.go }}" style="min-height:36px;padding:0 14px;border:none;border-radius:var(--radius-full);background:var(--md-secondary-container);color:var(--md-on-secondary-container);font:500 13px var(--font-sans);cursor:pointer">{{ o.label }}</button>
+                            </sc-if>
+                            <sc-if value="{{ o.off }}" hint-placeholder-val="{{ true }}">
+                              <button type="button" role="radio" aria-checked="false" onClick="{{ o.go }}" style="min-height:36px;padding:0 14px;border:none;border-radius:var(--radius-full);background:transparent;color:var(--md-on-surface-variant);font:500 13px var(--font-sans);cursor:pointer">{{ o.label }}</button>
+                            </sc-if>
+                          </sc-for>
+                        </div>
+                        <sc-if value="{{ m.hasNote }}" hint-placeholder-val="{{ false }}">
+                          <span style="font-size:12px;line-height:1.4;color:var(--md-on-surface-variant);text-wrap:pretty">{{ m.note }}</span>
+                        </sc-if>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+
                 <sc-if value="{{ f.isPhone }}" hint-placeholder-val="{{ true }}">
                   <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.AdaptiveNav" variant="bar" items="{{ f.nav }}" active="{{ f.navActive }}" onSelect="{{ f.onNav }}" hint-size="100%,80px"></x-import>
                 </sc-if>
@@ -406,7 +441,7 @@ const S = {
     buckets: ['Free', 'Closing soon', 'Claimed', 'Lecture'], over: ['free', 'closing', 'claimed', 'busy'], until: 'until {t}',
     batchBadge: '{b} · {n} studying', claimBadge: 'Focus session · {m} min', ownBadge: 'Your session · 24:10',
     buildings: 'Buildings', ofFree: '{f} of {t} rooms free', claims1: '1 focus session', claimsN: '{n} focus sessions', you: 'You',
-    legFree: 'Free rooms', legBatch: '{b} studying', legClaim: 'Focus session', mapUnknown: 'Focus activity unknown', mapTime: 'Schedule only',
+    legFree: 'Free rooms', legBatch: '{b} studying', legClaim: 'Focus session', legTap: 'Tap a building for focus activity', gear: 'Display settings', mTheme: 'Theme', mSystem: 'System', mLight: 'Light', mDark: 'Dark', mLang: 'Language', mAmen: 'Map amenities', mFocus: 'Focus labels', mFocusNote: 'Off: rings only; tap a building for its counts.', mOn: 'On', mOff: 'Off', mapUnknown: 'Focus activity unknown', mapTime: 'Schedule only',
     saved: 'Saved rooms', savedSub: 'Profile, below your focus graph',
     freeUntil: 'Free until {t}', closing: 'Closing soon', lectureNow: 'Lecture now', lectureUntil: 'Until {t}', freeAtT: 'Free Thu 14:00', freeUntilThu: 'Free until {t} on Thu',
     start: 'Start focus', join: 'Join', batchSub: 'Public sessions · since 09:40', claimTitle: 'Focus session · started {m} min ago',
@@ -423,7 +458,7 @@ const S = {
     buckets: ['Frei', 'Schließt bald', 'Fokus-Session', 'Vorlesung'], over: ['frei', 'schließt', 'Fokus', 'belegt'], until: 'bis {t}',
     batchBadge: '{b} · {n} lernen hier', batchBadge1: '{b} · 1 lernt hier', claimBadge: 'Fokus-Session · {m} Min.', ownBadge: 'Deine Session · 24:10',
     buildings: 'Gebäude', ofFree: '{f} von {t} Räumen frei', claims1: '1 Fokus-Session', claimsN: '{n} Fokus-Sessions', you: 'Du',
-    legFree: 'Freie Räume', legBatch: '{b} lernt hier', legClaim: 'Fokus-Session', mapUnknown: 'Fokus-Aktivität unbekannt', mapTime: 'Nur Belegung',
+    legFree: 'Freie Räume', legBatch: '{b} lernt hier', legClaim: 'Fokus-Session', legTap: 'Gebäude antippen für Fokus-Aktivität', gear: 'Anzeige-Einstellungen', mTheme: 'Design', mSystem: 'System', mLight: 'Hell', mDark: 'Dunkel', mLang: 'Sprache', mAmen: 'Karten-Ausstattung', mFocus: 'Fokus-Beschriftung', mFocusNote: 'Aus: nur Ringe; Gebäude antippen für die Anzahl.', mOn: 'An', mOff: 'Aus', mapUnknown: 'Fokus-Aktivität unbekannt', mapTime: 'Nur Belegung',
     saved: 'Gespeicherte Räume', savedSub: 'Profil, unter deinem Fokus-Verlauf',
     freeUntil: 'Frei bis {t}', closing: 'Schließt bald', lectureNow: 'Vorlesung läuft', lectureUntil: 'Bis {t}', freeAtT: 'Frei Do 14:00', freeUntilThu: 'Frei bis {t} am Do',
     start: 'Fokus starten', join: 'Beitreten', batchSub: 'Öffentliche Sessions · seit 09:40', claimTitle: 'Fokus-Session · seit {m} Min.',
@@ -457,12 +492,15 @@ const META = [
   ['mOwn', 'Campus · your session running', { foc: 'own', own: true, screen: 'campus' }],
   ['mLoading', 'Campus · loading', { foc: 'mixed', loading: true, screen: 'campus' }],
   ['mBuilding', 'Campus · building E opened', { foc: 'mixed', screen: 'building', building: 'E' }],
+  ['mMenu', 'Campus · settings menu', { foc: 'mixed', screen: 'campus', menu: true }],
+  ['mFocusOn', 'Campus · focus labels on', { foc: 'mixed', screen: 'campus', mapFocus: true }],
+  ['mFocusOnBld', 'Campus · focus labels on, building E opened', { foc: 'mixed', screen: 'building', building: 'E', mapFocus: true }],
 ];
 const NUM = {}, LABEL = {}, CFG = {}; META.forEach(([k, l, c], i) => { NUM[k] = pad(i + 1); LABEL[k] = l; CFG[k] = c; });
-const scen = st => Object.assign({ st, screen: 'rooms', foc: 'none', quiet: false, time: false, unknown: false, loading: false, own: false, building: null, sel: 'E 212' }, CFG[st]);
+const scen = st => Object.assign({ st, screen: 'rooms', foc: 'none', quiet: false, time: false, unknown: false, loading: false, own: false, building: null, sel: 'E 212', mapFocus: false, menu: false }, CFG[st]);
 const GROUPS = {
   rooms: ['Rooms list', ['none', 'batchOne', 'batchMany', 'claims', 'mixed', 'quiet', 'time', 'unknown', 'loading', 'own', 'saved']],
-  campus: ['Campus map', ['mNone', 'mBatchOne', 'mBatchMany', 'mClaims', 'mMixed', 'mQuiet', 'mTime', 'mUnknown', 'mOwn', 'mLoading', 'mBuilding']],
+  campus: ['Campus map', ['mNone', 'mBatchOne', 'mBatchMany', 'mClaims', 'mMixed', 'mQuiet', 'mTime', 'mUnknown', 'mOwn', 'mLoading', 'mBuilding', 'mMenu', 'mFocusOn', 'mFocusOnBld']],
   options: ['Map options · A ring vs B fill', []],
 };
 const GROUP_OF = {}; Object.keys(GROUPS).forEach(g => GROUPS[g][1].forEach(st => { GROUP_OF[st] = g; }));
@@ -483,25 +521,37 @@ const decorateMaps = () => document.querySelectorAll('[data-sig]').forEach(w => 
   svg.__sig = sig;
   let S0; try { S0 = JSON.parse(sig); } catch (e) { return; }
   const vb = svg.viewBox.baseVal, k = vb && vb.width ? Math.min(svg.clientWidth / vb.width, svg.clientHeight / vb.height) : 1, u = px => px / (k || 1);
-  const layer = el('g', { 'data-ov': '1' }, 'pointer-events:none'); svg.appendChild(layer);
-  Object.entries(S0.b || {}).forEach(([k, v]) => {
+  const base = el('g', { 'data-ov': '1' }, 'pointer-events:none'), front = el('g', { 'data-ov': '1' }, 'pointer-events:none');
+  svg.appendChild(base); svg.appendChild(front);
+  const ents = Object.entries(S0.b || {}).sort((x, y) => (x[0] === S0.sel) - (y[0] === S0.sel));
+  ents.forEach(([k, v]) => {
+    const layer = k === S0.sel ? front : base;
     const g = svg.querySelector(`.cm-bld[data-id="${k}"]`); if (!g) return;
     const roof = g.querySelector('polygon[stroke-width="0.9"]'); if (!roof) return;
     const bb = roof.getBBox();
-    if (v.chip) {
+    const on = k === S0.sel, all = !!S0.all, txt = on || all;
+    const pts = roof.getAttribute('points').trim().split(/\s+/).map(p => p.split(',').map(Number));
+    const top = pts.reduce((m, p) => (p[1] < m[1] ? p : m), pts[0]);
+    const cen = [pts.reduce((s, p) => s + p[0], 0) / pts.length, pts.reduce((s, p) => s + p[1], 0) / pts.length];
+    if (v.chip && !on) {
       if (S0.opt === 'B' && !v.lec) { roof.style.fill = 'var(--md-focus-container)'; roof.setAttribute('data-ovfill', '1'); }
       else layer.appendChild(el('polygon', { points: roof.getAttribute('points'), fill: 'none', 'stroke-width': u(3), 'stroke-linejoin': 'round' }, 'stroke:var(--md-focus)'));
+    }
+    let pillRight = null;
+    if (v.chip && txt) {
       const cg = el('g'); layer.appendChild(cg);
       const t = el('text', { 'font-size': u(11), 'font-weight': '500', 'dominant-baseline': 'central' }, 'fill:var(--md-on-focus);font-family:var(--font-sans)'); t.textContent = v.chip;
       const r = el('rect', { height: u(20), rx: u(10) }, 'fill:var(--md-focus)'); cg.appendChild(r); cg.appendChild(t);
-      const tw = t.getComputedTextLength(), x = bb.x + bb.width / 2 - (tw + u(16)) / 2, y = bb.y + bb.height / 2 - u(30);
+      const tw = t.getComputedTextLength(), x = cen[0] - (tw + u(16)) / 2, y = cen[1] + u(12);
       r.setAttribute('x', x); r.setAttribute('y', y); r.setAttribute('width', tw + u(16)); t.setAttribute('x', x + u(8)); t.setAttribute('y', y + u(10.5));
+      pillRight = [x + tw + u(16), y + u(10)];
       cg.insertBefore(el('rect', { x: x - u(1.5), y: y - u(1.5), width: tw + u(19), height: u(23), rx: u(11.5) }, 'fill:var(--md-surface)'), r);
     }
-    if (v.claims) {
-      const cx = bb.x + bb.width / 2, cy = bb.y + bb.height / 2 + u(14);
-      layer.appendChild(el('circle', { cx, cy, r: u(10.5) }, 'fill:var(--md-surface)'));
-      layer.appendChild(el('circle', { cx, cy, r: u(9) }, 'fill:var(--md-claimed)'));
+    if (v.claims && txt) {
+      const rr = 8, cx = pillRight ? pillRight[0] + u(14) : top[0], cy = pillRight ? pillRight[1] : top[1];
+      layer.appendChild(el('circle', { cx, cy, r: u(rr + 1.5) }, 'fill:var(--md-surface)'));
+      layer.appendChild(el('circle', { cx, cy, r: u(rr) }, 'fill:var(--md-claimed)'));
+      if (!txt) return;
       const t = el('text', { x: cx, y: cy + u(0.5), 'font-size': u(11), 'font-weight': '500', 'text-anchor': 'middle', 'dominant-baseline': 'central' }, 'fill:var(--md-on-claimed);font-family:var(--font-sans)');
       t.textContent = String(v.claims); layer.appendChild(t);
     }
@@ -520,6 +570,8 @@ class Component extends DCLogic {
     if (name === 'bld') { p.screen = 'building'; p.building = arg; }
     if (name === 'back') { p.screen = 'campus'; p.building = null; }
     if (name === 'sel') p.sel = arg;
+    if (name === 'menu') p.menu = !p.menu;
+    if (name === 'mapFocus') p.mapFocus = arg;
     return { ps: p };
   });
 
@@ -576,7 +628,7 @@ class Component extends DCLogic {
     const scr = c.screen, campusLike = scr === 'campus' || scr === 'building';
     const rows = this.rows(c, s, b, lang, a, interactive, isDesktop);
     const sig = this.signals(rows, c, s, b);
-    const showMap = !!window.CAMPUS_GEOJSON && (scr === 'campus' || (scr === 'building' && isDesktop));
+    const showMap = !!window.CAMPUS_GEOJSON && (scr === 'campus' || scr === 'building');
     let groups = [], blds = [], isGroups = false, isBlds = false;
     if (scr === 'rooms') { groups = this.groups(rows, s, o.counts); isGroups = true; }
     if (scr === 'building') { groups = this.groups(rows.filter(r => r.k === c.building), s, o.counts); isGroups = true; }
@@ -619,9 +671,17 @@ class Component extends DCLogic {
       nav: [{ id: 'campus', label: s.nav[0], icon: I.map }, { id: 'rooms', label: s.nav[1], icon: I.rooms }, { id: 'profile', label: s.nav[2], icon: I.profile }],
       navActive: campusLike ? 'campus' : scr === 'saved' ? 'profile' : 'rooms', onNav: id2 => a('nav', id2),
       phoneBrand: scr !== 'building', phoneBack: scr === 'building', backTitle: bname(c.building || 'E', s), onBack: () => a('back'),
-      pillPhone: c.own && isPhone, pillWide: c.own && !isPhone, pillAria: s.pillAria,
-      bodyDir, showMap, mapOrder: isDesktop ? 1 : 0, mapFlex: isDesktop ? '1 1 auto' : isTablet ? '0 0 520px' : '0 0 320px',
-      sig: JSON.stringify({ opt: O, b: mapSig }), selKey: scr === 'building' ? c.building : '', onBld: k => a('bld', k), mapInteractive: interactive,
+      pillPhone: c.own && isPhone, pillWide: c.own && !isPhone, pillAria: s.pillAria, pillRight: campusLike ? '60px' : '12px',
+      gearPhone: isPhone && campusLike, gearWide: !isPhone && showMap, onGear: () => a('menu'), menuOpen: !!c.menu && campusLike,
+      menuTop: isPhone ? '88px' : '64px', menuRight: isPhone ? '8px' : '12px',
+      menuRows: [
+        { head: s.mTheme, opts: [['system', s.mSystem], ['light', s.mLight], ['dark', s.mDark]].map(([k2, l]) => ({ label: l, on: theme === k2, off: theme !== k2, go: () => interactive && k2 !== 'system' && this.setState({ theme: k2 }) })) },
+        { head: s.mLang, opts: [['en', 'English'], ['de', 'Deutsch']].map(([k2, l]) => ({ label: l, on: lang === k2, off: lang !== k2, go: () => interactive && this.setState({ lang: k2 }) })) },
+        { head: s.mAmen, opts: [[true, s.mOn], [false, s.mOff]].map(([k2, l]) => ({ label: l, on: k2, off: !k2, go: () => {} })) },
+        { head: s.mFocus, note: s.mFocusNote, opts: [[true, s.mOn], [false, s.mOff]].map(([k2, l]) => ({ label: l, on: !!c.mapFocus === k2, off: !!c.mapFocus !== k2, go: () => a('mapFocus', k2) })) },
+      ].map(r => Object.assign(r, { hasNote: !!r.note })),
+      bodyDir, showMap, showLegend: scr === 'campus' || isDesktop, mapOrder: isDesktop ? 1 : 0, mapFlex: isDesktop ? '1 1 auto' : scr === 'building' ? (isTablet ? '0 0 360px' : '0 0 220px') : isTablet ? '0 0 520px' : '0 0 320px',
+      sig: JSON.stringify({ opt: O, all: !!c.mapFocus, sel: scr === 'building' ? c.building : '', b: mapSig }), selKey: scr === 'building' ? c.building : '', onBld: k => a('bld', k), mapInteractive: interactive,
       optA: O === 'A', optB: O === 'B', legLive: live, legBatch: P(s.legBatch, { b }), legNote: !live, legNoteText: c.time ? s.mapTime : s.mapUnknown,
       showList: true, listOrder: isDesktop ? 0 : 1, listFlex, listBorder: isDesktop && listFlex !== '1 1 auto' ? '1px solid var(--md-outline-variant)' : 'none',
       listMax: isTablet ? '640px' : scr === 'saved' && isDesktop ? '960px' : 'none', listPad: isPhone ? '16px 16px 24px' : isDesktop ? '24px 16px 24px' : '24px 24px 32px',
@@ -642,9 +702,9 @@ class Component extends DCLogic {
       sections = [{ title: 'Live prototype', sub: 'Phone and desktop share one state. Switch Campus / Rooms / Profile in the nav, tap a building on the map or in the list to open its rooms, pick a room on desktop. Jump to a scenario with the chips above.',
         frames: [this.frame(ps, { theme: T, lang, device: 'phone', interactive: true, id: 'P1' }), this.frame(ps, { theme: T, lang, device: 'desktop', interactive: true, id: 'P2' })] }];
     } else if (view === 'states' && group === 'options') {
-      const mk = (st, opt, dev, sc, sfx, tt = T) => Object.assign(this.frame(scen(st), { theme: tt, lang, device: dev, scale: sc, id: `O${sfx}`, opt }), { caption: `Option ${opt === 'A' ? 'A · Ring' : 'B · Fill'} · ${LABEL[st].split(' · ')[1]}` });
+      const mk = (st, opt, dev, sc, sfx, tt = T) => Object.assign(this.frame(Object.assign(scen(st), { mapFocus: true }), { theme: tt, lang, device: dev, scale: sc, id: `O${sfx}`, opt }), { caption: `Option ${opt === 'A' ? 'A · Ring' : 'B · Fill'} · ${LABEL[st].split(' · ')[1]}` });
       sections = [
-        { title: 'A · Ring vs B · Fill — chosen: A', sub: 'Same data, same buildings. A keeps the teal availability tint on every roof and adds a violet outline plus an “AIN 7 · 2” chip. B swaps the roof to violet, but only where no room has a lecture — so Lecture halls (HS 2 has your batch, HS 1 a lecture) fall back to a ring anyway. One signal that means one thing beats two that depend on the schedule.',
+        { title: 'A · Ring vs B · Fill — chosen: A', sub: 'Same data, same buildings. A keeps the teal availability tint on every roof and adds a violet outline; the “AIN 7 · 2” label appears only on the tapped building. B swaps the roof to violet, but only where no room has a lecture — so Lecture halls (HS 2 has your batch, HS 1 a lecture) fall back to a ring anyway. One signal that means one thing beats two that depend on the schedule.',
           frames: [mk('mBatchMany', 'A', 'phone', 1, '1a'), mk('mBatchMany', 'B', 'phone', 1, '1b'), mk('mMixed', 'A', 'phone', 1, '2a', 'dark'), mk('mMixed', 'B', 'phone', 1, '2b', 'dark')] },
         { title: 'Desktop (shown at 50%)', sub: 'On a large map B reads louder, which is the problem: a violet roof hides how many rooms are free there, and it is the only way availability is shown at a glance.',
           frames: [mk('mBatchMany', 'A', 'desktop', 0.5, '3a'), mk('mBatchMany', 'B', 'desktop', 0.5, '3b')] },
@@ -653,7 +713,7 @@ class Component extends DCLogic {
       const all = GROUPS[group][1], isCampus = group === 'campus';
       const deskSet = isCampus ? ['mNone', 'mBatchMany', 'mMixed', 'mTime', 'mOwn', 'mBuilding'] : all;
       sections = [
-        { title: 'Phone · compact (380 × 780)', sub: isCampus ? 'Map on top, the building list below is the map’s list equivalent: every ring and dot is a badge in its row. Tap a row or a roof to open that building’s rooms.' : 'Four quiet bucket headers, one badge or one label per card, duration stays the hero. Each state is a single change against 05 Mixed.', frames: all.map(st => fr(st, 'phone', 1, 'a')) },
+        { title: 'Phone · compact (380 × 780)', sub: isCampus ? 'Map at rest: violet ring for your batch only; no claim dots, no text, no count. Tapping a building labels it; the gear’s Focus labels switch shows all labels (24–25). The building list below is the map’s list equivalent: every ring and dot is a badge with words in its row. Tap a row or a roof to label it and open its rooms.' : 'Four quiet bucket headers, one badge or one label per card, duration stays the hero. Each state is a single change against 05 Mixed.', frames: all.map(st => fr(st, 'phone', 1, 'a')) },
         { title: 'Tablet · medium (768 × 1024, shown at 60%)', sub: 'Navigation rail; one centred 640 px column. The focus pill sits in the list header.', frames: (isCampus ? ['mMixed', 'mBuilding'] : ['mixed', 'quiet', 'own']).map(st => fr(st, 'tablet', 0.6, 'c')) },
         { title: 'Desktop · expanded (1280 × 800, shown at 50%)', sub: isCampus ? 'List-detail: building list (or the opened building’s rooms) on the left, the map on the right with the opened building outlined in blue.' : 'List-detail: rooms on the left, the selected room on the right with the D1 activity row and Start focus.', frames: deskSet.map(st => fr(st, 'desktop', 0.5, 'b')) },
       ];
@@ -695,9 +755,9 @@ class Component extends DCLogic {
           props: [{ n: 'kind', t: "'quiet' | 'time' | 'unknown'", d: 'Time travel adds the custom-time chip with ✕' }],
           notes: ['Unknown reads “Focus activity unknown”, never “empty” or “no one here”. role="status".', 'Time travel: “Schedule only. Focus activity shows for now.”'] },
         { name: 'CampusMap', kind: 'Extended · focusSignals', hasLinks: true, links: links(['mBatchMany', 'mMixed', 'mBuilding']),
-          purpose: 'Option A chosen. Availability tint untouched. Your batch: 2.4-unit violet outline on the roof + a pill “AIN 7 · 2”. Claims: dark-purple dot with a count on the roof’s left edge. Your own session: ring + “You”.',
+          purpose: 'Option A chosen. Availability tint untouched. At rest: batch = violet ring only; claims are not shown. Tapped building: pill “AIN 7 · 2” (or “You”) + counted dot. Gear → Focus labels On: every building gets its pill and counted dot.',
           props: [{ n: 'focusSignals', t: 'Record<key, {batchLabel?, claimCount?}>', d: 'Omitted or {} when time-travelling or unknown' }, { n: 'focusStyle', t: "'ring'", d: "'fill' kept for reference only" }],
-          notes: ['Why A: B replaces the one at-a-glance availability cue; B only applies when no lecture, so the same batch looks different in two buildings; violet vs teal fill is a hue-only distinction, weakest for colour-blind users; A’s chip carries words.', 'The map is aria-hidden; the building list below/beside it is the accessible equivalent and comes first in focus order on desktop.', 'Signals never touch lecture rooms: they sit on top, not instead of the tint. No animation on signals.'] },
+          notes: ['Why A: B replaces the one at-a-glance availability cue; B only applies when no lecture, so the same batch looks different in two buildings; violet vs teal fill is a hue-only distinction, weakest for colour-blind users; A’s chip carries words.', 'The map is aria-hidden; the building list below/beside it is the accessible equivalent and comes first in focus order on desktop.', 'Off by default: marks on every building crowded small phones and blocked taps, and showed activity nobody asked to see. Students who want the overview turn it on in the gear menu next to Theme and Language.', 'Signals never touch lecture rooms: they sit on top, not instead of the tint. No animation on signals.'] },
         { name: 'MapLegend', kind: 'New', hasLinks: true, links: links(['mMixed', 'mTime']),
           purpose: 'Small surface card on the map’s bottom-left: Free rooms · AIN 7 studying · Focus session. Time travel / unknown collapse it to Free rooms + one note.',
           props: [{ n: 'items', t: '{swatch, label}[]', d: 'Swatch mirrors the map mark exactly' }],

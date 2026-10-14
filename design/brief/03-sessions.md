@@ -17,7 +17,7 @@ note ([04](04-handback.md)).
 |---|---|---|---|
 | D1 | Approved | [D1](../exports/D1/README.md) | [00](00-first-message.md) |
 | D2 | Approved (first draft [rejected](../exports/D2-draft/README.md)) | [D2](../exports/D2/README.md) | [05](05-d2-message.md) |
-| D3 | Approved, map labels on tap pending | [D3](../exports/D3/README.md) | [06](06-d3-message.md) |
+| D3 | Approved | [D3](../exports/D3/README.md) | [06](06-d3-message.md) |
 | D4 | Next | — | [07](07-d4-message.md) |
 
 The focus graph moved from D4 into D2; D4 is the share card only.
