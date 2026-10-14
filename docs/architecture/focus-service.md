@@ -98,7 +98,8 @@ Errors carry a stable `hint` for the app to branch on; `message` is for logs.
 | Per-device lease token (one renewing tab) | ADR 0001 asks for it; the version check covers stale writers for now. Revisit in [#19](https://github.com/arudaev/THD-Room-Finder/issues/19) |
 | Separate admission budget table | A per-user start limit (20 per hour) stands in until [#22](https://github.com/arudaev/THD-Room-Finder/issues/22) measures load |
 | Full programme list and real room import | Once the [#40](https://github.com/arudaev/THD-Room-Finder/issues/40) taxonomy exists; a maintainer import script fills `focus.programme` and `focus.room` |
-| Client wrapper | [#18](https://github.com/arudaev/THD-Room-Finder/issues/18) and [#19](https://github.com/arudaev/THD-Room-Finder/issues/19), using the generated `src/data/supabase.types.ts` |
+| Client wrapper | Identity and sign-in: `src/data/identityApi.ts` ([#18](https://github.com/arudaev/THD-Room-Finder/issues/18)). Sessions: [#19](https://github.com/arudaev/THD-Room-Finder/issues/19) |
+| Manual semester correction (leave semesters) | Needs a stored offset on `focus.identity`; today the number follows the intake only |
 
 ## Testing
 

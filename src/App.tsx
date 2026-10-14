@@ -5,6 +5,7 @@ import { RoomDataProvider } from './features/rooms/RoomDataContext';
 import { RoomFilterProvider } from './features/rooms/RoomFilterContext';
 import { FavoritesProvider } from './features/favorites/favorites';
 import { FocusHistoryProvider } from './features/focus/FocusHistoryContext';
+import { StudyProfileProvider } from './features/profile/StudyProfileContext';
 import { AppShell } from './app/AppShell';
 
 /**
@@ -14,6 +15,7 @@ import { AppShell } from './app/AppShell';
  *   RoomDataProvider → THabella data, teaching filter, time-travel, auto-refresh
  *   FavoritesProvider → saved rooms
  *   FocusHistoryProvider → focus history, on this device only
+ *   StudyProfileProvider → sign-in and study profile (focus service)
  */
 export default function App() {
   return (
@@ -24,7 +26,9 @@ export default function App() {
             <RoomFilterProvider>
               <FavoritesProvider>
                 <FocusHistoryProvider>
-                  <AppShell />
+                  <StudyProfileProvider>
+                    <AppShell />
+                  </StudyProfileProvider>
                 </FocusHistoryProvider>
               </FavoritesProvider>
             </RoomFilterProvider>

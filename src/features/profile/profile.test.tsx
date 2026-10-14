@@ -11,7 +11,10 @@ import { memoryStore } from '../../data/focusHistoryStore';
 import type { FocusHistoryStore } from '../../data/focusHistoryStore';
 import { exportHistory } from '../../domain/focusHistory';
 import { FocusHistoryProvider } from '../focus/FocusHistoryContext';
+import { ServiceError } from '../../data/identityApi';
+import type { Identity, IdentityApi, IdentityInput } from '../../data/identityApi';
 import { SettingsScreen } from './SettingsScreen';
+import { StudyProfileProvider } from './StudyProfileContext';
 
 let container: HTMLDivElement;
 let root: Root;
@@ -35,13 +38,69 @@ afterEach(async () => {
   container.remove();
 });
 
-function Providers({ children, path, store = memoryStore() }: { children: ReactNode; path: string; store?: FocusHistoryStore }) {
+/** In-memory focus service: accepts the code 123456 for any address. */
+function fakeIdentityApi(): IdentityApi & { saved: IdentityInput[]; deleted: boolean } {
+  let email: string | null = null;
+  let identity: Identity | null = null;
+  const listeners = new Set<(e: string | null) => void>();
+  const api = {
+    saved: [] as IdentityInput[],
+    deleted: false,
+    async currentEmail() {
+      return email;
+    },
+    onAuthChange(cb: (e: string | null) => void) {
+      listeners.add(cb);
+      return () => {
+        listeners.delete(cb);
+      };
+    },
+    async sendCode() {},
+    async verifyCode(mail: string, code: string) {
+      if (code !== '123456') throw new ServiceError('code_expired');
+      email = mail;
+    },
+    async signOut() {
+      email = null;
+      listeners.forEach((l) => l(null));
+    },
+    async programmes() {
+      return [
+        { id: 'ain-b', code: 'AIN', nameEn: 'Artificial Intelligence', nameDe: 'Artificial Intelligence', intakeTerms: ['winter' as const] },
+        { id: 'ki-b', code: 'KI', nameEn: 'Artificial Intelligence', nameDe: 'Künstliche Intelligenz', intakeTerms: ['winter' as const] },
+      ];
+    },
+    async getIdentity() {
+      return identity;
+    },
+    async saveIdentity(input: IdentityInput, expected: number | null) {
+      if (expected !== (identity?.version ?? null)) throw new ServiceError('stale_version');
+      api.saved.push(input);
+      identity = { ...input, version: (identity?.version ?? 0) + 1 };
+      return identity;
+    },
+    async deleteIdentity() {
+      api.deleted = true;
+      identity = null;
+    },
+  };
+  return api;
+}
+
+function Providers({ children, path, store = memoryStore(), api = null }: {
+  children: ReactNode;
+  path: string;
+  store?: FocusHistoryStore;
+  api?: IdentityApi | null;
+}) {
   return (
     <MemoryRouter initialEntries={[path]}>
       <ThemeProvider>
         <MapPrefsProvider>
           <I18nProvider>
-            <FocusHistoryProvider store={store}>{children}</FocusHistoryProvider>
+            <FocusHistoryProvider store={store}>
+              <StudyProfileProvider api={api}>{children}</StudyProfileProvider>
+            </FocusHistoryProvider>
           </I18nProvider>
         </MapPrefsProvider>
       </ThemeProvider>
@@ -145,3 +204,131 @@ describe('Focus history settings', () => {
     expect(container.textContent).toContain('0 sessions');
   });
 });
+
+async function settle() {
+  await act(async () => {
+    for (let i = 0; i < 5; i++) await new Promise((r) => setTimeout(r, 0));
+  });
+}
+
+async function type(label: string, value: string) {
+  const input = document.querySelector<HTMLInputElement>(`input[aria-label="${label}"]`);
+  if (!input) throw new Error(`no input ${label}`);
+  const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!;
+  await act(async () => {
+    setter.call(input, value);
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+}
+
+function anyButton(name: string): HTMLButtonElement {
+  const el = [...document.querySelectorAll<HTMLButtonElement>('button')].find((b) => b.textContent?.trim() === name);
+  if (!el) throw new Error(`no button ${name}`);
+  return el;
+}
+
+function radioStarting(text: string): HTMLElement {
+  const el = [...document.querySelectorAll<HTMLElement>('[role="radio"]')].find((r) => r.textContent?.startsWith(text));
+  if (!el) throw new Error(`no radio ${text}`);
+  return el;
+}
+
+describe('Study profile setup', () => {
+  it('signs in with a code and saves programme, intake and default mode', async () => {
+    const api = fakeIdentityApi();
+    await render(
+      <Providers path="/profile/settings" api={api}>
+        <SettingsScreen />
+      </Providers>,
+    );
+    await settle();
+    await act(async () => anyButton('Set Up').click());
+    await type('Email', 'lena@example.test');
+    await act(async () => anyButton('Send Code').click());
+    await settle();
+
+    await type('Code', '000000');
+    await act(async () => anyButton('Continue').click());
+    await settle();
+    expect(document.querySelector('[role="alert"]')?.textContent).toContain('work');
+
+    await type('Code', '123456');
+    await act(async () => anyButton('Continue').click());
+    await settle();
+    expect(document.body.textContent).toContain('What do you study?');
+
+    await act(async () => radioStarting('Artificial IntelligenceAIN').click());
+    await act(async () => anyButton('Next').click());
+    await act(async () => radioStarting('Winter 2023').click());
+    await act(async () => anyButton('Next').click());
+    await act(async () => anyButton('Skip').click());
+    await act(async () => radioStarting('Public').click());
+    await act(async () => anyButton('Save').click());
+    await settle();
+
+    expect(api.saved).toEqual([
+      {
+        displayName: null,
+        programmeId: 'ain-b',
+        intakeYear: 2023,
+        intakeTerm: 'winter',
+        defaultVisibility: 'public',
+        showName: false,
+      },
+    ]);
+    expect(container.textContent).toContain('Signed in as');
+    expect(container.textContent).toContain('lena@example.test');
+  });
+
+  it('keeps not-listed students private and skips the intake', async () => {
+    const api = fakeIdentityApi();
+    await api.verifyCode('sam@example.test', '123456');
+    await render(
+      <Providers path="/profile/settings" api={api}>
+        <SettingsScreen />
+      </Providers>,
+    );
+    await settle();
+    await act(async () => anyButton('Set Up').click());
+    await act(async () => radioStarting('Other').click());
+    await act(async () => anyButton('Next').click());
+    expect(document.body.textContent).toContain('What should your batch call you?');
+    await act(async () => anyButton('Next').click());
+    expect(document.body.textContent).not.toContain('Public ·');
+    await act(async () => anyButton('Save').click());
+    await settle();
+    expect(api.saved[0]).toMatchObject({ programmeId: null, intakeYear: null, defaultVisibility: 'private' });
+  });
+
+  it('deletes the profile only after confirming, then signs out', async () => {
+    const api = fakeIdentityApi();
+    await api.verifyCode('max@example.test', '123456');
+    await api.saveIdentity(
+      { displayName: 'Max', programmeId: 'ain-b', intakeYear: 2023, intakeTerm: 'winter', defaultVisibility: 'private', showName: false },
+      null,
+    );
+    api.saved.length = 0;
+    await render(
+      <Providers path="/profile/settings" api={api}>
+        <SettingsScreen />
+      </Providers>,
+    );
+    await settle();
+    await act(async () => anyButton('Delete Profile').click());
+    expect(api.deleted).toBe(false);
+    await act(async () => anyButton('Delete').click());
+    await settle();
+    expect(api.deleted).toBe(true);
+    expect(await api.currentEmail()).toBeNull();
+  });
+
+  it('hides study profile settings when the focus service is not configured', async () => {
+    await render(
+      <Providers path="/profile/settings">
+        <SettingsScreen />
+      </Providers>,
+    );
+    expect(container.textContent).not.toContain('Study profile');
+  });
+});
+

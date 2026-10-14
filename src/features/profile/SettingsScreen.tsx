@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { AppBar, Button, ConfirmDialog, SegmentedControl, Snackbar, Switch } from '../../components';
 import { exportHistory } from '../../domain/focusHistory';
 import { useFocusHistory } from '../focus/FocusHistoryContext';
+import { SetupSheet } from './SetupSheet';
+import { useStudyProfile } from './StudyProfileContext';
 import type { Accent, Theme } from '../../lib/theme';
 import { useTheme } from '../../lib/theme';
 import { useMapPrefs } from '../../lib/mapPrefs';
@@ -13,7 +15,8 @@ import { Page } from '../shared/ui';
 /**
  * Settings behind the Profile gear (D2): a plain grouped list, one setting per
  * row, at least 56 px tall. Values wrap rather than truncate, so German fits.
- * The focus history group exports, imports and clears the device-only history.
+ * Study profile and account appear when the focus service is configured; the
+ * focus history group exports, imports and clears the device-only history.
  */
 export function SettingsGroup({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -177,6 +180,99 @@ function HistoryGroup({ onMessage }: { onMessage: (m: string) => void }) {
   );
 }
 
+/** Study profile and account rows (#18, D2). */
+function ProfileGroups({ onMessage }: { onMessage: (m: string) => void }) {
+  const { t, locale } = useI18n();
+  const profile = useStudyProfile();
+  const [setup, setSetup] = useState(false);
+  const [confirm, setConfirm] = useState(false);
+  if (!profile.available) return null;
+  const id = profile.identity;
+  const signedIn = Boolean(profile.email);
+  const sheet = <SetupSheet open={setup} onClose={() => setSetup(false)} onDone={onMessage} />;
+
+  if (!signedIn || !id) {
+    return (
+      <SettingsGroup title={t('Study profile', 'Studienprofil')}>
+        <SettingsRow
+          label={t('Set Up Study Profile', 'Studienprofil einrichten')}
+          sub={t(
+            'Share sessions with your batch. Public needs a study profile.',
+            'Teile Sessions mit deinem Jahrgang. Öffentlich braucht ein Studienprofil.',
+          )}
+        >
+          <Button variant="tonal" onClick={() => setSetup(true)}>
+            {t('Set Up', 'Einrichten')}
+          </Button>
+        </SettingsRow>
+        {sheet}
+      </SettingsGroup>
+    );
+  }
+
+  const programmeName = profile.programme
+    ? locale === 'de'
+      ? profile.programme.nameDe
+      : profile.programme.nameEn
+    : t('Other / not listed', 'Anderer / nicht gelistet');
+  return (
+    <>
+      <SettingsGroup title={t('Study profile', 'Studienprofil')}>
+        <SettingsRow label={t('Programme', 'Studiengang')} sub={programmeName} />
+        <SettingsRow label={t('Batch', 'Jahrgang')} sub={profile.batch ?? t('Private only', 'Nur privat')} divider />
+        <SettingsRow label={t('Display name', 'Anzeigename')} sub={id.displayName ?? t('Not set', 'Nicht gesetzt')} divider />
+        <SettingsRow
+          label={t('Default mode', 'Standardmodus')}
+          sub={
+            id.defaultVisibility === 'public'
+              ? t(`Public: ${profile.batch} sees you and can join.`, `Öffentlich: ${profile.batch} sieht dich und kann beitreten.`)
+              : t('Private: others see that someone is focusing here, not who.', 'Privat: Andere sehen, dass hier jemand lernt – aber nicht wer.')
+          }
+          divider
+        />
+        <div style={{ padding: '4px 0 12px' }}>
+          <Button variant="tonal" onClick={() => setSetup(true)}>
+            {t('Edit Study Profile', 'Studienprofil bearbeiten')}
+          </Button>
+        </div>
+        {sheet}
+      </SettingsGroup>
+      <SettingsGroup title={t('Account', 'Konto')}>
+        <SettingsRow label={t('Signed in as', 'Angemeldet als')} sub={profile.email} />
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, padding: '4px 0 12px' }}>
+          <Button variant="tonal" onClick={() => profile.signOut()}>
+            {t('Sign Out', 'Abmelden')}
+          </Button>
+          <Button variant="text" onClick={() => setConfirm(true)} style={{ color: 'var(--md-error)' }}>
+            {t('Delete Profile', 'Profil löschen')}
+          </Button>
+        </div>
+        <ConfirmDialog
+          open={confirm}
+          tone="danger"
+          title={t('Delete study profile?', 'Studienprofil löschen?')}
+          body={t(
+            'Your profile and any public session are removed. Your focus graph stays on this device.',
+            'Dein Profil und laufende öffentliche Sessions werden entfernt. Dein Fokus-Verlauf bleibt auf diesem Gerät.',
+          )}
+          confirmLabel={t('Delete', 'Löschen')}
+          cancelLabel={t('Cancel', 'Abbrechen')}
+          onCancel={() => setConfirm(false)}
+          onConfirm={async () => {
+            setConfirm(false);
+            try {
+              await profile.remove();
+              onMessage(t('Study profile deleted', 'Studienprofil gelöscht'));
+            } catch {
+              onMessage(t("Couldn't delete the profile. Try again online.", 'Profil konnte nicht gelöscht werden. Versuche es online erneut.'));
+            }
+          }}
+        />
+      </SettingsGroup>
+    </>
+  );
+}
+
 function Swatch({ accent, dark }: { accent: Accent; dark: boolean }) {
   // The swatch shows the ramp's strongest step for that graph colour. Accent
   // ramps resolve per theme only where data-theme and data-accent meet.
@@ -216,6 +312,7 @@ export function SettingsScreen({ children }: { children?: ReactNode }) {
       />
       <Page>
         {children}
+        <ProfileGroups onMessage={setSnack} />
         <SettingsGroup title={t('Appearance', 'Darstellung')}>
           <SettingsRow label={t('Theme', 'Design')}>
             <SegmentedControl<Theme>

@@ -9,6 +9,8 @@ import { graphText, statsLine } from '../focus/copy';
 import { ShareSheet } from '../focus/ShareSheet';
 import { useFocusStats } from '../focus/useFocusStats';
 import { SavedRooms } from './SavedRooms';
+import { SetupSheet } from './SetupSheet';
+import { useStudyProfile } from './StudyProfileContext';
 
 /**
  * Profile (D2): only what a student checks almost daily. A one-line header
@@ -24,6 +26,9 @@ export function ProfileScreen() {
   const focus = useFocusStats();
   const [sharing, setSharing] = useState(false);
   const [snack, setSnack] = useState('');
+  const [setup, setSetup] = useState(false);
+  const profile = useStudyProfile();
+  const signedIn = Boolean(profile.email && profile.identity);
 
   const stats = statsLine(t, locale, focus.semesterMinutes, focus.streak);
 
@@ -32,11 +37,14 @@ export function ProfileScreen() {
       <BrandHeader title={t('Profile', 'Profil')} menu={false} />
       <Page style={{ maxWidth: compact ? 640 : 960 }}>
         <ProfileHeader
-          signedIn={false}
-          notSignedIn={t('Not signed in', 'Nicht angemeldet')}
+          signedIn={signedIn}
+          name={profile.displayName ?? undefined}
+          batch={profile.batch ?? undefined}
+          batchLabel={profile.batch ? t(`Batch ${profile.batch}`, `Jahrgang ${profile.batch}`) : undefined}
+          notSignedIn={profile.email ? t('No study profile yet', 'Noch kein Studienprofil') : t('Not signed in', 'Nicht angemeldet')}
           setupLabel={t('Set Up Study Profile', 'Studienprofil einrichten')}
           settingsLabel={t('Settings', 'Einstellungen')}
-          onSetup={() => navigate('/profile/settings')}
+          onSetup={profile.available ? () => setSetup(true) : undefined}
           onSettings={() => navigate('/profile/settings')}
         />
         <FocusGraph
@@ -51,7 +59,14 @@ export function ProfileScreen() {
         />
         <SavedRooms grid={cls === 'expanded'} />
       </Page>
-      <ShareSheet open={sharing} onClose={() => setSharing(false)} onDone={setSnack} />
+      <ShareSheet
+        open={sharing}
+        onClose={() => setSharing(false)}
+        onDone={setSnack}
+        name={signedIn ? (profile.identity?.displayName ?? undefined) : undefined}
+        batch={signedIn ? (profile.batch ?? undefined) : undefined}
+      />
+      <SetupSheet open={setup} onClose={() => setSetup(false)} onDone={setSnack} />
       <Snackbar message={snack} onClose={() => setSnack('')} bottom={compact ? 96 : 24} />
     </>
   );
