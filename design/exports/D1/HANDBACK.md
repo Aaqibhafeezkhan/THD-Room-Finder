@@ -46,7 +46,7 @@ None. Only existing tokens are used: `--md-focus*`, `--md-claimed*`, status role
 | batchTitle | AIN 7 · 2 studying | AIN 7 · 2 lernen hier |
 | batchSub | Public sessions · since 09:40 | Öffentliche Sessions · seit 09:40 |
 | claimTitle | Focus session · started 25 min ago | Fokus-Session · seit 25 Min. |
-| claimSub | Someone is studying here. A claim is not a booking, so you can still focus here. | Hier lernt gerade jemand. Belegt heißt nicht gebucht – du kannst hier trotzdem lernen. |
+| claimSub | Someone is studying here. A claim is not a booking, so you can still focus here. | Hier lernt gerade jemand. Eine Fokus-Session ist keine Buchung – du kannst hier trotzdem lernen. |
 | lectureNow / sub | Lecture now · Until 09:30 · then free until 16:00 | Vorlesung läuft · Bis 09:30 · danach frei bis 16:00 |
 | lectureNote | Focus sessions can't start during a lecture. Free again at 09:30. | Während einer Vorlesung kannst du keinen Fokus starten. Ab 09:30 wieder frei. |
 | offlineTitle | Focus activity unknown | Fokus-Aktivität unbekannt |
