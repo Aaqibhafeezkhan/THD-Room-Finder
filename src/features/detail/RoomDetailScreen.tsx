@@ -9,6 +9,7 @@ import { computeRoomAvailability, getRoomSchedule } from '../../domain/availabil
 import { mayBeLocked } from '../../domain/roomFilters';
 import { formatDayTime, formatTime, statusBannerText } from '../../domain/format';
 import { Page, Spinner, EmptyState } from '../shared/ui';
+import { RoomFocusPanel } from '../focus/RoomFocusPanel';
 
 const stickyBar = { position: 'sticky' as const, top: 0, zIndex: 10 };
 
@@ -16,7 +17,7 @@ export function RoomDetailScreen() {
   const params = useParams();
   const navigate = useNavigate();
   const { t, locale } = useI18n();
-  const { rooms, events, queryTime, campusHours, loading } = useRoomData();
+  const { rooms, events, queryTime, campusHours, loading, isCustomTime } = useRoomData();
   const { isFavorite, toggle } = useFavorites();
 
   const ident = decodeURIComponent(params.ident ?? '');
@@ -92,6 +93,13 @@ export function RoomDetailScreen() {
             duration={banner.duration}
           />
         )}
+
+        <RoomFocusPanel
+          room={room}
+          availability={availability}
+          closing={campusHours.todayClose}
+          scheduleOnly={closed || isCustomTime}
+        />
 
         {/* Identity + facilities. */}
         <div

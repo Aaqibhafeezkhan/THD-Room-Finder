@@ -75,7 +75,17 @@ export function AppBar({ mode = 'brand', title, onBack, actions = null, style = 
         }}
       >
         <Logo size={24} />
-        <span style={{ fontWeight: 500, fontSize: '1.375rem', color: 'var(--md-on-surface)' }}>
+        <span
+          style={{
+            fontWeight: 500,
+            fontSize: '1.375rem',
+            color: 'var(--md-on-surface)',
+            minWidth: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
           {title || 'THD Room Finder'}
         </span>
       </div>

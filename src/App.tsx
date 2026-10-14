@@ -6,6 +6,7 @@ import { RoomFilterProvider } from './features/rooms/RoomFilterContext';
 import { FavoritesProvider } from './features/favorites/favorites';
 import { FocusHistoryProvider } from './features/focus/FocusHistoryContext';
 import { StudyProfileProvider } from './features/profile/StudyProfileContext';
+import { FocusSessionProvider } from './features/focus/FocusSessionContext';
 import { AppShell } from './app/AppShell';
 
 /**
@@ -16,6 +17,7 @@ import { AppShell } from './app/AppShell';
  *   FavoritesProvider → saved rooms
  *   FocusHistoryProvider → focus history, on this device only
  *   StudyProfileProvider → sign-in and study profile (focus service)
+ *   FocusSessionProvider → the running focus session and live room activity
  */
 export default function App() {
   return (
@@ -27,7 +29,9 @@ export default function App() {
               <FavoritesProvider>
                 <FocusHistoryProvider>
                   <StudyProfileProvider>
-                    <AppShell />
+                    <FocusSessionProvider>
+                      <AppShell />
+                    </FocusSessionProvider>
                   </StudyProfileProvider>
                 </FocusHistoryProvider>
               </FavoritesProvider>

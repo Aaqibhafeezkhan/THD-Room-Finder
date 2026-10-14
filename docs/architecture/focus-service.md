@@ -37,7 +37,7 @@ flowchart LR
 | Table | Holds | Notes |
 |---|---|---|
 | `focus.programme` | Programme catalogue: id, code, EN/DE name, intake terms, active | Ids are stable slugs; the real list comes from the taxonomy in [#40](https://github.com/arudaev/THD-Room-Finder/issues/40), not built yet. Only listed, active programmes can share Public |
-| `focus.room` | Rooms a session may name: `campus:ident`, campus, code, active | Filled by a maintainer import of teaching-eligible rooms; students cannot add rooms |
+| `focus.room` | Rooms a session may name: `thd:<THabella ident>`, campus, code, active | Generated from THabella by `scripts/dev/focus-rooms-sql.py` as a migration; students cannot add rooms |
 | `focus.identity` | Display name (1–32), programme, intake year + term, default visibility, show-name consent, version | Self-declared. Batch = programme + intake year + intake term. No email |
 | `focus.session` | Owner, room, visibility, show-name, batch snapshot, request id, started, planned end, lease, ended + reason, version | One open session per person (unique partial index). Planned end ≤ 3 h after start; lease ≤ planned end |
 
@@ -97,7 +97,7 @@ Errors carry a stable `hint` for the app to branch on; `message` is for logs.
 |---|---|
 | Per-device lease token (one renewing tab) | ADR 0001 asks for it; the version check covers stale writers for now. Revisit in [#19](https://github.com/arudaev/THD-Room-Finder/issues/19) |
 | Separate admission budget table | A per-user start limit (20 per hour) stands in until [#22](https://github.com/arudaev/THD-Room-Finder/issues/22) measures load |
-| Full programme list and real room import | Once the [#40](https://github.com/arudaev/THD-Room-Finder/issues/40) taxonomy exists; a maintainer import script fills `focus.programme` and `focus.room` |
+| Full programme list | Once the [#40](https://github.com/arudaev/THD-Room-Finder/issues/40) taxonomy exists; a maintainer import fills `focus.programme` |
 | Client wrapper | Identity and sign-in: `src/data/identityApi.ts` ([#18](https://github.com/arudaev/THD-Room-Finder/issues/18)). Sessions: [#19](https://github.com/arudaev/THD-Room-Finder/issues/19) |
 | Manual semester correction (leave semesters) | Needs a stored offset on `focus.identity`; today the number follows the intake only |
 
