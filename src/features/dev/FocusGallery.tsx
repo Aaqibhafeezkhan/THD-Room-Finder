@@ -65,14 +65,13 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 export function FocusGallery() {
   const { t, locale, setLocale } = useI18n();
-  const { theme, cycle, setTheme } = useTheme();
+  const { theme, cycle, setTheme, accent, setAccent } = useTheme();
   const [visibility, setVisibility] = useState<FocusVisibility>('private');
   const [showName, setShowName] = useState(false);
   const [quiet, setQuiet] = useState(false);
   const [checkIn, setCheckIn] = useState(false);
   const [confirm, setConfirm] = useState(false);
   const [snack, setSnack] = useState('');
-  const [accent, setAccent] = useState<'violet' | 'orchid' | 'graphite'>('violet');
 
   // ?theme=light|dark, ?lang=en|de and ?accent=orchid|graphite make screenshots reproducible.
   useEffect(() => {
@@ -83,15 +82,7 @@ export function FocusGallery() {
     if (lang === 'en' || lang === 'de') setLocale(lang);
     const acc = q.get('accent');
     if (acc === 'orchid' || acc === 'graphite') setAccent(acc);
-  }, [setTheme, setLocale]);
-
-  // Graph colour lives on the same element as data-theme (see tokens/colors.css).
-  useEffect(() => {
-    const root = document.documentElement;
-    if (accent === 'violet') root.removeAttribute('data-accent');
-    else root.setAttribute('data-accent', accent);
-    return () => root.removeAttribute('data-accent');
-  }, [accent]);
+  }, [setTheme, setLocale, setAccent]);
 
   const months = locale === 'de'
     ? ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez']

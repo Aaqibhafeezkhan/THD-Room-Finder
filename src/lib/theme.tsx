@@ -10,7 +10,14 @@ import type { ReactNode } from 'react';
  */
 export type Theme = 'system' | 'light' | 'dark';
 
+/**
+ * Focus graph colour (D4). Violet is the default ramp; Orchid and Graphite
+ * set `data-accent`, which must sit on the same element as `data-theme`.
+ */
+export type Accent = 'violet' | 'orchid' | 'graphite';
+
 const STORAGE_KEY = 'thd_theme';
+const ACCENT_KEY = 'thd_accent';
 const ORDER: Theme[] = ['system', 'light', 'dark'];
 
 function initialTheme(): Theme {
@@ -23,6 +30,22 @@ function initialTheme(): Theme {
   return 'system';
 }
 
+function initialAccent(): Accent {
+  try {
+    const saved = localStorage.getItem(ACCENT_KEY);
+    if (saved === 'orchid' || saved === 'graphite') return saved;
+  } catch {
+    /* ignore */
+  }
+  return 'violet';
+}
+
+function applyAccent(accent: Accent): void {
+  const root = document.documentElement;
+  if (accent === 'violet') root.removeAttribute('data-accent');
+  else root.setAttribute('data-accent', accent);
+}
+
 function apply(theme: Theme): void {
   const root = document.documentElement;
   if (theme === 'system') root.removeAttribute('data-theme');
@@ -33,12 +56,15 @@ interface ThemeValue {
   theme: Theme;
   setTheme: (t: Theme) => void;
   cycle: () => void;
+  accent: Accent;
+  setAccent: (a: Accent) => void;
 }
 
 const ThemeContext = createContext<ThemeValue | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>(initialTheme);
+  const [accent, setAccent] = useState<Accent>(initialAccent);
 
   useEffect(() => {
     apply(theme);
@@ -49,11 +75,23 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }, [theme]);
 
+  useEffect(() => {
+    applyAccent(accent);
+    try {
+      localStorage.setItem(ACCENT_KEY, accent);
+    } catch {
+      /* ignore */
+    }
+  }, [accent]);
+
   const cycle = useCallback(() => {
     setTheme((prev) => ORDER[(ORDER.indexOf(prev) + 1) % ORDER.length]);
   }, []);
 
-  const value = useMemo<ThemeValue>(() => ({ theme, setTheme, cycle }), [theme, cycle]);
+  const value = useMemo<ThemeValue>(
+    () => ({ theme, setTheme, cycle, accent, setAccent }),
+    [theme, cycle, accent],
+  );
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 

@@ -1,14 +1,15 @@
 import { lazy, Suspense, useMemo } from 'react';
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AdaptiveNav } from '../components';
 import type { NavItem } from '../components';
-import { IconList, IconMap, IconStar } from '../components/icons';
+import { IconList, IconMap } from '../components/icons';
+import { IconPerson } from '../components/focus/focusIcons';
 import { useWindowClass, useWideLayout } from '../lib/useWindowClass';
 import { useI18n } from '../i18n';
-import { useFavorites } from '../features/favorites/favorites';
 import { HomeScreen } from '../features/home/HomeScreen';
 import { CampusScreen } from '../features/campus/CampusScreen';
-import { FavoritesScreen } from '../features/favorites/FavoritesScreen';
+import { ProfileScreen } from '../features/profile/ProfileScreen';
+import { SettingsScreen } from '../features/profile/SettingsScreen';
 import { RoomDetailScreen } from '../features/detail/RoomDetailScreen';
 
 // Component specimen for `npm run dev` and Vercel previews; the import is
@@ -21,7 +22,7 @@ const FocusGallery = import.meta.env.DEV || __DEV_GALLERY__
 /** Maps the current path to the active nav destination. */
 function activeId(pathname: string): string {
   if (pathname.startsWith('/rooms')) return 'rooms';
-  if (pathname.startsWith('/saved')) return 'saved';
+  if (pathname.startsWith('/profile') || pathname.startsWith('/saved')) return 'profile';
   return 'campus';
 }
 
@@ -29,7 +30,6 @@ export function AppShell() {
   const cls = useWindowClass();
   const wide = useWideLayout();
   const { t } = useI18n();
-  const { favorites } = useFavorites();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -37,14 +37,9 @@ export function AppShell() {
     () => [
       { id: 'campus', label: t('Campus', 'Campus'), icon: <IconMap /> },
       { id: 'rooms', label: t('Rooms', 'Räume'), icon: <IconList /> },
-      {
-        id: 'saved',
-        label: t('Saved', 'Gespeichert'),
-        icon: <IconStar />,
-        badge: favorites.length > 0 ? favorites.length : undefined,
-      },
+      { id: 'profile', label: t('Profile', 'Profil'), icon: <IconPerson size={24} /> },
     ],
-    [t, favorites.length],
+    [t],
   );
 
   const onSelect = (id: string) => {
@@ -65,7 +60,10 @@ export function AppShell() {
       <Routes>
         <Route path="/" element={<CampusScreen />} />
         <Route path="/rooms" element={<HomeScreen />} />
-        <Route path="/saved" element={<FavoritesScreen />} />
+        <Route path="/profile" element={<ProfileScreen />} />
+        <Route path="/profile/settings" element={<SettingsScreen />} />
+        {/* The Saved tab became part of Profile (#37); old links still work. */}
+        <Route path="/saved" element={<Navigate to="/profile" replace />} />
         <Route path="/room/:ident" element={<RoomDetailScreen />} />
         {FocusGallery && (
           <Route
