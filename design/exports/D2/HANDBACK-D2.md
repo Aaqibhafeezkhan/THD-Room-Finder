@@ -61,7 +61,7 @@ Neighbouring levels differ by 1.2–2.2 : 1. Levels 0–2 are under 3 : 1 on pur
 | settings groups | Study profile · Sharing · Appearance · Account | Studienprofil · Teilen · Darstellung · Konto |
 | rows | Programme · Intake · Display name · Default mode · Theme · Language · Focus accent | Studiengang · Jahrgang · Anzeigename · Standardmodus · Design · Sprache · Fokusfarbe |
 | notePriv / notePub | Private: others see that someone is focusing here, not who. / Public: AIN 7 sees you and can join. | Privat: Andere sehen, dass hier jemand lernt – aber nicht wer. / Öffentlich: AIN 7 sieht dich und kann beitreten. |
-| quiet | Treat my batch's sessions as claimed | Sessions meines Jahrgangs als belegt anzeigen |
+| quiet | Treat my batch's sessions as claimed | Sessions meines Jahrgangs wie fremde anzeigen |
 | account | Export / Import focus history · Sign out · Delete profile | Fokus-Verlauf exportieren / importieren · Abmelden · Profil löschen |
 | stepOf | Step {n} of 6 | Schritt {n} von 6 |
 | email | What's your THD email? · We send you a 6-digit code. No password. · Send Code | Wie lautet deine THD-E-Mail? · Wir schicken dir einen 6-stelligen Code. Kein Passwort. · Code senden |
