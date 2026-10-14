@@ -6,6 +6,7 @@
 |---|---|---|---|---|
 | CI · Web | `ci.yml` | PR (any base), push to `main`, merge queue | `npm ci`, typecheck, Vitest, workflow-script tests, build | Yes |
 | CI · Android | `ci.yml` | same | Web build, `cap sync`, `assembleDebug` | Yes |
+| Database | `database.yml` | PR or push to `main` touching `supabase/` | Postgres with migrations and seed, pgTAP contract tests, generated types up to date | No |
 | Docs | `docs.yml` | PR or push touching Markdown | Offline relative-link check with lychee | No |
 | PR conventions | `pr-conventions.yml` | PR opened / edited / synced / labelled | Conventional title, linked issue, assign author, assign closed issues, path labels | Yes |
 | Issue commands | `issue-commands.yml` | Issue comment | `/take`, `/drop` self-assignment | — |
