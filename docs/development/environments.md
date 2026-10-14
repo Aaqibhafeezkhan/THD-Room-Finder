@@ -27,16 +27,37 @@ flowchart LR
 |---|---|---|---|
 | Web app | `npm run dev` | Vercel deployment per PR (includes all stack ancestors) | Vercel, from `main` |
 | THabella | Dev middleware proxy | `api/` proxy | `api/` proxy |
-| Supabase | `npx supabase start` (Docker) | One isolated staging project (planned) | Production project (planned, gated) |
+| Supabase | `npx supabase start` (Docker) | `thd-room-finder-staging` (Frankfurt, free plan) | Production project (planned, gated) |
 | Users | Seeded synthetic users | Seeded synthetic users | Real students |
 | Credentials | Local defaults printed by the CLI | Preview-scoped env vars in Vercel | Production env vars in Vercel |
 | Migrations | `supabase db reset` freely | Applied by the maintainer | Applied by the maintainer after review |
 
 **Status today:** the local stack runs the focus service: schema, functions,
 seed and contract tests ([#17](https://github.com/arudaev/THD-Room-Finder/issues/17),
-[contract](../architecture/focus-service.md)). No hosted Supabase project
-exists for THD Room Finder yet; hosted activation follows the
+[contract](../architecture/focus-service.md)). A hosted staging project backs
+Vercel previews; production does not exist yet and follows the
 [pilot checklist](../architecture/pilot-verification.md).
+
+## Staging (previews)
+
+`thd-room-finder-staging` runs in Frankfurt on the free plan. The maintainer
+keeps its project ref outside the repo.
+
+- **Schema:** the same migrations as local, applied with
+  `npx supabase link --project-ref <ref>` and `npx supabase db push`. The CLI
+  uses a temporary login role, so no database password is needed.
+- **Data:** `supabase/seed.sql` (synthetic people and sample rooms) via
+  `npx supabase db push --include-seed`. Never real students.
+- **Vercel:** `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` are set
+  for the **Preview** environment only. Production has no Supabase variables.
+- **Auth:** site URL is the `main` preview; redirects allow
+  `https://thd-room-finder-*-arudaev-projects.vercel.app/**` and
+  `http://localhost:5173/**`. Codes expire after 10 minutes.
+- **Email:** Supabase's built-in sender only mails members of the Supabase
+  organization, a few per hour, using the default templates (a link, an
+  8-digit code length, no custom text). The D2 code email needs a custom SMTP
+  sender, which is still open. Until then, test sign-in with the
+  maintainer's own address.
 
 ## Run Supabase locally
 
