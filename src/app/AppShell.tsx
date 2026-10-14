@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { lazy, Suspense, useMemo } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AdaptiveNav } from '../components';
 import type { NavItem } from '../components';
@@ -10,6 +10,12 @@ import { HomeScreen } from '../features/home/HomeScreen';
 import { CampusScreen } from '../features/campus/CampusScreen';
 import { FavoritesScreen } from '../features/favorites/FavoritesScreen';
 import { RoomDetailScreen } from '../features/detail/RoomDetailScreen';
+
+// Component specimen for development only; the import is dropped from
+// production builds because the condition is a build-time constant.
+const FocusGallery = import.meta.env.DEV
+  ? lazy(() => import('../features/dev/FocusGallery').then((m) => ({ default: m.FocusGallery })))
+  : null;
 
 /** Maps the current path to the active nav destination. */
 function activeId(pathname: string): string {
@@ -60,6 +66,16 @@ export function AppShell() {
         <Route path="/rooms" element={<HomeScreen />} />
         <Route path="/saved" element={<FavoritesScreen />} />
         <Route path="/room/:ident" element={<RoomDetailScreen />} />
+        {FocusGallery && (
+          <Route
+            path="/dev/focus"
+            element={
+              <Suspense fallback={null}>
+                <FocusGallery />
+              </Suspense>
+            }
+          />
+        )}
         <Route path="*" element={<CampusScreen />} />
       </Routes>
     </main>
