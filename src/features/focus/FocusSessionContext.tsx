@@ -106,7 +106,8 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
   const activeRef = useRef(active);
   activeRef.current = active;
 
-  const signedIn = Boolean(api && profile.email);
+  // A claim needs a study profile (ADR 0004); without one focus stays local.
+  const signedIn = Boolean(api && profile.email && profile.identity);
 
   const setActive = useCallback((next: ActiveSession | null) => {
     activeRef.current = next;

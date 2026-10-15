@@ -39,11 +39,13 @@ flowchart LR
 | `focus.programme` | Programme catalogue: id, code, EN/DE name, intake terms, active | Ids are stable slugs; the real list comes from the taxonomy in [#40](https://github.com/arudaev/THD-Room-Finder/issues/40), not built yet. Only listed, active programmes can share Public |
 | `focus.room` | Rooms a session may name: `thd:<THabella ident>`, campus, code, active | Generated from THabella by `scripts/dev/focus-rooms-sql.py` as a migration; students cannot add rooms |
 | `focus.identity` | Display name (1–32), programme, intake year + term, default visibility, show-name consent, version | Self-declared. Batch = programme + intake year + intake term. No email |
-| `focus.session` | Owner, room, visibility, show-name, batch snapshot, request id, started, planned end, lease, ended + reason, version | One open session per person (unique partial index). Planned end ≤ 3 h after start; lease ≤ planned end |
+| `focus.session` | Owner, room, visibility, show-name, batch snapshot, request id, started, planned end, lease, ended + reason, version, rhythm (focus, break, long break, every) and anchor | One open session per person (unique partial index). Planned end ≤ 3 h after start; lease ≤ planned end; anchor ≤ 3 h before start |
 
 A session is **live** while `ended_at is null`, `now() < lease_until` and
-`now() < planned_end`. The lease is 60 minutes (ADR 0002, provisional until
-[#39](https://github.com/arudaev/THD-Room-Finder/issues/39)).
+`now() < planned_end`. The lease is one block, the longer break and
+10 minutes to confirm the next block: 70 minutes for Deep 50/10
+([ADR 0004](adr/0004-focus-rhythm.md)). A claim needs a study profile;
+without one, focus stays on the device and never calls this service.
 
 ## Functions
 
@@ -56,8 +58,8 @@ identity results are JSON objects; times are server time.
 | `get_identity()` | signed in | Own identity or `null` |
 | `save_identity(display_name, programme_id, intake_year, intake_term, default_visibility, show_name, expected_version)` | signed in | Create (version `null`) or update. A new programme or intake **ends the running session** first |
 | `get_focus()` | signed in | Own open session or `null`; closes it first if its lease ran out |
-| `start_focus(room_key, planned_minutes, visibility, show_name, request_id, replace = false)` | signed in | Starts a session. 1–180 minutes; the client works out "until the next lecture". Same `request_id` returns the same session. A running session elsewhere is a conflict unless `replace` is true, which ends it |
-| `renew_focus(session_id, expected_version)` | owner | Lease = `min(planned_end, now + 60 min)`. Renewals within a minute return without a write. Never revives an ended or expired session |
+| `start_focus(room_key, planned_minutes, visibility, show_name, request_id, replace = false, focus_minutes = 60, break_minutes = 0, long_break_minutes = 0, long_every = 0, anchor_at = now)` | study profile | Starts a session. 1–180 minutes; the client lays out the rhythm until the next lecture. Blocks 5–120 minutes, breaks 0–30; the anchor is now, or a batch session's anchor when joining (at most 3 h ago). Same `request_id` returns the same session. A running session elsewhere is a conflict unless `replace` is true, which ends it. No study profile: `needs_profile` |
+| `renew_focus(session_id, expected_version)` | owner | Lease = `min(planned_end, now + focus + break + 10 min)`; called at each confirmed block and while the app is open. Renewals within a minute return without a write. Never revives an ended or expired session |
 | `update_focus(session_id, visibility, show_name, expected_version)` | owner | Private ↔ Public and name consent; applies to the next summary read |
 | `end_focus(session_id)` | owner | Ends it. Calling again returns the ended session |
 | `room_summaries(campus)` | anyone | One row per room **with live activity** on that campus (≤ 500), see below |
@@ -66,7 +68,10 @@ identity results are JSON objects; times are server time.
 ### What a viewer sees
 
 `room_summaries` returns `room_key`, `claims`, `claim_since`, `batch_count`,
-`batch_since`, `batch_names`, `own`, `expires_at` and `server_now`. No user ids.
+`batch_since`, `batch_names`, `batch_rhythm`, `own`, `expires_at` and
+`server_now`. No user ids. `batch_rhythm` is the rhythm and anchor of the
+earliest Public session of the viewer's batch, so Join can line up with it;
+everyone else gets `null`.
 
 | Session | Owner | Same batch (signed in) | Everyone else (incl. signed out) |
 |---|---|---|---|
@@ -84,8 +89,8 @@ Errors carry a stable `hint` for the app to branch on; `message` is for logs.
 | `hint` | SQLSTATE | When |
 |---|---|---|
 | `not_signed_in` | 28000 | A signed-in function without a user |
-| `invalid_duration`, `invalid_visibility`, `invalid_request`, `unknown_room` | 22023 | Bad input |
-| `invalid_programme`, `public_needs_batch` | 22023 | Unknown programme or intake; Public without a listed programme |
+| `invalid_duration`, `invalid_rhythm`, `invalid_visibility`, `invalid_request`, `unknown_room` | 22023 | Bad input |
+| `invalid_programme`, `public_needs_batch`, `needs_profile` | 22023 | Unknown programme or intake; Public without a listed programme; a claim without a study profile |
 | `already_active` | 23505 | A session is running and `replace` was not set |
 | `stale_version` | 40001 | The record changed elsewhere; reload and retry |
 | `not_active` | P0002 | Renew or update on a session that has ended or expired |

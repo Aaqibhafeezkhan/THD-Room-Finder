@@ -1,3 +1,4 @@
+import type { Rhythm } from '../domain/focusRhythm';
 import { ServiceError, errorCode } from './identityApi';
 import type { FocusClient } from './supabaseClient';
 
@@ -19,6 +20,9 @@ export interface SessionDto {
   endedAt: Date | null;
   endReason: string | null;
   version: number;
+  rhythm: Rhythm;
+  /** When the rhythm started (server clock); before startedAt after a Join. */
+  anchorAt: Date;
   /** Server clock minus device clock, in ms, at the time of the reply. */
   skewMs: number;
 }
@@ -32,6 +36,8 @@ export interface RoomSummary {
   batchCount: number;
   batchSince: Date | null;
   batchNames: string[];
+  /** Rhythm of the earliest Public batch session, to Join in step. */
+  batchRhythm: { rhythm: Rhythm; anchorAt: Date } | null;
   /** The caller's own session is in this room. */
   own: boolean;
 }
@@ -44,6 +50,10 @@ export interface StartInput {
   requestId: string;
   /** End a running session elsewhere first (moving rooms). */
   replace: boolean;
+  /** Without one the server assumes a single block (older clients). */
+  rhythm?: Rhythm;
+  /** Server-clock anchor of the rhythm; now unless joining. */
+  anchorAt?: Date;
 }
 
 export interface FocusApi {
@@ -62,10 +72,25 @@ export function roomKey(ident: string): string {
   return `thd:${ident}`;
 }
 
+function toRhythm(j: unknown): { rhythm: Rhythm; anchorAt: Date | null } | null {
+  if (!j || typeof j !== 'object') return null;
+  const r = j as Record<string, unknown>;
+  return {
+    rhythm: {
+      focus: Number(r.focus_minutes ?? 60),
+      break: Number(r.break_minutes ?? 0),
+      longBreak: Number(r.long_break_minutes ?? 0),
+      longEvery: Number(r.long_every ?? 0),
+    },
+    anchorAt: r.anchor_at ? new Date(String(r.anchor_at)) : null,
+  };
+}
+
 function toSession(j: Record<string, unknown> | null): SessionDto | null {
   if (!j) return null;
   const date = (v: unknown) => (v ? new Date(String(v)) : null);
   const serverNow = date(j.server_now);
+  const rhythm = toRhythm(j.rhythm);
   return {
     id: String(j.id),
     roomKey: String(j.room_key),
@@ -77,6 +102,8 @@ function toSession(j: Record<string, unknown> | null): SessionDto | null {
     endedAt: date(j.ended_at),
     endReason: (j.end_reason as string | null) ?? null,
     version: Number(j.version),
+    rhythm: rhythm?.rhythm ?? { focus: 60, break: 0, longBreak: 0, longEvery: 0 },
+    anchorAt: rhythm?.anchorAt ?? date(j.started_at)!,
     skewMs: serverNow ? serverNow.getTime() - Date.now() : 0,
   };
 }
@@ -99,6 +126,13 @@ export function supabaseFocusApi(load: () => Promise<FocusClient>): FocusApi {
         p_show_name: i.showName,
         p_request_id: i.requestId,
         p_replace: i.replace,
+        ...(i.rhythm && {
+          p_focus_minutes: i.rhythm.focus,
+          p_break_minutes: i.rhythm.break,
+          p_long_break_minutes: i.rhythm.longBreak,
+          p_long_every: i.rhythm.longEvery,
+        }),
+        ...(i.anchorAt && { p_anchor_at: i.anchorAt.toISOString() }),
       });
       return toSession(data as Record<string, unknown>)!;
     },
@@ -122,15 +156,19 @@ export function supabaseFocusApi(load: () => Promise<FocusClient>): FocusApi {
     },
     async summaries(campus) {
       const rows = (await call('room_summaries', { p_campus: campus })) as Record<string, unknown>[] | null;
-      return (rows ?? []).map((r) => ({
-        roomKey: String(r.room_key),
-        claims: Number(r.claims ?? 0),
-        claimSince: r.claim_since ? new Date(String(r.claim_since)) : null,
-        batchCount: Number(r.batch_count ?? 0),
-        batchSince: r.batch_since ? new Date(String(r.batch_since)) : null,
-        batchNames: Array.isArray(r.batch_names) ? (r.batch_names as string[]) : [],
-        own: Boolean(r.own),
-      }));
+      return (rows ?? []).map((r) => {
+        const batch = toRhythm(r.batch_rhythm);
+        return {
+          roomKey: String(r.room_key),
+          claims: Number(r.claims ?? 0),
+          claimSince: r.claim_since ? new Date(String(r.claim_since)) : null,
+          batchCount: Number(r.batch_count ?? 0),
+          batchSince: r.batch_since ? new Date(String(r.batch_since)) : null,
+          batchNames: Array.isArray(r.batch_names) ? (r.batch_names as string[]) : [],
+          batchRhythm: batch?.anchorAt ? { rhythm: batch.rhythm, anchorAt: batch.anchorAt } : null,
+          own: Boolean(r.own),
+        };
+      });
     },
   };
 }

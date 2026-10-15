@@ -7,7 +7,7 @@
 --   Max     max@example.test     AIN, winter 2023     same batch: "AIN 7 · studying"
 --   Jonas   jonas@example.test   AIN, winter 2024     other intake: anonymous claim
 --   Mia     mia@example.test     KI, winter 2023      other programme: anonymous claim
---   Sam     sam@example.test     no study profile     anonymous claim, Private only
+--   Sam     sam@example.test     no study profile     signed in, focus stays on the device
 --   (signed out, anon key)                           anonymous claim
 
 -- Programmes: synthetic placeholders until the #40 taxonomy exists.
@@ -48,13 +48,17 @@ insert into focus.identity (user_id, display_name, programme_id, intake_year, in
   ('00000000-0000-4000-a000-000000000004', 'Mia', 'bachelor-ki-deggendorf-ft', 2023, 'winter', 'public', true);
 
 -- A little live activity so the map and list have something to show:
--- Max studies publicly in A008 (name shown), Mia privately in ITC 2: sem(1).
+-- Max studies publicly in A008 (name shown, Deep 50/10), Mia privately in
+-- ITC 2: sem(1) (Pomodoro).
 insert into focus.session (user_id, room_key, visibility, show_name, programme_id, intake_year, intake_term,
-                           start_request_id, started_at, planned_end, lease_until)
+                           start_request_id, started_at, planned_end, lease_until,
+                           focus_minutes, break_minutes, long_break_minutes, long_every, anchor_at)
 values
   ('00000000-0000-4000-a000-000000000002', 'thd:r000000001', 'public', true,
    'bachelor-ain-deggendorf-ft', 2023, 'winter', gen_random_uuid(),
-   now() - interval '20 minutes', now() + interval '100 minutes', now() + interval '40 minutes'),
+   now() - interval '20 minutes', now() + interval '100 minutes', now() + interval '40 minutes',
+   50, 10, 0, 0, now() - interval '20 minutes'),
   ('00000000-0000-4000-a000-000000000004', 'thd:r000000131', 'private', false,
    'bachelor-ki-deggendorf-ft', 2023, 'winter', gen_random_uuid(),
-   now() - interval '40 minutes', now() + interval '80 minutes', now() + interval '20 minutes');
+   now() - interval '40 minutes', now() + interval '80 minutes', now() + interval '20 minutes',
+   25, 5, 15, 4, now() - interval '40 minutes');

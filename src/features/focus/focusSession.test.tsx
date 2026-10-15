@@ -89,6 +89,8 @@ function fakeFocusApi() {
         endedAt: null,
         endReason: null,
         version: 1,
+        rhythm: input.rhythm ?? { focus: 60, break: 0, longBreak: 0, longEvery: 0 },
+        anchorAt: input.anchorAt ?? now,
         skewMs: 0,
       };
       return session;

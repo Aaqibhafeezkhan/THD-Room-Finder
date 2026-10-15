@@ -2,7 +2,7 @@
 -- Uses the synthetic people from supabase/seed.sql. Each request is made
 -- as that person's JWT, exactly as a direct API call would be.
 begin;
-select plan(39);
+select plan(47);
 
 create function pg_temp.act_as(p_email text) returns void language plpgsql as $$
 declare uid uuid;
@@ -73,7 +73,7 @@ insert into t values ('start', public.start_focus('thd:r000000053', 240 / 2, 'pr
 select is((select v->>'visibility' from t where k = 'start'), 'private', 'Private by default');
 select is((select v->>'show_name' from t where k = 'start'), 'false', 'a name is never shown on a private session');
 select is((select ((v->>'lease_until')::timestamptz - (v->>'started_at')::timestamptz) from t where k = 'start'),
-  interval '60 minutes', 'the first lease is 60 minutes');
+  interval '70 minutes', 'without a rhythm: one 60-minute block plus 10 minutes to confirm');
 select is((public.start_focus('thd:r000000053', 120, 'private', false, '00000000-0000-4000-b000-000000000001'))->>'id',
   (select v->>'id' from t where k = 'start'), 'retrying the same request returns the same session');
 select throws_ok($$select public.start_focus('thd:r000000144', 60, 'private', false, gen_random_uuid())$$,
@@ -111,6 +111,7 @@ select throws_ok(format($$select public.renew_focus(%L, 3)$$, (select v->>'id' f
 select pg_temp.act_as('max@example.test');
 reset role;
 update focus.session set lease_until = now() - interval '1 minute', started_at = now() - interval '90 minutes',
+                         anchor_at = now() - interval '90 minutes',
                          planned_end = now() + interval '30 minutes'
  where room_key = 'thd:r000000001';
 select pg_temp.act_as('lena@example.test');
@@ -119,12 +120,41 @@ select is((select count(*)::int from public.room_summaries('deggendorf') where r
 select pg_temp.act_as('max@example.test');
 select is(public.get_focus(), null, 'the owner sees no running session after expiry');
 
--- ── Public needs a listed programme ────────────────────────────────────
+-- ── Rhythm (ADR 0004) ──────────────────────────────────────────────────
+select pg_temp.act_as('lena@example.test');
+insert into t values ('deep', public.start_focus('thd:r000000144', 110, 'public', false,
+  '00000000-0000-4000-b000-000000000002', true, 50, 10));
+select is((select ((v->>'lease_until')::timestamptz - (v->>'started_at')::timestamptz) from t where k = 'deep'),
+  interval '70 minutes', 'Deep 50/10: the lease covers a block, a break and 10 minutes to confirm');
+select is((select (v->'rhythm'->>'focus_minutes')::int from t where k = 'deep'), 50, 'the rhythm is returned');
+select throws_ok($$select public.start_focus('thd:r000000144', 60, 'private', false, gen_random_uuid(), true, 200, 10)$$,
+  '22023', null, 'blocks longer than 2 hours are refused');
+select throws_ok($$select public.start_focus('thd:r000000144', 60, 'private', false, gen_random_uuid(), true, 50, 10, 0, 0,
+  now() - interval '4 hours')$$, '22023', null, 'an anchor older than 3 hours is refused');
+
+select pg_temp.act_as('max@example.test');
+select is((select batch_rhythm->>'focus_minutes' from public.room_summaries('deggendorf') where room_key = 'thd:r000000144'), '50',
+  'same batch: sees the rhythm of the public session to join');
+reset role;
+select is((select (batch_rhythm->>'anchor_at')::timestamptz from public.room_summaries('deggendorf') where room_key = 'thd:r000000144'),
+  (select anchor_at from focus.session where start_request_id = '00000000-0000-4000-b000-000000000002'),
+  'the rhythm carries the anchor');
+select pg_temp.act_as('mia@example.test');
+select is((select batch_rhythm from public.room_summaries('deggendorf') where room_key = 'thd:r000000144'), null,
+  'other programme: no rhythm');
+
+select pg_temp.act_as('max@example.test');
+insert into t values ('join', public.start_focus('thd:r000000144', 60, 'public', false, gen_random_uuid(), true, 50, 10, 0, 0,
+  (select (batch_rhythm->>'anchor_at')::timestamptz from public.room_summaries('deggendorf') where room_key = 'thd:r000000144')));
+select is((select v->'rhythm'->>'anchor_at' from t where k = 'join'), (select v->'rhythm'->>'anchor_at' from t where k = 'deep'),
+  'joining adopts the batch''s anchor');
+
+-- ── A claim needs a study profile ──────────────────────────────────────
 select pg_temp.act_as('sam@example.test');
 select throws_ok($$select public.start_focus('thd:r000000144', 60, 'public', false, gen_random_uuid())$$,
   '22023', null, 'no study profile: Public is refused');
-select lives_ok($$select public.start_focus('thd:r000000144', 60, 'private', false, gen_random_uuid())$$,
-  'no study profile: Private still works');
+select throws_ok($$select public.start_focus('thd:r000000144', 60, 'private', false, gen_random_uuid())$$,
+  '22023', null, 'no study profile: no claim either, focus stays on the device');
 
 -- ── Changing batch ends the session; deleting removes the account ─────
 select pg_temp.act_as('mia@example.test');

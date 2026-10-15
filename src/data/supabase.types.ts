@@ -35,14 +35,14 @@ export type Database = {
                            },
 "room_summaries":
 { Args: { "p_campus": string }; Returns: {
-              "batch_count": number,"batch_names": (string)[],"batch_since": string,"claim_since": string,"claims": number,"expires_at": string,"own": boolean,"room_key": string,"server_now": string
+              "batch_count": number,"batch_names": (string)[],"batch_rhythm": Json,"batch_since": string,"claim_since": string,"claims": number,"expires_at": string,"own": boolean,"room_key": string,"server_now": string
             }[]
                            },
 "save_identity":
 { Args: { "p_default_visibility": string,"p_display_name": string,"p_expected_version"?: number,"p_intake_term": string,"p_intake_year": number,"p_programme_id": string,"p_show_name": boolean }; Returns: Json
                            },
 "start_focus":
-{ Args: { "p_planned_minutes": number,"p_replace"?: boolean,"p_request_id": string,"p_room_key": string,"p_show_name": boolean,"p_visibility": string }; Returns: Json
+{ Args: { "p_anchor_at"?: string,"p_break_minutes"?: number,"p_focus_minutes"?: number,"p_long_break_minutes"?: number,"p_long_every"?: number,"p_planned_minutes": number,"p_replace"?: boolean,"p_request_id": string,"p_room_key": string,"p_show_name": boolean,"p_visibility": string }; Returns: Json
                            },
 "update_focus":
 { Args: { "p_expected_version": number,"p_session_id": string,"p_show_name": boolean,"p_visibility": string }; Returns: Json
