@@ -70,15 +70,12 @@ def marker(d, cx, cy, kind, r=15):
 def diagram():
     data = json.load(open(os.path.join(HERE, 'roadmap.json'), encoding='utf-8'))
     milestones = data['milestones']
-    W, M, GAP, TOP = 3200, 120, 40, 380
+    # No heading: the banner above it in the post carries the title.
+    W, M, GAP, TOP = 3200, 120, 40, 150
     rows = max(len(m['stories']) for m in milestones)
     BOT = TOP + 200 + rows * 84 + 40
-    H = BOT + 140
+    H = BOT + 100
     base = Image.new('RGBA', (W, H), (236, 233, 248, 255))
-    base.alpha_composite(ICON.resize((96, 96), Image.LANCZOS), (M, 70))
-    d = ImageDraw.Draw(base)
-    d.text((M + 120, 118), 'THD Room Finder', font=font(SEMI, 50), fill=NAVY, anchor='lm')
-    d.text((M, 190), data['title'], font=font(BOLD, 104), fill=NAVY)
 
     n = len(milestones)
     CW = (W - 2 * M - (n - 1) * GAP) // n
@@ -108,7 +105,7 @@ def diagram():
             d.polygon([(ax + GAP - 6, ay), (ax + GAP - 20, ay - 10), (ax + GAP - 20, ay + 10)], fill=(150, 140, 200))
 
     d = ImageDraw.Draw(base)
-    lx, ly = W - M, 230
+    lx, ly = W - M, 75
     for label, kind in reversed([('Done', 'done'), ('In progress', 'doing'), ('Planned', 'planned')]):
         lx -= d.textlength(label, font=font(REG, 34))
         d.text((lx, ly), label, font=font(REG, 34), fill=NAVY, anchor='lm')
