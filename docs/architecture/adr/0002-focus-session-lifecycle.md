@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Accepted (direction), values provisional until spike [#39](https://github.com/arudaev/THD-Room-Finder/issues/39) reports |
+| **Status** | Accepted (direction), values provisional until spike [#39](https://github.com/arudaev/THD-Room-Finder/issues/39) reports; §1 and §2 amended by [ADR 0004](0004-focus-rhythm.md) |
 | **Date** | 13 October 2026 |
 | **Decided by** | Maintainer |
 | **Amends** | [ADR 0001](0001-study-presence.md): sharing choices, lease and client state, history |
@@ -29,6 +29,9 @@ assumptions:
 
 ### 1. Two sharing modes, plus a signed-out timer
 
+> **Amended by [ADR 0004](0004-focus-rhythm.md):** a claim needs a study
+> profile; without one, focus runs on the device only.
+
 | Mode | Who sees what | Default |
 |---|---|---|
 | **Private** (claim) | Everyone: the room has *a focus session* (dark purple), no name, programme or batch. Owner: full detail. | **Yes** |
@@ -41,6 +44,11 @@ activity. A student may switch Private ↔ Public during a session; narrowing
 takes effect on the next read, and widening never happens implicitly.
 
 ### 2. Duration-bound session with a check-in lease
+
+> **Amended by [ADR 0004](0004-focus-rhythm.md):** a session is a rhythm of
+> focus blocks and breaks; each block after the first is confirmed, the lease
+> follows the rhythm, and joining adopts the group's rhythm. The 60-minute
+> lease and the 45-minute web check-in below no longer apply.
 
 ```mermaid
 stateDiagram-v2

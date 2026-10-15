@@ -38,9 +38,12 @@ amber "closing soon" text reaches 4.76 : 1 on the light surface.
 | | Lecture now | Red status; no focus action |
 | | Your session · Private | Violet focus surface: timer, planned end, **Private \| Public** (Private on), End |
 | | Your session · Public | Same, Public on, "AIN 7 sees you"; optional "show my name" |
-| | Check-in | "Still focusing in E 212?" with Keep going / End |
+| | Break | Same surface: "Break · 7:40 left", what comes next ([ADR 0004](../../docs/architecture/adr/0004-focus-rhythm.md)) |
+| | Break over | "Break's over" with **Start block 3** / End; in the Open rhythm "Still focusing in E 212?" |
+| | Rhythm picker | Under Start: "Deep · 50 min focus, 10 min break", tap for Deep / Pomodoro / Lecture / Open / Custom |
 | | Ended / expired | Summary: minutes added to the focus graph |
-| | Signed out | Start runs a local timer; gentle prompt to set up a study profile for sharing |
+| | Signed out / no study profile | Start runs the same session on the device only; gentle prompt to set up a study profile to claim rooms |
+| Notification | Android and web | Room code, phase and countdown; never names or batch on the lock screen |
 | Compact active control | Any screen while a session runs | Small violet pill with timer; tap opens room detail |
 | Room list | Batch badge, claimed bucket | See `guidelines/focus-ordering.html` |
 | Campus map | Batch ring + count, claim dot | See `guidelines/focus-map-signal.html` |
@@ -56,7 +59,7 @@ summary line so Start focus stays above the fold on a phone.
 | Component | New / extended | Notes |
 |---|---|---|
 | `FocusButton` | New, or a `Button` variant | Primary for Start, tonal for Join |
-| `FocusSurface` | New | Violet container with timer, planned end, mode toggle, End |
+| `FocusSurface` | New; extended by ADR 0004 | Violet container with the phase countdown, block track, planned end, mode toggle, End |
 | `SegmentedControl` | New core component | Private / Public; generic so the language toggle can reuse it |
 | `ActivityRow` | New | Batch (violet) and claim (dark purple) rows under the status card |
 | `RoomCard` | Extended | `focus?: {kind: 'batch' \| 'claimed', label}`; claimed tints the hero |
