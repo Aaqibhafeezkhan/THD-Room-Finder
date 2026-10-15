@@ -1,0 +1,19 @@
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ask in English or German. Rough descriptions are fine.
+        Frag auf Deutsch oder Englisch. Eine kurze Beschreibung reicht.
+        Please leave out personal data and credentials. Bitte keine persönlichen Daten oder Zugangsdaten.
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question / Deine Frage
+      description: What are you trying to do, and where are you stuck? / Was möchtest du tun, und wo kommst du nicht weiter?
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: More context (optional) / Mehr dazu (optional)
+      description: What have you tried? If relevant, include device, browser or app version, room code and date/time. / Was hast du versucht? Falls relevant, Gerät, Browser oder App-Version, Raumcode und Datum/Uhrzeit.

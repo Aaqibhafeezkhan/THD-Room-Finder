@@ -1,0 +1,19 @@
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Honest criticism is welcome. You do not need to suggest a fix. English or German is fine.
+        Ehrliche Kritik ist willkommen. Du musst keine Lösung vorschlagen. Deutsch oder Englisch ist okay.
+        Please leave out personal data and credentials. Bitte keine persönlichen Daten oder Zugangsdaten.
+  - type: textarea
+    id: feedback
+    attributes:
+      label: What is on your mind? / Was möchtest du uns sagen?
+      description: What works, confuses you, or frustrates you? / Was funktioniert gut, ist unklar oder nervt dich?
+    validations:
+      required: true
+  - type: textarea
+    id: situation
+    attributes:
+      label: What happened? (optional) / Was ist passiert? (optional)
+      description: A situation, screenshot with personal details removed, or what you expected can help. / Eine Situation, ein Screenshot ohne persönliche Daten oder deine Erwartung können helfen.

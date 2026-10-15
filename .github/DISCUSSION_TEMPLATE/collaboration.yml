@@ -1,0 +1,20 @@
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Code, design, testing, translations, research and documentation all help. No CV needed.
+        Code, Design, Tests, Übersetzungen, Recherche und Dokumentation helfen. Kein Lebenslauf nötig.
+        English or German is fine. Please keep personal contact details private.
+        Deutsch oder Englisch ist okay. Bitte persönliche Kontaktdaten privat halten.
+  - type: textarea
+    id: interest
+    attributes:
+      label: What would you like to help with? / Wobei möchtest du helfen?
+      description: Say what interests you or what you would like to learn. / Was interessiert dich, oder was möchtest du lernen?
+    validations:
+      required: true
+  - type: textarea
+    id: next-step
+    attributes:
+      label: A possible first step (optional) / Ein möglicher erster Schritt (optional)
+      description: Link an issue, share an idea, or ask for a small starting task. / Verlinke ein Issue, teile eine Idee oder frag nach einer kleinen Einstiegsaufgabe.

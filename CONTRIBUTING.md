@@ -72,6 +72,11 @@ trailers or "generated with" lines to commits or PRs.
 
 ## For maintainers and AI agents
 
+The [Discussions guide](docs/contributing/discussions.md) explains how questions,
+feedback, use stories and collaboration offers become follow-ups. Keep shared
+triage notes in [Community notes](https://github.com/arudaev/THD-Room-Finder/discussions/122)
+so reviews can continue across sessions.
+
 [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md) hold the agent rules: agents
 open PRs but never merge, enable auto-merge, force-push shared branches or
 publish releases.

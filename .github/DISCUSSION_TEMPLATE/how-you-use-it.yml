@@ -1,0 +1,20 @@
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Tell us about a real situation. English or German is fine.
+        Erzähl uns von einer echten Situation. Deutsch oder Englisch ist okay.
+        Please do not share other people's names, student IDs or attendance details.
+        Bitte keine Namen anderer Personen, Matrikelnummern oder Anwesenheitsdaten teilen.
+  - type: textarea
+    id: story
+    attributes:
+      label: When do you use Room Finder? / Wann nutzt du Room Finder?
+      description: What are you trying to get done? / Was möchtest du damit erreichen?
+    validations:
+      required: true
+  - type: textarea
+    id: experience
+    attributes:
+      label: What helps or gets in the way? (optional) / Was hilft oder stört? (optional)
+      description: Tell us about useful parts, workarounds, or things you still need. / Erzähl von hilfreichen Funktionen, Notlösungen oder Dingen, die dir noch fehlen.

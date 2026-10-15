@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Question or idea
+  - name: Questions, feedback, ideas or collaboration / Fragen und Feedback
     url: https://github.com/arudaev/THD-Room-Finder/discussions
-    about: Ask a question or float an idea before it becomes an issue.
+    about: Ask for help, share criticism or a use story, suggest an idea, or offer to help. English and German welcome.
   - name: Documentation
     url: https://github.com/arudaev/THD-Room-Finder/tree/main/docs
     about: Product spec, architecture, development setup and the contributor workflow.
