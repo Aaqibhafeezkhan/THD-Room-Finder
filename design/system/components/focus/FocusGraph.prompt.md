@@ -1,6 +1,6 @@
 The Profile hero (D2): a contribution graph of daily focus minutes. Square
 cells, rows Mon → Sun, one column per week, the current week rightmost, today
-outlined, later days left empty. Levels 0 · <30 · <90 · <180 · 180+ min on
+outlined, later days left empty. Levels count Pomodoro blocks, 0 · 1 · 2–3 · 4–6 · 7+, on
 `--md-graph-0…4`, which follow the graph colour (`data-accent`).
 
 ```jsx
