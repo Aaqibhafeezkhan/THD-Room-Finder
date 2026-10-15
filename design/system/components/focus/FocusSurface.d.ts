@@ -67,6 +67,7 @@ export interface FocusSurfaceProps {
     onVisibility?: (v: FocusVisibility) => void;
     onShowName?: (on: boolean) => void;
     onEnd?: () => void;
+    /** Omit to hide Set Up (no focus service in this build). */
     onSetup?: () => void;
     style?: CSSProperties;
 }
