@@ -35,8 +35,8 @@ flowchart LR
 **Status today:** the local stack runs the focus service: schema, functions,
 seed and contract tests ([#17](https://github.com/arudaev/THD-Room-Finder/issues/17),
 [contract](../architecture/focus-service.md)). A hosted staging project backs
-Vercel previews; production does not exist yet and follows the
-[pilot checklist](../architecture/pilot-verification.md).
+Vercel previews and, for now, the live app; a separate production project
+follows the [pilot checklist](../architecture/pilot-verification.md).
 
 ## Staging (previews)
 
@@ -49,15 +49,30 @@ keeps its project ref outside the repo.
 - **Data:** `supabase/seed.sql` (synthetic people and sample rooms) via
   `npx supabase db push --include-seed`. Never real students.
 - **Vercel:** `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` are set
-  for the **Preview** environment only. Production has no Supabase variables.
-- **Auth:** site URL is the `main` preview; redirects allow
-  `https://thd-room-finder-*-arudaev-projects.vercel.app/**` and
+  for **Preview and Production**. Since 15 October 2026 the live app uses this
+  project too, so previews and production share data until a production
+  project is split off. Set values with `printf '%s' … | vercel env add`, never
+  a Windows PowerShell pipe: it adds a byte-order mark, and every request then
+  fails in the browser ("You're offline").
+- **Auth:** site URL is `https://thd-room-finder.vercel.app`; redirects allow
+  that URL, `https://thd-room-finder-*-arudaev-projects.vercel.app/**` and
   `http://localhost:5173/**`. Codes expire after 10 minutes.
-- **Email:** Supabase's built-in sender only mails members of the Supabase
-  organization, a few per hour, using the default templates (a link, an
-  8-digit code length, no custom text). The D2 code email needs a custom SMTP
-  sender, which is still open. Until then, test sign-in with the
-  maintainer's own address.
+- **Email:** custom SMTP through Brevo (`smtp-relay.brevo.com:587`, the Brevo
+  SMTP login and an SMTP key). Brevo's *Authorized IPs* blocking is off for
+  SMTP keys, because Supabase sends from changing addresses (`525 5.7.1
+  Unauthorized IP address` otherwise). Email rate limit: 30 an hour.
+- **Email templates:** the app asks for a code, so both templates that can
+  answer a sign-in must show `{{ .Token }}`, not only a link. Paste them in
+  Authentication → Emails → Templates:
+
+  | Template | When Supabase sends it | Source |
+  |---|---|---|
+  | Confirm signup | The first sign-in of an address (Confirm email is on) | `supabase/templates/confirmation.html` |
+  | Magic Link | Every later sign-in | `supabase/templates/magic_link.html` |
+
+  Subject for both: `Your THD Room Finder code · Dein Code`. Locally,
+  `supabase/config.toml` wires the same files, so Inbucket shows what
+  students get.
 
 ## Run Supabase locally
 

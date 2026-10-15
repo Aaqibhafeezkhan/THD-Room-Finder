@@ -8,7 +8,7 @@ ADR **amends** or **supersedes** them, and the old one gets a pointer.
 |---|---|---|
 | [0001](0001-study-presence.md) | Individual room study presence: identity, audience, data contract | Proposed contract; amended by 0002 |
 | [0002](0002-focus-session-lifecycle.md) | Focus session lifecycle, sharing modes and local history | Accepted; values provisional until [#39](https://github.com/arudaev/THD-Room-Finder/issues/39); §1–2 amended by 0004, §3 by 0003 and 0005 |
-| [0003](0003-focus-graph-share-links.md) | Focus graph share links with a stateless preview | Proposed |
+| [0003](0003-focus-graph-share-links.md) | Focus graph share links with a stateless preview | Accepted; built 15 October 2026 |
 | [0004](0004-focus-rhythm.md) | Focus rhythm, device-only focus and session notifications | Accepted |
 | [0005](0005-focus-across-devices.md) | Focus history sync and running sessions across devices | Accepted |
 
