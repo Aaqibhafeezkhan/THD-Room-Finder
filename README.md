@@ -239,10 +239,10 @@ development and contributor guides. The design system is mirrored in
 
 ## Contributing
 
-Questions, ideas, criticism, stories about how you use the app, and offers to
-help are welcome in [Discussions](https://github.com/arudaev/THD-Room-Finder/discussions).
-English or German is fine; you do not need a polished proposal. Start with the
-[welcome guide](https://github.com/arudaev/THD-Room-Finder/discussions/121).
+Questions, ideas and feedback are welcome in
+[Discussions](https://github.com/arudaev/THD-Room-Finder/discussions). See the
+[roadmap](https://github.com/arudaev/THD-Room-Finder/discussions/122) for
+where the app is heading.
 
 Pick an issue in the **Ready** column of the
 [project board](https://github.com/users/arudaev/projects/8), comment `/take`,

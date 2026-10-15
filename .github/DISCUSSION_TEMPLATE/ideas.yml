@@ -1,19 +1,8 @@
 body:
-  - type: markdown
-    attributes:
-      value: |
-        An unfinished idea is welcome. English or German is fine.
-        Auch eine unfertige Idee ist willkommen. Deutsch oder Englisch ist okay.
-        Please leave out personal data and credentials. Bitte keine persönlichen Daten oder Zugangsdaten.
   - type: textarea
-    id: need
+    id: idea
     attributes:
-      label: What would help? / Was würde helfen?
-      description: Tell us what you wish you could do and why. / Was würdest du gern tun können, und warum?
+      label: What would you like the app to do?
+      description: A rough idea is fine. Tell us what you're trying to get done.
     validations:
       required: true
-  - type: textarea
-    id: example
-    attributes:
-      label: An example or suggestion (optional) / Beispiel oder Vorschlag (optional)
-      description: Describe a real situation, a workaround, or a possible solution. / Beschreibe eine Situation, eine bisherige Notlösung oder einen Lösungsvorschlag.
