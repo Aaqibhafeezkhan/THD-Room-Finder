@@ -12,8 +12,10 @@ import type { Database } from './supabase.types';
  */
 export type FocusClient = SupabaseClient<Database>;
 
-const URL_ = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-const KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
+// Trimmed: a pasted value can carry a newline or a byte-order mark, and a BOM
+// in the key makes every fetch throw before it leaves the browser.
+const URL_ = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.trim();
+const KEY = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined)?.trim();
 
 export const focusServiceConfigured = Boolean(URL_ && KEY);
 
