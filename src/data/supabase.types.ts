@@ -1,7 +1,6 @@
 // Generated from the local database: npx supabase gen types typescript --local --schema public
 // Do not edit by hand; regenerate after changing supabase/migrations.
 
-
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
 export type Database = {
