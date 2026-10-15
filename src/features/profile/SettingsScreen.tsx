@@ -1,7 +1,9 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppBar, Button, ConfirmDialog, SegmentedControl, Snackbar, Switch } from '../../components';
+import { focusNotifier } from '../../data/focusNotifier';
+import type { NotifyPermission } from '../../data/focusNotifier';
 import { exportHistory } from '../../domain/focusHistory';
 import { useFocusHistory } from '../focus/FocusHistoryContext';
 import { RhythmSheet } from '../focus/RhythmSheet';
@@ -290,11 +292,26 @@ function Swatch({ accent, dark }: { accent: Accent; dark: boolean }) {
   );
 }
 
-/** Focus: the rhythm new sessions start with (ADR 0004). */
+/** Focus: the rhythm new sessions start with and notifications (ADR 0004). */
 function FocusGroup() {
   const { t } = useI18n();
   const [rhythm, setRhythm] = useRhythmPreference();
   const [open, setOpen] = useState(false);
+  const notifier = focusNotifier();
+  const [permission, setPermission] = useState<NotifyPermission | null>(null);
+  const [exact, setExact] = useState(true);
+
+  useEffect(() => {
+    const check = () => {
+      notifier.permission().then(setPermission, () => setPermission('denied'));
+      notifier.exactAlarms().then(setExact, () => setExact(true));
+    };
+    check();
+    // Coming back from the system settings.
+    document.addEventListener('visibilitychange', check);
+    return () => document.removeEventListener('visibilitychange', check);
+  }, [notifier]);
+
   return (
     <SettingsGroup title={t('Focus', 'Fokus')}>
       <SettingsRow label={t('Rhythm', 'Rhythmus')} sub={`${rhythmName(rhythm, t)} · ${rhythmLine(rhythm, t)}`}>
@@ -302,6 +319,41 @@ function FocusGroup() {
           {t('Change', 'Ändern')}
         </Button>
       </SettingsRow>
+      {notifier.kind !== 'none' && permission && (
+        <SettingsRow
+          label={t('Notifications', 'Benachrichtigungen')}
+          divider
+          sub={
+            permission === 'granted'
+              ? notifier.kind === 'android'
+                ? t('A countdown while you focus, also on the lock screen', 'Ein Countdown während du lernst, auch auf dem Sperrbildschirm')
+                : t('Shown when you leave the app during a session', 'Erscheint, wenn du die App während einer Session verlässt')
+              : permission === 'denied'
+                ? t('Off. Turn them on in your system or browser settings.', 'Aus. Schalte sie in den System- oder Browser-Einstellungen ein.')
+                : t('Off', 'Aus')
+          }
+        >
+          {permission === 'prompt' && (
+            <Button variant="text" onClick={() => void notifier.request().then(setPermission)}>
+              {t('Turn On', 'Einschalten')}
+            </Button>
+          )}
+        </SettingsRow>
+      )}
+      {notifier.kind === 'android' && permission === 'granted' && !exact && (
+        <SettingsRow
+          label={t('Alerts on the minute', 'Hinweise auf die Minute')}
+          divider
+          sub={t(
+            'Without this, break and block alerts can come a few minutes late.',
+            'Ohne diese Erlaubnis kommen Pausen- und Block-Hinweise evtl. ein paar Minuten zu spät.',
+          )}
+        >
+          <Button variant="text" onClick={() => void notifier.openExactAlarmSettings()}>
+            {t('Allow', 'Erlauben')}
+          </Button>
+        </SettingsRow>
+      )}
       <RhythmSheet
         open={open}
         title={t('Default rhythm', 'Standard-Rhythmus')}

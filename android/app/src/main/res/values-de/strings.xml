@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="focus_channel_running">Fokus-Session</string>
+    <string name="focus_channel_running_description">Die laufende Session mit Countdown, auch auf dem Sperrbildschirm</string>
+    <string name="focus_channel_alerts">Pausen und Blöcke</string>
+    <string name="focus_channel_alerts_description">Wenn eine Pause beginnt und wenn der nächste Block wartet</string>
+</resources>

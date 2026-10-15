@@ -95,6 +95,15 @@ describe('focusedMs', () => {
   it('an unconfirmed block counts nothing', () => {
     expect(minutes(focusedMs(plan, 1, at(10, 38)))).toBe(50);
   });
+
+  it('subtracts time in other apps during a block, not during a break', () => {
+    const away: [number, number][] = [
+      [at(9, 40).getTime(), at(9, 46).getTime()],
+      [at(9, 44).getTime(), at(9, 48).getTime()],
+      [at(10, 21).getTime(), at(10, 29).getTime()],
+    ];
+    expect(minutes(focusedMs(plan, 2, at(11, 20), away))).toBe(92);
+  });
 });
 
 describe('rhythm ids', () => {

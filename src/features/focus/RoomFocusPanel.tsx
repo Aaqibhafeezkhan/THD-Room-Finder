@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ActivityRow, Button, FocusButton, FocusSummary, FocusSurface, Snackbar } from '../../components';
 import type { FocusSurfaceText } from '../../components';
 import { roomKey } from '../../data/focusApi';
+import { focusNotifier } from '../../data/focusNotifier';
 import type { RoomSummary } from '../../data/focusApi';
 import { ServiceError } from '../../data/identityApi';
 import { formatTime } from '../../domain/format';
@@ -69,6 +70,13 @@ export function RoomFocusPanel({ room, availability, closing, scheduleOnly }: Ro
   };
 
   const startHere = async (join?: RoomSummary['batchRhythm']) => {
+    // Ask for notifications on the first Start (ADR 0004 §7); declining never
+    // blocks focusing.
+    const notifier = focusNotifier();
+    void notifier
+      .permission()
+      .then((p) => (p === 'prompt' ? notifier.request() : p))
+      .catch(() => undefined);
     const plan = planEnd(new Date(), availability.freeUntil, closing);
     if (!plan) {
       setSnack(t('Less than a minute until the next lecture.', 'Weniger als eine Minute bis zur nächsten Vorlesung.'));
@@ -219,9 +227,12 @@ export function RoomFocusPanel({ room, availability, closing, scheduleOnly }: Ro
             title={t('Session ended', 'Session beendet')}
             added={formatMinutes(ended.minutes, locale)}
             addedLabel={
-              ended.blocks > 1
+              (ended.blocks > 1
                 ? t(`of focus in ${ended.blocks} blocks, added to your focus graph`, `Fokus in ${ended.blocks} Blöcken, zu deinem Fokus-Verlauf hinzugefügt`)
-                : t('of focus, added to your focus graph', 'Fokus, zu deinem Fokus-Verlauf hinzugefügt')
+                : t('of focus, added to your focus graph', 'Fokus, zu deinem Fokus-Verlauf hinzugefügt')) +
+              (ended.awayMinutes > 0
+                ? t(` · ${formatMinutes(ended.awayMinutes, 'en')} in other apps left out`, ` · ${formatMinutes(ended.awayMinutes, 'de')} in anderen Apps nicht gezählt`)
+                : '')
             }
             todayLine={t(
               `Today ${formatMinutes(stats.todayMinutes, 'en')} · ${stats.streak}-day streak`,

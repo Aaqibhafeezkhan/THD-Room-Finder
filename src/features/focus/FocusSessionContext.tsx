@@ -6,7 +6,7 @@ import { ServiceError } from '../../data/identityApi';
 import { focusServiceConfigured, loadSupabase } from '../../data/supabaseClient';
 import { entryFor } from '../../domain/focusHistory';
 import { RHYTHMS, focusedMs, layout, statusAt } from '../../domain/focusRhythm';
-import type { FocusStatus, Rhythm, SessionPlan } from '../../domain/focusRhythm';
+import type { AwaySpan, FocusStatus, Rhythm, SessionPlan } from '../../domain/focusRhythm';
 import { MAX_SESSION_MINUTES } from '../../domain/focusSession';
 import type { EndReason, PlannedEnd } from '../../domain/focusSession';
 import { useStudyProfile } from '../profile/StudyProfileContext';
@@ -37,6 +37,8 @@ export interface ActiveSession {
   anchorAt: string;
   /** The last block the student confirmed (Start confirms block 1). */
   confirmed: number;
+  /** Time spent in other apps (Android), subtracted from focus time. */
+  away?: AwaySpan[];
   visibility: Visibility;
   showName: boolean;
   /** Set when the focus service holds the session. */
@@ -49,6 +51,8 @@ export interface EndedSession {
   roomIdent: string;
   minutes: number;
   blocks: number;
+  /** Minutes spent in other apps during blocks, already left out. */
+  awayMinutes: number;
 }
 
 export interface StartOptions {
@@ -75,6 +79,8 @@ interface FocusSessionValue {
   end: () => Promise<void>;
   /** Start the block that is waiting for an answer. */
   confirm: () => Promise<void>;
+  /** Record time spent in other apps (Android). */
+  addAway: (spans: AwaySpan[]) => void;
   setVisibility: (v: Visibility) => Promise<void>;
   setShowName: (on: boolean) => Promise<void>;
   dismissSummary: () => void;
@@ -148,13 +154,14 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
       setActive(null);
       const p = planOf(s);
       const until = new Date(Math.min(endedAt.getTime(), new Date(s.plannedEnd).getTime()));
-      const ms = p ? focusedMs(p, s.confirmed, until) : 0;
+      const ms = p ? focusedMs(p, s.confirmed, until, s.away) : 0;
+      const plain = p ? focusedMs(p, s.confirmed, until) : 0;
       const entry = entryFor(new Date(s.startedAt), until, s.roomCode, undefined, ms);
       // Under a minute adds nothing, so there is nothing to sum up either.
       if (entry) {
         await history.add(entry);
         const blocks = p ? p.phases.filter((x) => x.kind === 'focus' && x.block <= s.confirmed && x.start < until).length : 1;
-        setLastEnded({ roomIdent: s.roomIdent, minutes: entry.minutes, blocks });
+        setLastEnded({ roomIdent: s.roomIdent, minutes: entry.minutes, blocks, awayMinutes: Math.round((plain - ms) / 60000) });
       }
       if (tellServer && s.shared && api) await api.end(s.shared.id).catch(() => undefined);
     },
@@ -274,6 +281,15 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
     await renew();
   }, [renew, setActive]);
 
+  const addAway = useCallback(
+    (spans: AwaySpan[]) => {
+      const s = activeRef.current;
+      if (!s || !spans.length) return;
+      setActive({ ...s, away: [...(s.away ?? []), ...spans] });
+    },
+    [setActive],
+  );
+
   // Tick once a second while a session runs; end it at its planned end or
   // when a block went unconfirmed (counted to the last confirmed block).
   useEffect(() => {
@@ -344,11 +360,12 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
       start,
       end,
       confirm,
+      addAway,
       setVisibility,
       setShowName,
       dismissSummary: () => setLastEnded(null),
     }),
-    [active, plan, status, now, lastEnded, summaries, signedIn, start, end, confirm, setVisibility, setShowName],
+    [active, plan, status, now, lastEnded, summaries, signedIn, start, end, confirm, addAway, setVisibility, setShowName],
   );
   return <FocusSessionContext.Provider value={value}>{children}</FocusSessionContext.Provider>;
 }

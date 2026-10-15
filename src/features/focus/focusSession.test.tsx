@@ -162,7 +162,7 @@ describe('focus sessions', () => {
     await minutes(25);
     await act(async () => ctx.end());
     expect(ctx.active).toBeNull();
-    expect(ctx.lastEnded).toEqual({ roomIdent: E212.ident, minutes: 25, blocks: 1 });
+    expect(ctx.lastEnded).toEqual({ roomIdent: E212.ident, minutes: 25, blocks: 1, awayMinutes: 0 });
     expect(await recorded(store)).toEqual([[25, 'E212']]);
   });
 
@@ -187,6 +187,17 @@ describe('focus sessions', () => {
     await act(async () => ctx.end());
     expect(await recorded(store)).toEqual([[71, 'E212']]);
     expect(ctx.lastEnded?.blocks).toBe(2);
+  });
+
+  it('leaves time in other apps out of the focus time', async () => {
+    const store = await mount({ signedIn: false, api: null });
+    await act(async () => ctx.start(E212, plan(), deep));
+    await minutes(30);
+    const t = Date.now();
+    act(() => ctx.addAway([[t - 12 * 60000, t - 4 * 60000]]));
+    await act(async () => ctx.end());
+    expect(await recorded(store)).toEqual([[22, 'E212']]);
+    expect(ctx.lastEnded?.awayMinutes).toBe(8);
   });
 
   it('with no answer after the break, ends at the end of the last block', async () => {

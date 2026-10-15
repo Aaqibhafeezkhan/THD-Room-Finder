@@ -125,10 +125,16 @@ slot is therefore usually free for 105 to 120 minutes.
 | Lock screen content | Room code, phase and countdown only, never names or batch | The same |
 | A phase ends | A scheduled alarm vibrates and switches the notification to the next phase, even with the app closed. Exact when the student allows exact alarms, otherwise possibly a few minutes late | Only while the browser keeps the page alive; no web push in M1 |
 | Actions | "Start block N" and "End" | Tapping opens the app |
-| Android 16 | Asks to be shown as a Live Update (status-bar chip) | None |
+| Android 16 | A Live Update (status-bar chip) comes later: it needs compile SDK 36, the app builds against 34 | None |
 
-Permissions are asked on the first Start: notifications, and on Android
-exact alarms. Declining either never blocks focusing.
+Notification permission is asked on the first Start. Exact alarms are
+offered in Settings → Focus on Android 12+, where new installs don't get
+them by default. Declining either never blocks focusing.
+
+Away time is measured natively: from leaving the app while the screen is on
+until the screen turns off or the app comes back. If Android ends the app
+in between, the span runs until the app is opened again, at most to the end
+of that block.
 
 ## Consequences
 

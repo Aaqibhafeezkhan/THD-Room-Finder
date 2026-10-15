@@ -157,10 +157,39 @@ export function statusAt(plan: SessionPlan, confirmed: number, now: Date): Focus
   return { kind: phase.kind, phase, next: plan.phases[i + 1] ?? null };
 }
 
-/** Focus time of confirmed blocks up to `until`; breaks never count. */
-export function focusedMs(plan: SessionPlan, confirmed: number, until: Date): number {
+/** A stretch spent in another app, as [start, end] in epoch ms. */
+export type AwaySpan = [number, number];
+
+/**
+ * Focus time of confirmed blocks up to `until`; breaks never count, and
+ * neither does time spent in another app during a block (Android, ADR 0004).
+ */
+export function focusedMs(plan: SessionPlan, confirmed: number, until: Date, away: AwaySpan[] = []): number {
   const u = until.getTime();
   return plan.phases
     .filter((p) => p.kind === 'focus' && p.block <= confirmed)
-    .reduce((sum, p) => sum + Math.max(0, Math.min(p.end.getTime(), u) - p.start.getTime()), 0);
+    .reduce((sum, p) => {
+      const start = p.start.getTime();
+      const end = Math.min(p.end.getTime(), u);
+      if (end <= start) return sum;
+      return sum + (end - start) - overlapMs(start, end, away);
+    }, 0);
+}
+
+/** Away time inside [start, end], counting overlapping spans once. */
+export function overlapMs(start: number, end: number, away: AwaySpan[]): number {
+  const spans = away
+    .map(([a, b]): AwaySpan => [Math.max(a, start), Math.min(b, end)])
+    .filter(([a, b]) => b > a)
+    .sort((x, y) => x[0] - y[0]);
+  let total = 0;
+  let reach = start;
+  for (const [a, b] of spans) {
+    const from = Math.max(a, reach);
+    if (b > from) {
+      total += b - from;
+      reach = b;
+    }
+  }
+  return total;
 }
