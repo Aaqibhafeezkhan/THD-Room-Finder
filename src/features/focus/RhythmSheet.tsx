@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button, IconButton, Sheet } from '../../components';
-import { CUSTOM_BREAK, CUSTOM_FOCUS, RHYTHMS, customRhythm, rhythmId } from '../../domain/focusRhythm';
+import { CUSTOM_BREAK, CUSTOM_FOCUS, DEFAULT_RHYTHM_ID, RHYTHMS, customRhythm, rhythmId } from '../../domain/focusRhythm';
 import type { Rhythm } from '../../domain/focusRhythm';
 import { useI18n } from '../../i18n';
 import { useWindowClass } from '../../lib/useWindowClass';
@@ -70,7 +70,7 @@ export function RhythmSheet({ open, title, value, onClose, onPick }: RhythmSheet
             key={id}
             checked={rhythmId(choice) === id}
             onSelect={() => setChoice(RHYTHMS[id])}
-            trailing={id === 'deep' ? t('default', 'Standard') : undefined}
+            trailing={id === DEFAULT_RHYTHM_ID ? t('default', 'Standard') : undefined}
           >
             <div>{rhythmName(RHYTHMS[id], t)}</div>
             <div style={{ fontSize: 'var(--body-medium-size)', color: 'var(--md-on-surface-variant)' }}>

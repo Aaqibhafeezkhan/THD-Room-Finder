@@ -38,14 +38,15 @@ slot is therefore usually free for 105 to 120 minutes.
 
 | Rhythm | Focus | Break | Long break | Why |
 |---|---|---|---|---|
-| **Deep** (default) | 50 min | 10 min | none | Two blocks fill one free slot: 09:30 → 11:20, before the 11:30 lecture |
-| **Pomodoro** | 25 min | 5 min | 15 min after every 4th block | The well-known technique |
+| **Deep** | 50 min | 10 min | none | Two blocks fill one free slot: 09:30 → 11:20, before the 11:30 lecture |
+| **Pomodoro** (default) | 25 min | 5 min | 15 min after every 4th block | The well-known technique, and the easiest start for a new student |
 | **Lecture** | 90 min | 15 min | none | Mirrors the lecture grid |
 | **Open** | no blocks | none | none | A plain stopwatch, with "Still focusing?" every 60 minutes |
 | **Custom** | 15–120 min | 5–30 min | none | Steps of 5 minutes |
 
-- The default rhythm is set in Settings, and Start lets you pick another
-  one for this session.
+- Pomodoro is the default (changed from Deep on 15 October 2026, before
+  release); the picker still lists Deep first. The default is set in
+  Settings, and Start lets you pick another one for this session.
 - The plan is laid out at Start, from an **anchor time**, and cut at the
   planned end from ADR 0002: the next lecture, the campus closing time or
   3 hours.
@@ -167,7 +168,7 @@ of that block.
 
 | Value | Decided | Revisit in |
 |---|---|---|
-| Default rhythm | Deep 50/10 | Pilot ([#22](https://github.com/arudaev/THD-Room-Finder/issues/22)) |
+| Default rhythm | Pomodoro 25/5 | Pilot ([#22](https://github.com/arudaev/THD-Room-Finder/issues/22)) |
 | Confirmation grace | 10 min | [#39](https://github.com/arudaev/THD-Room-Finder/issues/39) |
 | Shortest last block | 10 min | Pilot |
 | Open rhythm check-in | 60 min | Pilot |

@@ -60,7 +60,7 @@ sequenceDiagram
 
 | State | What the student sees | Primary action |
 |---|---|---|
-| Free, no activity | Teal status card "free for 6 h"; under Start, the rhythm for this session ("Deep · 50 min focus, 10 min break"), tap to change | **Start focus** (filled, primary blue) |
+| Free, no activity | Teal status card "free for 6 h"; under Start, the rhythm for this session ("Pomodoro · 25 min focus, 5 min break"), tap to change | **Start focus** (filled, primary blue) |
 | Free, your batch is studying here | Teal status card + violet row "AIN 7 · 2 studying" | **Join focus** (starts your own session, public) |
 | Claimed by someone else | Dark-purple row "Focus session · 40 min" under the status card | Start focus still possible: it is a shared room, not a booking |
 | Lecture now | Red status card | None (focus unavailable) |
@@ -162,9 +162,10 @@ carrier of meaning: every signal also has a label and an icon.
 
 ## Session rules (summary of ADR 0002 and ADR 0004)
 
-- A session is a **rhythm of focus blocks and breaks**. Deep (50 min focus,
-  10 min break) is the default; Pomodoro (25/5, 15 after every 4th block),
-  Lecture (90/15), Open (a stopwatch) and Custom are one tap away.
+- A session is a **rhythm of focus blocks and breaks**. Pomodoro (25 min
+  focus, 5 min break, 15 after every 4th block) is the default; Deep (50/10,
+  listed first), Lecture (90/15), Open (a stopwatch) and Custom are one tap
+  away.
 - The plan ends before the room's next lecture, at closing time or after
   3 hours, whichever comes first, and never on a break.
 - After each break the app asks to **start the next block**. With no answer

@@ -23,7 +23,8 @@ export const RHYTHMS: Record<PresetId, Rhythm> = {
   open: { focus: 60, break: 0, longBreak: 0, longEvery: 0 },
 };
 
-export const DEFAULT_RHYTHM_ID: PresetId = 'deep';
+/** New students start with Pomodoro; the picker still lists Deep first. */
+export const DEFAULT_RHYTHM_ID: PresetId = 'pomodoro';
 /** Late answers to "Start block 2" still count from the block's start. */
 export const CONFIRM_GRACE_MINUTES = 10;
 /** A last block shorter than this is dropped (except the first). */

@@ -4,7 +4,7 @@ import type { Rhythm } from '../../domain/focusRhythm';
 
 /**
  * The rhythm new sessions start with (Settings → Focus, ADR 0004). Kept on
- * the device; Deep 50/10 until the student picks another one.
+ * the device; Pomodoro until the student picks another one.
  */
 const KEY = 'thd_focus_rhythm';
 const EVENT = 'thd-focus-rhythm';
