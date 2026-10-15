@@ -12,6 +12,7 @@
     }
   },
   "rewrites": [
+    { "source": "/f/:payload", "destination": "/api/share?p=:payload" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "headers": [
