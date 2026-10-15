@@ -64,8 +64,15 @@ const surfaceText: FocusSurfaceText = {
 };
 
 describe('focus graph levels', () => {
-  it('maps daily minutes onto the five ramp levels', () => {
-    expect([0, 1, 29, 30, 89, 90, 179, 180, 600].map(focusLevel)).toEqual([0, 1, 1, 2, 2, 3, 3, 4, 4]);
+  it('counts whole Pomodoro blocks: 1 · 2–3 · 4–6 · 7+', () => {
+    // 0 · a few minutes · 1 block · just short of 2 · 2 · 3 · 4 · 6 · 7 · a long day
+    const minutes = [0, 5, 25, 49, 50, 75, 100, 150, 175, 600];
+    expect(minutes.map(focusLevel)).toEqual([0, 1, 1, 1, 2, 2, 3, 3, 4, 4]);
+  });
+
+  it('puts a Deep block and a lecture-sized day where their Pomodoro count lands', () => {
+    expect(focusLevel(50)).toBe(2); // one Deep block = two Pomodoros
+    expect(focusLevel(180)).toBe(4); // two Lecture blocks
   });
 });
 
