@@ -1,6 +1,7 @@
 // Generated from the local database: npx supabase gen types typescript --local --schema public
 // Do not edit by hand; regenerate after changing supabase/migrations.
 
+
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
 export type Database = {
@@ -13,7 +14,10 @@ export type Database = {
             [_ in never]: never
           }
           Functions: {
-            "delete_identity":
+            "clear_focus_history":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
+"delete_identity":
 { Args: Record<PropertyKey, never>; Returns: undefined
                            },
 "end_focus":
@@ -22,6 +26,9 @@ export type Database = {
 "get_focus":
 { Args: Record<PropertyKey, never>; Returns: Json
                            },
+"get_focus_history":
+{ Args: { "p_since"?: string }; Returns: Json
+                           },
 "get_identity":
 { Args: Record<PropertyKey, never>; Returns: Json
                            },
@@ -29,6 +36,9 @@ export type Database = {
 { Args: Record<PropertyKey, never>; Returns: {
               "code": string,"id": string,"intake_terms": (string)[],"name_de": string,"name_en": string
             }[]
+                           },
+"put_focus_history":
+{ Args: { "p_entries": Json }; Returns: number
                            },
 "renew_focus":
 { Args: { "p_expected_version": number,"p_session_id": string }; Returns: Json

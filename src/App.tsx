@@ -15,8 +15,8 @@ import { AppShell } from './app/AppShell';
  *   I18nProvider   → EN/DE
  *   RoomDataProvider → THabella data, teaching filter, time-travel, auto-refresh
  *   FavoritesProvider → saved rooms
- *   FocusHistoryProvider → focus history, on this device only
  *   StudyProfileProvider → sign-in and study profile (focus service)
+ *   FocusHistoryProvider → focus history on the device, synced when signed in
  *   FocusSessionProvider → the running focus session and live room activity
  */
 export default function App() {
@@ -27,13 +27,13 @@ export default function App() {
           <RoomDataProvider>
             <RoomFilterProvider>
               <FavoritesProvider>
-                <FocusHistoryProvider>
-                  <StudyProfileProvider>
+                <StudyProfileProvider>
+                  <FocusHistoryProvider>
                     <FocusSessionProvider>
                       <AppShell />
                     </FocusSessionProvider>
-                  </StudyProfileProvider>
-                </FocusHistoryProvider>
+                  </FocusHistoryProvider>
+                </StudyProfileProvider>
               </FavoritesProvider>
             </RoomFilterProvider>
           </RoomDataProvider>

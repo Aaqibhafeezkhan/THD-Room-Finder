@@ -8,9 +8,11 @@
 > [ADR 0002](adr/0002-focus-session-lifecycle.md) (Private / Public, lease).
 
 The service is one small Supabase project: Auth for an email code sign-in and
-Postgres for study identities and running sessions. The app calls a handful of
-database functions over the Data API; it never touches a table. Everything
-else stays on the device: favourites, the focus graph and the signed-out timer.
+Postgres for study identities, running sessions and, for signed-in students,
+the focus history ([ADR 0005](adr/0005-focus-across-devices.md)). The app
+calls a handful of database functions over the Data API; it never touches a
+table. Everything else stays on the device: favourites, room codes in the
+focus history and the signed-out timer.
 
 ```mermaid
 flowchart LR
@@ -39,6 +41,7 @@ flowchart LR
 | `focus.programme` | Programme catalogue: id, code, EN/DE name, intake terms, active | Ids are stable slugs; the real list comes from the taxonomy in [#40](https://github.com/arudaev/THD-Room-Finder/issues/40), not built yet. Only listed, active programmes can share Public |
 | `focus.room` | Rooms a session may name: `thd:<THabella ident>`, campus, code, active | Generated from THabella by `scripts/dev/focus-rooms-sql.py` as a migration; students cannot add rooms |
 | `focus.identity` | Display name (1–32), programme, intake year + term, default visibility, show-name consent, version | Self-declared. Batch = programme + intake year + intake term. No email |
+| `focus.history` | Owner, entry id, start, end, focus minutes, synced at | Signed-in students only ([ADR 0005](adr/0005-focus-across-devices.md)). No room, rhythm or batch. Primary key (owner, entry id); at most 5,000 per owner; deleted with the account |
 | `focus.session` | Owner, room, visibility, show-name, batch snapshot, request id, started, planned end, lease, ended + reason, version, rhythm (focus, break, long break, every) and anchor | One open session per person (unique partial index). Planned end ≤ 3 h after start; lease ≤ planned end; anchor ≤ 3 h before start |
 
 A session is **live** while `ended_at is null`, `now() < lease_until` and
@@ -63,7 +66,10 @@ identity results are JSON objects; times are server time.
 | `update_focus(session_id, visibility, show_name, expected_version)` | owner | Private ↔ Public and name consent; applies to the next summary read |
 | `end_focus(session_id)` | owner | Ends it. Calling again returns the ended session |
 | `room_summaries(campus)` | anyone | One row per room **with live activity** on that campus (≤ 500), see below |
-| `delete_identity()` | signed in | Ends sessions, then deletes the account; the device's focus graph is untouched |
+| `delete_identity()` | signed in | Ends sessions, then deletes the account and its synced history; the device's copy of the focus graph is untouched |
+| `put_focus_history(entries)` | signed in | Adds up to 500 `{id, started_at, ended_at, minutes}` entries; ids already stored and malformed entries are skipped. Returns how many were new. Full at 5,000: `history_full` |
+| `get_focus_history(since = null)` | signed in | `{server_now, entries}`: own entries stored after `since`, oldest first |
+| `clear_focus_history()` | signed in | Deletes own synced history; returns how many entries went |
 
 ### What a viewer sees
 
@@ -95,6 +101,8 @@ Errors carry a stable `hint` for the app to branch on; `message` is for logs.
 | `stale_version` | 40001 | The record changed elsewhere; reload and retry |
 | `not_active` | P0002 | Renew or update on a session that has ended or expired |
 | `rate_limited` | 53400 | More than 20 starts in an hour |
+| `invalid_history`, `too_many_entries` | 22023 | History upload that is not an array, or over 500 entries |
+| `history_full` | 53400 | 5,000 synced entries already stored |
 
 ## Not in this contract yet
 
