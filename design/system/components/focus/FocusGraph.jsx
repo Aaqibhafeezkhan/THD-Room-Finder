@@ -13,15 +13,22 @@ import { IconShare } from './focusIcons.jsx';
  * screen readers: the section label carries the stats and a visually hidden
  * table lists every day's minutes. Hover or tap a cell for its day.
  */
-/** Daily minutes → ramp level: 0 · <30 · <90 · <180 · 180+. */
+/** One Pomodoro block, the default rhythm's unit of focus (ADR 0004). */
+const BLOCK_MINUTES = 25;
+/**
+ * Daily minutes → ramp level, counted in whole Pomodoro blocks: 0 · 1 ·
+ * 2–3 · 4–6 · 7+ (0 · <50 · <100 · <175 · 175+ min). Any focus at all is
+ * level 1. Fixed, not relative to the best day, so cards compare.
+ */
 export function focusLevel(minutes) {
     if (minutes <= 0)
         return 0;
-    if (minutes < 30)
+    const blocks = Math.floor(minutes / BLOCK_MINUTES);
+    if (blocks < 2)
         return 1;
-    if (minutes < 90)
+    if (blocks < 4)
         return 2;
-    if (minutes < 180)
+    if (blocks < 7)
         return 3;
     return 4;
 }

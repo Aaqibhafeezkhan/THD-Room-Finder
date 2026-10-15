@@ -51,7 +51,11 @@ export interface FocusGraphProps {
     onShare?: () => void;
     style?: CSSProperties;
 }
-/** Daily minutes → ramp level: 0 · <30 · <90 · <180 · 180+. */
+/**
+ * Daily minutes → ramp level, counted in whole Pomodoro blocks: 0 · 1 ·
+ * 2–3 · 4–6 · 7+ (0 · <50 · <100 · <175 · 175+ min). Any focus at all is
+ * level 1. Fixed, not relative to the best day, so cards compare.
+ */
 export declare function focusLevel(minutes: number): 0 | 1 | 2 | 3 | 4;
 export declare function parseDay(iso: string): Date;
 export declare function dayKey(d: Date): string;

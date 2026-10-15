@@ -96,7 +96,7 @@ if they pass the same test.
 | Profile | Contents |
 |---|---|
 | Header | Avatar initial, display name, batch chip ("AIN 7"), gear → Settings. Signed out: "Set Up Study Profile" |
-| Focus graph | GitHub-style contribution calendar: square cells, rows Mon–Sun, one column per week, current week rightmost, five levels from near-white to the darkest violet; streak and total; **Share** |
+| Focus graph | GitHub-style contribution calendar: square cells, rows Mon–Sun, one column per week, current week rightmost, five levels from near-white to the darkest violet, counted in Pomodoro blocks per day (1 · 2–3 · 4–6 · 7+); streak and total; **Share** |
 | Saved rooms | Today's Saved list with live status (unchanged behaviour, new home) |
 
 | Settings | Contents |
