@@ -23,8 +23,8 @@ interface StudyProfileValue {
   /** Display name, else the batch, else null. */
   displayName: string | null;
   api: IdentityApi | null;
-  /** Re-reads the profile after sign-in. */
-  refresh: () => Promise<void>;
+  /** Re-reads the profile after sign-in; resolves to the stored one, if any. */
+  refresh: () => Promise<Identity | null>;
   save: (input: IdentityInput) => Promise<Identity>;
   remove: () => Promise<void>;
   signOut: () => Promise<void>;
@@ -43,13 +43,16 @@ export function StudyProfileProvider({ children, api: injected }: { children: Re
   const [programmes, setProgrammes] = useState<Programme[]>([]);
 
   const refresh = useCallback(async () => {
-    if (!api) return;
+    if (!api) return null;
     try {
       const mail = await api.currentEmail();
+      const stored = mail ? await api.getIdentity() : null;
       setEmail(mail);
-      setIdentity(mail ? await api.getIdentity() : null);
+      setIdentity(stored);
+      return stored;
     } catch {
       /* offline: keep what we have */
+      return null;
     } finally {
       setLoading(false);
     }
