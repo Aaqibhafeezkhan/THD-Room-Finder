@@ -81,6 +81,13 @@ slot is therefore usually free for 105 to 120 minutes.
   another app, so it subtracts nothing.
 - A strict mode, where leaving the app during a block breaks it as in
   Forest, is a later option.
+- **Graph levels count Pomodoro blocks.** A day's colour comes from its
+  focus minutes in whole 25-minute blocks: 1 · 2–3 · 4–6 · 7+ (under 50,
+  under 100, under 175, 175+ min). Any focus at all lights the first level.
+  Other rhythms convert by minutes, so a Deep block counts as two. The
+  levels are fixed, not relative to the best day, so the Profile graph and
+  the semester share card compare across students. Changed from 30/90/180
+  minutes on 15 October 2026.
 
 ### 4. Without a study profile, focus stays on the device
 
