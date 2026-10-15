@@ -8,7 +8,7 @@ import { notificationStages } from './notificationStages';
 /**
  * Keeps the running-session notification in step with the session (ADR 0004
  * §7): rescheduled whenever the phase changes or a block is confirmed,
- * cleared when the session ends. Its "Start Block N" and "End" actions come
+ * cleared when the session ends or runs on another device. Its "Start Block N" and "End" actions come
  * back here, and on Android the time spent in other apps is collected each
  * time the app returns. Renders nothing.
  */
@@ -19,8 +19,10 @@ export function FocusNotifications({ notifier = focusNotifier() }: { notifier?: 
   latest.current = focus;
 
   const { active, plan, status } = focus;
+  // A session picked up from another device rings there, not here, until a
+  // block is confirmed on this one (ADR 0005).
   const phaseKey =
-    active && status && status.kind !== 'done'
+    active && !active.adopted && status && status.kind !== 'done'
       ? `${active.startedAt}|${active.confirmed}|${active.roomIdent}|${status.kind}|${'phase' in status ? status.phase.block : ''}`
       : '';
 

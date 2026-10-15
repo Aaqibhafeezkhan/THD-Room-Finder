@@ -30,6 +30,7 @@ export interface SessionView {
 }
 
 function until(s: ActiveSession, t: Translate): string {
+  if (s.adopted) return t('started on another device', 'auf einem anderen Gerät gestartet');
   const limit = new Date(s.limitAt ?? s.plannedEnd);
   return s.reason === 'lecture'
     ? t(`before the ${formatTime(limit)} lecture`, `vor der Vorlesung um ${formatTime(limit)}`)

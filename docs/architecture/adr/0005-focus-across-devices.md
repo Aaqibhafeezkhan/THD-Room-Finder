@@ -66,14 +66,17 @@ flowchart LR
   already running is treated as confirmed, and a block waiting for an answer
   asks again on this device.
 - **One entry per session.** A shared session's history entry uses the
-  server session id, so two devices that both record it store one entry.
-  When another device ended the session (`end_reason = 'ended'`), this
-  device records nothing; that device already did.
+  server session id, so when both devices record it, the account keeps the
+  first upload and each device keeps one entry for it.
 - **Moving rooms asks first.** Starting in another room while the server
   holds a session this device doesn't know about returns `already_active`;
   the app asks "Move your session here?" instead of replacing it silently.
-- **Notifications** run on the device that started the session or last
-  confirmed a block, so a laptop doesn't ring next to the phone.
+- **Notifications** stay on the device that started the session. A device
+  that adopted it stays quiet until a block is confirmed on it, so a laptop
+  doesn't ring next to the phone.
+- **The owner's session JSON** gains `room_code` and `renewed_at`
+  (migration `20261015170000_focus_session_handoff.sql`); blocks that began
+  before the last renewal count as confirmed on the adopting device.
 - Device-only sessions (no study profile, offline, unknown room) never leave
   their device.
 

@@ -60,7 +60,7 @@ identity results are JSON objects; times are server time.
 | `list_programmes()` | anyone | Active programmes for setup |
 | `get_identity()` | signed in | Own identity or `null` |
 | `save_identity(display_name, programme_id, intake_year, intake_term, default_visibility, show_name, expected_version)` | signed in | Create (version `null`) or update. A new programme or intake **ends the running session** first |
-| `get_focus()` | signed in | Own open session or `null`; closes it first if its lease ran out |
+| `get_focus()` | signed in | Own open session or `null`; closes it first if its lease ran out. Owner results carry `room_code` and `renewed_at`, so another device of the same student can pick the session up ([ADR 0005](adr/0005-focus-across-devices.md)) |
 | `start_focus(room_key, planned_minutes, visibility, show_name, request_id, replace = false, focus_minutes = 60, break_minutes = 0, long_break_minutes = 0, long_every = 0, anchor_at = now)` | study profile | Starts a session. 1–180 minutes; the client lays out the rhythm until the next lecture. Blocks 5–120 minutes, breaks 0–30; the anchor is now, or a batch session's anchor when joining (at most 3 h ago). Same `request_id` returns the same session. A running session elsewhere is a conflict unless `replace` is true, which ends it. No study profile: `needs_profile` |
 | `renew_focus(session_id, expected_version)` | owner | Lease = `min(planned_end, now + focus + break + 10 min)`; called at each confirmed block and while the app is open. Renewals within a minute return without a write. Never revives an ended or expired session |
 | `update_focus(session_id, visibility, show_name, expected_version)` | owner | Private ↔ Public and name consent; applies to the next summary read |

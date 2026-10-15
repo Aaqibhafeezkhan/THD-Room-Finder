@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ActivityRow, Button, FocusButton, FocusSummary, FocusSurface, Snackbar } from '../../components';
+import { ActivityRow, Button, ConfirmDialog, FocusButton, FocusSummary, FocusSurface, Snackbar } from '../../components';
 import type { FocusSurfaceText } from '../../components';
 import { roomKey } from '../../data/focusApi';
 import { focusNotifier } from '../../data/focusNotifier';
@@ -281,6 +281,18 @@ export function RoomFocusPanel({ room, availability, closing, scheduleOnly }: Ro
         onPick={setPicked}
       />
       <Snackbar message={snack} onClose={() => setSnack('')} bottom={cls === 'compact' ? 96 : 24} />
+      <ConfirmDialog
+        open={focus.conflict !== null}
+        title={t('Move your session here?', 'Session hierher verlegen?')}
+        body={t(
+          `You're focusing in ${focus.conflict?.roomCode ?? 'another room'} on another device. Moving ends it there and starts here with a fresh plan.`,
+          `Du lernst auf einem anderen Gerät in ${focus.conflict?.roomCode ?? 'einem anderen Raum'}. Beim Verlegen endet sie dort und startet hier mit neuem Plan.`,
+        )}
+        confirmLabel={t(`Move to ${room.code}`, `Nach ${room.code} verlegen`)}
+        cancelLabel={t('Keep it there', 'Dort lassen')}
+        onCancel={() => void focus.resolveConflict(false)}
+        onConfirm={() => void focus.resolveConflict(true).catch(fail)}
+      />
     </section>
   );
 }

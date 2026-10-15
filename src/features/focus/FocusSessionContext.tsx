@@ -10,6 +10,7 @@ import type { AwaySpan, FocusStatus, Rhythm, SessionPlan } from '../../domain/fo
 import { MAX_SESSION_MINUTES } from '../../domain/focusSession';
 import type { EndReason, PlannedEnd } from '../../domain/focusSession';
 import { useStudyProfile } from '../profile/StudyProfileContext';
+import { adoptSession } from './adoptSession';
 import { useFocusHistory } from './FocusHistoryContext';
 
 /**
@@ -45,6 +46,9 @@ export interface ActiveSession {
   shared: { id: string; version: number; leaseUntil: string } | null;
   /** Why a student with a study profile got a device-only session. */
   localBecause?: 'offline' | 'unknown_room' | 'error';
+  /** Started on another device of the same student and picked up here
+   *  (ADR 0005); this device stays quiet until a block is confirmed on it. */
+  adopted?: boolean;
 }
 
 export interface EndedSession {
@@ -76,6 +80,10 @@ interface FocusSessionValue {
   /** Sessions are shared (a study profile and the service). */
   shared: boolean;
   start: (room: { ident: string; code: string }, planned: PlannedEnd, opts: StartOptions) => Promise<void>;
+  /** A session runs on another device: where, until the student decides. */
+  conflict: { roomCode: string } | null;
+  /** Move the other device's session here, or keep it there. */
+  resolveConflict: (move: boolean) => Promise<void>;
   end: () => Promise<void>;
   /** Start the block that is waiting for an answer. */
   confirm: () => Promise<void>;
@@ -128,8 +136,11 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
   const [now, setNow] = useState(() => new Date());
   const [lastEnded, setLastEnded] = useState<EndedSession | null>(null);
   const [summaries, setSummaries] = useState<Map<string, RoomSummary> | null | undefined>(undefined);
+  const [conflict, setConflict] = useState<{ roomCode: string; retry: () => Promise<void> } | null>(null);
   const activeRef = useRef(active);
   activeRef.current = active;
+  /** Shared sessions this device ended, never to be adopted back. */
+  const endedHere = useRef(new Set<string>());
 
   // A claim needs a study profile (ADR 0004); without one focus stays local.
   const signedIn = Boolean(api && profile.email && profile.identity);
@@ -152,11 +163,14 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
       const s = activeRef.current;
       if (!s) return;
       setActive(null);
+      if (s.shared) endedHere.current.add(s.shared.id);
       const p = planOf(s);
       const until = new Date(Math.min(endedAt.getTime(), new Date(s.plannedEnd).getTime()));
       const ms = p ? focusedMs(p, s.confirmed, until, s.away) : 0;
       const plain = p ? focusedMs(p, s.confirmed, until) : 0;
-      const entry = entryFor(new Date(s.startedAt), until, s.roomCode, undefined, ms);
+      // A shared session's entry is named after it, so two devices that both
+      // record it store one entry once synced (ADR 0005).
+      const entry = entryFor(new Date(s.startedAt), until, s.roomCode, s.shared?.id, ms);
       // Under a minute adds nothing, so there is nothing to sum up either.
       if (entry) {
         await history.add(entry);
@@ -168,8 +182,8 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
     [api, history, setActive],
   );
 
-  const start = useCallback<FocusSessionValue['start']>(
-    async (room, planned, opts) => {
+  const begin = useCallback(
+    async (room: { ident: string; code: string }, planned: PlannedEnd, opts: StartOptions, force: boolean): Promise<void> => {
       const current = activeRef.current;
       if (current?.roomIdent === room.ident) return;
       const t = new Date();
@@ -207,13 +221,24 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
           visibility: base.visibility,
           showName: base.showName,
           requestId: uuid(),
-          replace: true,
+          // Replace only what this device knows about; a session it doesn't
+          // know (another device) is the student's call.
+          replace: force || Boolean(current),
           rhythm,
           ...(joinAnchor && { anchorAt: joinAnchor }),
         });
         setActive({ ...base, visibility: dto.visibility, showName: dto.showName, shared: sharedFrom(dto) });
       } catch (e) {
         const code = e instanceof ServiceError ? e.code : 'error';
+        if (code === 'already_active') {
+          const elsewhere = await api.current().catch(() => null);
+          setActive(null);
+          setConflict({
+            roomCode: elsewhere?.roomCode ?? elsewhere?.roomKey.replace(/^thd:/, '') ?? '',
+            retry: () => begin(room, planned, opts, true),
+          });
+          return;
+        }
         setActive({
           ...base,
           localBecause: code === 'network' ? 'offline' : code === 'unknown_room' ? 'unknown_room' : 'error',
@@ -221,6 +246,14 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
       }
     },
     [api, finish, profile.identity, setActive, signedIn],
+  );
+
+  const start = useCallback<FocusSessionValue['start']>(
+    (room, planned, opts) => {
+      setConflict(null);
+      return begin(room, planned, opts, false);
+    },
+    [begin],
   );
 
   const end = useCallback(() => finish(new Date()), [finish]);
@@ -277,7 +310,7 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
     if (!s || !p) return;
     const st = statusAt(p, s.confirmed, new Date());
     if (st.kind !== 'confirm') return;
-    setActive({ ...s, confirmed: st.phase.block });
+    setActive({ ...s, confirmed: st.phase.block, adopted: false });
     await renew();
   }, [renew, setActive]);
 
@@ -289,6 +322,37 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
     },
     [setActive],
   );
+
+  /** Picks up a session this student runs on another device (ADR 0005). */
+  const adopt = useCallback(async () => {
+    if (!signedIn || !api || activeRef.current) return;
+    const dto = await api.current().catch(() => null);
+    if (!dto || activeRef.current || endedHere.current.has(dto.id)) return;
+    const s = adoptSession(dto, new Date());
+    if (s) setActive(s);
+  }, [api, setActive, signedIn]);
+
+  /** Move the other device's session here, or leave it running there and
+   *  show it on this device too. */
+  const resolveConflict = useCallback(
+    async (move: boolean) => {
+      const c = conflict;
+      setConflict(null);
+      if (move && c) await c.retry();
+      else void adopt();
+    },
+    [adopt, conflict],
+  );
+
+  useEffect(() => {
+    if (!signedIn) return;
+    void adopt();
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') void adopt();
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, [adopt, signedIn]);
 
   // Tick once a second while a session runs; end it at its planned end or
   // when a block went unconfirmed (counted to the last confirmed block).
@@ -358,6 +422,8 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
       summaries,
       shared: signedIn,
       start,
+      conflict: conflict ? { roomCode: conflict.roomCode } : null,
+      resolveConflict,
       end,
       confirm,
       addAway,
@@ -365,7 +431,7 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
       setShowName,
       dismissSummary: () => setLastEnded(null),
     }),
-    [active, plan, status, now, lastEnded, summaries, signedIn, start, end, confirm, addAway, setVisibility, setShowName],
+    [active, plan, status, now, lastEnded, summaries, signedIn, start, conflict, resolveConflict, end, confirm, addAway, setVisibility, setShowName],
   );
   return <FocusSessionContext.Provider value={value}>{children}</FocusSessionContext.Provider>;
 }

@@ -12,11 +12,15 @@ export type Visibility = 'private' | 'public';
 export interface SessionDto {
   id: string;
   roomKey: string;
+  /** Room code from the service, e.g. "C011"; null from older servers. */
+  roomCode: string | null;
   visibility: Visibility;
   showName: boolean;
   startedAt: Date;
   plannedEnd: Date;
   leaseUntil: Date;
+  /** Last renewal (server clock); blocks started before it were confirmed. */
+  renewedAt: Date | null;
   endedAt: Date | null;
   endReason: string | null;
   version: number;
@@ -94,11 +98,13 @@ function toSession(j: Record<string, unknown> | null): SessionDto | null {
   return {
     id: String(j.id),
     roomKey: String(j.room_key),
+    roomCode: typeof j.room_code === 'string' ? j.room_code : null,
     visibility: j.visibility === 'public' ? 'public' : 'private',
     showName: Boolean(j.show_name),
     startedAt: date(j.started_at)!,
     plannedEnd: date(j.planned_end)!,
     leaseUntil: date(j.lease_until)!,
+    renewedAt: date(j.renewed_at),
     endedAt: date(j.ended_at),
     endReason: (j.end_reason as string | null) ?? null,
     version: Number(j.version),
