@@ -47,6 +47,11 @@ function errorText(code: string, t: Translate): string {
       return t('Too many codes in a short time. Wait a minute and try again.', 'Zu viele Codes in kurzer Zeit. Warte eine Minute und versuche es erneut.');
     case 'network':
       return t("You're offline. Your timer still works; try again when you're back online.", 'Du bist offline. Dein Timer funktioniert trotzdem; versuche es wieder, wenn du online bist.');
+    case 'blocked':
+      return t(
+        "Couldn't reach the sign-in server. An ad blocker or Brave Shields may be stopping it; allow this site and try again.",
+        'Der Anmeldeserver ist nicht erreichbar. Vielleicht blockiert ihn ein Werbeblocker oder Brave Shields; erlaube diese Seite und versuche es erneut.',
+      );
     case 'stale_version':
       return t('Your profile changed on another device. Close this and try again.', 'Dein Profil wurde auf einem anderen Gerät geändert. Schließe das hier und versuche es erneut.');
     case 'invalid_programme':

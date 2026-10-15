@@ -65,7 +65,12 @@ export function RoomFocusPanel({ room, availability, closing, scheduleOnly }: Ro
     setSnack(
       code === 'network'
         ? t("You're offline. Try again in a moment.", 'Du bist offline. Versuche es gleich noch einmal.')
-        : t("Couldn't update the session. Try again.", 'Session konnte nicht aktualisiert werden. Versuche es erneut.'),
+        : code === 'blocked'
+          ? t(
+              "Couldn't reach the server. An ad blocker or Brave Shields may be stopping it.",
+              'Server nicht erreichbar. Vielleicht blockiert ihn ein Werbeblocker oder Brave Shields.',
+            )
+          : t("Couldn't update the session. Try again.", 'Session konnte nicht aktualisiert werden. Versuche es erneut.'),
     );
   };
 

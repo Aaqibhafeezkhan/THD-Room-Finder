@@ -58,14 +58,22 @@ function toIdentity(j: Record<string, unknown> | null): Identity | null {
   };
 }
 
-/** Maps a PostgREST or Auth error to a short code the UI can word. */
-export function errorCode(err: { hint?: string | null; code?: string; status?: number; message?: string } | null): string {
+/**
+ * Maps a PostgREST or Auth error to a short code the UI can word. A request
+ * that never reached the server is `network` when the device is offline and
+ * `blocked` when it is online: an ad blocker, Brave Shields or a filtering
+ * DNS stopping requests to supabase.co.
+ */
+export function errorCode(
+  err: { hint?: string | null; code?: string; status?: number; message?: string } | null,
+  online: boolean = typeof navigator === 'undefined' || navigator.onLine !== false,
+): string {
   if (!err) return 'unknown';
   if (err.hint) return err.hint;
   if (err.code === 'otp_expired') return 'code_expired';
   if (err.status === 429 || err.code === 'over_email_send_rate_limit') return 'rate_limited';
   if (err.code === '42501') return 'not_signed_in';
-  if (/fetch|network/i.test(err.message ?? '')) return 'network';
+  if (/fetch|network/i.test(err.message ?? '')) return online ? 'blocked' : 'network';
   return err.code ?? 'unknown';
 }
 
