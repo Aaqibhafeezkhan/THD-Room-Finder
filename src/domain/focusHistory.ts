@@ -96,8 +96,11 @@ export function minutesOn(days: DayMinutes[], day: string): number {
 }
 
 /** Builds an entry for a session that just ended; null if it was under a minute. */
-export function entryFor(startedAt: Date, endedAt: Date, room?: string, id?: string): FocusEntry | null {
-  const minutes = Math.min(MAX_MINUTES, Math.floor((endedAt.getTime() - startedAt.getTime()) / 60000));
+/** `focusMs` is the time actually focused (breaks excluded); without it the
+ *  whole span from start to end counts. */
+export function entryFor(startedAt: Date, endedAt: Date, room?: string, id?: string, focusMs?: number): FocusEntry | null {
+  const span = focusMs ?? endedAt.getTime() - startedAt.getTime();
+  const minutes = Math.min(MAX_MINUTES, Math.floor(span / 60000));
   if (minutes < 1) return null;
   return {
     id: id ?? `${startedAt.getTime().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,

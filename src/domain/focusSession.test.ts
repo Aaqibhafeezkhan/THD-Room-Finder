@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { checkInDeadline, checkInDue, endedBy, formatElapsed, planEnd } from './focusSession';
+import { formatElapsed, planEnd } from './focusSession';
 
 const at = (h: number, m = 0) => new Date(2026, 9, 13, h, m);
 
@@ -30,25 +30,5 @@ describe('formatElapsed', () => {
     expect(formatElapsed(0)).toBe('0:00');
     expect(formatElapsed((24 * 60 + 10) * 1000)).toBe('24:10');
     expect(formatElapsed((3600 + 5 * 60 + 40) * 1000)).toBe('1:05:40');
-  });
-});
-
-describe('check-in', () => {
-  it('asks only after a long gap in the background', () => {
-    expect(checkInDue(null, at(11))).toBe(false);
-    expect(checkInDue(at(10), at(10, 44))).toBe(false);
-    expect(checkInDue(at(10), at(10, 45))).toBe(true);
-  });
-
-  it('gives ten minutes to answer', () => {
-    expect(checkInDeadline(at(11))).toEqual(at(11, 10));
-  });
-});
-
-describe('endedBy', () => {
-  it('ends at the planned end, or when the lease runs out first', () => {
-    expect(endedBy(at(11), at(12), at(11, 30))).toBeNull();
-    expect(endedBy(at(11, 30), at(12), at(11, 30))).toBe('expired');
-    expect(endedBy(at(12), at(12), null)).toBe('planned');
   });
 });

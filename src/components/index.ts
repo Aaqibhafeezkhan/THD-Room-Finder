@@ -55,7 +55,7 @@ export type { ActivityRowProps, ActivityKind } from './focus/ActivityRow';
 export { FocusButton } from './focus/FocusButton';
 export type { FocusButtonProps } from './focus/FocusButton';
 export { FocusSurface } from './focus/FocusSurface';
-export type { FocusSurfaceProps, FocusSurfaceText, FocusVisibility } from './focus/FocusSurface';
+export type { FocusPhase, FocusSurfaceProps, FocusSurfaceText, FocusTrackSegment, FocusVisibility } from './focus/FocusSurface';
 export { FocusPill } from './focus/FocusPill';
 export type { FocusPillProps } from './focus/FocusPill';
 export { FocusSummary } from './focus/FocusSummary';

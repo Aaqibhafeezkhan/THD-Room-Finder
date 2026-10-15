@@ -1,15 +1,26 @@
 import type { CSSProperties, ReactNode } from 'react';
 /**
- * The running session on room detail (D1): a violet focus-container card with
- * the timer, the planned end and why, Private | Public (Private is the
- * default), one plain line on what others see, "Show my name" in Public only,
- * the lock-screen note and End. Signed out it is a local timer: no visibility
- * control, a line saying the room is not claimed, and Set Up Study Profile.
- * Focus order: timer → visibility → name → End.
+ * The running session on room detail (D1, ADR 0004): a violet focus-container
+ * card with the phase ("Focus", "Break", "Break's over") and block count, a
+ * countdown to the end of the phase, a track of blocks and breaks, the planned
+ * end and why, Private | Public (Private is the default), one plain line on
+ * what others see, "Show my name" in Public only, the lock-screen note and
+ * End. When a break is over, "Start block 3" leads. Without a study profile
+ * the session runs on the device: no visibility control, a line saying the
+ * room is not claimed, and Set Up Study Profile.
+ * Focus order: Start block → timer → visibility → name → End.
  */
 export type FocusVisibility = 'private' | 'public';
+export type FocusPhase = 'focus' | 'break' | 'confirm';
+/** One block or break on the track; `progress` 0–1 on the current one. */
+export interface FocusTrackSegment {
+    kind: 'focus' | 'break';
+    minutes: number;
+    state: 'done' | 'now' | 'next';
+    progress?: number;
+}
 export interface FocusSurfaceText {
-    /** "Focus session" */
+    /** The phase: "Focus", "Break" or "Break's over". */
     title: string;
     /** "Private" */
     private: string;
@@ -25,7 +36,7 @@ export interface FocusSurfaceText {
     showName: string;
     /** 'Shown as "AIN 7 student"' / "Shown as Lena", matching showName. */
     nameSub: string;
-    /** "Keeps running when your phone is locked. We check in about once an hour." */
+    /** "Keeps running when your phone is locked. After each break, tap to start the next block." */
     lockedNote: string;
     /** "End" */
     end: string;
@@ -35,10 +46,18 @@ export interface FocusSurfaceText {
     setup: string;
 }
 export interface FocusSurfaceProps {
-    /** Elapsed time, e.g. "24:10". */
+    /** The big timer: time left in the phase ("32:10"), or elapsed in Open. */
     elapsed: string;
-    /** Full-sentence timer label, e.g. "24 minutes 10 seconds focused". */
+    /** Full-sentence timer label, e.g. "32 minutes left in block 2". */
     elapsedLabel?: string;
+    phase?: FocusPhase;
+    /** "Block 2 of 3" */
+    phaseLabel?: string;
+    /** Blocks and breaks; omitted in the Open rhythm. */
+    track?: FocusTrackSegment[];
+    /** "Start block 3", shown while the phase is confirm. */
+    confirmLabel?: string;
+    onConfirm?: () => void;
     /** e.g. "Planned end 12:36 · 3 h max" or "Planned end 15:55 · before the 16:00 lecture". */
     plannedLine: ReactNode;
     visibility: FocusVisibility;

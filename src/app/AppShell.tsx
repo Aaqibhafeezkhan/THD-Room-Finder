@@ -1,8 +1,8 @@
 import { lazy, Suspense, useMemo } from 'react';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AdaptiveNav, CheckInSheet } from '../components';
-import { formatElapsed } from '../domain/focusSession';
 import { useFocusSession } from '../features/focus/FocusSessionContext';
+import { sessionView } from '../features/focus/sessionView';
 import type { NavItem } from '../components';
 import { IconList, IconMap } from '../components/icons';
 import { IconPerson } from '../components/focus/focusIcons';
@@ -35,6 +35,8 @@ export function AppShell() {
   const navigate = useNavigate();
   const location = useLocation();
   const focus = useFocusSession();
+  const checkIn =
+    focus.active && focus.plan && focus.status ? sessionView(focus.active, focus.plan, focus.status, focus.now, t) : null;
 
   const items = useMemo<NavItem[]>(
     () => [
@@ -80,19 +82,21 @@ export function AppShell() {
         )}
         <Route path="*" element={<CampusScreen />} />
       </Routes>
-      {focus.active && (
+      {focus.active && checkIn && (
         <CheckInSheet
-          open={Boolean(focus.checkIn)}
+          // On the session's own room the focus surface asks instead.
+          open={checkIn.phase === 'confirm' && location.pathname !== `/room/${encodeURIComponent(focus.active.roomIdent)}`}
           variant={wide ? 'dialog' : 'sheet'}
-          title={t(`Still focusing in ${focus.active.roomCode}?`, `Lernst du noch in ${focus.active.roomCode}?`)}
-          meta={`${formatElapsed(focus.now.getTime() - new Date(focus.active.startedAt).getTime())} · ${focus.active.roomCode}`}
-          body={t(
-            "We ask about once an hour so rooms don't stay claimed after you leave. With no answer, the session ends in 10 min.",
-            'Wir fragen etwa stündlich, damit Räume nicht belegt bleiben, wenn du gegangen bist. Ohne Antwort endet die Session in 10 Min.',
-          )}
+          title={
+            checkIn.blockLabel
+              ? t(`Break's over in ${focus.active.roomCode}`, `Pause vorbei in ${focus.active.roomCode}`)
+              : t(`Still focusing in ${focus.active.roomCode}?`, `Lernst du noch in ${focus.active.roomCode}?`)
+          }
+          meta={`${checkIn.blockLabel ?? checkIn.clock} · ${focus.active.roomCode}`}
+          body={checkIn.line}
           endLabel={t('End', 'Beenden')}
-          keepLabel={t('Keep Going', 'Weiter lernen')}
-          onKeep={() => void focus.keepGoing()}
+          keepLabel={checkIn.confirmLabel}
+          onKeep={() => void focus.confirm()}
           onEnd={() => void focus.end()}
         />
       )}

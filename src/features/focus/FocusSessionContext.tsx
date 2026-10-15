@@ -5,74 +5,94 @@ import type { FocusApi, RoomSummary, SessionDto, Visibility } from '../../data/f
 import { ServiceError } from '../../data/identityApi';
 import { focusServiceConfigured, loadSupabase } from '../../data/supabaseClient';
 import { entryFor } from '../../domain/focusHistory';
-import { checkInDeadline, checkInDue, endedBy } from '../../domain/focusSession';
+import { RHYTHMS, focusedMs, layout, statusAt } from '../../domain/focusRhythm';
+import type { FocusStatus, Rhythm, SessionPlan } from '../../domain/focusRhythm';
+import { MAX_SESSION_MINUTES } from '../../domain/focusSession';
 import type { EndReason, PlannedEnd } from '../../domain/focusSession';
 import { useStudyProfile } from '../profile/StudyProfileContext';
 import { useFocusHistory } from './FocusHistoryContext';
 
 /**
- * The student's running focus session (#19, ADR 0002). One at a time. Signed
- * in, it is shared through the focus service and the lease is renewed while
- * the app is visible; signed out or offline it is a timer on this device that
- * publishes nothing. Either way, ending it adds one entry to the local focus
- * history. A locked or backgrounded phone doesn't end it: coming back after a
- * long gap asks "Still focusing?", and with no answer it ends where the
- * student left. The session survives reloads (localStorage).
+ * The student's running focus session (#19, ADR 0002 and 0004). One at a
+ * time, laid out as focus blocks and breaks from an anchor. Each block after
+ * the first is confirmed; with no answer within 10 minutes the session ends
+ * at the end of the last confirmed block. With a study profile it is shared
+ * through the focus service and the lease is renewed while the app is
+ * visible and at each confirmation; without one, offline or in a room the
+ * service doesn't know, it runs on this device only. Ending adds the focus
+ * time (breaks excluded) to the local focus history. The session survives
+ * reloads (localStorage).
  */
 export interface ActiveSession {
   roomIdent: string;
   roomCode: string;
   startedAt: string;
+  /** End of the last block; at or before the next lecture or 3 h. */
   plannedEnd: string;
   reason: EndReason;
+  /** The next lecture, campus closing or 3 h cap the plan was cut at. */
+  limitAt?: string;
+  rhythm: Rhythm;
+  /** When the rhythm started: the start, or the batch's anchor after Join. */
+  anchorAt: string;
+  /** The last block the student confirmed (Start confirms block 1). */
+  confirmed: number;
   visibility: Visibility;
   showName: boolean;
   /** Set when the focus service holds the session. */
   shared: { id: string; version: number; leaseUntil: string } | null;
-  /** Why a signed-in student got a local timer instead. */
+  /** Why a student with a study profile got a device-only session. */
   localBecause?: 'offline' | 'unknown_room' | 'error';
 }
 
 export interface EndedSession {
   roomIdent: string;
   minutes: number;
+  blocks: number;
 }
 
-export interface CheckIn {
-  askedAt: number;
-  /** When the app was last seen; an unanswered check-in ends here. */
-  hiddenAt: number;
+export interface StartOptions {
+  rhythm: Rhythm;
+  visibility?: Visibility;
+  /** Join: follow this batch session's rhythm and anchor (server clock). */
+  join?: { rhythm: Rhythm; anchorAt: Date };
 }
 
 interface FocusSessionValue {
   active: ActiveSession | null;
+  plan: SessionPlan | null;
+  /** Where the session stands now; null without one. */
+  status: FocusStatus | null;
   /** Device-clock now, ticking every second while a session runs. */
   now: Date;
   lastEnded: EndedSession | null;
-  checkIn: CheckIn | null;
   /** Live activity by room key: undefined while loading or not configured,
    *  null when it couldn't be loaded (activity unknown). */
   summaries: Map<string, RoomSummary> | null | undefined;
+  /** Sessions are shared (a study profile and the service). */
   shared: boolean;
-  start: (room: { ident: string; code: string }, plan: PlannedEnd, visibility?: Visibility) => Promise<void>;
+  start: (room: { ident: string; code: string }, planned: PlannedEnd, opts: StartOptions) => Promise<void>;
   end: () => Promise<void>;
+  /** Start the block that is waiting for an answer. */
+  confirm: () => Promise<void>;
   setVisibility: (v: Visibility) => Promise<void>;
   setShowName: (on: boolean) => Promise<void>;
-  keepGoing: () => Promise<void>;
   dismissSummary: () => void;
 }
 
 const FocusSessionContext = createContext<FocusSessionValue | null>(null);
 
 const STORAGE_KEY = 'thd_focus_session';
-const HIDDEN_KEY = 'thd_focus_hidden_at';
 const RENEW_MS = 60_000;
 const SUMMARY_MS = 60_000;
 
 function loadActive(): ActiveSession | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as ActiveSession) : null;
+    if (!raw) return null;
+    const s = JSON.parse(raw) as Partial<ActiveSession> & Pick<ActiveSession, 'startedAt'>;
+    // Sessions saved before rhythms existed run as one Open block.
+    return { rhythm: RHYTHMS.open, anchorAt: s.startedAt, confirmed: 1, ...s } as ActiveSession;
   } catch {
     return null;
   }
@@ -84,13 +104,13 @@ function uuid(): string {
     : 'xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx'.replace(/x/g, () => Math.floor(Math.random() * 16).toString(16));
 }
 
-/** Server times shifted onto the device clock. */
-function local(d: Date, skewMs: number): string {
-  return new Date(d.getTime() - skewMs).toISOString();
+function sharedFrom(dto: SessionDto): ActiveSession['shared'] {
+  // Server times shifted onto the device clock.
+  return { id: dto.id, version: dto.version, leaseUntil: new Date(dto.leaseUntil.getTime() - dto.skewMs).toISOString() };
 }
 
-function sharedFrom(dto: SessionDto): ActiveSession['shared'] {
-  return { id: dto.id, version: dto.version, leaseUntil: local(dto.leaseUntil, dto.skewMs) };
+export function planOf(s: ActiveSession): SessionPlan | null {
+  return layout(s.rhythm, new Date(s.anchorAt), new Date(s.startedAt), new Date(s.plannedEnd));
 }
 
 const CONFIGURED_API: FocusApi | null = focusServiceConfigured ? supabaseFocusApi(loadSupabase) : null;
@@ -101,13 +121,14 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
   const [active, setActiveState] = useState<ActiveSession | null>(loadActive);
   const [now, setNow] = useState(() => new Date());
   const [lastEnded, setLastEnded] = useState<EndedSession | null>(null);
-  const [checkIn, setCheckIn] = useState<CheckIn | null>(null);
   const [summaries, setSummaries] = useState<Map<string, RoomSummary> | null | undefined>(undefined);
   const activeRef = useRef(active);
   activeRef.current = active;
 
   // A claim needs a study profile (ADR 0004); without one focus stays local.
   const signedIn = Boolean(api && profile.email && profile.identity);
+
+  const plan = useMemo(() => (active ? planOf(active) : null), [active]);
 
   const setActive = useCallback((next: ActiveSession | null) => {
     activeRef.current = next;
@@ -125,13 +146,15 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
       const s = activeRef.current;
       if (!s) return;
       setActive(null);
-      setCheckIn(null);
+      const p = planOf(s);
       const until = new Date(Math.min(endedAt.getTime(), new Date(s.plannedEnd).getTime()));
-      const entry = entryFor(new Date(s.startedAt), until, s.roomCode);
+      const ms = p ? focusedMs(p, s.confirmed, until) : 0;
+      const entry = entryFor(new Date(s.startedAt), until, s.roomCode, undefined, ms);
       // Under a minute adds nothing, so there is nothing to sum up either.
       if (entry) {
         await history.add(entry);
-        setLastEnded({ roomIdent: s.roomIdent, minutes: entry.minutes });
+        const blocks = p ? p.phases.filter((x) => x.kind === 'focus' && x.block <= s.confirmed && x.start < until).length : 1;
+        setLastEnded({ roomIdent: s.roomIdent, minutes: entry.minutes, blocks });
       }
       if (tellServer && s.shared && api) await api.end(s.shared.id).catch(() => undefined);
     },
@@ -139,19 +162,29 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
   );
 
   const start = useCallback<FocusSessionValue['start']>(
-    async (room, plan, visibility) => {
+    async (room, planned, opts) => {
       const current = activeRef.current;
       if (current?.roomIdent === room.ident) return;
+      const t = new Date();
+      const rhythm = opts.join?.rhythm ?? opts.rhythm;
+      const joinAnchor = opts.join && opts.join.anchorAt <= t ? opts.join.anchorAt : null;
+      const anchor = joinAnchor ?? t;
+      const p = layout(rhythm, anchor, t, planned.end);
+      if (!p) return;
       // Moving rooms ends the old session first (the server replaces it too).
-      if (current) await finish(new Date(), false);
+      if (current) await finish(t, false);
       setLastEnded(null);
-      const vis: Visibility = visibility ?? profile.identity?.defaultVisibility ?? 'private';
+      const vis: Visibility = opts.visibility ?? profile.identity?.defaultVisibility ?? 'private';
       const base: ActiveSession = {
         roomIdent: room.ident,
         roomCode: room.code,
-        startedAt: new Date().toISOString(),
-        plannedEnd: plan.end.toISOString(),
-        reason: plan.reason,
+        startedAt: t.toISOString(),
+        plannedEnd: p.end.toISOString(),
+        reason: planned.reason,
+        limitAt: planned.end.toISOString(),
+        rhythm,
+        anchorAt: anchor.toISOString(),
+        confirmed: 1,
         visibility: signedIn ? vis : 'private',
         showName: signedIn && vis === 'public' ? Boolean(profile.identity?.showName) : false,
         shared: null,
@@ -163,20 +196,15 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
       try {
         const dto = await api.start({
           roomKey: roomKey(room.ident),
-          minutes: plan.minutes,
+          minutes: Math.min(MAX_SESSION_MINUTES, Math.max(1, Math.ceil((p.end.getTime() - t.getTime()) / 60000))),
           visibility: base.visibility,
           showName: base.showName,
           requestId: uuid(),
           replace: true,
+          rhythm,
+          ...(joinAnchor && { anchorAt: joinAnchor }),
         });
-        setActive({
-          ...base,
-          visibility: dto.visibility,
-          showName: dto.showName,
-          startedAt: local(dto.startedAt, dto.skewMs),
-          plannedEnd: local(dto.plannedEnd, dto.skewMs),
-          shared: sharedFrom(dto),
-        });
+        setActive({ ...base, visibility: dto.visibility, showName: dto.showName, shared: sharedFrom(dto) });
       } catch (e) {
         const code = e instanceof ServiceError ? e.code : 'error';
         setActive({
@@ -227,85 +255,57 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
         if (server && server.id === s.shared.id && !server.endedAt) {
           setActive({ ...s, shared: sharedFrom(server), visibility: server.visibility, showName: server.showName });
         } else {
-          // Ended elsewhere (another device, a profile change or the lease):
-          // count up to now at most.
+          // Ended elsewhere (another device or a profile change): count up to
+          // then, and never past now.
           const ended = server?.id === s.shared.id && server.endedAt ? new Date(server.endedAt.getTime() - server.skewMs) : new Date();
-          await finish(new Date(Math.min(ended.getTime(), new Date(s.shared.leaseUntil).getTime())), false);
+          await finish(new Date(Math.min(ended.getTime(), Date.now())), false);
         }
       }
     }
   }, [api, finish, setActive]);
 
-  const keepGoing = useCallback(async () => {
-    setCheckIn(null);
+  const confirm = useCallback(async () => {
+    const s = activeRef.current;
+    const p = s && planOf(s);
+    if (!s || !p) return;
+    const st = statusAt(p, s.confirmed, new Date());
+    if (st.kind !== 'confirm') return;
+    setActive({ ...s, confirmed: st.phase.block });
     await renew();
-  }, [renew]);
+  }, [renew, setActive]);
 
-  // Tick once a second while a session runs; end it at its planned end, when
-  // the lease has run out, or when a check-in went unanswered.
+  // Tick once a second while a session runs; end it at its planned end or
+  // when a block went unconfirmed (counted to the last confirmed block).
   useEffect(() => {
     if (!active) return;
     const tick = () => {
       const t = new Date();
       setNow(t);
       const s = activeRef.current;
-      if (!s) return;
-      const lease = s.shared && document.visibilityState !== 'visible' ? new Date(s.shared.leaseUntil) : null;
-      const by = endedBy(t, new Date(s.plannedEnd), lease);
-      if (by === 'planned') void finish(new Date(s.plannedEnd));
-      else if (by === 'expired') {
-        // The lease ran out in the background: count up to when the app was
-        // last seen, not the end of the lease.
-        let hiddenAt = 0;
-        try {
-          hiddenAt = Number(localStorage.getItem(HIDDEN_KEY)) || 0;
-        } catch {
-          /* ignore */
-        }
-        void finish(new Date(hiddenAt || s.shared!.leaseUntil), false);
-      }
+      const p = s && planOf(s);
+      if (!s || !p) return;
+      const st = statusAt(p, s.confirmed, t);
+      if (st.kind === 'done') void finish(st.at);
     };
     tick();
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
   }, [active?.roomIdent, active?.startedAt, finish]);
 
+  // Renew while visible and when the app comes back.
   useEffect(() => {
-    if (checkIn && now >= checkInDeadline(new Date(checkIn.askedAt))) void finish(new Date(checkIn.hiddenAt));
-  }, [checkIn, now, finish]);
-
-  // Renew while visible; on return from the background, ask or renew.
-  useEffect(() => {
-    if (!active) return;
+    if (!active?.shared) return;
     const onVisibility = () => {
-      if (document.visibilityState === 'hidden') {
-        try {
-          localStorage.setItem(HIDDEN_KEY, String(Date.now()));
-        } catch {
-          /* ignore */
-        }
-        return;
-      }
-      let hiddenAt: number | null = null;
-      try {
-        hiddenAt = Number(localStorage.getItem(HIDDEN_KEY)) || null;
-        localStorage.removeItem(HIDDEN_KEY);
-      } catch {
-        /* ignore */
-      }
-      if (hiddenAt && checkInDue(new Date(hiddenAt), new Date())) setCheckIn({ askedAt: Date.now(), hiddenAt });
-      else void renew();
+      if (document.visibilityState === 'visible') void renew();
     };
     onVisibility();
     document.addEventListener('visibilitychange', onVisibility);
-    const id = window.setInterval(() => {
-      if (document.visibilityState === 'visible' && !checkIn) void renew();
-    }, RENEW_MS);
+    const id = window.setInterval(onVisibility, RENEW_MS);
     return () => {
       document.removeEventListener('visibilitychange', onVisibility);
       window.clearInterval(id);
     };
-  }, [active?.roomIdent, active?.shared?.id, renew, checkIn]);
+  }, [active?.shared?.id, renew]);
 
   // Live activity for every room, refreshed while the app is visible.
   useEffect(() => {
@@ -330,22 +330,25 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
     };
   }, [api, profile.email, active?.shared?.id]);
 
+  const status = useMemo(() => (active && plan ? statusAt(plan, active.confirmed, now) : null), [active, plan, now]);
+
   const value = useMemo<FocusSessionValue>(
     () => ({
       active,
+      plan,
+      status,
       now,
       lastEnded,
-      checkIn,
       summaries,
       shared: signedIn,
       start,
       end,
+      confirm,
       setVisibility,
       setShowName,
-      keepGoing,
       dismissSummary: () => setLastEnded(null),
     }),
-    [active, now, lastEnded, checkIn, summaries, signedIn, start, end, setVisibility, setShowName, keepGoing],
+    [active, plan, status, now, lastEnded, summaries, signedIn, start, end, confirm, setVisibility, setShowName],
   );
   return <FocusSessionContext.Provider value={value}>{children}</FocusSessionContext.Provider>;
 }

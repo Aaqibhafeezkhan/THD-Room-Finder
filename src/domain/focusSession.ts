@@ -1,16 +1,11 @@
 /**
- * Focus session timing (ADR 0002, #19). Pure functions the session provider
- * uses: where a new session should end, when to ask "Still focusing?", and
- * when a session is over. Times are local Date objects; a server clock offset
- * is applied by the caller.
+ * Focus session timing (ADR 0002, #19): where a new session should end and
+ * how the timer reads. Blocks, breaks and when a session is over live in
+ * `focusRhythm.ts` (ADR 0004). Times are local Date objects.
  */
 
 /** Hard cap from ADR 0002: a session never runs longer than 3 hours. */
 export const MAX_SESSION_MINUTES = 180;
-/** Ask after the app was hidden this long (the server lease is 60 min). */
-export const CHECK_IN_AFTER_MINUTES = 45;
-/** With no answer to "Still focusing?", the session ends after this. */
-export const CHECK_IN_GRACE_MINUTES = 10;
 
 export type EndReason = 'cap' | 'lecture' | 'closing';
 
@@ -52,21 +47,4 @@ export function formatElapsed(ms: number): string {
   const mm = String(m).padStart(h ? 2 : 1, '0');
   const ss = String(s).padStart(2, '0');
   return h ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
-}
-
-/** True when the app comes back after being hidden long enough to ask. */
-export function checkInDue(hiddenAt: Date | null, now: Date): boolean {
-  return hiddenAt !== null && now.getTime() - hiddenAt.getTime() >= CHECK_IN_AFTER_MINUTES * 60000;
-}
-
-/** When an unanswered check-in ends the session (counted up to `hiddenAt`). */
-export function checkInDeadline(askedAt: Date): Date {
-  return new Date(askedAt.getTime() + CHECK_IN_GRACE_MINUTES * 60000);
-}
-
-/** The moment a running session is over by itself, if it is. */
-export function endedBy(now: Date, plannedEnd: Date, leaseUntil: Date | null): 'planned' | 'expired' | null {
-  if (now >= plannedEnd) return 'planned';
-  if (leaseUntil && now >= leaseUntil) return 'expired';
-  return null;
 }

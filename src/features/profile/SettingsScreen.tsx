@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { AppBar, Button, ConfirmDialog, SegmentedControl, Snackbar, Switch } from '../../components';
 import { exportHistory } from '../../domain/focusHistory';
 import { useFocusHistory } from '../focus/FocusHistoryContext';
+import { RhythmSheet } from '../focus/RhythmSheet';
+import { useRhythmPreference } from '../focus/rhythmPreference';
+import { rhythmLine, rhythmName } from '../focus/sessionView';
 import { SetupSheet } from './SetupSheet';
 import { useStudyProfile } from './StudyProfileContext';
 import type { Accent, Theme } from '../../lib/theme';
@@ -15,8 +18,9 @@ import { Page } from '../shared/ui';
 /**
  * Settings behind the Profile gear (D2): a plain grouped list, one setting per
  * row, at least 56 px tall. Values wrap rather than truncate, so German fits.
- * Study profile and account appear when the focus service is configured; the
- * focus history group exports, imports and clears the device-only history.
+ * Study profile and account appear when the focus service is configured.
+ * Focus holds the default rhythm (ADR 0004); the focus history group exports,
+ * imports and clears the device-only history.
  */
 export function SettingsGroup({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -286,6 +290,29 @@ function Swatch({ accent, dark }: { accent: Accent; dark: boolean }) {
   );
 }
 
+/** Focus: the rhythm new sessions start with (ADR 0004). */
+function FocusGroup() {
+  const { t } = useI18n();
+  const [rhythm, setRhythm] = useRhythmPreference();
+  const [open, setOpen] = useState(false);
+  return (
+    <SettingsGroup title={t('Focus', 'Fokus')}>
+      <SettingsRow label={t('Rhythm', 'Rhythmus')} sub={`${rhythmName(rhythm, t)} · ${rhythmLine(rhythm, t)}`}>
+        <Button variant="text" onClick={() => setOpen(true)}>
+          {t('Change', 'Ändern')}
+        </Button>
+      </SettingsRow>
+      <RhythmSheet
+        open={open}
+        title={t('Default rhythm', 'Standard-Rhythmus')}
+        value={rhythm}
+        onClose={() => setOpen(false)}
+        onPick={setRhythm}
+      />
+    </SettingsGroup>
+  );
+}
+
 export function SettingsScreen({ children }: { children?: ReactNode }) {
   const navigate = useNavigate();
   const { t, locale, setLocale } = useI18n();
@@ -313,6 +340,7 @@ export function SettingsScreen({ children }: { children?: ReactNode }) {
       <Page>
         {children}
         <ProfileGroups onMessage={setSnack} />
+        <FocusGroup />
         <SettingsGroup title={t('Appearance', 'Darstellung')}>
           <SettingsRow label={t('Theme', 'Design')}>
             <SegmentedControl<Theme>
