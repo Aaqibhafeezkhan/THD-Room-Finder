@@ -1,7 +1,10 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CampusMap, CAMPUS_GEOJSON, CAMPUS_CONTEXT, RoomCard } from '../../components';
-import type { Availability } from '../../components';
+import { BuildingRow, CampusMap, CAMPUS_GEOJSON, CAMPUS_CONTEXT, MapLegend, RoomCard } from '../../components';
+import type { Availability, BuildingFocusMarks } from '../../components';
+import { buildingFocus, focusBucket, rankByBucket } from '../../domain/focusSignals';
+import { cardFocus, useBatchLabel, useFocusSignals } from '../focus/useFocusSignals';
+import { FocusListNotice } from '../focus/FocusListNotice';
 import { useRoomData } from '../rooms/RoomDataContext';
 import { useRoomFilters } from '../rooms/RoomFilterContext';
 import { useFavorites } from '../favorites/favorites';
@@ -88,7 +91,7 @@ function BuildingBadge({ label, color, size = 44 }: { label: string; color: stri
  */
 export function CampusScreen() {
   const navigate = useNavigate();
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { theme } = useTheme();
   const { showGlyphs } = useMapPrefs();
   const cls = useWindowClass();
@@ -97,6 +100,8 @@ export function CampusScreen() {
     useRoomData();
   const { filters } = useRoomFilters();
   const { isFavorite } = useFavorites();
+  const { signalOf, notice, live } = useFocusSignals();
+  const batch = useBatchLabel();
 
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
 
@@ -104,13 +109,42 @@ export function CampusScreen() {
   // the tint to rooms on that map — remote sites (Cham/Badstraße, Pfarrkirchen)
   // stay in the full Rooms list but off Campus. Then apply the shared room
   // filters (seats / type) and float saved rooms to the top.
+  // Free (and your batch) → closing soon → claimed (#20).
   const filteredFree = useMemo<FreeRoom[]>(
     () =>
-      favoritesFirst(
-        freeRooms.filter((f) => isOnCampusMap(f.room) && matchesRoomFilters(f.room, filters)),
-        isFavorite,
+      rankByBucket(
+        favoritesFirst(
+          freeRooms.filter((f) => isOnCampusMap(f.room) && matchesRoomFilters(f.room, filters)),
+          isFavorite,
+        ),
+        (f) => focusBucket(freeStatus(f.freeUntil, planningTime), signalOf(f.room.ident)),
       ),
-    [freeRooms, filters, isFavorite],
+    [freeRooms, filters, isFavorite, planningTime, signalOf],
+  );
+
+  // Focus per building: only free rooms carry signals, so a lecture is never
+  // marked. The ring is your batch (or you); the dot counts claims.
+  const focusByBuilding = useMemo(
+    () =>
+      buildingFocus(
+        filteredFree.map((f) => ({ ident: f.room.ident, building: campusKeyForRoom(f.room) })),
+        signalOf,
+      ),
+    [filteredFree, signalOf],
+  );
+  const focusMarks = useMemo<BuildingFocusMarks>(
+    () =>
+      Object.fromEntries(
+        Object.entries(focusByBuilding).map(([key, f]) => [
+          key,
+          {
+            ring: f.batch > 0 || f.own,
+            claims: f.claims,
+            label: f.own ? t('You', 'Du') : f.batch > 0 ? `${batch ?? t('Batch', 'Jahrgang')} · ${f.batch}` : undefined,
+          },
+        ]),
+      ),
+    [focusByBuilding, batch, t],
   );
 
   const availability = useMemo<Availability>(
@@ -181,21 +215,25 @@ export function CampusScreen() {
           {t('No free rooms here right now. Pick another building.', 'Hier ist gerade nichts frei. Anderes Gebäude wählen.')}
         </div>
       ) : (
-        items.map((f) => (
-          <RoomCard
-            key={f.room.ident}
-            name={f.room.code}
-            meta={roomMeta(f.room)}
-            hint={mayBeLocked(f.room) ? t('may be locked', 'evtl. abgeschlossen') : undefined}
-            status={freeStatus(f.freeUntil, planningTime)}
-            duration={freeRoomDuration(f, planningTime)}
-            href={`/room/${encodeURIComponent(f.room.ident)}`}
-            onClick={(e) => {
-              e.preventDefault();
-              openRoom(f.room.ident);
-            }}
-          />
-        ))
+        items.map((f) => {
+          const signal = cardFocus(signalOf(f.room.ident), freeStatus(f.freeUntil, planningTime), planningTime, t, locale, batch);
+          return (
+            <RoomCard
+              key={f.room.ident}
+              name={f.room.code}
+              meta={roomMeta(f.room)}
+              hint={mayBeLocked(f.room) ? t('may be locked', 'evtl. abgeschlossen') : undefined}
+              status={signal.status}
+              focus={signal.focus}
+              duration={freeRoomDuration(f, planningTime)}
+              href={`/room/${encodeURIComponent(f.room.ident)}`}
+              onClick={(e) => {
+                e.preventDefault();
+                openRoom(f.room.ident);
+              }}
+            />
+          );
+        })
       )}
     </div>
   );
@@ -218,6 +256,44 @@ export function CampusScreen() {
           `Campus öffnet um ${formatTime(campusHours.todayOpen)} — Vorschau`,
         )}
       </div>
+    ) : null;
+
+  // Every map signal in words (D3): buildings with your session or batch
+  // first, then by claims. For screen readers and colour-blind students.
+  const focusEntries = Object.entries(focusByBuilding).sort(
+    ([, a], [, b]) => Number(b.own) - Number(a.own) || b.batch - a.batch || b.claims - a.claims,
+  );
+  const focusRows =
+    live && focusEntries.length > 0 ? (
+      <section
+        aria-label={t('Focus activity by building', 'Fokus-Aktivität nach Gebäude')}
+        style={{ background: 'var(--md-surface)', borderRadius: 'var(--radius-l)', boxShadow: 'var(--md-shadow-1)', padding: '4px 16px' }}
+      >
+        {focusEntries.map(([key, f], i) => (
+          <BuildingRow
+            key={key}
+            code={KEY_META[key]?.label ?? key}
+            name={KEY_META[key]?.name ?? key}
+            freeLine={t(
+              `${availability[key]?.free ?? 0} of ${availability[key]?.total ?? 0} rooms free`,
+              `${availability[key]?.free ?? 0} von ${availability[key]?.total ?? 0} Räumen frei`,
+            )}
+            own={f.own ? t('Your session', 'Deine Session') : undefined}
+            batch={
+              f.batch > 0
+                ? t(`${batch ?? 'Your batch'} · ${f.batch} studying`, `${batch ?? 'Dein Jahrgang'} · ${f.batch} ${f.batch === 1 ? 'lernt' : 'lernen'}`)
+                : undefined
+            }
+            claims={
+              f.claims > 0
+                ? t(`${f.claims} focus session${f.claims === 1 ? '' : 's'}`, `${f.claims} Fokus-Session${f.claims === 1 ? '' : 's'}`)
+                : undefined
+            }
+            divider={i > 0}
+            onOpen={() => setSelectedKey(key)}
+          />
+        ))}
+      </section>
     ) : null;
 
   // The panel below / beside the map: a "campus closed" banner when the
@@ -299,26 +375,46 @@ export function CampusScreen() {
           {t('Tap a building on the map to see its free rooms.', 'Tippe ein Gebäude auf der Karte für freie Räume.')}
         </div>
       </div>
+      {focusRows}
       <div style={{ display: 'flex' }}>
         <div style={{ marginLeft: 'auto' }}>
           <FilterMenu />
         </div>
       </div>
+      <FocusListNotice notice={notice} />
       {list(filteredFree)}
     </>
   );
 
   const map = (
-    <CampusMap
-      campus={CAMPUS_GEOJSON}
-      context={CAMPUS_CONTEXT}
-      availability={mapAvailability}
-      glyphs={showGlyphs ? PLACE_GLYPHS : undefined}
-      mode={mapMode}
-      selectedKey={selectedKey ?? ''}
-      onSelect={(k) => setSelectedKey(k)}
-      style={{ width: '100%', height: '100%' }}
-    />
+    <>
+      <CampusMap
+        campus={CAMPUS_GEOJSON}
+        context={CAMPUS_CONTEXT}
+        availability={mapAvailability}
+        glyphs={showGlyphs ? PLACE_GLYPHS : undefined}
+        focus={focusMarks}
+        mode={mapMode}
+        selectedKey={selectedKey ?? ''}
+        onSelect={(k) => setSelectedKey(k)}
+        style={{ width: '100%', height: '100%' }}
+      />
+      {notice !== null || live ? (
+        <MapLegend
+          free={t('Free rooms', 'Freie Räume')}
+          batch={live ? t(`${batch ?? 'Your batch'} studying`, `${batch ?? 'Dein Jahrgang'} lernt`) : undefined}
+          claim={live ? t('Focus session', 'Fokus-Session') : undefined}
+          note={
+            notice === 'time'
+              ? t('Schedule only', 'Nur Stundenplan')
+              : notice === 'unknown'
+                ? t('Focus activity unknown', 'Fokus-Aktivität unbekannt')
+                : undefined
+          }
+          style={{ position: 'absolute', left: 12, bottom: 12 }}
+        />
+      ) : null}
+    </>
   );
 
   if (loading && freeRooms.length === 0) {

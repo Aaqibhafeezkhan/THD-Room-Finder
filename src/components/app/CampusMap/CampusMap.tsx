@@ -2,6 +2,8 @@ import React from 'react';
 import type {
   Availability,
   BuildingGlyph,
+  BuildingFocusMark,
+  BuildingFocusMarks,
   BuildingGlyphs,
   CampusContext,
   CampusData,
@@ -171,6 +173,7 @@ interface RenderState {
   THEME: ResolvedTheme;
   avail?: Availability;
   glyphs?: BuildingGlyphs;
+  focus?: BuildingFocusMarks;
 }
 
 /**
@@ -204,9 +207,38 @@ function glyphMark(kind: BuildingGlyph, x: number, y: number, fill: string, halo
   return badge + icon;
 }
 
+/**
+ * Focus marks drawn with the building label (D3): a dark-purple dot with the
+ * claim count beside the label, and on the selected building a violet pill
+ * ("AIN 7 · 2", "You") above it. Colours come from the focus tokens, so they
+ * follow light/dark like the rest of the app.
+ */
+function focusMark(m: BuildingFocusMark, lp: Pt, selected: boolean, hasGlyph: boolean): string {
+  let s = '';
+  if (m.claims) {
+    const x = lp[0] + 10;
+    const y = lp[1] - 1;
+    s +=
+      `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.2" style="fill:var(--md-claimed);stroke:var(--md-surface)" stroke-width="0.8"/>` +
+      `<text x="${x.toFixed(1)}" y="${(y + 1.9).toFixed(1)}" text-anchor="middle" font-family="Roboto, system-ui, sans-serif" font-weight="700" font-size="5" style="fill:var(--md-on-claimed)">${m.claims}</text>`;
+  }
+  if (selected && m.label) {
+    const w = Math.max(16, m.label.length * 3.1 + 6);
+    const y = lp[1] - (hasGlyph ? 24 : 14);
+    s +=
+      `<rect x="${(lp[0] - w / 2).toFixed(1)}" y="${(y - 5).toFixed(1)}" width="${w.toFixed(1)}" height="9" rx="4.5" style="fill:var(--md-focus)"/>` +
+      `<text x="${lp[0].toFixed(1)}" y="${(y + 1.6).toFixed(1)}" text-anchor="middle" font-family="Roboto, system-ui, sans-serif" font-weight="600" font-size="5" style="fill:var(--md-on-focus)">${escapeXml(m.label)}</text>`;
+  }
+  return s;
+}
+
+function escapeXml(v: string): string {
+  return v.replace(/[<>&"]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' })[c] as string);
+}
+
 /* ---- build the SVG body + framing bounds for one camera/state ---- */
 function renderBody(geo: LocalGeo, st: RenderState) {
-  const { bear, ang, dark, sel, showLabels, showTrees, THEME, avail, glyphs } = st;
+  const { bear, ang, dark, sel, showLabels, showTrees, THEME, avail, glyphs, focus } = st;
   const pal = (dark ? THEME.dark : THEME.light) as Pal;
   const COSA = Math.cos(ang);
   const SINA = Math.sin(ang);
@@ -310,6 +342,8 @@ function renderBody(geo: LocalGeo, st: RenderState) {
         '</text>';
       const glyph = glyphs && glyphs[b.key];
       if (glyph) lbl += glyphMark(glyph, lp[0], lp[1] - 11, pal.text, pal.halo);
+      const mark = focus && focus[b.key];
+      if (mark) lbl += focusMark(mark, lp, isSel, Boolean(glyph));
       bldLabels.push(lbl);
     }
     return (
@@ -325,6 +359,11 @@ function renderBody(geo: LocalGeo, st: RenderState) {
       '" stroke="' +
       rgb(rim) +
       '" stroke-width="0.9" stroke-linejoin="round"/>' +
+      (focus && focus[b.key]?.ring
+        ? '<polygon points="' +
+          roof +
+          '" fill="none" style="stroke:var(--md-focus)" stroke-width="2.4" stroke-linejoin="round"/>'
+        : '') +
       (isSel
         ? '<polygon points="' +
           roof +
@@ -506,10 +545,10 @@ function renderBody(geo: LocalGeo, st: RenderState) {
   }
 
   // framing bounds: riverside core, OR include the selected satellite
-  const focus = geo.B.filter((b) => !b.sat || b.key === sel);
+  const framed = geo.B.filter((b) => !b.sat || b.key === sel);
   const xs: number[] = [];
   const ys: number[] = [];
-  focus.forEach((b) =>
+  framed.forEach((b) =>
     b.ring.forEach((p) => {
       const q = proj(rot(p), b.height);
       xs.push(q[0]);
@@ -565,6 +604,7 @@ export function CampusMap({
   showLabels = true,
   showTrees = true,
   glyphs,
+  focus,
   style = {},
 }: CampusMapProps) {
   const svgRef = React.useRef<SVGSVGElement>(null);
@@ -613,12 +653,12 @@ export function CampusMap({
     const svg = svgRef.current;
     if (!svg) return;
     const { html, bb } = renderBody(geo, {
-      bear, ang, dark, sel, showLabels, showTrees, THEME, avail: availability, glyphs,
+      bear, ang, dark, sel, showLabels, showTrees, THEME, avail: availability, glyphs, focus,
     });
     svg.innerHTML = html;
     camRef.current.bb = bb;
     applyVB();
-  }, [geo, bear, ang, dark, sel, showLabels, showTrees, THEME, availability, glyphs, applyVB]);
+  }, [geo, bear, ang, dark, sel, showLabels, showTrees, THEME, availability, glyphs, focus, applyVB]);
 
   // selection reframes when a satellite is picked
   const pick = React.useCallback(

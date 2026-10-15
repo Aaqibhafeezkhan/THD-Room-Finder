@@ -8,6 +8,7 @@ import { exportHistory } from '../../domain/focusHistory';
 import { useFocusHistory } from '../focus/FocusHistoryContext';
 import { RhythmSheet } from '../focus/RhythmSheet';
 import { useRhythmPreference } from '../focus/rhythmPreference';
+import { useQuietPreference } from '../focus/useFocusSignals';
 import { rhythmLine, rhythmName } from '../focus/sessionView';
 import { SetupSheet } from './SetupSheet';
 import { useStudyProfile } from './StudyProfileContext';
@@ -299,6 +300,8 @@ function FocusGroup() {
   const [open, setOpen] = useState(false);
   const notifier = focusNotifier();
   const [permission, setPermission] = useState<NotifyPermission | null>(null);
+  const [quiet, setQuiet] = useQuietPreference();
+  const { batch } = useStudyProfile();
   const [exact, setExact] = useState(true);
 
   useEffect(() => {
@@ -319,6 +322,19 @@ function FocusGroup() {
           {t('Change', 'Ändern')}
         </Button>
       </SettingsRow>
+      {batch && (
+        <div style={{ borderTop: '1px solid var(--md-outline-variant)' }}>
+          <Switch
+            checked={quiet}
+            onChange={setQuiet}
+            label={t('Quiet', 'Ruhig')}
+            sub={t(
+              `Rooms where ${batch} is studying rank like any claimed room, for when you'd rather be alone.`,
+              `Räume, in denen ${batch} lernt, erscheinen wie belegte Räume – wenn du lieber allein lernst.`,
+            )}
+          />
+        </div>
+      )}
       {notifier.kind !== 'none' && permission && (
         <SettingsRow
           label={t('Notifications', 'Benachrichtigungen')}

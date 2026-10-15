@@ -47,6 +47,19 @@ export type BuildingGlyph = 'coffee' | 'book' | 'printer';
 /** Per-building glyph overlay (e.g. café buildings, the Library). */
 export type BuildingGlyphs = Record<string, BuildingGlyph>;
 
+/**
+ * Focus signals on one building (D3, option A): a violet ring on the roof
+ * for your batch or your own session, a dark-purple dot with the number of
+ * claims, and a label ("AIN 7 · 2", "You") shown only while the building is
+ * selected. Never changes the roof's availability tint.
+ */
+export interface BuildingFocusMark {
+  ring?: boolean;
+  claims?: number;
+  label?: string;
+}
+export type BuildingFocusMarks = Record<string, BuildingFocusMark>;
+
 /** Deep-overridable colour theme. Omitted keys fall back to the default. */
 export interface CampusTheme {
   ramp?: string[];
@@ -82,5 +95,7 @@ export interface CampusMapProps {
   showTrees?: boolean;
   /** Optional amenity glyph per building key, drawn above the roof label. */
   glyphs?: BuildingGlyphs;
+  /** Focus signals per building key (ring, claim dot, selected label). */
+  focus?: BuildingFocusMarks;
   style?: CSSProperties;
 }

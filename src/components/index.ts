@@ -45,6 +45,8 @@ export type {
   Availability,
   BuildingGlyph,
   BuildingGlyphs,
+  BuildingFocusMark,
+  BuildingFocusMarks,
   CampusTheme,
   CampusMapProps,
 } from './app/CampusMap/types';
