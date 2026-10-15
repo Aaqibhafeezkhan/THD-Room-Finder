@@ -75,6 +75,7 @@ export interface FocusSurfaceProps {
   onVisibility?: (v: FocusVisibility) => void;
   onShowName?: (on: boolean) => void;
   onEnd?: () => void;
+  /** Omit to hide Set Up (no focus service in this build). */
   onSetup?: () => void;
   style?: CSSProperties;
 }
@@ -223,11 +224,13 @@ export function FocusSurface({
             </span>
             <span style={{ textWrap: 'pretty' }}>{text.signedOut}</span>
           </div>
-          <div style={{ marginLeft: -12 }}>
-            <Button variant="text" size="small" onClick={onSetup} style={onFocusText}>
-              {text.setup}
-            </Button>
-          </div>
+          {onSetup && (
+            <div style={{ marginLeft: -12 }}>
+              <Button variant="text" size="small" onClick={onSetup} style={onFocusText}>
+                {text.setup}
+              </Button>
+            </div>
+          )}
         </div>
       )}
 
