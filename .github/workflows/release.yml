@@ -48,8 +48,19 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
+      # The focus service's public URL and publishable key (repository
+      # variables, not secrets: both ship in the app). Without them the APK
+      # builds device-only, with no sign-in, so a release must fail instead.
       - name: Build web bundle
-        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_PUBLISHABLE_KEY" ]; then
+            echo "::error::VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY repository variables are required"
+            exit 1
+          fi
+          npm run build
 
       - name: Sync web assets into Android project
         run: npx cap sync android

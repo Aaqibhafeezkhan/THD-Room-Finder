@@ -1,12 +1,15 @@
 import { useState } from 'react';
+import { Capacitor } from '@capacitor/core';
 import { useNavigate } from 'react-router-dom';
-import { FocusGraph, ProfileHeader, Snackbar } from '../../components';
+import { Button, FocusGraph, ProfileHeader, Snackbar } from '../../components';
 import { useI18n } from '../../i18n';
+import { useTheme } from '../../lib/theme';
 import { useWindowClass } from '../../lib/useWindowClass';
 import { BrandHeader } from '../shared/BrandHeader';
 import { Page } from '../shared/ui';
 import { graphText, statsLine } from '../focus/copy';
 import { ShareSheet } from '../focus/ShareSheet';
+import { inviteLink, PUBLIC_ORIGIN } from '../focus/shareSnapshot';
 import { useFocusStats } from '../focus/useFocusStats';
 import { SavedRooms } from './SavedRooms';
 import { SetupSheet } from './SetupSheet';
@@ -16,7 +19,8 @@ import { useStudyProfile } from './StudyProfileContext';
  * Profile (D2): only what a student checks almost daily. A one-line header
  * (study profile or "Not signed in" with the gear), the focus graph and the
  * saved rooms. Settings sit behind the gear. Signed out, the graph (local) and
- * saved rooms still work.
+ * saved rooms still work. Invite a friend shares a link to the app whose
+ * preview is the light or dark banner, as this app is set.
  */
 export function ProfileScreen() {
   const navigate = useNavigate();
@@ -31,6 +35,26 @@ export function ProfileScreen() {
   const signedIn = Boolean(profile.email && profile.identity);
 
   const stats = statsLine(t, locale, focus.semesterMinutes, focus.streak);
+  const { theme } = useTheme();
+
+  const invite = async () => {
+    const dark =
+      theme === 'dark' ||
+      (theme === 'system' && typeof matchMedia === 'function' && matchMedia('(prefers-color-scheme: dark)').matches);
+    const origin = Capacitor.isNativePlatform() ? PUBLIC_ORIGIN : window.location.origin;
+    const url = inviteLink(dark, locale === 'de' ? 'de' : 'en', origin);
+    try {
+      if (typeof navigator.share === 'function') {
+        await navigator.share({ title: 'THD Room Finder', url });
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      setSnack(t('Invite link copied', 'Einladungslink kopiert'));
+    } catch (err) {
+      // AbortError: the share sheet was closed.
+      if ((err as Error).name !== 'AbortError') setSnack(t("Couldn't share the link", 'Link konnte nicht geteilt werden'));
+    }
+  };
 
   return (
     <>
@@ -58,6 +82,9 @@ export function ProfileScreen() {
           onShare={focus.hasHistory ? () => setSharing(true) : undefined}
         />
         <SavedRooms grid={cls === 'expanded'} />
+        <Button variant="text" onClick={invite} style={{ alignSelf: 'center', minHeight: 48 }}>
+          {t('Invite a Friend', 'Freunde einladen')}
+        </Button>
       </Page>
       <ShareSheet
         open={sharing}

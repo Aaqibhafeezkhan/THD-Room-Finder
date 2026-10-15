@@ -111,7 +111,7 @@ if they pass the same test.
 
 | Action | What happens |
 |---|---|
-| **Share link** (main) | The app builds a link that carries a snapshot of the current semester's graph. Chat apps show the card as the link preview; the friend opens a page with the card and a way into the app. Nothing is stored on a server ([ADR 0003](../architecture/adr/0003-focus-graph-share-links.md), proposed) |
+| **Share link** (main) | The app builds a link that carries a snapshot of the current semester's graph. Chat apps show the card as the link preview; opening it lands on the campus map. Copy Link is the main action. Nothing is stored on a server ([ADR 0003](../architecture/adr/0003-focus-graph-share-links.md)) |
 | **Save image** | The same card as a PNG (1080×1080, ≤ 150 KB), for stories and apps without link previews |
 | Card contents | Hours this semester, streak, the semester grid (first week of the semester on the left, future days blank), app name and URL. Name and batch only if switched on |
 | Theme and accent | The sender's app theme (light/dark) and focus accent at the moment of sharing |

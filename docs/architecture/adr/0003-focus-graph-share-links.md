@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Proposed. Format of the preview image pending a platform check (below) |
+| **Status** | Accepted, 15 October 2026 (implemented; see *As built*) |
 | **Date** | 14 October 2026 |
 | **Decided by** | Maintainer (direction), details open for review |
 | **Amends** | [ADR 0002](0002-focus-session-lifecycle.md) §3: how the share card leaves the device |
@@ -53,8 +53,8 @@ sequenceDiagram
    renders the card (`@vercel/og` or an equivalent) as the `og:image`. The
    response is immutable and cached at the edge; the same payload always
    gives the same image. Nothing is written anywhere.
-3. **Landing page.** Opening the link shows the card, the figures and one
-   call to action into the app. It works without an account.
+3. **Opening the link** goes straight to the app's campus map (`/`); the
+   preview in the chat already showed the card. It works without an account.
 4. **A snapshot, not a profile.** The link never updates and never expires.
    It is not proof of anything: anyone could craft a payload, the same as
    editing a screenshot.
@@ -65,6 +65,22 @@ sequenceDiagram
    WhatsApp, Discord, LinkedIn, Telegram and iMessage. Many chat apps show
    1.91:1 images large and square ones as a small thumbnail; the check
    decides.
+
+## As built (15 October 2026)
+
+- **Preview format: 1200×630.** Chat apps show 1.91:1 previews large and
+  square ones as a thumbnail, so the wide card is the `og:image`; the square
+  1080×1080 stays for Save Image.
+- **Routes:** `/f/<payload>` is rewritten to `api/share.js`, an HTML page
+  with the `og:` tags whose script sends people to `/`. `api/card.js` draws
+  the PNG with `@vercel/og`, cached as immutable. The service worker never
+  answers `/f/` or `/api/`, so an installed app doesn't swallow a link.
+- **Payload:** `shared/shareLink.js`, shared by the app and the functions:
+  version, theme, graph colour, language, the semester's first Monday,
+  weeks, today, minutes, streak, a 3-bit level per day, then name and batch
+  only when switched on. A typical link is about 110 characters.
+- **Share sheet:** Copy Link first, the system share sheet when the device
+  has one, Save Image last. The Android app links to the public origin.
 
 ## Consequences
 

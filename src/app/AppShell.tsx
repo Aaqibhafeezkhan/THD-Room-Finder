@@ -70,6 +70,9 @@ export function AppShell() {
         <Route path="/profile/settings" element={<SettingsScreen />} />
         {/* The Saved tab became part of Profile (#37); old links still work. */}
         <Route path="/saved" element={<Navigate to="/profile" replace />} />
+        {/* Share and invite links opened inside the app land on the map. */}
+        <Route path="/f/*" element={<Navigate to="/" replace />} />
+        <Route path="/i/*" element={<Navigate to="/" replace />} />
         <Route path="/room/:ident" element={<RoomDetailScreen />} />
         {FocusGallery && (
           <Route

@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Capacitor } from '@capacitor/core';
 import { Button, Sheet, ShareCard, Switch } from '../../components';
 import { renderShareCard } from '../../components/focus/ShareCard';
 import type { ShareCardOptions } from '../../components/focus/ShareCard';
@@ -6,16 +7,16 @@ import { useI18n } from '../../i18n';
 import { useTheme } from '../../lib/theme';
 import { useWindowClass } from '../../lib/useWindowClass';
 import { formatHours, monthNames } from './copy';
+import { PUBLIC_ORIGIN, shareLink } from './shareSnapshot';
 import { useFocusStats } from './useFocusStats';
 
 /**
- * Share the focus graph as an image (D4, #38). The card is drawn on the device
- * from local history; it never shows rooms, times or the programme. Name and
- * batch are opt-in and off each time the sheet opens. Phones that can share
- * files get Share Image (Web Share API); everyone else saves a PNG.
- *
- * Sharing a link whose preview is the card (ADR 0003) waits for its
- * platform check; this sheet covers the image path from ADR 0002.
+ * Share the focus graph (D4, #38) as a link whose preview is the graph
+ * (ADR 0003): in WhatsApp or Discord the friend sees the card, and opening it
+ * lands on the app's campus map. The link carries the snapshot, so nothing is
+ * stored on a server. It never shows rooms or times; name and batch are
+ * opt-in and off each time the sheet opens. Save Image keeps the PNG for
+ * stories and apps that drop link previews.
  */
 export interface ShareSheetProps {
   open: boolean;
@@ -30,15 +31,6 @@ export interface ShareSheetProps {
 const FILE_EN = 'focus-graph.png';
 const FILE_DE = 'fokus-verlauf.png';
 
-function canShareFiles(): boolean {
-  if (typeof navigator === 'undefined' || !navigator.canShare) return false;
-  try {
-    return navigator.canShare({ files: [new File([new Blob()], 'x.png', { type: 'image/png' })] });
-  } catch {
-    return false;
-  }
-}
-
 function download(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -50,6 +42,10 @@ function download(blob: Blob, filename: string) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+function linkOrigin(): string {
+  return Capacitor.isNativePlatform() ? PUBLIC_ORIGIN : window.location.origin;
+}
+
 export function ShareSheet({ open, onClose, onDone, name, batch }: ShareSheetProps) {
   const { t, locale } = useI18n();
   const { theme, accent } = useTheme();
@@ -58,7 +54,7 @@ export function ShareSheet({ open, onClose, onDone, name, batch }: ShareSheetPro
   const [showName, setShowName] = useState(false);
   const [showBatch, setShowBatch] = useState(false);
   const [busy, setBusy] = useState(false);
-  const shareFiles = useMemo(canShareFiles, []);
+  const canShare = useMemo(() => typeof navigator !== 'undefined' && typeof navigator.share === 'function', []);
 
   const dark =
     theme === 'dark' ||
@@ -93,23 +89,53 @@ export function ShareSheet({ open, onClose, onDone, name, batch }: ShareSheetPro
   );
   const filename = locale === 'de' ? FILE_DE : FILE_EN;
 
+  const link = () =>
+    shareLink(
+      {
+        days: stats.days,
+        today: stats.today,
+        semesterStart: stats.semester.start,
+        semesterEnd: stats.semester.end,
+        semesterMinutes: stats.semesterMinutes,
+        streak: stats.streak,
+        dark,
+        accent: accent ?? 'violet',
+        lang: locale === 'de' ? 'de' : 'en',
+        name: showName ? name : undefined,
+        batch: showBatch ? batch : undefined,
+      },
+      linkOrigin(),
+    );
+
   const close = () => {
     setShowName(false);
     setShowBatch(false);
     onClose();
   };
 
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(link());
+      close();
+      onDone(t('Link copied', 'Link kopiert'));
+    } catch {
+      onDone(t("Couldn't copy the link", 'Link konnte nicht kopiert werden'));
+    }
+  };
+
   const share = async () => {
     setBusy(true);
     try {
-      const blob = await renderShareCard(options);
-      const file = new File([blob], filename, { type: 'image/png' });
-      await navigator.share({ files: [file], title: t('Focus graph', 'Fokus-Verlauf'), text: alt });
+      await navigator.share({
+        title: t('My focus this semester', 'Mein Fokus in diesem Semester'),
+        text: t(`${hours} of focus this semester on THD Room Finder`, `${hours} Fokus in diesem Semester mit THD Room Finder`),
+        url: link(),
+      });
       close();
-      onDone(t('Image shared', 'Bild geteilt'));
+      onDone(t('Link shared', 'Link geteilt'));
     } catch (err) {
       // AbortError: the student closed the share sheet; stay here.
-      if ((err as Error).name !== 'AbortError') onDone(t("Couldn't share the image", 'Bild konnte nicht geteilt werden'));
+      if ((err as Error).name !== 'AbortError') onDone(t("Couldn't share the link", 'Link konnte nicht geteilt werden'));
     } finally {
       setBusy(false);
     }
@@ -144,24 +170,21 @@ export function ShareSheet({ open, onClose, onDone, name, batch }: ShareSheetPro
         )}
         <p style={{ margin: 0, fontSize: 'var(--body-medium-size)', color: 'var(--md-on-surface-variant)' }}>
           {t(
-            'Anyone you send it to sees this card. It never shows rooms, times or your programme.',
-            'Alle, denen du es schickst, sehen diese Karte. Sie zeigt nie Räume, Uhrzeiten oder deinen Studiengang.',
+            'Anyone with the link sees this graph as its preview, and opening it takes them to the app. It never shows rooms or times; the graph is in the link itself, not stored anywhere.',
+            'Alle mit dem Link sehen diesen Verlauf als Vorschau, und der Link führt zur App. Er zeigt nie Räume oder Uhrzeiten; der Verlauf steckt im Link selbst und wird nirgends gespeichert.',
           )}
         </p>
-        {shareFiles ? (
-          <>
-            <Button variant="filled" disabled={busy} onClick={share} style={{ width: '100%', minHeight: 48 }}>
-              {busy ? t('Opening Share…', 'Teilen wird geöffnet …') : t('Share Image', 'Bild teilen')}
-            </Button>
-            <Button variant="text" disabled={busy} onClick={save} style={{ width: '100%', minHeight: 48 }}>
-              {t('Save Image', 'Bild speichern')}
-            </Button>
-          </>
-        ) : (
-          <Button variant="filled" disabled={busy} onClick={save} style={{ width: '100%', minHeight: 48 }}>
-            {t('Save Image', 'Bild speichern')}
+        <Button variant="filled" disabled={busy} onClick={copy} style={{ width: '100%', minHeight: 48 }}>
+          {t('Copy Link', 'Link kopieren')}
+        </Button>
+        {canShare && (
+          <Button variant="outlined" disabled={busy} onClick={share} style={{ width: '100%', minHeight: 48 }}>
+            {busy ? t('Opening Share…', 'Teilen wird geöffnet …') : t('Share Link', 'Link teilen')}
           </Button>
         )}
+        <Button variant="text" disabled={busy} onClick={save} style={{ width: '100%', minHeight: 48 }}>
+          {t('Save Image', 'Bild speichern')}
+        </Button>
       </div>
     </Sheet>
   );

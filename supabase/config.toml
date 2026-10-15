@@ -256,6 +256,12 @@ otp_expiry = 600
 subject = "Your THD Room Finder code · Dein Code"
 content_path = "./supabase/templates/magic_link.html"
 
+# A first sign-in sends the signup confirmation instead of the magic link,
+# so it carries the same code.
+[auth.email.template.confirmation]
+subject = "Your THD Room Finder code · Dein Code"
+content_path = "./supabase/templates/confirmation.html"
+
 # Uncomment to customize email template
 # [auth.email.template.invite]
 # subject = "You have been invited"
