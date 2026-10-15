@@ -239,6 +239,11 @@ development and contributor guides. The design system is mirrored in
 
 ## Contributing
 
+Questions, ideas and feedback are welcome in
+[Discussions](https://github.com/arudaev/THD-Room-Finder/discussions). See the
+[roadmap](https://github.com/arudaev/THD-Room-Finder/discussions/122) for
+where the app is heading.
+
 Pick an issue in the **Ready** column of the
 [project board](https://github.com/users/arudaev/projects/8), comment `/take`,
 and open a draft PR. Start with [CONTRIBUTING.md](CONTRIBUTING.md); look for
