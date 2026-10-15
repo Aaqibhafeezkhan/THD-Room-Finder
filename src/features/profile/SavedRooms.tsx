@@ -8,6 +8,7 @@ import { computeRoomAvailability, getRoomSchedule } from '../../domain/availabil
 import { mayBeLocked } from '../../domain/roomFilters';
 import { formatTime, roomMeta, statusBannerText } from '../../domain/format';
 import { ClosedNotice } from '../shared/ClosedNotice';
+import { roomStatusLabel } from '../shared/roomStatusLabel';
 
 /**
  * Saved rooms on Profile (D2): the student's own order, each with live status.
@@ -121,6 +122,7 @@ export function SavedRooms({ grid = false }: { grid?: boolean }) {
                   meta={roomMeta(room)}
                   hint={mayBeLocked(room) ? t('may be locked', 'evtl. abgeschlossen') : undefined}
                   status={availability.status}
+                  statusLabel={roomStatusLabel(availability.status, t)}
                   duration={banner.duration ?? ''}
                   href={href}
                   onClick={open}

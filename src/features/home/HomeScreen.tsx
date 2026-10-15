@@ -17,6 +17,7 @@ import { ClosedNotice } from '../shared/ClosedNotice';
 import { TimeControl } from '../shared/TimeControl';
 import { FilterMenu } from '../shared/FilterMenu';
 import { SearchControl } from '../shared/SearchControl';
+import { roomStatusLabel } from '../shared/roomStatusLabel';
 import { Page, Spinner, EmptyState, ErrorState } from '../shared/ui';
 
 export function HomeScreen() {
@@ -153,6 +154,7 @@ export function HomeScreen() {
                         meta={roomMeta(room)}
                         hint={lockHint(room)}
                         status={signal.status}
+                        statusLabel={roomStatusLabel(signal.status, t)}
                         focus={'focus' in signal ? signal.focus : undefined}
                         duration={b.duration}
                         href={`/room/${encodeURIComponent(room.ident)}`}
@@ -182,6 +184,7 @@ export function HomeScreen() {
                       meta={roomMeta(f.room)}
                       hint={lockHint(f.room)}
                       status={signal.status}
+                      statusLabel={roomStatusLabel(signal.status, t)}
                       focus={signal.focus}
                       duration={freeRoomDuration(f, planningTime)}
                       href={`/room/${encodeURIComponent(ident)}`}

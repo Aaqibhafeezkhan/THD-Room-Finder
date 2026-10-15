@@ -5,6 +5,7 @@ import type { Availability, BuildingFocusMarks } from '../../components';
 import { buildingFocus, focusBucket, rankByBucket } from '../../domain/focusSignals';
 import { cardFocus, useBatchLabel, useFocusSignals } from '../focus/useFocusSignals';
 import { FocusListNotice } from '../focus/FocusListNotice';
+import { roomStatusLabel } from '../shared/roomStatusLabel';
 import { useRoomData } from '../rooms/RoomDataContext';
 import { useRoomFilters } from '../rooms/RoomFilterContext';
 import { useFavorites } from '../favorites/favorites';
@@ -224,6 +225,7 @@ export function CampusScreen() {
               meta={roomMeta(f.room)}
               hint={mayBeLocked(f.room) ? t('may be locked', 'evtl. abgeschlossen') : undefined}
               status={signal.status}
+              statusLabel={roomStatusLabel(signal.status, t)}
               focus={signal.focus}
               duration={freeRoomDuration(f, planningTime)}
               href={`/room/${encodeURIComponent(f.room.ident)}`}

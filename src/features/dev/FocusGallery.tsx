@@ -22,6 +22,7 @@ import {
 } from '../../components';
 import type { FocusDay, FocusGraphText, FocusSurfaceText, FocusTrackSegment, FocusVisibility } from '../../components';
 import { useI18n } from '../../i18n';
+import { roomStatusLabel } from '../shared/roomStatusLabel';
 import { useTheme } from '../../lib/theme';
 
 /**
@@ -266,10 +267,10 @@ export function FocusGallery() {
         <ListNotice kind="quiet">{t('AIN 7 sessions show as claimed (Settings).', 'Sessions von AIN 7 erscheinen als Fokus-Session (Einstellungen).')}</ListNotice>
         <ListNotice kind="time">{t('Schedule only. Focus activity shows for now.', 'Nur Belegung. Fokus-Aktivität gibt es nur für jetzt.')}</ListNotice>
         <ListNotice kind="unknown">{t('Focus activity unknown', 'Fokus-Aktivität unbekannt')}</ListNotice>
-        <RoomCard name="E 212" meta={t('Building E · 60 seats', 'Gebäude E · 60 Plätze')} status="free" duration="6h" focus={{ kind: 'own', label: t('Your session · 24:10', 'Deine Session · 24:10') }} />
-        <RoomCard name="A 008" meta={t('Building A · 45 seats', 'Gebäude A · 45 Plätze')} status="free" duration="4h 30m" focus={{ kind: 'batch', label: t('AIN 7 · 2 studying', 'AIN 7 · 2 lernen hier') }} />
-        <RoomCard name="ITC 2.01" meta={t('ITC 2 · 30 seats', 'ITC 2 · 30 Plätze')} status="claimed" statusLabel={t('claimed', 'Fokus')} duration="4h" focus={{ kind: 'claimed', label: t('Focus session · 40 min', 'Fokus-Session · 40 Min.') }} />
-        <RoomCard name="D 105" meta={t('Building D · 24 seats', 'Gebäude D · 24 Plätze')} status="soon" statusLabel={t('closing', 'schließt')} duration="25m" focus={{ kind: 'claimed', label: t('Focus session · 10 min', 'Fokus-Session · 10 Min.') }} />
+        <RoomCard name="E 212" meta={t('Building E · 60 seats', 'Gebäude E · 60 Plätze')} status="free" statusLabel={roomStatusLabel('free', t)} duration="6h" focus={{ kind: 'own', label: t('Your session · 24:10', 'Deine Session · 24:10') }} />
+        <RoomCard name="A 008" meta={t('Building A · 45 seats', 'Gebäude A · 45 Plätze')} status="free" statusLabel={roomStatusLabel('free', t)} duration="4h 30m" focus={{ kind: 'batch', label: t('AIN 7 · 2 studying', 'AIN 7 · 2 lernen hier') }} />
+        <RoomCard name="ITC 2.01" meta={t('ITC 2 · 30 seats', 'ITC 2 · 30 Plätze')} status="claimed" statusLabel={roomStatusLabel('claimed', t)} duration="4h" focus={{ kind: 'claimed', label: t('Focus session · 40 min', 'Fokus-Session · 40 Min.') }} />
+        <RoomCard name="D 105" meta={t('Building D · 24 seats', 'Gebäude D · 24 Plätze')} status="soon" statusLabel={roomStatusLabel('soon', t)} duration="25m" focus={{ kind: 'claimed', label: t('Focus session · 10 min', 'Fokus-Session · 10 Min.') }} />
         <div style={{ background: 'var(--md-surface)', borderRadius: 'var(--radius-l)', boxShadow: 'var(--md-shadow-1)', overflow: 'hidden' }}>
           <BuildingRow code="ITC" name="Rohde & Schwarz Forum" freeLine={t('4 of 20 rooms free', '4 von 20 Räumen frei')} batch={t('AIN 7 · 2 studying', 'AIN 7 · 2 lernen hier')} claims={t('1 focus session', '1 Fokus-Session')} />
           <BuildingRow code="E" name={t('Building E', 'Gebäude E')} freeLine={t('6 of 12 rooms free', '6 von 12 Räumen frei')} own={t('Your session', 'Deine Session')} divider />
