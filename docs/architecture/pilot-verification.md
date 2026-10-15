@@ -1,6 +1,6 @@
 # M1 operating and preview acceptance
 
-> Request volumes below assume ADR 0001's 60-second renewal. [ADR 0002](adr/0002-focus-session-lifecycle.md) renews only while the app is visible and lets locked phones coast on the lease, so real volumes should be lower; re-measure in M1-S6 (#22).
+> Request volumes below assume ADR 0001's 60-second renewal. [ADR 0002](adr/0002-focus-session-lifecycle.md) and [ADR 0004](adr/0004-focus-rhythm.md) renew only while the app is visible or a block is confirmed, so real volumes are lower: see [measured in M1-S6](#measured-in-m1-s6-15-october-2026).
 
 Contract: [ADR 0001](adr/0001-study-presence.md). These are proposed pilot limits and required measurements, not measured capacity or a provider billing guarantee. Initial extra provisioned spend remains **zero until a hosted budget is selected**.
 
@@ -38,18 +38,87 @@ The global gate and counters must be tested for concurrent transactions, window 
 - [ ] Record THD-specific project reference privately, owner, EU region, actual plan and verified branching entitlement. No borrowing another app's project.
 - [ ] Record a monthly incremental allowance and provider fixed/variable rates; include compute, Auth/mail, egress, logs and branch hours. Identify costs excluded from provider caps.
 - [ ] Confirm budget alerts and a documented operator stop procedure. Automatic pausing, if chosen, is explicitly configured and tested; no claim of zero overshoot.
-- [ ] Set preview-only URL/publishable key; keep service/admin keys out of all browser bundles. Check built artifacts for forbidden secrets.
+- [x] Set preview-only URL/publishable key; keep service/admin keys out of all browser bundles. Check built artifacts for forbidden secrets. *(15 Oct: Vercel has the staging URL and publishable key on Preview only; `dist/` contains only `sb_publishable_…`, no `sb_secret_`, service-role JWT or admin key.)*
 - [ ] Bind only an isolated synthetic-data instance to previews; verify a preview cannot write to production. Use an explicit project-ref allowlist in deployment checks.
 - [ ] Test email OTP, resend/attempt limits, mail delivery/recovery, session persistence and allowed web/native redirects. Do not send test mail to real students.
-- [ ] Apply reviewed migrations to local/preview first, rehearse rollback/restore and catalogue refresh. Production migration execution is maintainer-controlled.
-- [ ] Verify owner/peer/outsider/signed-out/expired-session access by direct table and RPC calls. Test every audience and consent narrowing.
-- [ ] Verify one-session concurrency, idempotent starts/ends, stale versions, early renewals, changed degree/cohort, lost end and device-clock manipulation.
+- [ ] Apply reviewed migrations to local/preview first, rehearse rollback/restore and catalogue refresh. Production migration execution is maintainer-controlled. *(Applied to local and staging first, through `20261015120000_focus_rhythm.sql`; rollback/restore rehearsal still open.)*
+- [x] Verify owner/peer/outsider/signed-out/expired-session access by direct table and RPC calls. Test every audience and consent narrowing. *(pgTAP `focus_service.test.sql` as each role, plus direct REST calls; see the privacy matrix below.)*
+- [ ] Verify one-session concurrency, idempotent starts/ends, stale versions, early renewals, changed degree/cohort, lost end and device-clock manipulation. *(All but device-clock manipulation are covered by pgTAP and the session tests; a lost end expires with the rhythm lease. Clock manipulation is open.)*
 - [ ] Verify 50 visible clients for 50 minutes in isolated staging, with bounded test traffic and synthetic upstream schedules. Never load-test THabella.
 - [ ] Record p50/p95 latency, errors, admitted/rejected counts, response bytes and actual provider use. Candidate p95: start/renew ≤1 second, summary ≤1.5 seconds on the chosen regional test setup; failure blocks expansion, not ordinary browsing.
 - [ ] Verify hidden/reconnecting/expired behavior, two tabs, two devices, time travel, sign-out/deletion, EN/DE and Android/iOS/desktop browser capabilities.
-- [ ] Verify presence off: zero presence/Auth calls, existing room search/favorites unchanged. Verify private timer: zero heartbeat/read calls.
+- [x] Verify presence off: zero presence/Auth calls, existing room search/favorites unchanged. Verify private timer: zero heartbeat/read calls. *(Without the Supabase variables no focus client is created; without a study profile no session call is made: `focusSession.test.tsx`.)*
 - [ ] Measure clean transferred app-shell bytes (<1 MB compressed target), incremental shared-feature bundle, memory, storage and 50-minute phone energy with wake lock off/on at fixed brightness/network.
 - [ ] Verify immediate authorization/expiry filtering, cleanup within 24 hours and documented log/backup retention. Name the operational owner.
+
+## Measured in M1-S6, 15 October 2026
+
+Local Supabase (Docker) and the dev or production build on a desktop
+browser; staging was not load-tested. Device runs follow the
+[focus walkthrough](../development/focus-walkthrough.md).
+
+### Requests per client
+
+| Situation | Calls | Notes |
+|---|---|---|
+| App open and visible, no session | 4 `room_summaries` / min | One per campus. ~50 ms each locally |
+| App open, own shared session | + 1 `renew_focus` / min | Writes at most once a minute |
+| Phone locked or app in the background | 0 | The lease covers one block, the break and 10 min |
+| Start, confirm a block, end | 1 each | Confirming renews the lease |
+| Device-only session (no profile, offline) | 0 | |
+| Picked time (time travel) | 4 summaries / min still polled | Results are ignored; a candidate to skip |
+
+A two-block Deep session with the phone locked while studying costs about
+8 session calls (start, one confirmation, end and a few renewals while
+the app is open), against 52 in ADR 0001's model. Summary reads dominate:
+4 per visible minute per client. Folding them into one call for all
+campuses would cut that to 1; it needs a new `room_summaries` signature.
+
+### Payload sizes
+
+| Response | Size |
+|---|---|
+| `room_summaries`, campus without activity | 2 B |
+| `room_summaries`, per room with activity | ~290 B (JSON, before compression) |
+| 50 simultaneous sessions in 50 different rooms | ≤ ~14.5 KB per campus read |
+| Session (`start_focus`, `renew_focus`) | ~0.55 KB (552 B with the rhythm) |
+
+The proposed 8 KiB summary ceiling holds up to about 28 active rooms per
+campus; above that, responses grow linearly to the 500-row cap. Compressed
+transfer is a fraction of that.
+
+### App size
+
+| Part | gzip |
+|---|---|
+| Main bundle (`index-*.js`, app + React) | 135 KB |
+| Supabase client, loaded on first use | 59 KB |
+| CSS | 3 KB |
+
+All precached by the service worker, including the Supabase chunk, so focus
+works offline; well under the 1 MB app-shell target.
+
+### Privacy matrix
+
+Checked by pgTAP (each caller's JWT) and by direct REST calls with the
+publishable key.
+
+| Caller | Tables | Private session in a room | Public session of AIN 7 |
+|---|---|---|---|
+| Owner | none | own | own |
+| Same batch (AIN, winter 2023) | none | anonymous claim | batch count, names only if shared, rhythm |
+| Same programme, other intake | none | anonymous claim | anonymous claim |
+| Other programme | none | anonymous claim | anonymous claim |
+| Signed out | none (`focus` schema not exposed, `public.session` absent) | anonymous claim | anonymous claim, no name, no rhythm |
+| Signed out, writes | `start_focus`, `get_identity`: permission denied | | |
+| Signed in, no study profile | none | cannot claim (`needs_profile`) | |
+
+### Regressions
+
+Desktop, 15 Oct: free-room count, search (free rows keep their badges, busy
+rows get none), filters, time travel ("Schedule only", no signals), EN/DE,
+light/dark, campus map tint and the offline shell (service worker precache)
+unchanged.
 
 ## Preview strategy and seeds
 
