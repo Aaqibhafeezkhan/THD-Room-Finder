@@ -147,9 +147,15 @@ describe('FocusSurface', () => {
   });
 
   it('offers no visibility choice for a signed-out local timer', async () => {
-    await render(<FocusSurface {...base} visibility="private" signedIn={false} />);
+    await render(<FocusSurface {...base} visibility="private" signedIn={false} onSetup={() => {}} />);
     expect(container.querySelector('[role="radiogroup"]')).toBeNull();
     expect(container.textContent).toContain(surfaceText.setup);
+  });
+
+  it('hides Set Up when the build has no focus service to set up with', async () => {
+    await render(<FocusSurface {...base} visibility="private" signedIn={false} />);
+    expect(container.textContent).toContain(surfaceText.signedOut);
+    expect(container.textContent).not.toContain(surfaceText.setup);
   });
 });
 

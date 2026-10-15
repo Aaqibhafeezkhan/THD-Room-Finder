@@ -103,11 +103,12 @@ export function FocusSurface({ elapsed, elapsedLabel, phase = 'focus', phaseLabe
             </span>
             <span style={{ textWrap: 'pretty' }}>{text.signedOut}</span>
           </div>
-          <div style={{ marginLeft: -12 }}>
-            <Button variant="text" size="small" onClick={onSetup} style={onFocusText}>
-              {text.setup}
-            </Button>
-          </div>
+          {onSetup && (
+            <div style={{ marginLeft: -12 }}>
+              <Button variant="text" size="small" onClick={onSetup} style={onFocusText}>
+                {text.setup}
+              </Button>
+            </div>)}
         </div>)}
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
