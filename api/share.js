@@ -1,14 +1,23 @@
 import { decodeShare } from '../shared/shareLink.js';
-import { sharePage } from '../shared/sharePage.js';
+import { invitePage, parseInvite, sharePage } from '../shared/sharePage.js';
 
-// GET /f/<payload>, rewritten to /api/share?p=<payload>: a focus graph share
-// link (ADR 0003). See shared/sharePage.js.
+// Two kinds of link, both pages whose og: tags make the chat preview and
+// whose script sends people to the campus map (ADR 0003):
+//   /f/<payload> → /api/share?p=<payload>  the focus graph (shared/sharePage.js)
+//   /i/<variant> → /api/share?i=<variant>  an invite with the app's banner
 
 export function GET(request) {
   const url = new URL(request.url);
-  const payload = url.searchParams.get('p') ?? '';
-  const snapshot = decodeShare(payload);
-  return new Response(sharePage(snapshot, snapshot ? payload : '', url.origin), {
+  const variant = url.searchParams.get('i');
+  let html;
+  if (variant !== null) {
+    html = invitePage(parseInvite(variant), url.origin);
+  } else {
+    const payload = url.searchParams.get('p') ?? '';
+    const snapshot = decodeShare(payload);
+    html = sharePage(snapshot, snapshot ? payload : '', url.origin);
+  }
+  return new Response(html, {
     status: 200,
     headers: {
       'Content-Type': 'text/html; charset=utf-8',

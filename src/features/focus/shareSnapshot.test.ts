@@ -68,3 +68,19 @@ describe('focus graph share link', () => {
     expect(html).toContain('content="https://example.test/og.jpg"');
   });
 });
+
+describe('invite link', () => {
+  it('carries the theme and language, and its page shows the matching banner', async () => {
+    const { inviteLink } = await import('./shareSnapshot');
+    const { invitePage, parseInvite } = await import('../../../shared/sharePage.js');
+    expect(inviteLink(true, 'de', 'https://x.test')).toBe('https://x.test/i/dark-de');
+    expect(inviteLink(false, 'en', 'https://x.test')).toBe('https://x.test/i/light');
+
+    expect(invitePage(parseInvite('dark'), 'https://x.test')).toContain('content="https://x.test/og-dark.jpg"');
+    const light = invitePage(parseInvite('light-de'), 'https://x.test');
+    expect(light).toContain('content="https://x.test/og.jpg"');
+    expect(light).toContain('lang="de"');
+    expect(light).toContain("location.replace('/')");
+    expect(parseInvite('<b>')).toBeNull();
+  });
+});
