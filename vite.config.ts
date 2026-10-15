@@ -81,6 +81,9 @@ export default defineConfig({
     devThabellaApi(),
     VitePWA({
       registerType: 'autoUpdate',
+      // Registered in main.tsx on the web only; the Android app updates
+      // through its own channel (#113).
+      injectRegister: null,
       includeAssets: ['icons/app-icon.svg', 'icons/app-icon-180.png'],
       manifest: {
         name: 'THD Room Finder',

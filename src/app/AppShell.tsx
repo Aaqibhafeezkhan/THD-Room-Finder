@@ -4,6 +4,7 @@ import { AdaptiveNav, CheckInSheet } from '../components';
 import { useFocusSession } from '../features/focus/FocusSessionContext';
 import { sessionView } from '../features/focus/sessionView';
 import { FocusNotifications } from '../features/focus/FocusNotifications';
+import { AppUpdates } from '../features/update/AppUpdates';
 import type { NavItem } from '../components';
 import { IconList, IconMap } from '../components/icons';
 import { IconPerson } from '../components/focus/focusIcons';
@@ -87,6 +88,7 @@ export function AppShell() {
         <Route path="*" element={<CampusScreen />} />
       </Routes>
       <FocusNotifications />
+      <AppUpdates />
       {focus.active && checkIn && (
         <CheckInSheet
           // On the session's own room the focus surface asks instead.
