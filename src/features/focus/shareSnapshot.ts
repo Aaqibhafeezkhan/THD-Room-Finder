@@ -23,6 +23,11 @@ export interface ShareLinkInput {
   batch?: string;
 }
 
+/** An invite to the app whose preview is the light or dark banner. */
+export function inviteLink(dark: boolean, lang: 'en' | 'de', origin: string): string {
+  return `${origin}/i/${dark ? 'dark' : 'light'}${lang === 'de' ? '-de' : ''}`;
+}
+
 /**
  * The /f/ link for the semester graph (ADR 0003): one level per day from the
  * semester's first Monday through today, plus the figures. No rooms, no

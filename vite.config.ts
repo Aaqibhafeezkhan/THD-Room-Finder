@@ -105,9 +105,9 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
         // Opens the room when the focus-session notification is tapped.
         importScripts: ['focus-sw.js'],
-        // Share links and the API are served by Vercel functions, never the
-        // cached app shell (a shared /f/ link must reach its preview page).
-        navigateFallbackDenylist: [/^\/f\//, /^\/api\//],
+        // Share and invite links and the API are served by Vercel functions,
+        // never the cached app shell (a link must reach its preview page).
+        navigateFallbackDenylist: [/^\/f\//, /^\/i\//, /^\/api\//],
         runtimeCaching: [
           {
             urlPattern: ({ url }) => url.pathname.startsWith('/api/'),
