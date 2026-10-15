@@ -34,7 +34,7 @@ export function AppBar({ mode = 'brand', title, onBack, actions = null, style = 
     <header style={bar}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0 0.75rem', flex: 1, minWidth: 0 }}>
         <Logo size={24} />
-        <span style={{ fontWeight: 500, fontSize: '1.375rem', color: 'var(--md-on-surface)' }}>{title || 'THD Room Finder'}</span>
+        <span style={{ fontWeight: 500, fontSize: '1.375rem', color: 'var(--md-on-surface)', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{title || 'THD Room Finder'}</span>
       </div>
       {actions}
     </header>

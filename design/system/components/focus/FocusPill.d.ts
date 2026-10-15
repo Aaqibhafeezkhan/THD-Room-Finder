@@ -2,12 +2,14 @@ import type { CSSProperties, MouseEventHandler } from 'react';
 /**
  * Your running session, visible from every other screen (D1, D3): trailing in
  * the brand app bar on phones, in the list-pane header on tablet and desktop.
- * Tapping it opens the room. The aria-label is a full sentence, e.g.
- * "Focus session in E 212, 24:10. Open room."
+ * Tapping it opens the room. Filled violet while focusing; tonal with a cup
+ * during a break or when the next block is waiting (ADR 0004). The aria-label
+ * is a full sentence, e.g. "Focus in E 212, 32 minutes left. Open room."
  */
 export interface FocusPillProps {
-    /** Elapsed time, e.g. "24:10" or "1:05:40". */
+    /** Time left in the phase, e.g. "32:10", or elapsed in the Open rhythm. */
     elapsed: string;
+    phase?: 'focus' | 'break' | 'confirm';
     /** Room code, e.g. "E 212". */
     room: string;
     /** Full-sentence accessible name. */

@@ -20,6 +20,11 @@
             </intent-filter>
         </activity>
 
+        <!-- Moves the focus-session notification to its next stage. -->
+        <receiver
+            android:name=".focus.FocusAlarmReceiver"
+            android:exported="false" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -32,4 +37,8 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Focus-session notification and its alerts on the minute (ADR 0004). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 </manifest>

@@ -32,7 +32,7 @@ const COMPONENTS = {
   'focus/FocusSurface': { section: 'Focus', subtitle: 'The running session on room detail', viewport: '420x420' },
   'focus/FocusPill': { section: 'Focus', subtitle: 'Running session from any screen', viewport: '700x80' },
   'focus/FocusSummary': { section: 'Focus', subtitle: 'Session ended, added to the graph', viewport: '420x200' },
-  'focus/CheckInSheet': { section: 'Focus', subtitle: '"Still focusing?" once an hour', viewport: '420x320' },
+  'focus/CheckInSheet': { section: 'Focus', subtitle: 'Break is over / still focusing, before the next block', viewport: '420x320' },
   'focus/FocusBadge': { section: 'Focus', subtitle: 'Own / batch / claimed badge on cards', viewport: '700x80' },
   'focus/FocusGraph': { section: 'Focus', subtitle: 'Contribution graph of daily focus minutes', viewport: '900x260' },
   'focus/ShareCard': { section: 'Focus', subtitle: 'Semester share card drawn on canvas (1080 × 1080)', viewport: '420x440' },

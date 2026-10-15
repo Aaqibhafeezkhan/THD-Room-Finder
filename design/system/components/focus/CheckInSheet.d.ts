@@ -20,6 +20,6 @@ export interface CheckInSheetProps {
     contained?: boolean;
 }
 /**
- * @startingPoint section="Focus" subtitle=""Still focusing?" once an hour" viewport="420x320"
+ * @startingPoint section="Focus" subtitle="Break is over / still focusing, before the next block" viewport="420x320"
  */
 export declare function CheckInSheet(props: CheckInSheetProps): JSX.Element;

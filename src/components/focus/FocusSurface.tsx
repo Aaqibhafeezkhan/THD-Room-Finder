@@ -2,20 +2,32 @@ import type { CSSProperties, ReactNode } from 'react';
 import { Button } from '../core/Button';
 import { SegmentedControl } from '../core/SegmentedControl';
 import { Switch } from '../core/Switch';
-import { IconGroup, IconLock, IconPhone, IconTimer } from './focusIcons';
+import { IconBreak, IconGroup, IconLock, IconPhone, IconTimer } from './focusIcons';
 
 /**
- * The running session on room detail (D1): a violet focus-container card with
- * the timer, the planned end and why, Private | Public (Private is the
- * default), one plain line on what others see, "Show my name" in Public only,
- * the lock-screen note and End. Signed out it is a local timer: no visibility
- * control, a line saying the room is not claimed, and Set Up Study Profile.
- * Focus order: timer → visibility → name → End.
+ * The running session on room detail (D1, ADR 0004): a violet focus-container
+ * card with the phase ("Focus", "Break", "Break's over") and block count, a
+ * countdown to the end of the phase, a track of blocks and breaks, the planned
+ * end and why, Private | Public (Private is the default), one plain line on
+ * what others see, "Show my name" in Public only, the lock-screen note and
+ * End. When a break is over, "Start block 3" leads. Without a study profile
+ * the session runs on the device: no visibility control, a line saying the
+ * room is not claimed, and Set Up Study Profile.
+ * Focus order: Start block → timer → visibility → name → End.
  */
 export type FocusVisibility = 'private' | 'public';
+export type FocusPhase = 'focus' | 'break' | 'confirm';
+
+/** One block or break on the track; `progress` 0–1 on the current one. */
+export interface FocusTrackSegment {
+  kind: 'focus' | 'break';
+  minutes: number;
+  state: 'done' | 'now' | 'next';
+  progress?: number;
+}
 
 export interface FocusSurfaceText {
-  /** "Focus session" */
+  /** The phase: "Focus", "Break" or "Break's over". */
   title: string;
   /** "Private" */
   private: string;
@@ -31,7 +43,7 @@ export interface FocusSurfaceText {
   showName: string;
   /** 'Shown as "AIN 7 student"' / "Shown as Lena", matching showName. */
   nameSub: string;
-  /** "Keeps running when your phone is locked. We check in about once an hour." */
+  /** "Keeps running when your phone is locked. After each break, tap to start the next block." */
   lockedNote: string;
   /** "End" */
   end: string;
@@ -42,10 +54,18 @@ export interface FocusSurfaceText {
 }
 
 export interface FocusSurfaceProps {
-  /** Elapsed time, e.g. "24:10". */
+  /** The big timer: time left in the phase ("32:10"), or elapsed in Open. */
   elapsed: string;
-  /** Full-sentence timer label, e.g. "24 minutes 10 seconds focused". */
+  /** Full-sentence timer label, e.g. "32 minutes left in block 2". */
   elapsedLabel?: string;
+  phase?: FocusPhase;
+  /** "Block 2 of 3" */
+  phaseLabel?: string;
+  /** Blocks and breaks; omitted in the Open rhythm. */
+  track?: FocusTrackSegment[];
+  /** "Start block 3", shown while the phase is confirm. */
+  confirmLabel?: string;
+  onConfirm?: () => void;
   /** e.g. "Planned end 12:36 · 3 h max" or "Planned end 15:55 · before the 16:00 lecture". */
   plannedLine: ReactNode;
   visibility: FocusVisibility;
@@ -59,9 +79,50 @@ export interface FocusSurfaceProps {
   style?: CSSProperties;
 }
 
+function Track({ segments }: { segments: FocusTrackSegment[] }) {
+  return (
+    <div aria-hidden="true" style={{ display: 'flex', gap: 3, alignItems: 'center', height: 8 }}>
+      {segments.map((seg, i) => {
+        const fill = seg.state === 'done' ? 1 : seg.state === 'now' ? Math.min(1, Math.max(0, seg.progress ?? 0)) : 0;
+        const tall = seg.kind === 'focus';
+        return (
+          <span
+            key={i}
+            style={{
+              flex: `${seg.minutes} 1 0`,
+              minWidth: 4,
+              height: tall ? 8 : 4,
+              borderRadius: 'var(--radius-full)',
+              overflow: 'hidden',
+              background: 'var(--focus-state-layer)',
+              outline: seg.state === 'now' ? '1px solid var(--md-on-focus-container)' : 'none',
+              outlineOffset: 1,
+            }}
+          >
+            <span
+              style={{
+                display: 'block',
+                width: `${fill * 100}%`,
+                height: '100%',
+                background: tall ? 'var(--md-on-focus-container)' : 'var(--md-focus)',
+                opacity: tall ? 1 : 0.6,
+              }}
+            />
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
 export function FocusSurface({
   elapsed,
   elapsedLabel,
+  phase = 'focus',
+  phaseLabel,
+  track,
+  confirmLabel,
+  onConfirm,
   plannedLine,
   visibility,
   showName,
@@ -91,9 +152,19 @@ export function FocusSurface({
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 500 }}>
-        <IconTimer size={18} />
-        <span>{text.title}</span>
+        {phase === 'focus' ? <IconTimer size={18} /> : <IconBreak size={18} />}
+        <span style={{ flex: 1, minWidth: 0 }}>{text.title}</span>
+        {phaseLabel && <span style={{ fontWeight: 400, fontSize: 13 }}>{phaseLabel}</span>}
       </div>
+      {phase === 'confirm' && confirmLabel && (
+        <Button
+          variant="filled"
+          onClick={onConfirm}
+          style={{ background: 'var(--md-focus)', color: 'var(--md-on-focus)', alignSelf: 'stretch' }}
+        >
+          {confirmLabel}
+        </Button>
+      )}
       <div>
         <div
           role="timer"
@@ -101,13 +172,18 @@ export function FocusSurface({
           style={{
             fontFamily: 'var(--font-mono)',
             fontVariantNumeric: 'tabular-nums',
-            fontSize: 48,
+            fontSize: phase === 'confirm' ? 32 : 48,
             fontWeight: 300,
             lineHeight: 1,
           }}
         >
           {elapsed}
         </div>
+        {track && track.length > 1 && (
+          <div style={{ marginTop: 12 }}>
+            <Track segments={track} />
+          </div>
+        )}
         <div style={{ fontSize: 13, marginTop: 8 }}>{plannedLine}</div>
       </div>
 

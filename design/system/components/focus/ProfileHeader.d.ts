@@ -19,6 +19,7 @@ export interface ProfileHeaderProps {
     setupLabel: string;
     /** "Settings" */
     settingsLabel: string;
+    /** Omit when study profiles aren't available; Set Up is then hidden. */
     onSetup?: () => void;
     onSettings?: () => void;
     style?: CSSProperties;

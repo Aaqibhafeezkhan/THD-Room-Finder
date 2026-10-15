@@ -23,6 +23,7 @@ export interface ProfileHeaderProps {
   setupLabel: string;
   /** "Settings" */
   settingsLabel: string;
+  /** Omit when study profiles aren't available; Set Up is then hidden. */
   onSetup?: () => void;
   onSettings?: () => void;
   style?: CSSProperties;
@@ -99,11 +100,13 @@ export function ProfileHeader({
             <span style={{ fontSize: 16, color: 'var(--md-on-surface-variant)', marginRight: 4, whiteSpace: 'nowrap' }}>
               {notSignedIn}
             </span>
-            <div style={{ marginLeft: -12 }}>
-              <Button variant="text" size="small" onClick={onSetup}>
-                {setupLabel}
-              </Button>
-            </div>
+            {onSetup && (
+              <div style={{ marginLeft: -12 }}>
+                <Button variant="text" size="small" onClick={onSetup}>
+                  {setupLabel}
+                </Button>
+              </div>
+            )}
           </div>
         </>
       )}

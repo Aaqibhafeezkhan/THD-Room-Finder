@@ -90,7 +90,7 @@ Sign-in emails never leave your machine locally: open Inbucket to read the
 
 `supabase/seed.sql` creates synthetic people, five placeholder programmes
 (until the #40 taxonomy exists), a few sample rooms and two live sessions
-(Max, Public with his name in A 008; Mia, Private in ITC 2.01). Sign in as any of them with the code from
+(Max, Public with his name in A008; Mia, Private in ITC 2: sem(1)). Sign in as any of them with the code from
 Inbucket.
 
 | Person | Email | Study profile | Sees a Public session of Lena's as |

@@ -27,3 +27,5 @@ export declare const IconPhone: ({ size, strokeWidth }: FocusIconProps) => JSX.E
 export declare const IconShare: ({ size, strokeWidth }: FocusIconProps) => JSX.Element;
 /** Gear: Settings, from the Profile header. */
 export declare const IconSettings: ({ size, strokeWidth }: FocusIconProps) => JSX.Element;
+/** Cup: a break between focus blocks (focus surface, pill). */
+export declare const IconBreak: ({ size, strokeWidth }: FocusIconProps) => JSX.Element;

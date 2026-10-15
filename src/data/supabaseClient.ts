@@ -1,0 +1,28 @@
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from './supabase.types';
+
+/**
+ * The browser's Supabase client, built from the publishable URL and key
+ * (`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`). When either is
+ * missing the shared focus features stay off and the app works as before:
+ * schedule, saved rooms and the local-only timer. Never a service-role key.
+ *
+ * supabase-js is loaded on first use, so the room finder's first paint
+ * doesn't carry it.
+ */
+export type FocusClient = SupabaseClient<Database>;
+
+const URL_ = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+const KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
+
+export const focusServiceConfigured = Boolean(URL_ && KEY);
+
+let client: Promise<FocusClient> | null = null;
+
+export function loadSupabase(): Promise<FocusClient> {
+  if (!focusServiceConfigured) return Promise.reject(new Error('focus service not configured'));
+  client ??= import('@supabase/supabase-js').then(({ createClient }) =>
+    createClient<Database>(URL_!, KEY!, { auth: { persistSession: true, autoRefreshToken: true } }),
+  );
+  return client;
+}

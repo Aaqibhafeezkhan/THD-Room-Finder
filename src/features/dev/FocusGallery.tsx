@@ -20,15 +20,17 @@ import {
   Snackbar,
   Switch,
 } from '../../components';
-import type { FocusDay, FocusGraphText, FocusSurfaceText, FocusVisibility } from '../../components';
+import type { FocusDay, FocusGraphText, FocusSurfaceText, FocusTrackSegment, FocusVisibility } from '../../components';
 import { useI18n } from '../../i18n';
+import { roomStatusLabel } from '../shared/roomStatusLabel';
 import { useTheme } from '../../lib/theme';
 
 /**
  * Development-only specimen of the focus-layer components (D1–D4) with fake,
- * deterministic data. Reached at /dev/focus in `npm run dev`; it is not routed
- * in production builds. Used to check light/dark and EN/DE before the screens
- * that use these components are built.
+ * deterministic data. Reached at /dev/focus in `npm run dev` and in Vercel
+ * preview deployments; it is not routed in production builds. Used to check
+ * light/dark and EN/DE before the screens that use these components are
+ * built.
  */
 
 const TODAY = '2026-10-13';
@@ -62,16 +64,26 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
+/** Deep 50/10 from 10:30 to 12:20: block, break, block, break, block. */
+function track(now: number, progress: number): FocusTrackSegment[] {
+  const shape: [FocusTrackSegment['kind'], number][] = [['focus', 50], ['break', 10], ['focus', 50], ['break', 10], ['focus', 50]];
+  return shape.map(([kind, minutes], i) => ({
+    kind,
+    minutes,
+    state: i < now ? 'done' : i === now ? 'now' : 'next',
+    ...(i === now && { progress }),
+  }));
+}
+
 export function FocusGallery() {
   const { t, locale, setLocale } = useI18n();
-  const { theme, cycle, setTheme } = useTheme();
+  const { theme, cycle, setTheme, accent, setAccent } = useTheme();
   const [visibility, setVisibility] = useState<FocusVisibility>('private');
   const [showName, setShowName] = useState(false);
   const [quiet, setQuiet] = useState(false);
   const [checkIn, setCheckIn] = useState(false);
   const [confirm, setConfirm] = useState(false);
   const [snack, setSnack] = useState('');
-  const [accent, setAccent] = useState<'violet' | 'orchid' | 'graphite'>('violet');
 
   // ?theme=light|dark, ?lang=en|de and ?accent=orchid|graphite make screenshots reproducible.
   useEffect(() => {
@@ -82,15 +94,7 @@ export function FocusGallery() {
     if (lang === 'en' || lang === 'de') setLocale(lang);
     const acc = q.get('accent');
     if (acc === 'orchid' || acc === 'graphite') setAccent(acc);
-  }, [setTheme, setLocale]);
-
-  // Graph colour lives on the same element as data-theme (see tokens/colors.css).
-  useEffect(() => {
-    const root = document.documentElement;
-    if (accent === 'violet') root.removeAttribute('data-accent');
-    else root.setAttribute('data-accent', accent);
-    return () => root.removeAttribute('data-accent');
-  }, [accent]);
+  }, [setTheme, setLocale, setAccent]);
 
   const months = locale === 'de'
     ? ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez']
@@ -98,7 +102,7 @@ export function FocusGallery() {
   const dayNames = locale === 'de' ? ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'] : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
   const surfaceText: FocusSurfaceText = {
-    title: t('Focus session', 'Fokus-Session'),
+    title: t('Focus', 'Fokus'),
     private: t('Private', 'Privat'),
     public: t('Public · AIN 7', 'Öffentlich · AIN 7'),
     visibility: t('Who sees this session', 'Wer diese Session sieht'),
@@ -110,13 +114,13 @@ export function FocusGallery() {
     showName: t('Show my name', 'Meinen Namen zeigen'),
     nameSub: showName ? t('Shown as Lena', 'Angezeigt als Lena') : t('Shown as "AIN 7 student"', 'Angezeigt als „Studi aus AIN 7"'),
     lockedNote: t(
-      'Keeps running when your phone is locked. We check in about once an hour.',
-      'Läuft weiter, wenn dein Handy gesperrt ist. Etwa stündlich fragen wir kurz nach.',
+      'Keeps running when your phone is locked. After each break, tap to start the next block.',
+      'Läuft weiter, wenn dein Handy gesperrt ist. Nach jeder Pause tippst du, um den nächsten Block zu starten.',
     ),
     end: t('End', 'Beenden'),
     signedOut: t(
-      "Only you see this timer; the room doesn't show as claimed. Set up a study profile to share sessions with your batch.",
-      'Nur du siehst diesen Timer; der Raum wird nicht als belegt angezeigt. Richte ein Studienprofil ein, um Sessions mit deinem Jahrgang zu teilen.',
+      "This session stays on your device; the room doesn't show as claimed. Set up a study profile to claim rooms and focus with your batch.",
+      'Diese Session bleibt auf deinem Gerät; der Raum wird nicht als belegt angezeigt. Richte ein Studienprofil ein, um Räume zu belegen und mit deinem Jahrgang zu lernen.',
     ),
     setup: t('Set Up Study Profile', 'Studienprofil einrichten'),
   };
@@ -182,8 +186,10 @@ export function FocusGallery() {
           {t('Start focus', 'Fokus starten')}
         </FocusButton>
         <FocusSurface
-          elapsed="24:10"
-          plannedLine={t('Planned end 12:36 · 3 h max', 'Geplantes Ende 12:36 · max. 3 Std.')}
+          elapsed="32:10"
+          phaseLabel={t('Block 2 of 3', 'Block 2 von 3')}
+          track={track(1, 0.36)}
+          plannedLine={t('Break at 11:20 · ends 12:20, before the 12:30 lecture', 'Pause um 11:20 · endet 12:20, vor der Vorlesung um 12:30')}
           visibility={visibility}
           onVisibility={setVisibility}
           showName={showName}
@@ -192,7 +198,29 @@ export function FocusGallery() {
           text={surfaceText}
           onEnd={() => setCheckIn(true)}
         />
-        <FocusSurface elapsed="03:12" plannedLine={t('Planned end 12:36 · 3 h max', 'Geplantes Ende 12:36 · max. 3 Std.')} visibility="private" showName={false} signedIn={false} text={surfaceText} />
+        <FocusSurface
+          elapsed="07:40"
+          phase="break"
+          phaseLabel={t('Block 3 of 3 next', 'Danach Block 3 von 3')}
+          track={track(3, 0.23)}
+          plannedLine={t('Block 3 at 11:30 · ends 12:20, before the 12:30 lecture', 'Block 3 um 11:30 · endet 12:20, vor der Vorlesung um 12:30')}
+          visibility="private"
+          showName={false}
+          signedIn={false}
+          text={{ ...surfaceText, title: t('Break', 'Pause') }}
+        />
+        <FocusSurface
+          elapsed="08:12"
+          phase="confirm"
+          phaseLabel={t('Block 3 of 3', 'Block 3 von 3')}
+          track={track(4, 0.06)}
+          confirmLabel={t('Start Block 3', 'Block 3 starten')}
+          plannedLine={t('No answer by 11:40 ends the session.', 'Ohne Antwort bis 11:40 endet die Session.')}
+          visibility="private"
+          showName={false}
+          signedIn
+          text={{ ...surfaceText, title: t("Break's over", 'Pause vorbei') }}
+        />
         <FocusSummary
           title={t('Session ended', 'Session beendet')}
           added={t('1 h 25 min', '1 Std. 25 Min.')}
@@ -201,8 +229,9 @@ export function FocusGallery() {
           viewGraphLabel={t('View Focus Graph', 'Fokus-Verlauf ansehen')}
         />
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <FocusPill elapsed="24:10" room="E 212" label={t('Focus session in E 212, 24:10. Open room.', 'Fokus-Session in E 212, 24:10. Raum öffnen.')} />
-          <FocusPill elapsed="1:05:40" room="ITC1.07" label="Focus session in ITC1.07" />
+          <FocusPill elapsed="32:10" room="E 212" label={t('Focus in E 212, 33 minutes left in block 2. Open room.', 'Fokus in E 212, noch 33 Minuten in Block 2. Raum öffnen.')} />
+          <FocusPill elapsed="07:40" phase="break" room="E 212" label={t('Break in E 212, 8 minutes left. Open room.', 'Pause in E 212, noch 8 Minuten. Raum öffnen.')} />
+          <FocusPill elapsed="1:05:40" room="ITC1.07" label="Focus in ITC1.07" />
         </div>
       </Section>
 
@@ -238,10 +267,10 @@ export function FocusGallery() {
         <ListNotice kind="quiet">{t('AIN 7 sessions show as claimed (Settings).', 'Sessions von AIN 7 erscheinen als Fokus-Session (Einstellungen).')}</ListNotice>
         <ListNotice kind="time">{t('Schedule only. Focus activity shows for now.', 'Nur Belegung. Fokus-Aktivität gibt es nur für jetzt.')}</ListNotice>
         <ListNotice kind="unknown">{t('Focus activity unknown', 'Fokus-Aktivität unbekannt')}</ListNotice>
-        <RoomCard name="E 212" meta={t('Building E · 60 seats', 'Gebäude E · 60 Plätze')} status="free" duration="6h" focus={{ kind: 'own', label: t('Your session · 24:10', 'Deine Session · 24:10') }} />
-        <RoomCard name="A 008" meta={t('Building A · 45 seats', 'Gebäude A · 45 Plätze')} status="free" duration="4h 30m" focus={{ kind: 'batch', label: t('AIN 7 · 2 studying', 'AIN 7 · 2 lernen hier') }} />
-        <RoomCard name="ITC 2.01" meta={t('ITC 2 · 30 seats', 'ITC 2 · 30 Plätze')} status="claimed" statusLabel={t('claimed', 'Fokus')} duration="4h" focus={{ kind: 'claimed', label: t('Focus session · 40 min', 'Fokus-Session · 40 Min.') }} />
-        <RoomCard name="D 105" meta={t('Building D · 24 seats', 'Gebäude D · 24 Plätze')} status="soon" statusLabel={t('closing', 'schließt')} duration="25m" focus={{ kind: 'claimed', label: t('Focus session · 10 min', 'Fokus-Session · 10 Min.') }} />
+        <RoomCard name="E 212" meta={t('Building E · 60 seats', 'Gebäude E · 60 Plätze')} status="free" statusLabel={roomStatusLabel('free', t)} duration="6h" focus={{ kind: 'own', label: t('Your session · 24:10', 'Deine Session · 24:10') }} />
+        <RoomCard name="A 008" meta={t('Building A · 45 seats', 'Gebäude A · 45 Plätze')} status="free" statusLabel={roomStatusLabel('free', t)} duration="4h 30m" focus={{ kind: 'batch', label: t('AIN 7 · 2 studying', 'AIN 7 · 2 lernen hier') }} />
+        <RoomCard name="ITC 2.01" meta={t('ITC 2 · 30 seats', 'ITC 2 · 30 Plätze')} status="claimed" statusLabel={roomStatusLabel('claimed', t)} duration="4h" focus={{ kind: 'claimed', label: t('Focus session · 40 min', 'Fokus-Session · 40 Min.') }} />
+        <RoomCard name="D 105" meta={t('Building D · 24 seats', 'Gebäude D · 24 Plätze')} status="soon" statusLabel={roomStatusLabel('soon', t)} duration="25m" focus={{ kind: 'claimed', label: t('Focus session · 10 min', 'Fokus-Session · 10 Min.') }} />
         <div style={{ background: 'var(--md-surface)', borderRadius: 'var(--radius-l)', boxShadow: 'var(--md-shadow-1)', overflow: 'hidden' }}>
           <BuildingRow code="ITC" name="Rohde & Schwarz Forum" freeLine={t('4 of 20 rooms free', '4 von 20 Räumen frei')} batch={t('AIN 7 · 2 studying', 'AIN 7 · 2 lernen hier')} claims={t('1 focus session', '1 Fokus-Session')} />
           <BuildingRow code="E" name={t('Building E', 'Gebäude E')} freeLine={t('6 of 12 rooms free', '6 von 12 Räumen frei')} own={t('Your session', 'Deine Session')} divider />
@@ -274,14 +303,11 @@ export function FocusGallery() {
 
       <CheckInSheet
         open={checkIn}
-        title={t('Still focusing in E 212?', 'Lernst du noch in E 212?')}
-        meta="24:10 · E 212"
-        body={t(
-          "We ask about once an hour so rooms don't stay claimed after you leave. With no answer, the session ends in 10 min.",
-          'Wir fragen etwa stündlich, damit Räume nicht belegt bleiben, wenn du gegangen bist. Ohne Antwort endet die Session in 10 Min.',
-        )}
+        title={t("Break's over in E 212", 'Pause vorbei in E 212')}
+        meta={t('Block 3 of 3 · E 212', 'Block 3 von 3 · E 212')}
+        body={t('No answer by 11:40 ends the session.', 'Ohne Antwort bis 11:40 endet die Session.')}
         endLabel={t('End', 'Beenden')}
-        keepLabel={t('Keep Going', 'Weiter lernen')}
+        keepLabel={t('Start Block 3', 'Block 3 starten')}
         onKeep={() => setCheckIn(false)}
         onEnd={() => setCheckIn(false)}
       />

@@ -26,7 +26,7 @@ src/
   domain/       # framework-free, unit-tested: models, parse, availability, priority, teachingRooms, format
   data/         # dto, mappers, cache (localStorage), thabellaClient (web proxy / native HTTP)
   components/   # ported Material 3 design-system components (core/ + app/) + icons
-  features/     # screens + state: home/ detail/ campus/ favorites/ rooms/ (RoomDataContext) shared/
+  features/     # screens + state: home/ detail/ campus/ profile/ favorites/ focus/ rooms/ (RoomDataContext) shared/
   i18n/         # EN/DE provider (t(en, de))
   lib/          # theme provider, window-size-class hook
   styles/       # design-system token CSS + global entry

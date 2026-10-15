@@ -62,6 +62,11 @@ function devThabellaApi(): Plugin {
 }
 
 export default defineConfig({
+  // Vercel sets VERCEL_ENV at build time. Previews (never production) route
+  // the /dev/focus component gallery so designs can be reviewed on a phone.
+  define: {
+    __DEV_GALLERY__: JSON.stringify(process.env.VERCEL_ENV === 'preview'),
+  },
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
@@ -98,6 +103,8 @@ export default defineConfig({
         // App shell is precached; THabella data is network-first with a
         // short cache so the app still opens (with last data) offline.
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        // Opens the room when the focus-session notification is tapped.
+        importScripts: ['focus-sw.js'],
         runtimeCaching: [
           {
             urlPattern: ({ url }) => url.pathname.startsWith('/api/'),
