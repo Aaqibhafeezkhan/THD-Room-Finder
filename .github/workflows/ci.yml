@@ -48,6 +48,7 @@ jobs:
       - run: npm run build
       - run: npx cap sync android
       - run: chmod +x android/gradlew
-      - name: Assemble debug APK
+      # The job name is a required check; unit tests run in the same step.
+      - name: Native unit tests and debug APK
         working-directory: android
-        run: ./gradlew assembleDebug --no-daemon
+        run: ./gradlew testDebugUnitTest assembleDebug --no-daemon

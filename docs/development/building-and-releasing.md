@@ -51,10 +51,12 @@ flowchart LR
   C --> D[typecheck · test · build]
   D --> E[Restore keystore from secrets]
   E --> F[assembleRelease]
-  F --> G[GitHub release with<br/>thd-room-finder-X.Y.Z.apk<br/>+ generated notes]
+  F --> G[GitHub release with<br/>thd-room-finder-X.Y.Z.apk,<br/>web-X.Y.Z.zip, update.json<br/>+ generated notes]
 ```
 
-1. Merge a `chore(release): vX.Y.Z` PR that bumps `package.json`.
+1. Merge a `chore(release): vX.Y.Z` PR that bumps `package.json` and
+   `versionCode`/`versionName` in `android/app/build.gradle`. The release
+   fails when the three disagree.
 2. Tag the merge commit: `git tag vX.Y.Z && git push origin vX.Y.Z`.
 3. `release.yml` builds and publishes. It fails rather than publishing an
    unsigned APK. A tag can be rebuilt with *Run workflow* and the tag name.
@@ -65,6 +67,28 @@ flowchart LR
 | `KEYSTORE_PASSWORD` | Store password |
 | `KEY_ALIAS` | Key alias |
 | `KEY_PASSWORD` | Key password |
+
+### Updates for installed apps
+
+Each release also publishes `web-X.Y.Z.zip` (the same web build that is in
+the APK) and `update.json`, which installed Android apps read from
+`releases/latest/download/update.json` (#113):
+
+```json
+{ "schema": 1, "version": "2.4.0", "versionCode": 4, "native": "e21dd6beadde99a8",
+  "notes": "…/releases/tag/v2.4.0",
+  "bundle": { "url": "…/web-2.4.0.zip", "sha256": "…", "size": 0 },
+  "apk": { "url": "…/thd-room-finder-2.4.0.apk", "sha256": "…", "size": 0 } }
+```
+
+`native` is the fingerprint of the native shell
+([`scripts/release/nativeFingerprint.mjs`](../../scripts/release/nativeFingerprint.mjs)):
+the `android/` sources and resources, `capacitor.config.ts` and the installed
+Capacitor plugin versions, ignoring line endings and the version lines. The
+app is built with the same value. A release with the same fingerprint as the
+installed app arrives as a silent live update; a different one asks the
+student to install the new APK. Nothing needs to be decided by hand; print
+the current value with `node scripts/release/nativeFingerprint.mjs`.
 
 ## iOS
 

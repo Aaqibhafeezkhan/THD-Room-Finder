@@ -19,7 +19,16 @@ loaded data for offline viewing. Cached data is not live; reconnect to refresh.
    [latest release](https://github.com/arudaev/THD-Room-Finder/releases/latest).
 2. Open it and allow installation from your browser or file manager when
    Android asks.
-3. Updates: install the newer APK over the old one.
+3. Updates: from the first release after v2.3.0 the app updates itself
+   ([ADR 0006](../architecture/adr/0006-android-self-update.md)). Most
+   releases arrive silently and are used from the next start; a release that
+   changes the native app shows **Update available**, which opens the
+   [install page](https://arudaev.github.io/THD-Room-Finder/#get) to download
+   the new APK and install it over the old one.
+   Older versions: install the newer APK over the old one once.
+4. Prefer store-style updates? [Obtainium](https://github.com/ImranR98/Obtainium)
+   can track the GitHub releases of `arudaev/THD-Room-Finder` and install
+   new APKs for you.
 
 If Android says the package conflicts with an existing app, the installed copy
 was signed with a different key (for example a debug build). Uninstall it

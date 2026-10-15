@@ -1,9 +1,12 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath, URL } from 'node:url';
+import { nativeFingerprint } from './scripts/release/nativeFingerprint.mjs';
 
 const THABELLA = 'https://thabella.th-deg.de/thabella/opn';
+const APP_VERSION: string = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')).version;
 
 /**
  * Dev-only middleware that mirrors the production Vercel functions
@@ -66,6 +69,9 @@ export default defineConfig({
   // the /dev/focus component gallery so designs can be reviewed on a phone.
   define: {
     __DEV_GALLERY__: JSON.stringify(process.env.VERCEL_ENV === 'preview'),
+    // The Android app compares both with a release's update.json (#113).
+    __APP_VERSION__: JSON.stringify(APP_VERSION),
+    __NATIVE_FINGERPRINT__: JSON.stringify(nativeFingerprint(fileURLToPath(new URL('.', import.meta.url)))),
   },
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
@@ -75,6 +81,9 @@ export default defineConfig({
     devThabellaApi(),
     VitePWA({
       registerType: 'autoUpdate',
+      // Registered in main.tsx on the web only; the Android app updates
+      // through its own channel (#113).
+      injectRegister: null,
       includeAssets: ['icons/app-icon.svg', 'icons/app-icon-180.png'],
       manifest: {
         name: 'THD Room Finder',
