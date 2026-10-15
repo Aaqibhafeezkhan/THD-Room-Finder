@@ -14,7 +14,7 @@
   <meta property="og:image" content="https://arudaev.github.io/THD-Room-Finder/assets/og.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="THD Room Finder: an illustrated THD seminar room next to the app showing a running Pomodoro focus block in lecture hall C116.">
+  <meta property="og:image:alt" content="THD Room Finder: an illustrated THD seminar room next to the app showing a running Pomodoro focus block in room C011.">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://arudaev.github.io/THD-Room-Finder/assets/og.jpg">
   <link rel="icon" href="icons/app-icon.svg" type="image/svg+xml">
@@ -133,8 +133,8 @@
     .phone img { border-radius: 27px; width: 100%; }
     .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
     .step { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; }
-    .step .phone { aspect-ratio: 390 / 520; overflow: hidden; }
-    .step .phone img { width: 100%; height: auto; }
+    /* Galaxy A55 screen, 360 × 780 */
+    .phone img { aspect-ratio: 360 / 780; }
     .num { width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--md-primary-container); color: var(--md-on-primary-container); font-weight: 500; font-size: 15px; }
     .step:nth-child(2) .num { background: var(--md-focus-container); color: var(--md-on-focus-container); }
     .step h3 { font-size: 20px; font-weight: 500; margin: 10px 0 6px; }
@@ -155,8 +155,8 @@
     .tile svg { width: 20px; height: 20px; }
     .feats h3 { font-size: 16px; font-weight: 500; }
     .feats p { font-size: 15px; color: var(--md-on-surface-variant); margin-top: 2px; }
-    .stack { position: relative; display: flex; justify-content: center; min-height: 520px; }
-    .stack .phone { position: absolute; width: 62%; max-width: 280px; }
+    .stack { position: relative; display: flex; justify-content: center; min-height: 640px; }
+    .stack .phone { position: absolute; width: 58%; max-width: 270px; }
     .stack .phone:first-child { left: 4%; top: 0; transform: rotate(-4deg); }
     .stack .phone:last-child { right: 4%; top: 64px; transform: rotate(3deg); }
     .graph-card { margin-top: 48px; border-radius: var(--radius-l); overflow: hidden; box-shadow: var(--shadow-1); background: var(--md-surface); }
@@ -210,7 +210,7 @@
       .bar nav { display: none; }
       .split { grid-template-columns: 1fr; gap: 40px; }
       .split.rev > :first-child { order: 2; }
-      .stack { min-height: 0; height: 120vw; max-height: 560px; }
+      .stack { min-height: 0; height: 150vw; max-height: 680px; }
     }
     @media (max-width: 760px) {
       section { padding: 64px 0; }
@@ -291,7 +291,7 @@
       </div>
       <div class="steps">
         <div class="step">
-          <div class="phone"><picture><source srcset="assets/screen-rooms-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/screen-rooms-light.webp" alt="The room list: 112 rooms free right now, B004 free for 10 hours 24 minutes at the top" loading="lazy" width="780" height="1688"></picture></div>
+          <div class="phone"><picture><source srcset="assets/screen-rooms-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/screen-rooms-light.webp" alt="The room list on a phone: 31 rooms free right now, B004 free for 10 hours at the top, then B101, C116 and C011" loading="lazy" width="720" height="1560"></picture></div>
           <div>
             <span class="num">1</span>
             <h3 data-de="Finde einen Raum">Find a room</h3>
@@ -299,7 +299,7 @@
           </div>
         </div>
         <div class="step">
-          <div class="phone"><picture><source srcset="assets/screen-focus-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/screen-focus-light.webp" alt="A running focus session in C Hörsaal C116: block 1 of 6, 11:58 left, break at 09:59" loading="lazy" width="780" height="1130"></picture></div>
+          <div class="phone"><picture><source srcset="assets/screen-focus-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/screen-focus-light.webp" alt="A running Pomodoro session in room C011: block 1 of 6, 11:58 left before the first break" loading="lazy" width="720" height="1560"></picture></div>
           <div>
             <span class="num">2</span>
             <h3 data-de="Starte den Fokus">Start focus</h3>
@@ -307,7 +307,7 @@
           </div>
         </div>
         <div class="step">
-          <div class="phone"><picture><source srcset="assets/screen-profile-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/screen-profile-light.webp" alt="The focus graph on the profile: 23 hours this semester and a 5-day streak" loading="lazy" width="780" height="1000"></picture></div>
+          <div class="phone"><picture><source srcset="assets/screen-profile-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/screen-profile-light.webp" alt="The focus graph on the profile: 23 hours this semester and a 5-day streak" loading="lazy" width="720" height="1560"></picture></div>
           <div>
             <span class="num">3</span>
             <h3 data-de="Sieh dein Semester wachsen">Watch your semester grow</h3>
@@ -342,8 +342,8 @@
           </ul>
         </div>
         <div class="stack">
-          <div class="phone"><picture><source srcset="assets/screen-focus-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/screen-focus-light.webp" alt="" loading="lazy" width="780" height="1130"></picture></div>
-          <div class="phone"><picture><source srcset="assets/screen-break-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/screen-break-light.webp" alt="The same session on a break: 2:58 left, block 2 of 6 next" loading="lazy" width="780" height="1130"></picture></div>
+          <div class="phone"><picture><source srcset="assets/screen-focus-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/screen-focus-light.webp" alt="" loading="lazy" width="720" height="1560"></picture></div>
+          <div class="phone"><picture><source srcset="assets/screen-break-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/screen-break-light.webp" alt="The same session in C011 on a break: 2:58 left, block 2 of 6 next" loading="lazy" width="720" height="1560"></picture></div>
         </div>
       </div>
     </div>
