@@ -80,7 +80,7 @@ export default defineConfig({
         name: 'THD Room Finder',
         short_name: 'Room Finder',
         description:
-          'Find free study rooms at Technische Hochschule Deggendorf in real time.',
+          'Find a free study room at THD Deggendorf and focus in it, in Pomodoro blocks, alone or with your batch.',
         lang: 'en',
         theme_color: '#1565C0',
         background_color: '#F4F6FA',

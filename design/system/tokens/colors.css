@@ -82,7 +82,7 @@
   --md-on-event-container:     #221B00;
 
   /* ── Focus graph ramp (D2) ────────────────────────────
-     Daily focus minutes → level: 0 · <30 · <90 · <180 · 180+.
+     Daily focus → level, in Pomodoro blocks: 0 · 1 · 2–3 · 4–6 · 7+.
      Light: more focus = darker. Contrast vs --md-surface:
      1.13 · 1.48 · 2.49 · 4.83 · 10.11. Levels 0–2 stay under
      3:1 on purpose (contribution-graph look); the value is

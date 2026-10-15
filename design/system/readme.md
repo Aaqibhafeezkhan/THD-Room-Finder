@@ -138,7 +138,7 @@ app (`design/mirror-components.mjs`), so they render exactly as the app does.
 |---|---|---|---|---|
 | You & your batch | `--md-focus` / `-container` | `#6A4BA8` / `#EBE0FF` | `#D0BCFF` / `#4F378B` | Your active session surface; a batchmate's public session; batch map ring |
 | Claimed by someone else | `--md-claimed` / `-container` | `#4E4060` / `#E6E0EC` | `#CFC0DC` / `#43384F` | Anonymous claim row, claimed bucket, map dot. "Grey, but for focus" |
-| Focus graph, levels 0–4 | `--md-graph-0…4` | `#EFEEF5 #D8CCF6 #AE95E8 #7E5BCC #4A2A91` | `#2B2930 #3D2D6E #5B3FAD #9479E6 #D3C2FF` | Daily minutes 0 · <30 · <90 · <180 · 180+. Levels 0–2 stay under 3:1 on purpose; values are also in the tooltip, legend and a hidden table |
+| Focus graph, levels 0–4 | `--md-graph-0…4` | `#EFEEF5 #D8CCF6 #AE95E8 #7E5BCC #4A2A91` | `#2B2930 #3D2D6E #5B3FAD #9479E6 #D3C2FF` | Daily focus in Pomodoro blocks 0 · 1 · 2–3 · 4–6 · 7+ (0 · <50 · <100 · <175 · 175+ min). Levels 0–2 stay under 3:1 on purpose; values are also in the tooltip, legend and a hidden table |
 | Snackbar | `--md-inverse-surface` / `-on-surface` | `#1C1B1F` / `#FDFCFF` | `#E6E1E5` / `#1C1B1F` | One-line status ("Link copied") |
 | City events (reserved, Phase 3) | `--md-event` / `-container` | `#6B5E00` / `#F7E886` | `#DCCB5C` / `#504600` | Not used before M4; kept distinct from amber "closing soon" |
 
