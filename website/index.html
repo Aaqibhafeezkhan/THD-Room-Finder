@@ -2,739 +2,510 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>THD Room Finder — Find Free Study Rooms Instantly</title>
-  <meta name="description" content="Find available study rooms at Technische Hochschule Deggendorf in real time. Building filters, schedule lookup, and offline support — no login required.">
-  <meta property="og:title" content="THD Room Finder">
-  <meta property="og:description" content="Instantly find free study rooms at THD. Real-time availability for 289 classrooms.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>THD Room Finder: find a free room, focus in it</title>
+  <meta name="description" content="See which rooms at THD Deggendorf are free right now and for how long, then focus there in Pomodoro blocks, alone or with your batch. Free, open source, no account needed.">
+  <link rel="canonical" href="https://arudaev.github.io/THD-Room-Finder/">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="https://arudaev.github.io/THD-Room-Finder/og-banner-door.png">
+  <meta property="og:site_name" content="THD Room Finder">
+  <meta property="og:url" content="https://arudaev.github.io/THD-Room-Finder/">
+  <meta property="og:title" content="THD Room Finder: find a free room, focus in it">
+  <meta property="og:description" content="Live free study rooms at THD Deggendorf, plus Pomodoro focus sessions with your batch. Free, open source, no account needed.">
+  <meta property="og:image" content="https://arudaev.github.io/THD-Room-Finder/assets/og.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="THD Room Finder: an illustrated THD seminar room next to the app showing a running Pomodoro focus block in lecture hall C116.">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://arudaev.github.io/THD-Room-Finder/og-banner-door.png">
+  <meta name="twitter:image" content="https://arudaev.github.io/THD-Room-Finder/assets/og.jpg">
   <link rel="icon" href="icons/app-icon.svg" type="image/svg+xml">
   <link rel="icon" href="icons/app-icon-192.png" sizes="192x192" type="image/png">
   <link rel="apple-touch-icon" sizes="180x180" href="icons/app-icon-180.png">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FDFCFF">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#F4F6FA">
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111318">
-  <meta name="theme-color" content="#FDFCFF">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+    /* Tokens mirror src/styles/tokens (the app's design system). */
     :root {
-      --md-primary:              #1565C0;
-      --md-on-primary:           #FFFFFF;
-      --md-primary-container:    #D3E4FF;
-      --md-on-primary-container: #001C3B;
-      --md-secondary:            #546E7A;
-      --md-on-secondary:         #FFFFFF;
-      --md-secondary-container:    #D6E4EF;
-      --md-on-secondary-container: #0D1D26;
-      --md-surface:              #FDFCFF;
-      --md-on-surface:           #1C1B1F;
-      --md-on-surface-variant:   #44464F;
-      --md-outline:              #74777F;
-      --md-outline-variant:      #C4C6D0;
-      --md-bg:                   #F4F6FA;
-      --md-surface-1:            #EEF1FA;
-      --sponsor:                 #D81B60;
-      --sponsor-container:       #FCE4EC;
-      --md-font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-      --md-radius-l:  16px;
-      --md-radius-xl: 28px;
-      --md-shadow-1: 0 1px 2px rgba(0,0,0,.12), 0 1px 3px 1px rgba(0,0,0,.08);
-      --md-shadow-2: 0 1px 2px rgba(0,0,0,.15), 0 2px 6px 2px rgba(0,0,0,.10);
+      --md-primary: #1565C0; --md-on-primary: #FFFFFF;
+      --md-primary-container: #D3E4FF; --md-on-primary-container: #001C3B;
+      --md-secondary-container: #D6E4EF; --md-on-secondary-container: #0D1D26;
+      --md-tertiary: #00796B; --md-tertiary-container: #B2DFDB; --md-on-tertiary-container: #00251F;
+      --md-focus: #6A4BA8; --md-on-focus: #FFFFFF;
+      --md-focus-container: #EBE0FF; --md-on-focus-container: #2D1A5C;
+      --md-bg: #F4F6FA; --md-surface: #FDFCFF; --md-on-surface: #1C1B1F;
+      --md-surface-variant: #E1E2EC; --md-on-surface-variant: #44464F;
+      --md-outline-variant: #C4C6D0;
+      --md-graph-1: #D8CCF6; --md-graph-2: #AE95E8; --md-graph-3: #7E5BCC; --md-graph-4: #4A2A91;
+      --sponsor: #C2185B; --sponsor-container: #FCE4EC;
+      --shadow-1: 0 1px 2px rgba(0,0,0,.12), 0 1px 3px 1px rgba(0,0,0,.08);
+      --shadow-2: 0 1px 2px rgba(0,0,0,.15), 0 2px 6px 2px rgba(0,0,0,.10);
+      --shadow-3: 0 4px 8px 3px rgba(0,0,0,.10), 0 1px 3px rgba(0,0,0,.15);
+      --radius-s: 8px; --radius-m: 12px; --radius-l: 16px; --radius-xl: 28px;
+      --font: 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono: 'Roboto Mono', ui-monospace, monospace;
+      --hero-fade: linear-gradient(90deg, rgba(244,246,250,.97) 0%, rgba(244,246,250,.9) 34%, rgba(244,246,250,0) 62%);
+      --max: 1120px;
     }
-
     @media (prefers-color-scheme: dark) {
       :root {
-        --md-primary:              #90CAF9;
-        --md-on-primary:           #003063;
-        --md-primary-container:    #00458D;
-        --md-on-primary-container: #D3E4FF;
-        --md-secondary:            #B0BEC5;
-        --md-on-secondary:         #1E333E;
-        --md-secondary-container:    #354A55;
-        --md-on-secondary-container: #D6E4EF;
-        --md-surface:              #1C1B1F;
-        --md-on-surface:           #E6E1E5;
-        --md-on-surface-variant:   #C4C6D0;
-        --md-outline:              #8E9099;
-        --md-outline-variant:      #44464F;
-        --md-bg:                   #111318;
-        --md-surface-1:            #21242C;
-        --sponsor:                 #FF8AB7;
-        --sponsor-container:       #5A1631;
-        --md-shadow-1: 0 1px 2px rgba(0,0,0,.3),  0 1px 3px 1px rgba(0,0,0,.2);
-        --md-shadow-2: 0 1px 2px rgba(0,0,0,.35), 0 2px 6px 2px rgba(0,0,0,.25);
+        --md-primary: #90CAF9; --md-on-primary: #003063;
+        --md-primary-container: #00458D; --md-on-primary-container: #D3E4FF;
+        --md-secondary-container: #354A55; --md-on-secondary-container: #D6E4EF;
+        --md-tertiary: #4DB6AC; --md-tertiary-container: #004F45; --md-on-tertiary-container: #B2DFDB;
+        --md-focus: #D0BCFF; --md-on-focus: #381E72;
+        --md-focus-container: #4F378B; --md-on-focus-container: #EBE0FF;
+        --md-bg: #111318; --md-surface: #1C1B1F; --md-on-surface: #E6E1E5;
+        --md-surface-variant: #2B2930; --md-on-surface-variant: #C4C6D0;
+        --md-outline-variant: #44464F;
+        --md-graph-1: #3D2D6E; --md-graph-2: #5B3FAD; --md-graph-3: #9479E6; --md-graph-4: #D3C2FF;
+        --sponsor: #FF8AB7; --sponsor-container: #5A1631;
+        --shadow-1: 0 1px 2px rgba(0,0,0,.3), 0 1px 3px 1px rgba(0,0,0,.2);
+        --shadow-2: 0 1px 2px rgba(0,0,0,.35), 0 2px 6px 2px rgba(0,0,0,.25);
+        --shadow-3: 0 4px 8px 3px rgba(0,0,0,.3), 0 1px 3px rgba(0,0,0,.4);
+        --hero-fade: linear-gradient(90deg, rgba(17,19,24,.96) 0%, rgba(17,19,24,.82) 34%, rgba(17,19,24,0) 62%);
       }
     }
 
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: var(--md-font);
-      background: var(--md-bg);
-      color: var(--md-on-surface);
-      overflow-x: hidden;
-    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    body { margin: 0; font-family: var(--font); background: var(--md-bg); color: var(--md-on-surface); line-height: 1.5; overflow-x: hidden; }
+    img { display: block; max-width: 100%; height: auto; }
+    a { color: var(--md-primary); }
+    h1, h2, h3, p { margin: 0; }
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+    .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    :focus-visible { outline: 2px solid var(--md-primary); outline-offset: 2px; border-radius: 4px; }
 
-    /* ── Top App Bar ─────────────────────────── */
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 1rem;
-      height: 64px;
-      background: var(--md-surface);
-      border-bottom: 1px solid var(--md-outline-variant);
-    }
-    .nav-brand {
-      font-size: 1.375rem;
-      font-weight: 500;
-      color: var(--md-on-surface);
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    .nav-actions {
-      --nav-action-height: 2.125rem;
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-    .nav-sponsor {
-      width: var(--nav-action-height);
-      height: var(--nav-action-height);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--sponsor);
-      background: color-mix(in srgb, var(--sponsor-container) 58%, transparent);
-      border-radius: 50%;
-      text-decoration: none;
-      transition: background 0.1s, transform 0.1s;
-    }
-    .nav-sponsor:hover {
-      background: var(--sponsor-container);
-      transform: translateY(-1px);
-    }
-    .nav-sponsor svg {
-      width: 18px;
-      height: 18px;
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-    .nav-gh {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      color: var(--md-on-surface-variant);
-      text-decoration: none;
-      font-size: 0.875rem;
-      font-weight: 500;
-      height: var(--nav-action-height);
-      padding: 0.5rem 0.75rem;
-      border-radius: var(--md-radius-xl);
-      transition: background 0.1s, color 0.1s;
-    }
-    .nav-gh:hover {
-      background: color-mix(in srgb, var(--md-on-surface) 8%, transparent);
-      color: var(--md-on-surface);
-    }
+    /* Top bar */
+    .bar { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--md-bg) 86%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    .bar .wrap { display: flex; align-items: center; gap: 8px; height: 64px; }
+    .brand { display: flex; align-items: center; gap: 10px; color: var(--md-on-surface); text-decoration: none; font-weight: 500; font-size: 18px; margin-right: auto; white-space: nowrap; }
+    .brand img { width: 32px; height: 32px; border-radius: 8px; }
+    .bar nav { display: flex; gap: 2px; }
+    .bar nav a { color: var(--md-on-surface-variant); text-decoration: none; font-size: 14px; font-weight: 500; padding: 8px 12px; border-radius: var(--radius-xl); }
+    .bar nav a:hover { background: color-mix(in srgb, var(--md-on-surface) 8%, transparent); color: var(--md-on-surface); }
+    .icon-btn { width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--md-on-surface-variant); background: none; border: 0; cursor: pointer; text-decoration: none; font: 500 13px var(--font); }
+    .icon-btn:hover { background: color-mix(in srgb, var(--md-on-surface) 8%, transparent); }
+    .icon-btn svg { width: 20px; height: 20px; }
+    .icon-btn.sponsor { color: var(--sponsor); }
+    .lang { width: auto; padding: 0 12px; border-radius: var(--radius-xl); letter-spacing: .04em; }
 
-    /* ── Hero ────────────────────────────────── */
-    .hero {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 5rem 1.5rem 4rem;
-    }
-    .hero-inner {
-      max-width: 560px;
-      width: 100%;
-      animation: fade-up 0.4s ease both;
-    }
+    /* Buttons (M3) */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 24px; border-radius: var(--radius-xl); font: 500 15px var(--font); text-decoration: none; border: 0; cursor: pointer; transition: box-shadow .15s, transform .15s; }
+    .btn svg { width: 18px; height: 18px; flex: none; }
+    .btn:hover { box-shadow: var(--shadow-1); }
+    .btn:active { transform: scale(.98); }
+    .btn.filled { background: var(--md-primary); color: var(--md-on-primary); }
+    .btn.tonal { background: var(--md-secondary-container); color: var(--md-on-secondary-container); }
+    .btn.small { min-height: 40px; padding: 0 18px; font-size: 14px; }
+    .ver { opacity: .7; font-size: 13px; }
 
-    .app-icon {
-      width: 80px; height: 80px;
-      border-radius: 20px;
-      display: block;
-      margin: 0 auto 2rem;
-      box-shadow: var(--md-shadow-2);
-    }
+    /* Hero */
+    .hero { position: relative; min-height: min(760px, calc(100svh - 64px)); display: flex; align-items: center; overflow: hidden; }
+    .hero picture, .hero picture img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 70% 50%; }
+    .hero::after { content: ""; position: absolute; inset: 0; background: var(--hero-fade); }
+    .hero .wrap { position: relative; z-index: 1; width: 100%; padding-top: 56px; padding-bottom: 72px; }
+    .hero-copy { max-width: 540px; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: var(--radius-s); background: var(--md-focus-container); color: var(--md-on-focus-container); font-size: 13px; font-weight: 500; }
+    .chip svg { width: 16px; height: 16px; }
+    .hero h1 { font-size: clamp(40px, 6vw, 64px); line-height: 1.06; font-weight: 400; letter-spacing: -.01em; margin: 20px 0 16px; }
+    .hero h1 em { font-style: normal; color: var(--md-focus); }
+    .lead { font-size: 18px; color: var(--md-on-surface-variant); max-width: 480px; }
+    .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin: 32px 0 20px; }
+    .meta { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--md-on-surface-variant); list-style: none; padding: 0; margin: 0; }
+    .meta li { display: flex; align-items: center; gap: 6px; }
+    .meta svg { width: 14px; height: 14px; color: var(--md-tertiary); }
 
-    h1 {
-      font-size: 2.75rem;
-      font-weight: 400;
-      letter-spacing: 0;
-      line-height: 1.15;
-      margin-bottom: 1rem;
-      color: var(--md-on-surface);
-    }
+    /* Sections */
+    section { padding: 88px 0; }
+    .eyebrow { font-size: 13px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--md-focus); margin-bottom: 10px; }
+    h2 { font-size: clamp(28px, 3.6vw, 40px); line-height: 1.15; font-weight: 400; letter-spacing: -.005em; }
+    .sub { font-size: 17px; color: var(--md-on-surface-variant); margin-top: 12px; max-width: 620px; }
+    .head { margin-bottom: 48px; }
+    .head.center { text-align: center; }
+    .head.center .sub { margin-left: auto; margin-right: auto; }
 
-    .hero-sub {
-      font-size: 1rem;
-      color: var(--md-on-surface-variant);
-      line-height: 1.7;
-      max-width: 420px;
-      margin: 0 auto 2.5rem;
-    }
+    /* Phones */
+    .phone { position: relative; width: 100%; max-width: 300px; border-radius: 36px; padding: 10px; background: #1C1B1F; box-shadow: var(--shadow-3); }
+    .phone img { border-radius: 27px; width: 100%; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+    .step { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; }
+    .step .phone { aspect-ratio: 390 / 520; overflow: hidden; }
+    .step .phone img { width: 100%; height: auto; }
+    .num { width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--md-primary-container); color: var(--md-on-primary-container); font-weight: 500; font-size: 15px; }
+    .step:nth-child(2) .num { background: var(--md-focus-container); color: var(--md-on-focus-container); }
+    .step h3 { font-size: 20px; font-weight: 500; margin: 10px 0 6px; }
+    .step p { font-size: 15px; color: var(--md-on-surface-variant); max-width: 300px; }
 
-    /* ── Stats ────────────────────────────────── */
-    .stat-row {
-      display: flex;
-      justify-content: center;
-      gap: 2.5rem;
-      flex-wrap: wrap;
-      margin-bottom: 2.5rem;
-    }
-    .stat { text-align: center; }
-    .stat-num {
-      font-size: 1.5rem;
-      font-weight: 400;
-      letter-spacing: 0;
-      color: var(--md-primary);
-      line-height: 1;
-    }
-    .stat-label {
-      font-size: 0.75rem;
-      color: var(--md-on-surface-variant);
-      margin-top: 0.3rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0;
-    }
+    /* Focus */
+    .focus { background: var(--md-surface); }
+    .split { display: grid; grid-template-columns: 1.05fr .95fr; gap: 64px; align-items: center; }
+    .rhythms { display: flex; flex-wrap: wrap; gap: 8px; margin: 28px 0 32px; padding: 0; list-style: none; }
+    .rhythms li { padding: 8px 14px; border-radius: var(--radius-s); background: var(--md-surface-variant); font-size: 14px; color: var(--md-on-surface); }
+    .rhythms li b { font-weight: 500; }
+    .rhythms li span { color: var(--md-on-surface-variant); font-family: var(--mono); font-size: 13px; margin-left: 4px; }
+    .rhythms li.default { background: var(--md-focus-container); color: var(--md-on-focus-container); }
+    .rhythms li.default span { color: inherit; opacity: .8; }
+    .feats { list-style: none; padding: 0; margin: 0; display: grid; gap: 20px; }
+    .feats li { display: grid; grid-template-columns: 40px 1fr; gap: 14px; }
+    .tile { width: 40px; height: 40px; border-radius: var(--radius-m); background: var(--md-focus-container); color: var(--md-on-focus-container); display: flex; align-items: center; justify-content: center; }
+    .tile svg { width: 20px; height: 20px; }
+    .feats h3 { font-size: 16px; font-weight: 500; }
+    .feats p { font-size: 15px; color: var(--md-on-surface-variant); margin-top: 2px; }
+    .stack { position: relative; display: flex; justify-content: center; min-height: 520px; }
+    .stack .phone { position: absolute; width: 62%; max-width: 280px; }
+    .stack .phone:first-child { left: 4%; top: 0; transform: rotate(-4deg); }
+    .stack .phone:last-child { right: 4%; top: 64px; transform: rotate(3deg); }
+    .graph-card { margin-top: 48px; border-radius: var(--radius-l); overflow: hidden; box-shadow: var(--shadow-1); background: var(--md-surface); }
 
-    /* ── CTAs ─────────────────────────────────── */
-    .cta-row {
-      display: flex;
-      gap: 0.75rem;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 2rem;
-    }
+    /* Map */
+    .browser { border-radius: var(--radius-l); overflow: hidden; box-shadow: var(--shadow-3); background: var(--md-surface); }
+    .browser-bar { display: flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; background: var(--md-surface-variant); }
+    .browser-bar i { width: 10px; height: 10px; border-radius: 50%; background: var(--md-outline-variant); }
+    .browser-bar span { margin-left: 10px; font-size: 12px; color: var(--md-on-surface-variant); background: var(--md-surface); padding: 3px 12px; border-radius: 12px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 20px; font-size: 14px; color: var(--md-on-surface-variant); justify-content: center; }
+    .legend span { display: inline-flex; align-items: center; gap: 8px; }
+    .legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
 
-    .btn-filled {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: var(--md-primary);
-      color: var(--md-on-primary);
-      font-size: 0.875rem;
-      font-weight: 500;
-      font-family: var(--md-font);
-      letter-spacing: 0;
-      padding: 0.625rem 1.5rem;
-      border-radius: var(--md-radius-xl);
-      text-decoration: none;
-      transition: box-shadow 0.15s;
-    }
-    .btn-filled:hover { box-shadow: var(--md-shadow-1); }
+    /* Batch */
+    .batch-art { border-radius: var(--radius-l); overflow: hidden; box-shadow: var(--shadow-2); }
+    .soon { display: inline-flex; margin-left: 8px; vertical-align: middle; padding: 3px 10px; border-radius: var(--radius-s); background: var(--md-secondary-container); color: var(--md-on-secondary-container); font-size: 12px; font-weight: 500; letter-spacing: 0; text-transform: none; }
 
-    .btn-tonal {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: var(--md-secondary-container);
-      color: var(--md-on-secondary-container);
-      font-size: 0.875rem;
-      font-weight: 500;
-      font-family: var(--md-font);
-      letter-spacing: 0;
-      padding: 0.625rem 1.5rem;
-      border-radius: var(--md-radius-xl);
-      text-decoration: none;
-      transition: box-shadow 0.15s;
-    }
-    .btn-tonal:hover { box-shadow: var(--md-shadow-1); }
+    /* Privacy */
+    .privacy { background: var(--md-surface); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+    .card { background: var(--md-bg); border-radius: var(--radius-l); padding: 24px; }
+    .card .tile { background: var(--md-primary-container); color: var(--md-on-primary-container); margin-bottom: 16px; }
+    .card h3 { font-size: 17px; font-weight: 500; margin-bottom: 6px; }
+    .card p { font-size: 15px; color: var(--md-on-surface-variant); }
 
-    .ver { font-size: 0.75rem; opacity: 0.6; margin-left: 0.1rem; }
+    /* Get it */
+    .get .card { background: var(--md-surface); box-shadow: var(--shadow-1); display: flex; flex-direction: column; gap: 10px; }
+    .get .card .btn { margin-top: auto; align-self: flex-start; }
+    .get ol { margin: 0; padding-left: 20px; font-size: 15px; color: var(--md-on-surface-variant); }
+    .sponsor-card { background: var(--sponsor-container) !important; }
+    .sponsor-card .tile { background: var(--md-surface); color: var(--sponsor); }
+    .sponsor-card h3 { color: var(--sponsor); }
+    .sponsor-card .btn { background: var(--sponsor); color: var(--md-surface); }
 
-    .meta-row {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 1.25rem;
-      font-size: 0.8rem;
-      color: var(--md-on-surface-variant);
-    }
-    .meta-item { display: flex; align-items: center; gap: 0.35rem; }
+    /* FAQ */
+    .faq { max-width: 760px; margin: 0 auto; }
+    details { background: var(--md-surface); border-radius: var(--radius-l); box-shadow: var(--shadow-1); margin-bottom: 10px; }
+    summary { list-style: none; cursor: pointer; padding: 18px 56px 18px 22px; font-weight: 500; font-size: 16px; position: relative; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: ""; position: absolute; right: 22px; top: 50%; width: 9px; height: 9px; border-right: 2px solid var(--md-on-surface-variant); border-bottom: 2px solid var(--md-on-surface-variant); transform: translateY(-70%) rotate(45deg); transition: transform .2s; }
+    details[open] summary::after { transform: translateY(-30%) rotate(225deg); }
+    details p { padding: 0 22px 20px; color: var(--md-on-surface-variant); font-size: 15px; }
 
-    /* ── Showcase (campus map) ───────────────────── */
-    .showcase {
-      padding: 1rem 1.5rem 5rem;
-      max-width: 1080px;
-      margin: 0 auto;
-    }
-    .showcase-grid {
-      display: grid;
-      grid-template-columns: 1.4fr 1fr;
-      gap: 1.5rem;
-      align-items: stretch;
-    }
-    .map-card {
-      background: var(--md-surface);
-      border-radius: var(--md-radius-l);
-      box-shadow: var(--md-shadow-1);
-      padding: 1rem 1rem 1.25rem;
-      display: flex;
-      flex-direction: column;
-    }
-    .map-card img {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 12px;
-      background: #E7EAF2;
-    }
-    .map-caption {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-top: 0.85rem;
-      font-size: 0.8125rem;
-      color: var(--md-on-surface-variant);
-    }
-    .map-caption svg { flex: none; width: 15px; height: 15px; stroke: var(--md-primary); fill: none; stroke-width: 2; }
+    footer { padding: 48px 0 56px; font-size: 14px; color: var(--md-on-surface-variant); }
+    footer .wrap { display: flex; flex-wrap: wrap; gap: 16px 32px; justify-content: space-between; }
+    footer a { color: var(--md-on-surface-variant); }
+    footer .links { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+    .fine { font-size: 12px; margin-top: 6px; opacity: .85; max-width: 520px; }
 
-    .rooms-preview {
-      background: var(--md-surface);
-      border-radius: var(--md-radius-l);
-      box-shadow: var(--md-shadow-1);
-      padding: 1.1rem;
-      display: flex;
-      flex-direction: column;
+    @media (max-width: 960px) {
+      .bar nav { display: none; }
+      .split { grid-template-columns: 1fr; gap: 40px; }
+      .split.rev > :first-child { order: 2; }
+      .stack { min-height: 0; height: 120vw; max-height: 560px; }
     }
-    .rooms-preview-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 0.75rem;
+    @media (max-width: 760px) {
+      section { padding: 64px 0; }
+      .wrap { padding: 0 16px; }
+      .hero { min-height: 0; flex-direction: column; align-items: stretch; }
+      .hero picture { position: relative; display: block; height: 56vw; }
+      .hero picture img { position: absolute; object-position: 72% 50%; }
+      .hero::after { display: none; }
+      .hero .wrap { padding-top: 28px; padding-bottom: 48px; }
+      .steps { grid-template-columns: 1fr; gap: 56px; }
+      .brand span { display: none; }
+      .ctas .btn { flex: 1 1 100%; }
     }
-    .rooms-preview-head strong { font-size: 0.9375rem; font-weight: 500; }
-    .rooms-preview-head span { font-size: 0.75rem; color: var(--md-on-surface-variant); }
-    .room-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.7rem 0;
-      border-top: 1px solid var(--md-outline-variant);
-    }
-    .room-row:first-of-type { border-top: none; }
-    .room-name { font-size: 0.8125rem; font-weight: 500; }
-    .room-sub { font-size: 0.75rem; color: var(--md-on-surface-variant); margin-top: 0.15rem; }
-    .room-time { text-align: right; flex: none; }
-    .room-status {
-      font-size: 0.6875rem;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      color: #00796B;
-      text-transform: uppercase;
-      display: block;
-    }
-    @media (prefers-color-scheme: dark) { .room-status { color: #4DB6AC; } }
-    .room-dur { font-size: 0.875rem; font-weight: 500; color: var(--md-on-surface); }
-
-    /* ── Trust strip ──────────────────────────────── */
-    .trust {
-      background: var(--md-surface-1);
-      padding: 3.5rem 1.5rem;
-    }
-    .trust-inner {
-      max-width: 920px;
-      margin: 0 auto;
-    }
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2rem;
-    }
-    .trust-item { display: flex; gap: 0.9rem; }
-    .trust-icon {
-      flex: none;
-      width: 36px; height: 36px;
-      background: var(--md-primary-container);
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .trust-icon svg { width: 18px; height: 18px; stroke: var(--md-on-primary-container); fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
-    .trust-item h3 { font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem; }
-    .trust-item p { font-size: 0.8125rem; color: var(--md-on-surface-variant); line-height: 1.6; }
-
-    /* ── Features ─────────────────────────────── */
-    .features {
-      padding: 4rem 1.5rem 5rem;
-      max-width: 920px;
-      margin: 0 auto;
-    }
-    .sec-head { text-align: center; margin-bottom: 2.5rem; }
-    .sec-head h2 {
-      font-size: 1.75rem;
-      font-weight: 400;
-      letter-spacing: 0;
-      margin-bottom: 0.4rem;
-      color: var(--md-on-surface);
-    }
-    .sec-head p { color: var(--md-on-surface-variant); font-size: 0.9375rem; }
-
-    .grid-4 {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 1rem;
-    }
-
-    /* M3 ElevatedCard */
-    .card {
-      background: var(--md-surface);
-      border-radius: var(--md-radius-l);
-      box-shadow: var(--md-shadow-1);
-      padding: 1.5rem;
-    }
-    .card-icon {
-      width: 40px; height: 40px;
-      background: var(--md-primary-container);
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 0.9rem;
-    }
-    .card-icon svg {
-      width: 20px; height: 20px;
-      stroke: var(--md-on-primary-container); fill: none;
-      stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round;
-    }
-    .card h3 { font-size: 0.9375rem; font-weight: 500; margin-bottom: 0.4rem; }
-    .card p  { font-size: 0.8125rem; color: var(--md-on-surface-variant); line-height: 1.65; }
-    .card-link {
-      color: inherit;
-      display: block;
-      text-decoration: none;
-      transition: box-shadow 0.15s, transform 0.15s;
-    }
-    .card-link:hover {
-      box-shadow: var(--md-shadow-2);
-      transform: translateY(-1px);
-    }
-    .sponsor-card .card-icon {
-      background: var(--sponsor-container);
-    }
-    .sponsor-card .card-icon svg {
-      stroke: var(--sponsor);
-    }
-    .sponsor-card h3 {
-      color: var(--sponsor);
-    }
-
-    /* ── Footer ────────────────────────────────── */
-    footer {
-      text-align: center;
-      padding: 2rem 1.5rem;
-      font-size: 0.8125rem;
-      color: var(--md-on-surface-variant);
-      border-top: 1px solid var(--md-outline-variant);
-    }
-    .ft-links { display: flex; gap: 1.25rem; justify-content: center; margin-top: 0.5rem; }
-    footer a { color: var(--md-on-surface-variant); text-decoration: none; }
-    footer a:hover { color: var(--md-on-surface); }
-
-    @keyframes fade-up {
-      from { opacity: 0; transform: translateY(12px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (max-width: 800px) {
-      .showcase-grid { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 600px) {
-      nav { padding: 0 1rem; }
-      .hero { padding: 3.5rem 1.25rem 3rem; }
-      .showcase { padding: 0.5rem 1.25rem 4rem; }
-      .features { padding: 3rem 1.25rem 4rem; }
-      .trust { padding: 3rem 1.25rem; }
-      .grid-4 { grid-template-columns: 1fr 1fr; }
-      .stat-row { gap: 1.5rem; }
-      h1 { font-size: 2.1rem; }
-      .sec-head h2 { font-size: 1.45rem; }
-    }
-    @media (max-width: 420px) {
-      .grid-4 { grid-template-columns: 1fr; }
-    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
   </style>
 </head>
 <body>
 
-<nav>
-  <a href="#" class="nav-brand">
-    <svg width="24" height="24" viewBox="0 0 108 108" xmlns="http://www.w3.org/2000/svg">
-      <rect width="108" height="108" fill="#1565C0" rx="24"/>
-      <path fill="#FFFFFF" d="M30 38L30 78L66 78L66 38L48 26Z"/>
-      <path fill="#FFFFFF" fill-opacity="0.7" d="M48 26L30 38L66 38Z"/>
-      <circle cx="68" cy="60" r="9" fill="none" stroke="#FFFFFF" stroke-width="3"/>
-      <line x1="74.4" y1="66.4" x2="82" y2="74" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round"/>
-    </svg>
-    THD Room Finder
-  </a>
-  <div class="nav-actions">
-    <a href="https://github.com/sponsors/arudaev?frequency=one-time" class="nav-sponsor" target="_blank" rel="noopener" aria-label="Sponsor the iOS release" title="Sponsor the iOS release">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M20.8 4.6c-1.7-1.7-4.5-1.6-6.1.2L12 7.6 9.3 4.8C7.7 3 4.9 2.9 3.2 4.6c-1.8 1.8-1.8 4.7 0 6.5L12 20l8.8-8.9c1.8-1.8 1.8-4.7 0-6.5z"/>
-      </svg>
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="icons/app-icon-192.png" alt="" width="32" height="32"><span>THD Room Finder</span></a>
+    <nav aria-label="Sections" data-i18n-attr="aria-label:Abschnitte">
+      <a href="#how" data-de="So geht's">How it works</a>
+      <a href="#focus" data-de="Fokus">Focus</a>
+      <a href="#privacy" data-de="Privatsphäre">Privacy</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <button class="icon-btn lang" id="lang" type="button" aria-label="Auf Deutsch lesen">DE</button>
+    <a class="icon-btn sponsor" href="https://github.com/sponsors/arudaev?frequency=one-time" target="_blank" rel="noopener" aria-label="Sponsor the iPhone release" data-de-label="Die iPhone-Version unterstützen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6c-1.7-1.7-4.5-1.6-6.1.2L12 7.6 9.3 4.8C7.7 3 4.9 2.9 3.2 4.6c-1.8 1.8-1.8 4.7 0 6.5L12 20l8.8-8.9c1.8-1.8 1.8-4.7 0-6.5z"/></svg>
     </a>
-    <a href="https://github.com/arudaev/THD-Room-Finder" class="nav-gh" target="_blank" rel="noopener">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
-      </svg>
-      GitHub
+    <a class="icon-btn" href="https://github.com/arudaev/THD-Room-Finder" target="_blank" rel="noopener" aria-label="Source code on GitHub" data-de-label="Quellcode auf GitHub">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
     </a>
+    <a class="btn filled small" href="https://thd-room-finder.vercel.app/" data-de="App öffnen">Open app</a>
   </div>
-</nav>
+</header>
 
-<section class="hero">
-  <div class="hero-inner">
-    <svg class="app-icon" viewBox="0 0 108 108" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="THD Room Finder icon">
-      <rect width="108" height="108" fill="#1565C0" rx="24"/>
-      <path fill="#FFFFFF" d="M35 84 L35 47 Q35 29 54 29 Q73 29 73 47 L73 84 Z"/>
-      <path fill="#1565C0" d="M43 84 L43 49 Q43 37 54 37 Q65 37 65 49 L65 84 Z"/>
-      <path fill="#4FD0A0" d="M43 84 L64 84 L43 63 Z"/>
-      <path fill="#FFFFFF" d="M43 84 L43 51 L57 57 L57 84 Z"/>
-      <circle cx="52.5" cy="70" r="2.1" fill="#1565C0"/>
-    </svg>
-    <h1>THD Room Finder</h1>
-    <p class="hero-sub">
-      Find free study rooms at Technische Hochschule Deggendorf — instantly.
-      Real-time availability across 289 classrooms, no account required.
-    </p>
-    <div class="stat-row">
-      <div class="stat">
-        <div class="stat-num">289</div>
-        <div class="stat-label">Classrooms</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num">5 min</div>
-        <div class="stat-label">Refresh rate</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num">0</div>
-        <div class="stat-label">Accounts needed</div>
+<main id="top">
+  <section class="hero" style="padding:0">
+    <picture>
+      <source srcset="assets/hero-evening.webp" media="(prefers-color-scheme: dark)">
+      <img src="assets/hero-day.webp" alt="" width="1536" height="1024" fetchpriority="high">
+    </picture>
+    <div class="wrap">
+      <div class="hero-copy">
+        <span class="chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M10 2h4"/></svg>
+          <span data-de="Neu: Fokus-Sessions">New: focus sessions</span>
+        </span>
+        <h1 data-de="Finde einen freien Raum. <em>Bleib dort fokussiert.</em>">Find a free room. <em>Focus in it.</em></h1>
+        <p class="lead" data-de="Sieh, welche Räume an der TH Deggendorf gerade frei sind und wie lange noch. Dann lern dort in Pomodoro-Blöcken, allein oder mit deinem Jahrgang.">See which rooms at THD Deggendorf are free right now, and for how long. Then study there in Pomodoro blocks, on your own or with your batch.</p>
+        <div class="ctas">
+          <a class="btn filled" href="https://thd-room-finder.vercel.app/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <span data-de="Im Browser öffnen">Open in browser</span>
+          </a>
+          <a class="btn tonal apk" href="https://github.com/arudaev/THD-Room-Finder/releases/latest" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85a.637.637 0 00-.83.22l-1.88 3.24a11.43 11.43 0 00-8.94 0L5.65 5.67a.643.643 0 00-.87-.2c-.28.18-.37.54-.22.83L6.4 9.48A10.78 10.78 0 001 18h22a10.78 10.78 0 00-5.4-8.52zM7 15.25a1.25 1.25 0 110-2.5 1.25 1.25 0 010 2.5zm10 0a1.25 1.25 0 110-2.5 1.25 1.25 0 010 2.5z"/></svg>
+            <span data-de="Android-App">Android app</span><span class="ver"></span>
+          </a>
+        </div>
+        <ul class="meta">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-de="Kostenlos und Open Source">Free and open source</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-de="Kein Konto nötig">No account needed</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><a href="#get" data-de="Auch fürs iPhone">Works on iPhone too</a></li>
+        </ul>
       </div>
     </div>
-    <div class="cta-row">
-      <a href="https://thd-room-finder.vercel.app/" class="btn-filled">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
-          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-        </svg>
-        Use in Browser
-      </a>
-      <a href="https://github.com/arudaev/THD-Room-Finder/releases/latest" id="dl-btn" class="btn-tonal" target="_blank" rel="noopener">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-          <polyline points="7 10 12 15 17 10"/>
-          <line x1="12" y1="15" x2="12" y2="3"/>
-        </svg>
-        Download APK<span class="ver" id="ver"></span>
-      </a>
-      <a href="https://github.com/arudaev/THD-Room-Finder" class="btn-tonal" target="_blank" rel="noopener">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
-        </svg>
-        View Source
-      </a>
-    </div>
-    <div class="meta-row">
-      <span class="meta-item">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="3"/>
-        </svg>
-        Android 8.0+ &amp; iOS 16+
-      </span>
-      <span class="meta-item">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-        </svg>
-        Free &amp; Open Source
-      </span>
-      <span class="meta-item">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
-        </svg>
-        MIT License
-      </span>
-    </div>
-  </div>
-</section>
+  </section>
 
-<section class="showcase">
-  <div class="sec-head">
-    <h2>See the whole campus at a glance</h2>
-    <p>Every building, tinted by how many rooms are free right now</p>
-  </div>
-  <div class="showcase-grid">
-    <div class="map-card">
-      <img src="campus-map.svg" alt="2.5D map of THD's Deggendorf campus with buildings tinted by live room availability" width="1200" height="800" loading="lazy">
-      <div class="map-caption">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-        Darker teal = more free rooms. Tap any building in the app to drill in.
+  <section id="how">
+    <div class="wrap">
+      <div class="head center">
+        <p class="eyebrow" data-de="So geht's">How it works</p>
+        <h2 data-de="Vom Flur an den Schreibtisch in drei Schritten">From the corridor to a desk in three steps</h2>
+        <p class="sub" data-de="Kein Herumlaufen mehr, um Türen auszuprobieren. Die App kennt den Stundenplan jedes Raums und sagt dir, wie lange er frei bleibt.">No more walking the corridors trying doors. The app knows every room's timetable and tells you how long it stays free.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="phone"><picture><source srcset="assets/screen-rooms-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/screen-rooms-light.webp" alt="The room list: 112 rooms free right now, B004 free for 10 hours 24 minutes at the top" loading="lazy" width="780" height="1688"></picture></div>
+          <div>
+            <span class="num">1</span>
+            <h3 data-de="Finde einen Raum">Find a room</h3>
+            <p data-de="Freie Räume, sortiert danach, wie lange sie frei bleiben. Auf der Karte oder als Liste, jetzt oder für später.">Free rooms, sorted by how long they stay free. On the map or as a list, for now or for later today.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="phone"><picture><source srcset="assets/screen-focus-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/screen-focus-light.webp" alt="A running focus session in C Hörsaal C116: block 1 of 6, 11:58 left, break at 09:59" loading="lazy" width="780" height="1130"></picture></div>
+          <div>
+            <span class="num">2</span>
+            <h3 data-de="Starte den Fokus">Start focus</h3>
+            <p data-de="Ein Tipp startet Pomodoro: 25 Minuten Fokus, 5 Minuten Pause. Die Session endet von selbst vor der nächsten Vorlesung.">One tap starts Pomodoro: 25 minutes of focus, 5 minutes of break. It ends on its own before the next lecture.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="phone"><picture><source srcset="assets/screen-profile-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/screen-profile-light.webp" alt="The focus graph on the profile: 23 hours this semester and a 5-day streak" loading="lazy" width="780" height="1000"></picture></div>
+          <div>
+            <span class="num">3</span>
+            <h3 data-de="Sieh dein Semester wachsen">Watch your semester grow</h3>
+            <p data-de="Jeder Block färbt deinen Fokus-Verlauf dunkler. Streak, Semesterstunden und eine Karte zum Teilen.">Every block darkens your focus graph. A streak, your semester hours and a card to share.</p>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="rooms-preview">
-      <div class="rooms-preview-head">
-        <strong>Free right now</strong>
-        <span>sorted by longest-free</span>
-      </div>
-      <div class="room-row">
-        <div>
-          <div class="room-name">D021</div>
-          <div class="room-sub">Building D · 90 seats</div>
-        </div>
-        <div class="room-time"><span class="room-status">Free</span><span class="room-dur">8h 16m</span></div>
-      </div>
-      <div class="room-row">
-        <div>
-          <div class="room-name">C Hörsaal C118 (DMS)</div>
-          <div class="room-sub">Building C · 24 seats</div>
-        </div>
-        <div class="room-time"><span class="room-status">Free</span><span class="room-dur">8h 16m</span></div>
-      </div>
-      <div class="room-row">
-        <div>
-          <div class="room-name">E001</div>
-          <div class="room-sub">Building E · 90 seats</div>
-        </div>
-        <div class="room-time"><span class="room-status">Free</span><span class="room-dur">8h 16m</span></div>
-      </div>
-      <div class="room-row">
-        <div>
-          <div class="room-name">I107</div>
-          <div class="room-sub">Building I · 100 seats</div>
-        </div>
-        <div class="room-time"><span class="room-status">Free</span><span class="room-dur">3h 42m</span></div>
-      </div>
-      <div class="room-row">
-        <div>
-          <div class="room-name">ITC 2: sem(1)</div>
-          <div class="room-sub">Building ITC · 30 seats · may be locked</div>
-        </div>
-        <div class="room-time"><span class="room-status">Free</span><span class="room-dur">1h 05m</span></div>
-      </div>
-    </div>
-  </div>
-</section>
+  </section>
 
-<section class="trust">
-  <div class="trust-inner">
-    <div class="sec-head">
-      <h2>Built for THD, from official data</h2>
-      <p>No scraping, no accounts, nothing to sign up for</p>
-    </div>
-    <div class="grid-3">
-      <div class="trust-item">
-        <div class="trust-icon">
-          <svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.66 3.58 3 8 3s8-1.34 8-3V5"/><path d="M4 11v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/></svg>
-        </div>
+  <section class="focus" id="focus">
+    <div class="wrap">
+      <div class="split">
         <div>
-          <h3>Straight from THabella</h3>
-          <p>Room and schedule data comes directly from THD's own public scheduling system — the same source lecturers and admin already rely on.</p>
+          <p class="eyebrow" data-de="Fokus-Sessions">Focus sessions</p>
+          <h2 data-de="Ein Rhythmus, der zu deinem Tag passt">A rhythm that fits your day</h2>
+          <p class="sub" data-de="Fokusblöcke und Pausen, wie bei Forest oder einem Pomodoro-Timer, nur direkt dort, wo du lernst.">Focus blocks and breaks, like Forest or a Pomodoro timer, right where you study.</p>
+          <ul class="rhythms" aria-label="Rhythms">
+            <li><b data-de="Tiefenfokus">Deep</b><span>50/10</span></li>
+            <li class="default"><b>Pomodoro</b><span>25/5</span> <span data-de="· Standard">· default</span></li>
+            <li><b data-de="Vorlesung">Lecture</b><span>90/15</span></li>
+            <li><b data-de="Offen">Open</b><span>∞</span></li>
+            <li><b data-de="Eigener">Custom</b><span>15–120</span></li>
+          </ul>
+          <ul class="feats">
+            <li><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M10 6h4"/></svg></span>
+              <div><h3 data-de="Läuft weiter, wenn das Handy gesperrt ist">Keeps going on a locked phone</h3><p data-de="In der Android-App zählt eine Benachrichtigung auf dem Sperrbildschirm herunter und meldet sich, wenn die Pause vorbei ist.">In the Android app, a lock-screen notification counts down and tells you when the break is over.</p></div></li>
+            <li><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 8h1a4 4 0 010 8h-1M3 8h14v9a4 4 0 01-4 4H7a4 4 0 01-4-4z"/><path d="M6 2v2M10 2v2M14 2v2"/></svg></span>
+              <div><h3 data-de="Pausen zählen nie">Breaks never count</h3><p data-de="Nach jeder Pause tippst du auf „Block starten“. Antwortest du nicht, endet die Session mit dem letzten Block, den du wirklich gemacht hast.">After each break you tap Start block. If you don't, the session ends at the last block you actually did.</p></div></li>
+            <li><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+              <div><h3 data-de="Endet vor der nächsten Vorlesung">Ends before the next lecture</h3><p data-de="Die App plant deine Blöcke um den Stundenplan des Raums herum, damit du nie mitten in eine Vorlesung gerätst.">Blocks are planned around the room's timetable, so you never end up in the middle of a lecture.</p></div></li>
+          </ul>
         </div>
-      </div>
-      <div class="trust-item">
-        <div class="trust-icon">
-          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        </div>
-        <div>
-          <h3>No accounts, no tracking</h3>
-          <p>Nothing to sign in with and no personal data collected. Room data is cached on-device only, to keep the app fast and work offline.</p>
-        </div>
-      </div>
-      <div class="trust-item">
-        <div class="trust-icon">
-          <svg viewBox="0 0 24 24" style="fill: var(--md-on-primary-container); stroke: none;"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-        </div>
-        <div>
-          <h3>Open source</h3>
-          <p>Built and maintained by a THD student, in the open on GitHub. Anyone — faculty included — can read the code or suggest a change.</p>
+        <div class="stack">
+          <div class="phone"><picture><source srcset="assets/screen-focus-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/screen-focus-light.webp" alt="" loading="lazy" width="780" height="1130"></picture></div>
+          <div class="phone"><picture><source srcset="assets/screen-break-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/screen-break-light.webp" alt="The same session on a break: 2:58 left, block 2 of 6 next" loading="lazy" width="780" height="1130"></picture></div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="features">
-  <div class="sec-head">
-    <h2>Everything a student needs</h2>
-    <p>Simple, fast, and always up to date</p>
-  </div>
-  <div class="grid-4">
-    <div class="card">
-      <div class="card-icon">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+  <section id="map">
+    <div class="wrap">
+      <div class="head center">
+        <p class="eyebrow" data-de="Campus-Karte">Campus map</p>
+        <h2 data-de="Der ganze Campus auf einen Blick">The whole campus at a glance</h2>
+        <p class="sub" data-de="Jedes Gebäude ist danach eingefärbt, wie viele Räume gerade frei sind. Tippe auf ein Gebäude, um seine Räume zu sehen.">Every building is tinted by how many rooms are free right now. Tap one to see its rooms.</p>
       </div>
-      <h3>Real-time Availability</h3>
-      <p>See which rooms are free right now. Powered by THD's public THabella scheduling system — no scraping, always accurate.</p>
+      <div class="browser">
+        <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span>thd-room-finder.vercel.app</span></div>
+        <picture><source srcset="assets/desktop-map-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/desktop-map-light.webp" alt="The campus map on a laptop: buildings tinted by free rooms, 82 rooms free right now, the longest-free rooms listed on the right" loading="lazy" width="1600" height="1000"></picture>
+      </div>
+      <div class="legend" aria-hidden="true">
+        <span><i style="background:var(--md-tertiary)"></i><span data-de="Frei">Free</span></span>
+        <span><i style="background:#E6A100"></i><span data-de="Bald belegt (≤ 40 Min.)">Closing soon (≤ 40 min)</span></span>
+        <span><i style="background:var(--md-focus)"></i><span data-de="Fokus-Session">Focus session</span></span>
+        <span><i style="background:#B3261E"></i><span data-de="Vorlesung">Lecture</span></span>
+      </div>
     </div>
-    <div class="card">
-      <div class="card-icon">
-        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+  </section>
+
+  <section class="focus" id="batch">
+    <div class="wrap">
+      <div class="split rev">
+        <div class="batch-art"><img src="assets/batch.webp" alt="Illustration of a THD lecture hall with autumn trees outside and a few students, shown as grey silhouettes, studying quietly in different rows" loading="lazy" width="1280" height="853"></div>
+        <div>
+          <p class="eyebrow"><span data-de="Gemeinsam">Together</span><span class="soon" data-de="Mit Studienprofil">With a study profile</span></p>
+          <h2 data-de="Lern dort, wo dein Jahrgang lernt">Study where your batch studies</h2>
+          <p class="sub" data-de="Mit einem Studienprofil siehst du, in welchen Räumen dein Jahrgang gerade lernt, und steigst mit einem Tipp in denselben Rhythmus ein.">With a study profile, you see which rooms your batch is studying in right now, and join their rhythm with one tap.</p>
+          <ul class="feats" style="margin-top:28px">
+            <li><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span>
+              <div><h3 data-de="Öffentlich für deinen Jahrgang">Public to your batch</h3><p data-de="Nur dein Jahrgang sieht die Session, mit deinem Namen nur, wenn du es willst. Gemeinsame Pausen inklusive.">Only your batch sees the session, with your name only if you want it. Shared breaks included.</p></div></li>
+            <li><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
+              <div><h3 data-de="Oder privat">Or private</h3><p data-de="Andere sehen nur, dass der Raum belegt ist, nie von wem. So läuft niemand umsonst hin.">Others only see that the room is taken, never by whom. Nobody walks over for nothing.</p></div></li>
+          </ul>
+        </div>
       </div>
-      <h3>Building Filters</h3>
-      <p>Filter instantly by building code — A, B, C, D, I, ITC and more. Find the closest free room to where you already are.</p>
     </div>
-    <div class="card">
-      <div class="card-icon">
-        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+  </section>
+
+  <section id="privacy">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow" data-de="Privatsphäre">Privacy</p>
+        <h2 data-de="Deine Fokuszeit gehört dir">Your focus time is yours</h2>
       </div>
-      <h3>Schedule Lookup</h3>
-      <p>Pick any future date and time to check availability ahead of schedule. Plan your study sessions in advance.</p>
+      <div class="grid">
+        <div class="card"><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0112 0v1M17 3l4 4M21 3l-4 4"/></svg></span>
+          <h3 data-de="Kein Konto nötig">No account needed</h3><p data-de="Räume finden und Fokus-Sessions funktionieren ohne Anmeldung. Ein Studienprofil brauchst du nur für deinen Jahrgang.">Finding rooms and focus sessions work without signing in. You only need a study profile for your batch.</p></div>
+        <div class="card"><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M12 18h.01"/></svg></span>
+          <h3 data-de="Dein Verlauf bleibt auf dem Gerät">Your graph stays on your device</h3><p data-de="Fokus-Verlauf, Streak und Raumcodes werden lokal gespeichert. Export und Import als Datei, wann immer du willst.">Focus history, streak and room codes are stored locally. Export and import them as a file whenever you like.</p></div>
+        <div class="card"><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.66 3.58 3 8 3s8-1.34 8-3V5M4 11v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/></svg></span>
+          <h3 data-de="Daten direkt von THabella">Straight from THabella</h3><p data-de="Räume und Stundenpläne kommen aus dem öffentlichen Planungssystem der THD, demselben, das die Hochschule selbst nutzt.">Rooms and timetables come from THD's public scheduling system, the same one the university uses.</p></div>
+        <div class="card"><span class="tile"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg></span>
+          <h3 data-de="Offen auf GitHub">Open on GitHub</h3><p data-de="Gebaut von einem THD-Studenten. Jeder kann den Code lesen, Fehler melden oder mitbauen.">Built by a THD student. Anyone can read the code, report a bug or help build it.</p></div>
+      </div>
     </div>
-    <div class="card">
-      <div class="card-icon">
-        <svg viewBox="0 0 24 24"><path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+  </section>
+
+  <section class="focus get" id="get">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow" data-de="Loslegen">Get it</p>
+        <h2 data-de="Auf jedem Gerät, das du dabeihast">On whatever you carry</h2>
       </div>
-      <h3>Offline Support</h3>
-      <p>Room data is cached locally with a 24-hour TTL. Browse the full list even without a connection — schedules update when back online.</p>
+      <div class="grid">
+        <div class="card"><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
+          <h3 data-de="Im Browser">In the browser</h3><p data-de="Läuft auf Laptop und Handy, auch offline, sobald es einmal geladen ist.">Runs on laptops and phones, offline too once it has loaded.</p>
+          <a class="btn filled small" href="https://thd-room-finder.vercel.app/" data-de="App öffnen">Open app</a></div>
+        <div class="card"><span class="tile"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85a.637.637 0 00-.83.22l-1.88 3.24a11.43 11.43 0 00-8.94 0L5.65 5.67a.643.643 0 00-.87-.2c-.28.18-.37.54-.22.83L6.4 9.48A10.78 10.78 0 001 18h22a10.78 10.78 0 00-5.4-8.52zM7 15.25a1.25 1.25 0 110-2.5 1.25 1.25 0 010 2.5zm10 0a1.25 1.25 0 110-2.5 1.25 1.25 0 010 2.5z"/></svg></span>
+          <h3>Android</h3><p data-de="Die App mit Sperrbildschirm-Benachrichtigung. Android 5.1 oder neuer; beim ersten Mal die Installation aus dem Browser erlauben.">The app with the lock-screen notification. Android 5.1 or newer; allow installing from your browser the first time.</p>
+          <a class="btn tonal small apk" href="https://github.com/arudaev/THD-Room-Finder/releases/latest" target="_blank" rel="noopener"><span data-de="APK herunterladen">Download APK</span><span class="ver"></span></a></div>
+        <div class="card" id="iphone"><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M12 18h.01"/></svg></span>
+          <h3>iPhone</h3>
+          <ol>
+            <li data-de="Die App in Safari öffnen">Open the app in Safari</li>
+            <li data-de="Auf „Teilen“ tippen">Tap Share</li>
+            <li data-de="„Zum Home-Bildschirm“ wählen">Choose Add to Home Screen</li>
+          </ol>
+        </div>
+        <a class="card sponsor-card" href="https://github.com/sponsors/arudaev?frequency=one-time" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">
+          <span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6c-1.7-1.7-4.5-1.6-6.1.2L12 7.6 9.3 4.8C7.7 3 4.9 2.9 3.2 4.6c-1.8 1.8-1.8 4.7 0 6.5L12 20l8.8-8.9c1.8-1.8 1.8-4.7 0-6.5z"/></svg></span>
+          <h3 data-de="Bring es in den App Store">Help bring it to the App Store</h3><p data-de="Eine einmalige Spende deckt das Apple-Entwicklerprogramm, damit die App richtig aufs iPhone kommt, mit Benachrichtigungen.">A one-time sponsorship covers the Apple Developer Program, so the app ships properly on iPhone, notifications included.</p>
+          <span class="btn small" data-de="Unterstützen">Sponsor</span></a>
+      </div>
     </div>
-    <a class="card card-link sponsor-card" href="https://github.com/sponsors/arudaev?frequency=one-time" target="_blank" rel="noopener">
-      <div class="card-icon">
-        <svg viewBox="0 0 24 24"><path d="M20.8 4.6c-1.7-1.7-4.5-1.6-6.1.2L12 7.6 9.3 4.8C7.7 3 4.9 2.9 3.2 4.6c-1.8 1.8-1.8 4.7 0 6.5L12 20l8.8-8.9c1.8-1.8 1.8-4.7 0-6.5z"/></svg>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <div class="head center"><p class="eyebrow">FAQ</p><h2 data-de="Gute Fragen">Good questions</h2></div>
+      <div class="faq">
+        <details><summary data-de="Ist das eine offizielle App der THD?">Is this an official THD app?</summary>
+          <p data-de="Nein. Es ist ein Studentenprojekt. Es nutzt die öffentlichen Raum- und Stundenplandaten aus THabella, aber die Hochschule betreibt es nicht.">No. It's a student project. It uses the public room and timetable data from THabella, but the university doesn't run it.</p></details>
+        <details><summary data-de="Wie genau ist „frei“?">How accurate is "free"?</summary>
+          <p data-de="So genau wie der Stundenplan: Ein Raum gilt als frei, wenn dort gerade keine Veranstaltung eingetragen ist. Manche Räume sind trotzdem abgeschlossen; die App markiert sie mit „evtl. abgeschlossen“.">As accurate as the timetable: a room counts as free when nothing is booked in it right now. Some rooms are still locked; the app marks those "may be locked".</p></details>
+        <details><summary data-de="Brauche ich ein Konto?">Do I need an account?</summary>
+          <p data-de="Nein. Ohne Konto läuft alles auf deinem Gerät. Ein Studienprofil (E-Mail-Anmeldung) brauchst du nur, um Räume zu beanspruchen und mit deinem Jahrgang zu lernen.">No. Without one, everything runs on your device. You only need a study profile (email sign-in) to claim rooms and study with your batch.</p></details>
+        <details><summary data-de="Sehen andere, wo ich lerne?">Can others see where I study?</summary>
+          <p data-de="Nur wenn du es willst. Ohne Studienprofil sieht niemand etwas. Mit Profil zeigt eine private Session nur „belegt“, eine öffentliche zeigt deinem Jahrgang den Raum, deinen Namen nur, wenn du ihn einschaltest.">Only if you want them to. Without a study profile nobody sees anything. With one, a private session only shows "taken"; a public one shows your batch the room, and your name only if you turn it on.</p></details>
+        <details><summary data-de="Funktioniert es offline?">Does it work offline?</summary>
+          <p data-de="Ja. Räume und der Stundenplan des Tages werden zwischengespeichert, und eine Fokus-Session läuft auch ohne Netz weiter.">Yes. Rooms and the day's timetable are cached, and a focus session keeps running without a connection.</p></details>
       </div>
-      <h3>Help Launch iOS</h3>
-      <p>One-time sponsorships go directly toward the Apple Developer Program so THD Room Finder can ship properly on iPhone.</p>
-    </a>
-  </div>
-</section>
+    </div>
+  </section>
+</main>
 
 <footer>
-  <p>THD Room Finder — For students at Technische Hochschule Deggendorf</p>
-  <div class="ft-links">
-    <a href="https://github.com/arudaev/THD-Room-Finder" target="_blank" rel="noopener">GitHub</a>
-    <a href="https://github.com/arudaev/THD-Room-Finder/releases" target="_blank" rel="noopener">Releases</a>
-    <a href="https://www.thd.de" target="_blank" rel="noopener">THD Website</a>
+  <div class="wrap">
+    <div>
+      <p data-de="THD Room Finder: ein Studentenprojekt an der Technischen Hochschule Deggendorf. Keine offizielle Anwendung der THD.">THD Room Finder: a student project at Technische Hochschule Deggendorf. Not an official THD service.</p>
+      <p class="fine" data-de="Illustrationen mit KI erstellt, nach Fotos vom Campus. Screenshots aus der echten App.">Illustrations made with AI from photos of the campus. Screenshots are from the real app.</p>
+    </div>
+    <div class="links">
+      <a href="https://github.com/arudaev/THD-Room-Finder" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/arudaev/THD-Room-Finder/releases" target="_blank" rel="noopener" data-de="Versionen">Releases</a>
+      <a href="https://github.com/arudaev/THD-Room-Finder/issues/new/choose" target="_blank" rel="noopener" data-de="Fehler melden">Report a bug</a>
+      <a href="https://github.com/sponsors/arudaev?frequency=one-time" target="_blank" rel="noopener" data-de="Unterstützen">Sponsor</a>
+    </div>
   </div>
 </footer>
 
 <script>
-(async () => {
-  const btn = document.getElementById('dl-btn');
-  const ver = document.getElementById('ver');
-  try {
-    const r = await fetch('https://api.github.com/repos/arudaev/THD-Room-Finder/releases/latest');
-    if (!r.ok) return;
-    const d = await r.json();
-    const apk = d.assets?.find(a => a.name.endsWith('.apk'));
-    if (apk) btn.href = apk.browser_download_url;
-    else if (d.html_url) btn.href = d.html_url;
-    if (d.tag_name) ver.textContent = ' ' + d.tag_name;
-  } catch { /* keep fallback */ }
+(() => {
+  // EN/DE: each translatable element carries its German in data-de.
+  const nodes = [...document.querySelectorAll('[data-de]')];
+  nodes.forEach(n => { n.dataset.en = n.innerHTML; });
+  const labels = [...document.querySelectorAll('[data-de-label]')];
+  labels.forEach(n => { n.dataset.enLabel = n.getAttribute('aria-label'); });
+  const btn = document.getElementById('lang');
+  const set = (lang) => {
+    const de = lang === 'de';
+    document.documentElement.lang = lang;
+    nodes.forEach(n => { n.innerHTML = de ? n.dataset.de : n.dataset.en; });
+    labels.forEach(n => n.setAttribute('aria-label', de ? n.dataset.deLabel : n.dataset.enLabel));
+    btn.textContent = de ? 'EN' : 'DE';
+    btn.setAttribute('aria-label', de ? 'Read in English' : 'Auf Deutsch lesen');
+    try { localStorage.setItem('thd_site_lang', lang); } catch {}
+  };
+  let saved = null;
+  try { saved = localStorage.getItem('thd_site_lang'); } catch {}
+  set(saved || ((navigator.language || '').toLowerCase().startsWith('de') ? 'de' : 'en'));
+  btn.addEventListener('click', () => set(document.documentElement.lang === 'de' ? 'en' : 'de'));
+
+  // Latest Android release: link the APK directly and show its version.
+  fetch('https://api.github.com/repos/arudaev/THD-Room-Finder/releases/latest')
+    .then(r => (r.ok ? r.json() : null))
+    .then(d => {
+      if (!d) return;
+      const apk = (d.assets || []).find(a => a.name.endsWith('.apk'));
+      document.querySelectorAll('a.apk').forEach(a => {
+        if (apk) { a.href = apk.browser_download_url; a.removeAttribute('target'); }
+        const v = a.querySelector('.ver');
+        if (v && d.tag_name) v.textContent = ' ' + d.tag_name;
+      });
+    })
+    .catch(() => {});
 })();
 </script>
-
 </body>
 </html>
