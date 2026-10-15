@@ -280,6 +280,32 @@ describe('Study profile setup', () => {
     expect(container.textContent).toContain('lena@example.test');
   });
 
+  it('signs a returning student straight in when their profile already exists', async () => {
+    const api = fakeIdentityApi();
+    await api.saveIdentity(
+      { displayName: 'Lena', programmeId: 'ain-b', intakeYear: 2023, intakeTerm: 'winter', defaultVisibility: 'public', showName: false },
+      null,
+    );
+    await render(
+      <Providers path="/profile/settings" api={api}>
+        <SettingsScreen />
+      </Providers>,
+    );
+    await settle();
+    await act(async () => anyButton('Set Up').click());
+    await type('Email', 'lena@example.test');
+    await act(async () => anyButton('Send Code').click());
+    await settle();
+    await type('Code', '123456');
+    await act(async () => anyButton('Continue').click());
+    await settle();
+
+    expect(document.body.textContent).not.toContain('What do you study?');
+    expect(api.saved).toHaveLength(1);
+    expect(container.textContent).toContain('lena@example.test');
+    expect(document.body.textContent).toContain('profile synced');
+  });
+
   it('keeps not-listed students private and skips the intake', async () => {
     const api = fakeIdentityApi();
     await api.verifyCode('sam@example.test', '123456');

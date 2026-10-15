@@ -14,7 +14,8 @@ import { useStudyProfile } from './StudyProfileContext';
 /**
  * Study profile setup (D2): one question per step, a bottom sheet on phones
  * and a 480 px dialog from tablet up. Email → code → programme → intake →
- * optional name → what others see. Signed-in students editing their profile
+ * optional name → what others see. A returning student whose profile already
+ * exists is done after the code. Signed-in students editing their profile
  * start at the programme. "Not listed" keeps the student Private-only.
  */
 type Step = 'email' | 'code' | 'programme' | 'intake' | 'name' | 'visibility';
@@ -135,7 +136,13 @@ export function SetupSheet({ open, onClose, onDone }: SetupSheetProps) {
   const verify = () =>
     run(async () => {
       await profile.api!.verifyCode(email.trim(), code.trim());
-      await profile.refresh();
+      // A returning student already has a profile on the service: it is now
+      // loaded on this device, so there is nothing left to ask.
+      if (await profile.refresh()) {
+        onClose();
+        onDone?.(t('Signed in · profile synced', 'Angemeldet · Profil synchronisiert'));
+        return;
+      }
       go('programme');
     });
   const save = () =>
