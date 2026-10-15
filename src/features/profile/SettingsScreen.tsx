@@ -104,10 +104,11 @@ function readText(file: Blob): Promise<string> {
   });
 }
 
-/** Export, import and clear the device-only focus history (#38). */
+/** Export, import and clear the focus history (#38); signed in, it syncs (#89). */
 function HistoryGroup({ onMessage }: { onMessage: (m: string) => void }) {
   const { t } = useI18n();
-  const { entries, importFile, clear } = useFocusHistory();
+  const { entries, syncedWith, importFile, clear } = useFocusHistory();
+  const canSync = useStudyProfile().available;
   const [confirm, setConfirm] = useState(false);
   const input = useRef<HTMLInputElement>(null);
 
@@ -130,11 +131,27 @@ function HistoryGroup({ onMessage }: { onMessage: (m: string) => void }) {
   return (
     <SettingsGroup title={t('Focus history', 'Fokus-Verlauf')}>
       <SettingsRow
-        label={t('Stored on this device only', 'Nur auf diesem Gerät gespeichert')}
-        sub={t(
-          `${entries.length} sessions. Export them before you switch phones.`,
-          `${entries.length} Sessions. Exportiere sie, bevor du das Handy wechselst.`,
-        )}
+        label={
+          syncedWith
+            ? t('Synced with your account', 'Mit deinem Konto synchronisiert')
+            : t('Stored on this device only', 'Nur auf diesem Gerät gespeichert')
+        }
+        sub={
+          syncedWith
+            ? t(
+                `${entries.length} sessions, on every device you sign in on. Only dates and minutes sync; rooms stay on this device.`,
+                `${entries.length} Sessions, auf jedem Gerät, auf dem du angemeldet bist. Nur Datum und Minuten werden synchronisiert; Räume bleiben auf diesem Gerät.`,
+              )
+            : canSync
+              ? t(
+                  `${entries.length} sessions. Sign in to keep them on all your devices, or export them before you switch phones.`,
+                  `${entries.length} Sessions. Melde dich an, um sie auf all deinen Geräten zu haben, oder exportiere sie, bevor du das Handy wechselst.`,
+                )
+              : t(
+                  `${entries.length} sessions. Export them before you switch phones.`,
+                  `${entries.length} Sessions. Exportiere sie, bevor du das Handy wechselst.`,
+                )
+        }
       />
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, padding: '4px 0 12px' }}>
         <Button
@@ -170,17 +187,28 @@ function HistoryGroup({ onMessage }: { onMessage: (m: string) => void }) {
         open={confirm}
         tone="danger"
         title={t('Clear focus history?', 'Fokus-Verlauf löschen?')}
-        body={t(
-          'Every session on this device is removed and your focus graph starts empty. Export first if you want to keep it.',
-          'Alle Sessions auf diesem Gerät werden entfernt und dein Fokus-Verlauf beginnt leer. Exportiere ihn vorher, wenn du ihn behalten willst.',
-        )}
+        body={
+          syncedWith
+            ? t(
+                'Every session is removed from this device and your account, and your focus graph starts empty. Other devices keep their copy until you clear it there too. Export first if you want to keep it.',
+                'Alle Sessions werden von diesem Gerät und aus deinem Konto entfernt und dein Fokus-Verlauf beginnt leer. Andere Geräte behalten ihre Kopie, bis du sie dort auch löschst. Exportiere ihn vorher, wenn du ihn behalten willst.',
+              )
+            : t(
+                'Every session on this device is removed and your focus graph starts empty. Export first if you want to keep it.',
+                'Alle Sessions auf diesem Gerät werden entfernt und dein Fokus-Verlauf beginnt leer. Exportiere ihn vorher, wenn du ihn behalten willst.',
+              )
+        }
         confirmLabel={t('Clear', 'Löschen')}
         cancelLabel={t('Cancel', 'Abbrechen')}
         onCancel={() => setConfirm(false)}
         onConfirm={async () => {
           setConfirm(false);
-          await clear();
-          onMessage(t('Focus history cleared', 'Fokus-Verlauf gelöscht'));
+          try {
+            await clear();
+            onMessage(t('Focus history cleared', 'Fokus-Verlauf gelöscht'));
+          } catch {
+            onMessage(t("Couldn't reach your account. Nothing was cleared; try again online.", 'Dein Konto war nicht erreichbar. Nichts wurde gelöscht; versuch es online noch einmal.'));
+          }
         }}
       />
     </SettingsGroup>

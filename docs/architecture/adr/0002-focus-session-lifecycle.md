@@ -104,6 +104,10 @@ Ending or expiring a session appends `{date, minutes, roomCode?}` to
 and rendered locally. The server still stores no completed sessions, so ADR
 0001's retention rule holds. Export/import as JSON covers phone changes.
 
+> **Amended by [ADR 0005](0005-focus-across-devices.md):** for signed-in
+> students the history syncs across their devices (dates and minutes, no
+> rooms); signed-out history stays on the device.
+
 The share card is a PNG of about 1200×630 and at most 150 KB, generated with
 `<canvas>` and shared through the Web Share API (download fallback). It
 contains the graph, streak and totals only; name, room and programme are

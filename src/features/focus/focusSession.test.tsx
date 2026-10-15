@@ -78,15 +78,19 @@ function fakeFocusApi() {
     },
     async start(input) {
       calls.start.push(input);
+      // Like the service: a running session is a conflict unless replaced.
+      if (session && !input.replace) throw new ServiceError('already_active');
       const now = new Date();
       session = {
         id: 's1',
         roomKey: input.roomKey,
+        roomCode: input.roomKey === 'thd:r000000712' ? 'C011' : null,
         visibility: input.visibility,
         showName: input.showName,
         startedAt: now,
         plannedEnd: new Date(now.getTime() + input.minutes * 60000),
         leaseUntil: new Date(now.getTime() + 60 * 60000),
+        renewedAt: now,
         endedAt: null,
         endReason: null,
         version: 1,
@@ -99,7 +103,7 @@ function fakeFocusApi() {
     async renew() {
       calls.renew += 1;
       if (!session) throw new ServiceError('not_active');
-      session = { ...session, version: session.version + 1, leaseUntil: new Date(Date.now() + 60 * 60000) };
+      session = { ...session, version: session.version + 1, leaseUntil: new Date(Date.now() + 60 * 60000), renewedAt: new Date() };
       return session;
     },
     async update(_id, _v, visibility, showName) {
@@ -214,7 +218,7 @@ describe('focus sessions', () => {
     await act(async () => ctx.start(E212, plan(), deep));
     // 10:00 to the 13:00 cap: three Deep blocks, ending 12:50.
     expect(api.calls.start).toEqual([
-      expect.objectContaining({ roomKey: 'thd:r000000053', minutes: 170, visibility: 'private', rhythm: RHYTHMS.deep, replace: true }),
+      expect.objectContaining({ roomKey: 'thd:r000000053', minutes: 170, visibility: 'private', rhythm: RHYTHMS.deep, replace: false }),
     ]);
     expect(api.calls.start[0].anchorAt).toBeUndefined();
     expect(ctx.active?.shared?.id).toBe('s1');
@@ -295,5 +299,62 @@ describe('focus sessions', () => {
     await mount({ signedIn: false, api: null, store });
     expect(ctx.active).toBeNull();
     expect(await recorded(store)).toEqual([[50, 'E212']]);
+  });
+  describe('across devices (ADR 0005)', () => {
+    const C011 = { roomKey: 'thd:r000000712', minutes: 120, visibility: 'private' as const, showName: false, requestId: 'phone', replace: false, rhythm: RHYTHMS.pomodoro };
+
+    it('shows a session started on another device, with its blocks lined up', async () => {
+      const api = fakeFocusApi();
+      await api.start(C011); // on the phone, at 10:00
+      vi.setSystemTime(new Date(2026, 9, 13, 10, 10));
+      await mount({ signedIn: true, api });
+      expect(ctx.active).toMatchObject({ roomIdent: 'r000000712', roomCode: 'C011', adopted: true, confirmed: 1 });
+      expect(ctx.status).toMatchObject({ kind: 'focus', phase: { block: 1 } });
+      await minutes(16); // 10:26, the phone's first break
+      expect(ctx.status?.kind).toBe('break');
+    });
+
+    it('a block that began after the last renewal asks again here', async () => {
+      const api = fakeFocusApi();
+      await api.start(C011);
+      vi.setSystemTime(new Date(2026, 9, 13, 10, 32)); // block 2 began at 10:30
+      await mount({ signedIn: true, api });
+      expect(ctx.status).toMatchObject({ kind: 'confirm', phase: { block: 2 } });
+      await act(async () => ctx.confirm());
+      expect(ctx.active?.adopted).toBe(false);
+    });
+
+    it('records the session once, under its server id', async () => {
+      const api = fakeFocusApi();
+      await api.start(C011);
+      vi.setSystemTime(new Date(2026, 9, 13, 10, 20));
+      const store = await mount({ signedIn: true, api });
+      await act(async () => ctx.end());
+      expect(api.calls.end).toEqual(['s1']);
+      expect((await store.all()).map((e) => [e.id, e.minutes])).toEqual([['s1', 20]]);
+      expect(ctx.active).toBeNull();
+    });
+
+    it('starting in another room while one runs elsewhere asks first', async () => {
+      const api = fakeFocusApi();
+      await mount({ signedIn: true, api });
+      await api.start(C011); // the phone starts after this device last looked
+      await act(async () => ctx.start(E212, plan(), deep));
+      expect(ctx.conflict).toEqual({ roomCode: 'C011' });
+      expect(ctx.active).toBeNull();
+      await act(async () => ctx.resolveConflict(true));
+      expect(ctx.conflict).toBeNull();
+      expect(ctx.active?.roomIdent).toBe(E212.ident);
+      expect(api.calls.start[api.calls.start.length - 1].replace).toBe(true);
+    });
+
+    it("keeping it there shows the other device's session here", async () => {
+      const api = fakeFocusApi();
+      await mount({ signedIn: true, api });
+      await api.start(C011);
+      await act(async () => ctx.start(E212, plan(), deep));
+      await act(async () => ctx.resolveConflict(false));
+      expect(ctx.active).toMatchObject({ roomIdent: 'r000000712', adopted: true });
+    });
   });
 });

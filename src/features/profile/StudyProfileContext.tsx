@@ -121,3 +121,8 @@ export function useStudyProfile(): StudyProfileValue {
   if (!ctx) throw new Error('useStudyProfile must be used within <StudyProfileProvider>');
   return ctx;
 }
+
+/** The profile when a provider is present; null in isolated trees (tests). */
+export function useOptionalStudyProfile(): StudyProfileValue | null {
+  return useContext(StudyProfileContext);
+}

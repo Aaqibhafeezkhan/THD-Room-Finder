@@ -96,7 +96,7 @@ if they pass the same test.
 | Profile | Contents |
 |---|---|
 | Header | Avatar initial, display name, batch chip ("AIN 7"), gear → Settings. Signed out: "Set Up Study Profile" |
-| Focus graph | GitHub-style contribution calendar: square cells, rows Mon–Sun, one column per week, current week rightmost, five levels from near-white to the darkest violet; streak and total; **Share** |
+| Focus graph | GitHub-style contribution calendar: square cells, rows Mon–Sun, one column per week, current week rightmost, five levels from near-white to the darkest violet, counted in Pomodoro blocks per day (1 · 2–3 · 4–6 · 7+); streak and total; **Share** |
 | Saved rooms | Today's Saved list with live status (unchanged behaviour, new home) |
 
 | Settings | Contents |
@@ -174,7 +174,11 @@ carrier of meaning: every signal also has a label and an icon.
 - Only focus time counts for the focus graph. In the Android app, time spent
   in other apps during a block is subtracted.
 - **Without a study profile, focus stays on the device**: no claim, nothing
-  sent, nothing synced. Offline works the same way.
+  sent. Offline works the same way.
+- **Signed in, the focus graph follows you** to every device you sign in on:
+  dates and minutes sync, rooms stay on the device. A running shared session
+  shows on your other devices too
+  ([ADR 0005](../architecture/adr/0005-focus-across-devices.md)).
 - With a study profile, **Private is the default**. Public is one tap away
   and can be switched back.
 - Locking the phone does not end the session. A notification shows the phase
@@ -202,9 +206,9 @@ Phase 2 ([later phases](later-phases.md)).
 | Promise | How it is kept |
 |---|---|
 | Outsiders never learn who is in a claimed room | The service returns anonymous claims to non-batch viewers; names never leave the server for them |
-| No attendance history on a server | Completed sessions are stored on the device only |
+| No attendance history on a server | Signed out, completed sessions stay on the device. Signed in, only dates and minutes sync so the graph matches across devices; rooms never leave the device ([ADR 0005](../architecture/adr/0005-focus-across-devices.md)) |
 | Self-declared batch, honest wording | Setup explains that batch matching is self-declared and that others see a claim |
-| Delete means delete | Profile deletion ends sessions and removes identity |
+| Delete means delete | Profile deletion ends sessions and removes the identity and the synced history; Clear history clears the account copy too |
 | No location tracking | The app never reads GPS; a session is linked to the room the student picked |
 
 ## Acceptance examples
