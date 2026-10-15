@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { parseManifest, RELEASE_DOWNLOADS } from '../../domain/appUpdate';
 import type { UpdatePlan } from '../../domain/appUpdate';
 import type { AppUpdater } from '../../data/appUpdater';
-import { checkForUpdate } from './AppUpdates';
+import { checkForUpdate, shouldAsk } from './AppUpdates';
 
 const manifest = parseManifest({
   schema: 1,
@@ -45,10 +45,19 @@ describe('app updates', () => {
     expect(calls.checks).toBe(2);
   });
 
-  it('downloads nothing when the release needs a new APK', async () => {
+  it('downloads nothing and reports it when the release needs a new APK', async () => {
     const { updater, calls } = fake({ kind: 'apk', manifest });
-    await checkForUpdate(updater, later());
+    expect((await checkForUpdate(updater, later()))?.kind).toBe('apk');
     expect(calls.downloads).toEqual([]);
+  });
+
+  it('asks again three days after Later, or at once for a newer version', () => {
+    const now = 10 * 24 * HOUR;
+    expect(shouldAsk('2.5.0', null, now)).toBe(true);
+    expect(shouldAsk('2.5.0', `2.5.0@${now - 24 * HOUR}`, now)).toBe(false);
+    expect(shouldAsk('2.5.0', `2.5.0@${now - 73 * HOUR}`, now)).toBe(true);
+    expect(shouldAsk('2.6.0', `2.5.0@${now - HOUR}`, now)).toBe(true);
+    expect(shouldAsk('2.5.0', 'garbage', now)).toBe(true);
   });
 
   it('tries again on the next resume after a failed check', async () => {
