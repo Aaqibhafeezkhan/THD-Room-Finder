@@ -1,7 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 /**
  * The Profile hero (D2): a contribution graph of focus minutes. Square cells,
- * seven rows Mon → Sun, one column per week, the current week rightmost, today
+ * seven rows Sun → Sat, one column per week, the current week rightmost, today
  * outlined, days after today left as empty slots. Five levels from the
  * --md-graph-0…4 ramp (it follows the student's graph colour via data-accent).
  * Phones get fixed 11 px cells in a scroller that opens at the right edge;
@@ -15,7 +15,7 @@ export interface FocusDay {
     minutes: number;
 }
 export interface FocusGraphText {
-    /** Mon … Sun, short. Mon, Wed and Fri are shown as row labels. */
+    /** Sun … Sat, short. Mon, Wed and Fri are shown as row labels. */
     days: string[];
     /** Jan … Dec, short. */
     months: string[];
@@ -25,14 +25,17 @@ export interface FocusGraphText {
     less: string;
     /** "More" */
     more: string;
+    /** Closed-day legend and tooltip/table annotation (EN/DE supplied by caller). */
+    closed: string;
+    closureNote: string;
     /** "Share focus graph" */
     share: string;
     /** Hidden table caption, "Focus minutes per day, newest week first". */
     tableCaption: string;
     /** Row header prefix, "Week of". */
     weekOf: string;
-    /** Formats a week's Monday for the table, e.g. "13 Oct". */
-    weekLabel: (monday: Date) => string;
+    /** Formats a week's Sunday for the table, e.g. "13 Oct". */
+    weekLabel: (sunday: Date) => string;
 }
 export interface FocusGraphProps {
     days: FocusDay[];
@@ -60,8 +63,8 @@ export declare function focusLevel(minutes: number): 0 | 1 | 2 | 3 | 4;
 export declare function parseDay(iso: string): Date;
 export declare function dayKey(d: Date): string;
 export declare function addDays(d: Date, n: number): Date;
-/** Monday of the week that contains d. */
-export declare function mondayOf(d: Date): Date;
+/** Sunday of the week that contains d. */
+export declare function sundayOf(d: Date): Date;
 /**
  * @startingPoint section="Focus" subtitle="Contribution graph of daily focus minutes" viewport="900x260"
  */

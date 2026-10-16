@@ -2,10 +2,11 @@ import { useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { IconButton } from '../core/IconButton';
 import { IconShare } from './focusIcons';
+import { isCampusClosedDay } from '../../domain/openingHours';
 
 /**
  * The Profile hero (D2): a contribution graph of focus minutes. Square cells,
- * seven rows Mon → Sun, one column per week, the current week rightmost, today
+ * seven rows Sun → Sat, one column per week, the current week rightmost, today
  * outlined, days after today left as empty slots. Five levels from the
  * --md-graph-0…4 ramp (it follows the student's graph colour via data-accent).
  * Phones get fixed 11 px cells in a scroller that opens at the right edge;
@@ -20,7 +21,7 @@ export interface FocusDay {
 }
 
 export interface FocusGraphText {
-  /** Mon … Sun, short. Mon, Wed and Fri are shown as row labels. */
+  /** Sun … Sat, short. Mon, Wed and Fri are shown as row labels. */
   days: string[];
   /** Jan … Dec, short. */
   months: string[];
@@ -30,14 +31,17 @@ export interface FocusGraphText {
   less: string;
   /** "More" */
   more: string;
+  /** Closed-day legend and tooltip/table annotation (EN/DE supplied by caller). */
+  closed: string;
+  closureNote: string;
   /** "Share focus graph" */
   share: string;
   /** Hidden table caption, "Focus minutes per day, newest week first". */
   tableCaption: string;
   /** Row header prefix, "Week of". */
   weekOf: string;
-  /** Formats a week's Monday for the table, e.g. "13 Oct". */
-  weekLabel: (monday: Date) => string;
+  /** Formats a week's Sunday for the table, e.g. "13 Oct". */
+  weekLabel: (sunday: Date) => string;
 }
 
 export interface FocusGraphProps {
@@ -88,9 +92,9 @@ export function addDays(d: Date, n: number): Date {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
 }
 
-/** Monday of the week that contains d. */
-export function mondayOf(d: Date): Date {
-  return addDays(d, -((d.getDay() + 6) % 7));
+/** Sunday of the week that contains d. */
+export function sundayOf(d: Date): Date {
+  return addDays(d, -d.getDay());
 }
 
 interface Cell {
@@ -127,23 +131,23 @@ export function FocusGraph({
   for (const d of days) minutesByDay.set(d.date, (minutesByDay.get(d.date) ?? 0) + d.minutes);
 
   const todayDate = parseDay(today);
-  const firstMonday = addDays(mondayOf(todayDate), -(weeks - 1) * 7);
-  const columns: { monday: Date; month: string; cells: Cell[] }[] = [];
+  const firstSunday = addDays(sundayOf(todayDate), -(weeks - 1) * 7);
+  const columns: { sunday: Date; month: string; cells: Cell[] }[] = [];
   for (let w = 0; w < weeks; w++) {
-    const monday = addDays(firstMonday, w * 7);
-    const prev = addDays(monday, -7);
-    let month = monday.getMonth() !== prev.getMonth() ? text.months[monday.getMonth()] : '';
+    const sunday = addDays(firstSunday, w * 7);
+    const prev = addDays(sunday, -7);
+    let month = sunday.getMonth() !== prev.getMonth() ? text.months[sunday.getMonth()] : '';
     if (w === 0) {
-      const sameAhead = addDays(monday, 7).getMonth() === monday.getMonth() && addDays(monday, 14).getMonth() === monday.getMonth();
-      month = sameAhead ? text.months[monday.getMonth()] : '';
+      const sameAhead = addDays(sunday, 7).getMonth() === sunday.getMonth() && addDays(sunday, 14).getMonth() === sunday.getMonth();
+      month = sameAhead ? text.months[sunday.getMonth()] : '';
     }
     const cells: Cell[] = [];
     for (let d = 0; d < 7; d++) {
-      const date = addDays(monday, d);
+      const date = addDays(sunday, d);
       const key = dayKey(date);
       cells.push({ key, date, minutes: minutesByDay.get(key) ?? 0, future: date > todayDate, today: key === today });
     }
-    columns.push({ monday, month, cells });
+    columns.push({ sunday, month, cells });
   }
 
   const items: ReactNode[] = [<div key="corner" />];
@@ -165,7 +169,7 @@ export function FocusGraph({
             whiteSpace: 'nowrap',
           }}
         >
-          {i % 2 === 0 && i < 6 ? d : ''}
+          {i % 2 === 1 && i < 6 ? d : ''}
         </span>
       </div>,
     ),
@@ -184,10 +188,15 @@ export function FocusGraph({
         items.push(<div key={cell.key} style={{ width: '100%', aspectRatio: '1', alignSelf: 'start' }} />);
         return;
       }
-      const show = () => setTip({ key: cell.key, text: text.cellLabel(cell.date, cell.minutes), row: r, col: c });
+      const closed = isCampusClosedDay(cell.date);
+      const cellText = `${text.cellLabel(cell.date, cell.minutes)}${closed ? ` · ${text.closed}` : ''}`;
+      const show = () => setTip({ key: cell.key, text: cellText, row: r, col: c });
       items.push(
         <div
           key={cell.key}
+          data-date={cell.key}
+          data-closed={closed || undefined}
+          title={cellText}
           onMouseEnter={show}
           onMouseLeave={() => setTip(null)}
           onClick={() => (tip?.key === cell.key ? setTip(null) : show())}
@@ -196,7 +205,7 @@ export function FocusGraph({
             aspectRatio: '1',
             alignSelf: 'start',
             borderRadius: 2,
-            background: `var(--md-graph-${focusLevel(cell.minutes)})`,
+            background: closed ? 'var(--md-graph-closed)' : `var(--md-graph-${focusLevel(cell.minutes)})`,
             outline: cell.today ? '1.5px solid var(--md-on-surface)' : 'none',
             outlineOffset: 1,
           }}
@@ -274,14 +283,17 @@ export function FocusGraph({
                 position: 'absolute',
                 zIndex: 2,
                 pointerEvents: 'none',
-                whiteSpace: 'nowrap',
+                width: 'max-content',
+                maxWidth: 'min(280px, 100%)',
+                whiteSpace: 'normal',
+                overflowWrap: 'anywhere',
                 padding: '5px 8px',
                 borderRadius: 'var(--radius-xs)',
                 background: 'var(--md-on-surface)',
                 color: 'var(--md-surface)',
                 font: '500 12px var(--font-sans)',
                 boxShadow: 'var(--md-shadow-1)',
-                left: `clamp(0px, calc(26px + (100% - 26px) * ${(tip.col + 0.5) / weeks} - 60px), calc(100% - 120px))`,
+                left: `clamp(0px, calc(26px + (100% - 26px) * ${(tip.col + 0.5) / weeks} - 140px), calc(100% - 280px))`,
                 top: `calc(16px + (100% - 16px) * ${(tip.row + (tipBelow ? 1 : 0)) / 7} + ${tipBelow ? 6 : -32}px)`,
               }}
             >
@@ -296,40 +308,46 @@ export function FocusGraph({
           alignItems: 'center',
           justifyContent: 'flex-end',
           gap: 3,
+          flexWrap: 'wrap',
           fontSize: 12,
           color: 'var(--md-on-surface-variant)',
         }}
         aria-hidden="true"
       >
+        <i style={{ ...legendCell, background: 'var(--md-graph-closed)' }} />
+        <span style={{ marginRight: 10 }}>{text.closed}</span>
         <span style={{ marginRight: 4 }}>{text.less}</span>
         {[0, 1, 2, 3, 4].map((l) => (
           <i key={l} style={{ ...legendCell, background: `var(--md-graph-${l})` }} />
         ))}
         <span style={{ marginLeft: 4 }}>{text.more}</span>
       </div>
-      <table style={hidden}>
-        <caption>{text.tableCaption}</caption>
-        <thead>
-          <tr>
-            <th scope="col">{text.weekOf}</th>
-            {text.days.map((d) => (
-              <th key={d} scope="col">
-                {d}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {[...columns].reverse().map((col) => (
-            <tr key={dayKey(col.monday)}>
-              <th scope="row">{text.weekLabel(col.monday)}</th>
-              {col.cells.map((cell) => (
-                <td key={cell.key}>{cell.future ? '—' : cell.minutes}</td>
+      <p style={{ margin: 0, fontSize: 12, lineHeight: 1.4, color: 'var(--md-on-surface-variant)' }}>{text.closureNote}</p>
+      <div style={hidden}>
+        <table>
+          <caption>{text.tableCaption}</caption>
+          <thead>
+            <tr>
+              <th scope="col">{text.weekOf}</th>
+              {text.days.map((d) => (
+                <th key={d} scope="col">
+                  {d}
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {[...columns].reverse().map((col) => (
+              <tr key={dayKey(col.sunday)}>
+                <th scope="row">{text.weekLabel(col.sunday)}</th>
+                {col.cells.map((cell) => (
+                  <td key={cell.key}>{cell.future ? '—' : `${cell.minutes}${isCampusClosedDay(cell.date) ? ` · ${text.closed}` : ''}`}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </section>
   );
 }

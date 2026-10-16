@@ -40,8 +40,9 @@
   }
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const graphText = {
-    days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], months,
+    days: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], months,
     cellLabel: (d, m) => `${d.getDate()} ${months[d.getMonth()]} · ${m ? m + ' min' : 'No focus'}`,
+    closed: 'Campus closed', closureNote: 'Closed campus days pause your streak. Only open days count.',
     less: 'Less', more: 'More', share: 'Share focus graph',
     tableCaption: 'Focus minutes per day, newest week first', weekOf: 'Week of',
     weekLabel: (d) => `${d.getDate()} ${months[d.getMonth()]}`,

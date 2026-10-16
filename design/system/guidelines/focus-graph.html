@@ -15,6 +15,7 @@
   .g i.slot { background: none; }
   .ramp { display: flex; gap: 3px; align-items: center; justify-content: flex-end; font-size: 11px; color: var(--md-on-surface-variant); margin-top: 10px; }
   .ramp i { width: 11px; height: 11px; border-radius: 2px; display: block; }
+  .closed { background: var(--md-graph-closed); }
   .l0 { background: var(--md-graph-0); } .l1 { background: var(--md-graph-1); } .l2 { background: var(--md-graph-2); }
   .l3 { background: var(--md-graph-3); } .l4 { background: var(--md-graph-4); }
   .accents { display: flex; flex-direction: column; gap: 8px; font-size: 12px; color: var(--md-on-surface-variant); }
@@ -34,8 +35,9 @@
 <body>
   <div class="card">
     <div class="stats">21 h this semester · 12-day streak</div>
+    <p class="stats">Closed days pause the streak; five weekdays + Monday = six. Only open days count.</p>
     <div class="g" id="g" aria-hidden="true"></div>
-    <div class="ramp">Less <i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i> More · 0 · 1 · 2–3 · 4–6 · 7+ Pomodoro blocks</div>
+    <div class="ramp"><i class="closed"></i> Campus closed · Less <i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i> More · 0 · 1 · 2–3 · 4–6 · 7+ Pomodoro blocks</div>
   </div>
   <div class="card accents">
     <strong style="color: var(--md-on-surface); font-weight: 500;">Graph colour</strong>
@@ -60,14 +62,15 @@
   const g = document.getElementById('g');
   for (let w = 0; w < 20; w++) for (let d = 0; d < 7; d++) {
     const i = document.createElement('i');
-    if (w === 19 && d > 1) i.className = 'slot';
-    else i.className = 'l' + level() + (w === 19 && d === 1 ? ' today' : '');
+    if (w === 19 && d > 2) i.className = 'slot';
+    else if ((d === 0 || d === 6)) i.className = 'closed';
+    else i.className = 'l' + level() + (w === 19 && d === 2 ? ' today' : '');
     g.appendChild(i);
   }
   const sg = document.getElementById('sg');
   for (let w = 0; w < 24; w++) for (let d = 0; d < 7; d++) {
     const i = document.createElement('i');
-    i.className = w > 2 || (w === 2 && d > 1) ? 'slot' : 'l' + Math.max(1, level());
+    i.className = w > 2 || (w === 2 && d > 2) ? 'slot' : (d === 0 || d === 6) ? 'closed' : 'l' + Math.max(1, level());
     sg.appendChild(i);
   }
 </script>
