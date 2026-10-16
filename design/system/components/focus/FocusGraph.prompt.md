@@ -26,3 +26,5 @@ retain recorded minutes and add the closure annotation. The footer pairs a pause
 Weeks start Sunday, with Mon/Wed/Fri labels on rows 2/4/6.
 
 The semester total leads the card; optional secondaryStats shows the study-day streak beneath it. Compact graphs support native swipe, trackpad and keyboard scrolling with a visible keyboard focus ring and no scrollbar. A subtle left-edge fade signals older history and disappears at the oldest week.
+
+Responsive layout: cells scale with card width (14–26 px), with the complete year available by scrolling on every screen. The profile column is capped at 840 px. Wider pointer layouts offer older/newer navigation; narrower layouts retain native scrolling and keyboard access. Resize preserves the viewed week. Weekend cells blend the closed token into the surface for a softer contrast.

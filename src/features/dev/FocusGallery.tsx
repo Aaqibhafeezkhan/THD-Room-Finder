@@ -140,6 +140,8 @@ export function FocusGallery() {
     more: t('More', 'Mehr'),
     closed: t('Campus closed', 'Campus geschlossen'),
     closureNote: t('Weekends pause your streak', 'Serie pausiert am Wochenende'),
+    older: t('Older weeks', 'Ältere Wochen'),
+    newer: t('Newer weeks', 'Neuere Wochen'),
     share: t('Share focus graph', 'Fokus-Verlauf teilen'),
     tableCaption: t('Focus minutes per day, newest week first', 'Fokus-Minuten pro Tag, neueste Woche zuerst'),
     weekOf: t('Week of', 'Woche ab'),

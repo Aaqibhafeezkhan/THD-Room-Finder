@@ -112,8 +112,8 @@ describe('FocusGraph', () => {
       compact={compact} stats="0-day streak" label="Focus graph" text={graphText} />);
     const saturday = container.querySelector<HTMLElement>('[data-date="2026-10-10"]')!;
     const sunday = container.querySelector<HTMLElement>('[data-date="2026-10-11"]')!;
-    expect(saturday.style.background).toBe('var(--md-graph-closed)');
-    expect(sunday.style.background).toBe('var(--md-graph-closed)');
+    expect(saturday.style.background).toBe('color-mix(in srgb, var(--md-graph-closed) 72%, var(--md-surface))');
+    expect(sunday.style.background).toBe('color-mix(in srgb, var(--md-graph-closed) 72%, var(--md-surface))');
     expect(sunday.style.outline).toContain('solid');
     expect(saturday.title).toBe('10 · 175 min · Campus closed');
     expect(container.querySelector('tbody')?.textContent).toContain('175 · Campus closed');

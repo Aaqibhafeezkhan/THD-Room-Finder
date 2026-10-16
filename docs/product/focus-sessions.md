@@ -243,7 +243,7 @@ colour, in light and dark themes. Today retains its outline, including on a
 closed day. Future dates retain the graph's blank slots / share card's outlined
 slots. Tooltips and the accessible table include "Campus closed" / "Campus
 geschlossen" alongside any recorded minutes; the compact graph footer explains the
-paused streak. The semester total leads the card, with the study-day streak on a secondary line. The footer pairs a pause icon and a short weekend note with the five-swatch intensity ramp; its less-to-more label remains accessible. On phones, native swipe, trackpad and keyboard scrolling reveal older weeks without a visible scrollbar. A subtle left-edge fade signals more history and disappears at the oldest week.
+paused streak. The semester total leads the card, with the study-day streak on a secondary line. The footer pairs a pause icon and a short weekend note with the five-swatch intensity ramp; its less-to-more label remains accessible. At every screen width, native swipe, trackpad and keyboard scrolling reveal the full year without a visible scrollbar. Cells scale with the card width (14–26 px); the profile column is capped at 840 px. Wider pointer layouts also offer older/newer navigation buttons. The viewed week is preserved when resizing or rotating. Weekend cells blend the closed-day token into the surface for softer contrast. A subtle left-edge fade signals more history and disappears at the oldest week.
 
 The source is the general classroom schedule in `src/domain/openingHours.ts`,
 not the library schedule or the absence of THabella lectures. The repository

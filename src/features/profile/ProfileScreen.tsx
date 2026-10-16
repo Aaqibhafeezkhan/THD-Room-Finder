@@ -59,7 +59,7 @@ export function ProfileScreen() {
   return (
     <>
       <BrandHeader title={t('Profile', 'Profil')} menu={false} />
-      <Page style={{ maxWidth: compact ? 640 : 960 }}>
+      <Page style={{ maxWidth: 840 }}>
         <ProfileHeader
           signedIn={signedIn}
           name={profile.displayName ?? undefined}
@@ -76,7 +76,7 @@ export function ProfileScreen() {
           today={focus.today}
           weeks={53}
           compact={compact}
-          stats={focus.hasHistory ? `${formatHours(focus.semesterMinutes, locale)} ${t('this semester', 'dieses Semester')}` : stats}
+          stats={focus.hasHistory ? <>{formatHours(focus.semesterMinutes, locale)} <span className="thd-focus-period">{t('this semester', 'dieses Semester')}</span></> : stats}
           secondaryStats={focus.hasHistory ? t(`${focus.streak}-day study streak`, `${focus.streak} Lerntage in Folge`) : undefined}
           label={`${t('Focus graph', 'Fokus-Verlauf')}. ${stats}`}
           text={graphText(t, locale)}
