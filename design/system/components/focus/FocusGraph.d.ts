@@ -25,7 +25,7 @@ export interface FocusGraphText {
     less: string;
     /** "More" */
     more: string;
-    /** Closed-day legend and tooltip/table annotation (EN/DE supplied by caller). */
+    /** Closed-day tooltip/table annotation (EN/DE supplied by caller). */
     closed: string;
     closureNote: string;
     /** "Share focus graph" */
@@ -45,8 +45,10 @@ export interface FocusGraphProps {
     weeks?: number;
     /** Phone layout: fixed 11 px cells, horizontal scroll, opens at today. */
     compact?: boolean;
-    /** One quiet line, e.g. "21 h this semester · 12-day streak". */
+    /** Semester total, or an empty-history message. */
     stats: ReactNode;
+    /** Optional secondary line beneath the semester total, e.g. study-day streak. */
+    secondaryStats?: ReactNode;
     /** Accessible name of the card; should repeat the stats. */
     label: string;
     text: FocusGraphText;

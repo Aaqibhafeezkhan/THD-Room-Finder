@@ -10,3 +10,11 @@
 @import url('./tokens/spacing.css');
 @import url('./tokens/breakpoints.css');
 @import url('./tokens/elevation.css');
+
+/* Native swipe, trackpad and keyboard scrolling without a bright scrollbar. */
+.thd-focus-graph-scroll::-webkit-scrollbar { display: none; }
+.thd-focus-graph-scroll:focus-visible {
+  outline: 2px solid var(--md-focus);
+  outline-offset: 3px;
+  border-radius: var(--radius-xs);
+}

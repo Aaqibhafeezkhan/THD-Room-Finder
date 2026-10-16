@@ -7,7 +7,7 @@ import { useTheme } from '../../lib/theme';
 import { useWindowClass } from '../../lib/useWindowClass';
 import { BrandHeader } from '../shared/BrandHeader';
 import { Page } from '../shared/ui';
-import { graphText, statsLine } from '../focus/copy';
+import { formatHours, graphText, statsLine } from '../focus/copy';
 import { ShareSheet } from '../focus/ShareSheet';
 import { inviteLink, PUBLIC_ORIGIN } from '../focus/shareSnapshot';
 import { useFocusStats } from '../focus/useFocusStats';
@@ -76,7 +76,8 @@ export function ProfileScreen() {
           today={focus.today}
           weeks={53}
           compact={compact}
-          stats={stats}
+          stats={focus.hasHistory ? `${formatHours(focus.semesterMinutes, locale)} ${t('this semester', 'dieses Semester')}` : stats}
+          secondaryStats={focus.hasHistory ? t(`${focus.streak}-day study streak`, `${focus.streak} Lerntage in Folge`) : undefined}
           label={`${t('Focus graph', 'Fokus-Verlauf')}. ${stats}`}
           text={graphText(t, locale)}
           onShare={focus.hasHistory ? () => setSharing(true) : undefined}

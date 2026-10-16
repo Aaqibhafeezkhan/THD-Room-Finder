@@ -242,8 +242,8 @@ elapsed closed dates in neutral gray (`--md-graph-closed`), independent of graph
 colour, in light and dark themes. Today retains its outline, including on a
 closed day. Future dates retain the graph's blank slots / share card's outlined
 slots. Tooltips and the accessible table include "Campus closed" / "Campus
-geschlossen" alongside any recorded minutes; the graph legend explains the
-paused streak.
+geschlossen" alongside any recorded minutes; the compact graph footer explains the
+paused streak. The semester total leads the card, with the study-day streak on a secondary line. The footer pairs a pause icon and a short weekend note with the five-swatch intensity ramp; its less-to-more label remains accessible. On phones, native swipe, trackpad and keyboard scrolling reveal older weeks without a visible scrollbar. A subtle left-edge fade signals more history and disappears at the oldest week.
 
 The source is the general classroom schedule in `src/domain/openingHours.ts`,
 not the library schedule or the absence of THabella lectures. The repository

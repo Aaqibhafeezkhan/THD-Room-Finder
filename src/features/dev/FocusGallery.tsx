@@ -139,7 +139,7 @@ export function FocusGallery() {
     less: t('Less', 'Weniger'),
     more: t('More', 'Mehr'),
     closed: t('Campus closed', 'Campus geschlossen'),
-    closureNote: t('Closed campus days pause your streak. Only open days count.', 'Geschlossene Campustage pausieren deine Serie. Nur offene Tage zählen.'),
+    closureNote: t('Weekends pause your streak', 'Serie pausiert am Wochenende'),
     share: t('Share focus graph', 'Fokus-Verlauf teilen'),
     tableCaption: t('Focus minutes per day, newest week first', 'Fokus-Minuten pro Tag, neueste Woche zuerst'),
     weekOf: t('Week of', 'Woche ab'),
@@ -251,9 +251,9 @@ export function FocusGallery() {
             { id: 'graphite', label: t('Graphite', 'Graphit') },
           ]}
         />
-        <FocusGraph days={DAYS} today={TODAY} weeks={53} stats={stats} label={stats} text={graphText} onShare={() => setSnack(t('Link copied', 'Link kopiert'))} />
+        <FocusGraph days={DAYS} today={TODAY} weeks={53} stats={t('21 h this semester', '21 Std. dieses Semester')} secondaryStats={t('12-day study streak', '12 Lerntage in Folge')} label={stats} text={graphText} onShare={() => setSnack(t('Link copied', 'Link kopiert'))} />
         <div style={{ maxWidth: 380 }}>
-          <FocusGraph days={DAYS} today={TODAY} weeks={53} compact stats={stats} label={stats} text={graphText} onShare={() => undefined} />
+          <FocusGraph days={DAYS} today={TODAY} weeks={53} compact stats={t('21 h this semester', '21 Std. dieses Semester')} secondaryStats={t('12-day study streak', '12 Lerntage in Folge')} label={stats} text={graphText} onShare={() => undefined} />
         </div>
         <FocusGraph days={[]} today={TODAY} weeks={20} stats={t('No focus yet. Start a session in any free room.', 'Noch kein Fokus. Starte eine Session in einem freien Raum.')} label="Focus graph" text={graphText} />
         <div style={{ background: 'var(--md-surface)', borderRadius: 'var(--radius-l)', boxShadow: 'var(--md-shadow-1)', padding: '4px 16px' }}>

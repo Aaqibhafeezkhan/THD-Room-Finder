@@ -4,7 +4,7 @@ outlined, later days left empty. Levels count Pomodoro blocks, 0 · 1 · 2–3 �
 `--md-graph-0…4`, which follow the graph colour (`data-accent`).
 
 ```jsx
-<FocusGraph days={days} today="2026-10-13" weeks={53} stats="21 h this semester · 12-day streak"
+<FocusGraph days={days} today="2026-10-13" weeks={53} stats="21 h this semester" secondaryStats="12-day study streak"
   label="Focus graph. 21 h this semester, 12-day streak." text={copy} onShare={openShare} />
 <FocusGraph {...same} compact />   // phones: 11px cells, the scroller opens at today
 ```
@@ -21,7 +21,8 @@ focus days; an intervening missed open day breaks the streak.
 
 Supply `text.closed` ("Campus closed" / "Campus geschlossen") and
 `text.closureNote` in the caller's language. Tooltips and the accessible table
-retain recorded minutes and add the closure annotation. The legend and note
-explain that closed days pause the streak.
+retain recorded minutes and add the closure annotation. The footer pairs a pause icon and a short weekend note with five intensity swatches. The ramp keeps an accessible less-to-more label.
 
 Weeks start Sunday, with Mon/Wed/Fri labels on rows 2/4/6.
+
+The semester total leads the card; optional secondaryStats shows the study-day streak beneath it. Compact graphs support native swipe, trackpad and keyboard scrolling with a visible keyboard focus ring and no scrollbar. A subtle left-edge fade signals older history and disappears at the oldest week.

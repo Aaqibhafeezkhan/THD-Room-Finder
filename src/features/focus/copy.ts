@@ -49,7 +49,7 @@ export function graphText(t: Translate, locale: Locale): FocusGraphText {
     less: t('Less', 'Weniger'),
     more: t('More', 'Mehr'),
     closed: t('Campus closed', 'Campus geschlossen'),
-    closureNote: t('Closed campus days pause your streak. Only open days count.', 'Geschlossene Campustage pausieren deine Serie. Nur offene Tage zählen.'),
+    closureNote: t('Weekends pause your streak', 'Serie pausiert am Wochenende'),
     share: t('Share focus graph', 'Fokus-Verlauf teilen'),
     tableCaption: t('Focus minutes per day, newest week first', 'Fokus-Minuten pro Tag, neueste Woche zuerst'),
     weekOf: t('Week of', 'Woche ab'),

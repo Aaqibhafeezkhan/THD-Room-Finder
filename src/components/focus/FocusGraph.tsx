@@ -31,7 +31,7 @@ export interface FocusGraphText {
   less: string;
   /** "More" */
   more: string;
-  /** Closed-day legend and tooltip/table annotation (EN/DE supplied by caller). */
+  /** Closed-day tooltip/table annotation (EN/DE supplied by caller). */
   closed: string;
   closureNote: string;
   /** "Share focus graph" */
@@ -52,8 +52,10 @@ export interface FocusGraphProps {
   weeks?: number;
   /** Phone layout: fixed 11 px cells, horizontal scroll, opens at today. */
   compact?: boolean;
-  /** One quiet line, e.g. "21 h this semester · 12-day streak". */
+  /** Semester total, or an empty-history message. */
   stats: ReactNode;
+  /** Optional secondary line beneath the semester total, e.g. study-day streak. */
+  secondaryStats?: ReactNode;
   /** Accessible name of the card; should repeat the stats. */
   label: string;
   text: FocusGraphText;
@@ -120,12 +122,17 @@ export function FocusGraph({
   weeks = 53,
   compact = false,
   stats,
+  secondaryStats,
   label,
   text,
   onShare,
   style = {},
 }: FocusGraphProps) {
   const [tip, setTip] = useState<{ key: string; text: string; row: number; col: number } | null>(null);
+  const [olderAvailable, setOlderAvailable] = useState(false);
+  const updateOverflow = (el: HTMLDivElement | null) => {
+    if (el) setOlderAvailable(el.scrollWidth - el.clientWidth + el.scrollLeft > 2);
+  };
 
   const minutesByDay = new Map<string, number>();
   for (const d of days) minutesByDay.set(d.date, (minutesByDay.get(d.date) ?? 0) + d.minutes);
@@ -150,7 +157,7 @@ export function FocusGraph({
     columns.push({ sunday, month, cells });
   }
 
-  const items: ReactNode[] = [<div key="corner" />];
+  const items: ReactNode[] = [<div key="corner" style={{ position: 'sticky', left: 0, zIndex: 1, minWidth: 26, background: 'var(--md-surface)' }} />];
   text.days.forEach((d, i) =>
     items.push(
       <div
@@ -227,7 +234,7 @@ export function FocusGraph({
         padding: compact ? 16 : 20,
         display: 'flex',
         flexDirection: 'column',
-        gap: 10,
+        gap: 18,
         minWidth: 0,
         position: 'relative',
         fontFamily: 'var(--font-sans)',
@@ -240,13 +247,15 @@ export function FocusGraph({
             margin: 0,
             flex: 1,
             minWidth: 0,
-            fontSize: 14,
+            fontSize: secondaryStats ? 22 : 14,
+            fontWeight: secondaryStats ? 500 : 400,
             lineHeight: 1.4,
-            color: 'var(--md-on-surface-variant)',
+            color: secondaryStats ? 'var(--md-on-surface)' : 'var(--md-on-surface-variant)',
             textWrap: 'pretty',
           }}
         >
           {stats}
+          {secondaryStats && <span style={{ display: 'block', marginTop: 4, fontSize: 14, fontWeight: 400, color: 'var(--md-on-surface-variant)' }}>{secondaryStats}</span>}
         </p>
         {onShare && (
           <IconButton label={text.share} onClick={onShare}>
@@ -254,12 +263,19 @@ export function FocusGraph({
           </IconButton>
         )}
       </div>
+      <div style={{ position: 'relative', minWidth: 0 }}>
       <div
+        className="thd-focus-graph-scroll"
+        ref={updateOverflow}
+        onScroll={(event) => { updateOverflow(event.currentTarget); setTip(null); }}
+        tabIndex={compact ? 0 : undefined}
+        role={compact ? 'region' : undefined}
+        aria-label={compact ? text.tableCaption : undefined}
         style={{
           direction: 'rtl',
           overflowX: compact ? 'auto' : 'hidden',
           overflowY: 'hidden',
-          scrollbarWidth: 'thin',
+          scrollbarWidth: 'none',
           padding: '3px 3px 6px 0',
         }}
       >
@@ -302,27 +318,28 @@ export function FocusGraph({
           )}
         </div>
       </div>
+      {compact && olderAvailable && <div aria-hidden="true" style={{ position: 'absolute', left: 26, top: 0, bottom: 0, width: 14, pointerEvents: 'none', background: 'linear-gradient(to right, var(--md-surface), transparent)' }} />}
+      </div>
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'flex-end',
-          gap: 3,
-          flexWrap: 'wrap',
+          justifyContent: 'space-between',
+          gap: 16,
           fontSize: 12,
           color: 'var(--md-on-surface-variant)',
         }}
-        aria-hidden="true"
       >
-        <i style={{ ...legendCell, background: 'var(--md-graph-closed)' }} />
-        <span style={{ marginRight: 10 }}>{text.closed}</span>
-        <span style={{ marginRight: 4 }}>{text.less}</span>
+        <p style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0, lineHeight: 1.5 }}>
+          <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ flexShrink: 0 }}><rect x="1.5" y="1.5" width="13" height="13" rx="3" /><path d="M6 5v6M10 5v6" /></svg>
+          <span>{text.closureNote}</span>
+        </p>
+        <div role="img" aria-label={`${text.less} → ${text.more}`} title={`${text.less} → ${text.more}`} style={{ display: 'flex', gap: 3, flexShrink: 0 }}>
         {[0, 1, 2, 3, 4].map((l) => (
           <i key={l} style={{ ...legendCell, background: `var(--md-graph-${l})` }} />
         ))}
-        <span style={{ marginLeft: 4 }}>{text.more}</span>
+        </div>
       </div>
-      <p style={{ margin: 0, fontSize: 12, lineHeight: 1.4, color: 'var(--md-on-surface-variant)' }}>{text.closureNote}</p>
       <div style={hidden}>
         <table>
           <caption>{text.tableCaption}</caption>
