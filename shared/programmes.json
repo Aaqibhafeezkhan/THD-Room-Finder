@@ -91,6 +91,16 @@
       "accessedOn": "2026-10-14"
     },
     {
+      "id": "moduleHandbooks",
+      "title": "Official module handbook index",
+      "url": "https://www.th-deg.de/en/students/documents",
+      "supports": [
+        "current official module-handbook index",
+        "corroborating programme-code conventions where a programme handbook is listed"
+      ],
+      "accessedOn": "2026-10-18"
+    },
+    {
       "id": "page-ae-m",
       "title": "Car IT und Elektronik, M.Eng. (programme page)",
       "url": "https://www.th-deg.de/ae-m",
