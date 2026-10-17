@@ -1,0 +1,99 @@
+<!-- @dsCard group="Components" viewport="760x900" name="Focus layer — Components" subtitle="D1–D4 approved: activity rows, focus surface, pill, badges, focus graph, building row, map legend, share card" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: var(--font-sans); background: var(--md-bg); color: var(--md-on-surface); padding: 20px 24px; }
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; align-items: start; }
+  .group { display: flex; flex-direction: column; gap: 10px; }
+  .lbl { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .04em; color: var(--md-on-surface-variant); }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .panel { background: var(--md-surface); border-radius: var(--radius-l); box-shadow: var(--md-shadow-1); overflow: hidden; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel">
+  const {
+    ActivityRow, FocusButton, FocusSurface, FocusPill, FocusBadge, FocusGraph,
+    RoomCard, BuildingRow, MapLegend, ListNotice, ShareCard, SegmentedControl,
+  } = window.THDRoomFinderDesignSystem_de229b;
+
+  // Fake, deterministic history: the last 20 weeks up to Tue 13 Oct 2026.
+  const days = [];
+  let seed = 7;
+  const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+  for (let i = 139; i >= 0; i--) {
+    const d = new Date(2026, 9, 13 - i);
+    if (rnd() < (d.getDay() % 6 === 0 ? 0.25 : 0.6)) {
+      const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      days.push({ date: iso, minutes: Math.round((15 + rnd() * 220) / 5) * 5 });
+    }
+  }
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const graphText = {
+    days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], months,
+    cellLabel: (d, m) => `${d.getDate()} ${months[d.getMonth()]} · ${m ? m + ' min' : 'No focus'}`,
+    less: 'Less', more: 'More', share: 'Share focus graph',
+    tableCaption: 'Focus minutes per day, newest week first', weekOf: 'Week of',
+    weekLabel: (d) => `${d.getDate()} ${months[d.getMonth()]}`,
+  };
+  const surfaceText = {
+    title: 'Focus session', private: 'Private', public: 'Public · AIN 7', visibility: 'Who sees this session',
+    explainPrivate: 'Others see that someone is focusing here, not who.',
+    explainPublic: 'AIN 7 sees you here and can join. Everyone else sees a focus session.',
+    showName: 'Show my name', nameSub: 'Shown as "AIN 7 student"',
+    lockedNote: 'Keeps running when your phone is locked. We check in about once an hour.',
+    end: 'End', signedOut: "Only you see this timer; the room doesn't show as claimed.", setup: 'Set Up Study Profile',
+  };
+
+  function Demo() {
+    const [vis, setVis] = React.useState('private');
+    const [name, setName] = React.useState(false);
+    return (
+      <div className="cols">
+        <div className="group">
+          <span className="lbl">Room detail · D1</span>
+          <ActivityRow kind="batch" title="AIN 7 · 2 studying" sub="Public sessions · since 09:40" action={<FocusButton tone="join">Join</FocusButton>} />
+          <ActivityRow kind="claimed" title="Focus session · started 25 min ago" sub="A claim is not a booking, so you can still focus here." />
+          <ActivityRow kind="unknown" title="Focus activity unknown" />
+          <FocusButton tone="start" fullWidth>Start focus</FocusButton>
+          <FocusSurface elapsed="24:10" plannedLine="Planned end 12:36 · 3 h max" visibility={vis} onVisibility={setVis}
+            showName={name} onShowName={setName} signedIn text={surfaceText} />
+          <div className="row"><FocusPill elapsed="24:10" room="E 212" label="Focus session in E 212, 24:10. Open room." /></div>
+        </div>
+        <div className="group">
+          <span className="lbl">List and map · D3</span>
+          <ListNotice kind="quiet">AIN 7 sessions show as claimed (Settings).</ListNotice>
+          <RoomCard name="E 212" meta="Building E · 60 seats" status="free" duration="6h" focus={{ kind: 'own', label: 'Your session · 24:10' }} />
+          <RoomCard name="A 008" meta="Building A · 45 seats" status="free" duration="4h 30m" focus={{ kind: 'batch', label: 'AIN 7 · 2 studying' }} />
+          <RoomCard name="ITC 2.01" meta="ITC 2 · 30 seats" status="claimed" duration="4h" focus={{ kind: 'claimed', label: 'Focus session · 40 min' }} />
+          <div className="panel">
+            <BuildingRow code="ITC" name="Rohde & Schwarz Forum" freeLine="4 of 20 rooms free" batch="AIN 7 · 2 studying" claims="1 focus session" />
+            <BuildingRow code="E" name="Building E" freeLine="6 of 12 rooms free" own="Your session" divider />
+          </div>
+          <MapLegend free="Free rooms" batch="AIN 7 studying" claim="Focus session" />
+          <span className="lbl" style={{ marginTop: 8 }}>Profile · D2 and share card · D4</span>
+          <FocusGraph days={days} today="2026-10-13" weeks={20} stats="21 h this semester · 12-day streak" label="Focus graph" text={graphText} onShare={() => {}} />
+          <div style={{ maxWidth: 260 }}>
+            <ShareCard days={days} today="2026-10-13" semesterStart="2026-10-01" semesterEnd="2027-03-14" months={months}
+              theme="light" iconSrc="../../assets/logo/icon.svg" url="thd-room-finder.vercel.app"
+              figures={[{ num: '21', unit: 'h', label: 'this semester' }, { num: '12', unit: '', label: 'day streak' }]}
+              alt="Focus graph image: 21 hours this semester, 12-day streak." />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById('root')).render(<Demo/>);
+</script>
+</body>
+</html>

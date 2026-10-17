@@ -1,0 +1,8 @@
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like the app to do?
+      description: A rough idea is fine. Tell us what you're trying to get done.
+    validations:
+      required: true

@@ -4,15 +4,35 @@
     {
       "name": "dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 5173
     },
     {
       "name": "website",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "8124"],
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8124"
+      ],
       "port": 8124,
       "cwd": "website"
+    },
+    {
+      "name": "preview",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "preview",
+        "--",
+        "--port",
+        "4173",
+        "--strictPort"
+      ],
+      "port": 4173
     }
   ]
 }

@@ -48,8 +48,29 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
+      # The focus service's public URL and publishable key (repository
+      # variables, not secrets: both ship in the app). Without them the APK
+      # builds device-only, with no sign-in, so a release must fail instead.
       - name: Build web bundle
-        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_PUBLISHABLE_KEY" ]; then
+            echo "::error::VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY repository variables are required"
+            exit 1
+          fi
+          npm run build
+
+      # Live updates (#113): the same web build as a zip, plus the native
+      # fingerprint it was built against (computed before cap sync, like the
+      # value built into the app).
+      - name: Package web bundle
+        id: bundle
+        run: |
+          echo "fingerprint=$(node scripts/release/nativeFingerprint.mjs)" >> "$GITHUB_OUTPUT"
+          mkdir -p dist-apk
+          (cd dist && zip -qr "../dist-apk/web-${{ steps.version.outputs.value }}.zip" .)
 
       - name: Sync web assets into Android project
         run: npx cap sync android
@@ -86,13 +107,23 @@ jobs:
 
       - name: Collect APK
         run: |
-          mkdir -p dist-apk
           cp android/app/build/outputs/apk/release/app-release.apk \
             "dist-apk/thd-room-finder-${{ steps.version.outputs.value }}.apk"
+
+      # What installed apps read from releases/latest/download/update.json.
+      - name: Write update manifest
+        run: |
+          node scripts/release/updateManifest.mjs "$RELEASE_TAG" "${{ steps.bundle.outputs.fingerprint }}" \
+            "dist-apk/web-${{ steps.version.outputs.value }}.zip" \
+            "dist-apk/thd-room-finder-${{ steps.version.outputs.value }}.apk" > dist-apk/update.json
+          cat dist-apk/update.json
 
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.RELEASE_TAG }}
-          files: dist-apk/*.apk
+          files: |
+            dist-apk/*.apk
+            dist-apk/*.zip
+            dist-apk/update.json
           generate_release_notes: true

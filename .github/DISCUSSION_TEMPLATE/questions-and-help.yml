@@ -1,0 +1,13 @@
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: What's your question?
+      description: What are you trying to do, and where are you stuck?
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Anything else? (optional)
+      description: Device, browser or app version, a room code, or what you've tried.

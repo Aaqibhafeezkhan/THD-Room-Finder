@@ -2,8 +2,9 @@
 
 > **Status:** selected scope for milestone **M1 — Focus sessions** (epic
 > [#16](https://github.com/arudaev/THD-Room-Finder/issues/16)). Decisions are
-> recorded in the [charter](../../PROJECT-CHARTER.md) and
-> [ADR 0002](../architecture/adr/0002-focus-session-lifecycle.md). Visual
+> recorded in the [charter](../../PROJECT-CHARTER.md),
+> [ADR 0002](../architecture/adr/0002-focus-session-lifecycle.md) and
+> [ADR 0004](../architecture/adr/0004-focus-rhythm.md). Visual
 > design follows the [design brief](../../design/brief/README.md).
 
 ## The idea in one paragraph
@@ -11,7 +12,8 @@
 Room Finder already answers *"where is a free room, and for how long?"*. That
 question only matters a few weeks a year, around exams. Phase 1 adds the
 everyday reason to open the app: **you go to a room you like and start a focus
-session.** Alone, it claims the room quietly. Open to your batch, it becomes an
+session**: blocks of focus with short breaks, in a rhythm you choose. The
+focus is the point; the room is the reward. Alone, it claims the room quietly. Open to your batch, it becomes an
 invitation: your classmates see a violet room on the map and can come and
 study with you. Every session you finish fills in your personal focus graph.
 
@@ -58,11 +60,13 @@ sequenceDiagram
 
 | State | What the student sees | Primary action |
 |---|---|---|
-| Free, no activity | Teal status card "free for 6 h" | **Start focus** (filled, primary blue) |
+| Free, no activity | Teal status card "free for 6 h"; under Start, the rhythm for this session ("Pomodoro · 25 min focus, 5 min break"), tap to change | **Start focus** (filled, primary blue) |
 | Free, your batch is studying here | Teal status card + violet row "AIN 7 · 2 studying" | **Join focus** (starts your own session, public) |
 | Claimed by someone else | Dark-purple row "Focus session · 40 min" under the status card | Start focus still possible: it is a shared room, not a booking |
 | Lecture now | Red status card | None (focus unavailable) |
-| Your session active | Violet focus surface: timer, planned end, **Private / Public** segmented control (Private selected by default), End | End |
+| Your session, focus block | Violet focus surface: countdown to the break, "Block 2 of 3", a track of blocks and breaks, planned end, **Private / Public** (Private by default; only with a study profile), End | End |
+| Your session, break | The same surface, "Break · 7:40 left", what comes next | End |
+| Your session, break over | "Break's over" with **Start block 3**; 10 minutes to answer | Start block 3 |
 
 Facility tags (Beamer, Whiteboard, EDV…) collapse into one summary line under
 the status card so the Start focus action stays above the fold.
@@ -73,9 +77,10 @@ the status card so the Start focus action stays above the fold.
   claim tints the overline and duration dark purple and moves the row into the
   claimed bucket ([ordering](#ordering)).
 - Map buildings keep the teal availability tint. A building with a public
-  session of your batch gets a **violet marker** (ring or badge; the design
-  session decides) with the count. Claims show as a small dark-purple dot
-  count. **No focus signal ever recolours lecture occupancy.**
+  session of your batch gets a **violet ring** on its roof; claims show as a
+  small dark-purple dot with a count. Text labels ("AIN 7 · 2") appear only
+  on the **tapped building**, so the overview stays quiet on small screens.
+  **No focus signal ever recolours lecture occupancy.**
 - Every map signal has a list equivalent for screen readers and colour-blind
   users.
 
@@ -83,13 +88,33 @@ the status card so the Start focus action stays above the fold.
 
 Navigation becomes **Campus · Rooms · Profile**.
 
-| Section | Contents |
+The Profile holds only what a student checks or updates **almost daily**:
+their focus graph and saved rooms. Everything set once a semester or less
+lives in **Settings**, behind one gear icon. Later phases add to Profile only
+if they pass the same test.
+
+| Profile | Contents |
 |---|---|
-| Study profile | Programme (e.g. AIN), intake term → shown as "AIN 7", display name, default sharing mode |
-| Focus graph | 20 weeks of study days, streak, total hours, **Share** |
+| Header | Avatar initial, display name, batch chip ("AIN 7"), gear → Settings. Signed out: "Set Up Study Profile" |
+| Focus graph | GitHub-style contribution calendar: square cells, rows Mon–Sun, one column per week, current week rightmost, five levels from near-white to the darkest violet, counted in Pomodoro blocks per day (1 · 2–3 · 4–6 · 7+); streak and total; **Share** |
 | Saved rooms | Today's Saved list with live status (unchanged behaviour, new home) |
-| Appearance | Theme, language, personal focus accent (vetted swatches; meanings of free/soon/claimed/lecture stay fixed) |
-| Account | Sign in with email code, export focus history, delete profile |
+
+| Settings | Contents |
+|---|---|
+| Study profile | Programme (e.g. AIN), intake term → shown as "AIN 7", display name |
+| Sharing | Default mode (Private); the one place that explains what others see |
+| Focus | Default rhythm (Deep, Pomodoro, Lecture, Open or Custom), notifications |
+| Appearance | Theme, language, graph colour (Violet, Orchid or Graphite, each with a hand-tuned ramp; it colours the focus graph and share card only, while session and batch signals stay violet and free/soon/claimed/lecture never change), quiet preference |
+| Account | Sign in with email code, export/import focus history, sign out, delete profile |
+
+### Sharing the focus graph
+
+| Action | What happens |
+|---|---|
+| **Share link** (main) | The app builds a link that carries a snapshot of the current semester's graph. Chat apps show the card as the link preview; opening it lands on the campus map. Copy Link is the main action. Nothing is stored on a server ([ADR 0003](../architecture/adr/0003-focus-graph-share-links.md)) |
+| **Save image** | The same card as a PNG (1080×1080, ≤ 150 KB), for stories and apps without link previews |
+| Card contents | Hours this semester, streak, the semester grid (first week of the semester on the left, future days blank), app name and URL. Name and batch only if switched on |
+| Theme and accent | The sender's app theme (light/dark) and focus accent at the moment of sharing |
 
 ## Batches
 
@@ -112,7 +137,7 @@ the required duration are applied first. Then:
 |---|---|---|
 | 1 | Free, no focus activity, **or** your batch is studying there publicly | Longest free first; main campus tiebreak |
 | 2 | Closing soon (free ≤ 40 min) | Longest free first |
-| 3 | Claimed by a focus session (private, or another batch's public session) | Longest free first |
+| 3 | Claimed by a focus session (private, or another batch's public session); a claimed room closing soon stays here with an amber duration | Longest free first |
 | 4 | Lecture now | Soonest free first |
 
 A **quiet preference** (Profile → Appearance) treats your own batch's sessions
@@ -135,37 +160,69 @@ All pairs meet WCAG AA, most AAA; ratios are listed in the
 [design brief](../../design/brief/02-focus-layer.md). Colour is never the only
 carrier of meaning: every signal also has a label and an icon.
 
-## Session rules (summary of ADR 0002)
+## Session rules (summary of ADR 0002 and ADR 0004)
 
-- Start uses the room's next lecture as the default end, capped at 3 hours.
-- **Private is the default.** Public is one tap away and can be switched back.
-- Locking the phone does not end the session. A 60-minute check-in lease ends
-  forgotten sessions; Android reminds with a local notification.
+- A session is a **rhythm of focus blocks and breaks**. Pomodoro (25 min
+  focus, 5 min break, 15 after every 4th block) is the default; Deep (50/10,
+  listed first), Lecture (90/15), Open (a stopwatch) and Custom are one tap
+  away.
+- The plan ends before the room's next lecture, at closing time or after
+  3 hours, whichever comes first, and never on a break.
+- After each break the app asks to **start the next block**. With no answer
+  within 10 minutes the session ends at the end of the last block, so a
+  forgotten session holds a room for at most one block and break more.
+- Only focus time counts for the focus graph. In the Android app, time spent
+  in other apps during a block is subtracted.
+- **Without a study profile, focus stays on the device**: no claim, nothing
+  sent. Offline works the same way.
+- **Signed in, the focus graph follows you** to every device you sign in on:
+  dates and minutes sync, rooms stay on the device. A running shared session
+  shows on your other devices too
+  ([ADR 0005](../architecture/adr/0005-focus-across-devices.md)).
+- With a study profile, **Private is the default**. Public is one tap away
+  and can be switched back.
+- Locking the phone does not end the session. A notification shows the phase
+  and a countdown; in the Android app it is on the lock screen too.
 - One active session per person. Starting elsewhere ends the old one.
-- A lecture starting in the room ends the session.
-- Signed out or offline: a local timer that publishes nothing but still counts
-  for the focus graph.
+
+### Joining and ending
+
+Phase 1 has **no shared group object**. Every session belongs to one person.
+
+| Action | What happens |
+|---|---|
+| **Join** on a batch row | Starts *your own* session in that room, **Public**, in the **same rhythm as the batch** so everyone breaks together. Joining during a break starts focus right away. Your planned end comes from the same rules as Start |
+| **End** | Ends **only your** session. Nobody else's timer changes |
+| The person you joined ends | Your session keeps running. The batch row's count drops by one |
+| Last Public session in the room ends | The violet batch row disappears; remaining Private sessions still show as a claim |
+| Switch to Private after joining | Allowed; you leave the batch count and show as a claim |
+| No answer after a break | Your session ends at the end of your last block; the batch row's count drops by one |
+
+Groups with invitations, friends outside the batch and a group object are
+Phase 2 ([later phases](later-phases.md)).
 
 ## Privacy promises
 
 | Promise | How it is kept |
 |---|---|
 | Outsiders never learn who is in a claimed room | The service returns anonymous claims to non-batch viewers; names never leave the server for them |
-| No attendance history on a server | Completed sessions are stored on the device only |
+| No attendance history on a server | Signed out, completed sessions stay on the device. Signed in, only dates and minutes sync so the graph matches across devices; rooms never leave the device ([ADR 0005](../architecture/adr/0005-focus-across-devices.md)) |
 | Self-declared batch, honest wording | Setup explains that batch matching is self-declared and that others see a claim |
-| Delete means delete | Profile deletion ends sessions and removes identity |
+| Delete means delete | Profile deletion ends sessions and removes the identity and the synced history; Clear history clears the account copy too |
 | No location tracking | The app never reads GPS; a session is linked to the room the student picked |
 
 ## Acceptance examples
 
 - Starting in E212 at 10:15 with a lecture at 16:00 plans an end of 13:15 (3 h cap).
 - A batchmate sees "AIN 7 · studying"; a KI student sees only "Focus session".
-- Locking the phone for 50 minutes keeps the session; 61 minutes without a check-in expires it.
+- Deep rhythm from 09:30 with a lecture at 11:30: block 1 until 10:20, a break until 10:30, block 2 until 11:20, and the session ends.
+- Not answering "Start block 2" by 10:40 ends that session at 10:20 with 50 minutes recorded.
+- Locking the phone for a whole block keeps the session.
 - A lecture at 12:00 ends a session that started at 11:30.
 - With presence unavailable, the list falls back to schedule order and says "activity unknown".
 - Time travel to tomorrow 09:00 shows no focus signals.
 
 ## Out of scope for Phase 1
 
-Group timers, chat, friends, organization accounts, events, city layer, push
+Group objects and invitations, chat, friends, organization accounts, events, city layer, push
 from a server, leaderboards. See [later phases](later-phases.md).

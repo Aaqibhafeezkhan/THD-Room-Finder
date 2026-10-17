@@ -72,6 +72,9 @@ trailers or "generated with" lines to commits or PRs.
 
 ## For maintainers and AI agents
 
+[Discussions](docs/contributing/discussions.md) covers the categories and when
+a conversation becomes an issue.
+
 [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md) hold the agent rules: agents
 open PRs but never merge, enable auto-merge, force-push shared branches or
 publish releases.

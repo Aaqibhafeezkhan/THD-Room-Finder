@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/tokens/colors.css">
+<link rel="stylesheet" href="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/tokens/typography.css">
+<link rel="stylesheet" href="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/tokens/breakpoints.css">
+<link rel="stylesheet" href="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/tokens/elevation.css">
+<link rel="stylesheet" href="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/styles.css">
+<script src="_ds/thd-room-finder-design-system-de229b71-7390-4512-805f-a450449acdf8/_ds_bundle.js"></script>
+<script src="campus-data.js"></script>
+<script src="context-lite.js"></script>
+<style>
+html, body { margin: 0; background: var(--md-bg); }
+* { box-sizing: border-box; }
+a { color: var(--md-primary); }
+a:hover { color: var(--md-on-primary-container); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+</helmet>
+
+<div data-theme="{{ pageTheme }}" style="min-height:100vh;background:var(--md-bg);color:var(--md-on-surface);font-family:var(--font-sans);padding:32px 40px 80px;display:flex;flex-direction:column;gap:32px">
+
+  <header style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:24px">
+    <div style="display:flex;flex-direction:column;gap:6px;max-width:640px">
+      <div style="font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--md-on-surface-variant)">Phase 1 · Design session D3</div>
+      <h1 style="margin:0;font-size:32px;font-weight:400;line-height:1.2">List and map signals</h1>
+      <p style="margin:0;font-size:14px;line-height:1.5;color:var(--md-on-surface-variant);text-wrap:pretty">One badge per room card, one ring per building. The duration stays the hero, the schedule always wins, and every signal on the map is also a line in a list.</p>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <sc-for list="{{ viewChips }}" as="c" hint-placeholder-count="4">
+          <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Chip" active="{{ c.active }}" onClick="{{ c.go }}" hint-size="auto,44px">{{ c.label }}</x-import>
+        </sc-for>
+      </div>
+      <div style="display:flex;gap:8px">
+        <sc-for list="{{ themeChips }}" as="c" hint-placeholder-count="2">
+          <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Chip" active="{{ c.active }}" onClick="{{ c.go }}" hint-size="auto,44px">{{ c.label }}</x-import>
+        </sc-for>
+      </div>
+      <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.LanguageToggle" value="{{ lang }}" onChange="{{ setLang }}" hint-size="190px,46px"></x-import>
+    </div>
+  </header>
+
+  <sc-if value="{{ showStateChips }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--md-on-surface-variant)">{{ stateChipsTitle }}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <sc-for list="{{ stateChips }}" as="c" hint-placeholder-count="12">
+          <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Chip" active="{{ c.active }}" onClick="{{ c.go }}" hint-size="auto,44px">{{ c.label }}</x-import>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-for list="{{ sections }}" as="sec" hint-placeholder-count="1">
+    <section style="display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <h2 style="margin:0;font-size:20px;font-weight:400">{{ sec.title }}</h2>
+        <p style="margin:0;font-size:13px;color:var(--md-on-surface-variant);max-width:760px;text-wrap:pretty">{{ sec.sub }}</p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start">
+        <sc-for list="{{ sec.frames }}" as="f" hint-placeholder-count="2">
+          <div id="{{ f.id }}" style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;gap:8px;max-width:{{ f.boxW }}px;flex-wrap:wrap">
+              <span style="font:500 12px var(--font-mono);padding:2px 8px;border-radius:var(--radius-xs);background:var(--md-on-surface);color:var(--md-surface)">{{ f.id }}</span>
+              <span style="font-size:13px;font-weight:500">{{ f.caption }}</span>
+              <span style="font-size:12px;color:var(--md-on-surface-variant)">{{ f.tag }}</span>
+            </div>
+            <div style="width:{{ f.boxW }}px;height:{{ f.boxH }}px;overflow:hidden;border-radius:{{ f.radius }};box-shadow:var(--md-shadow-2)">
+              <div data-theme="{{ f.theme }}" lang="{{ f.lang }}" data-screen-label="{{ f.id }} {{ f.caption }}" style="width:{{ f.w }}px;height:{{ f.h }}px;transform:scale({{ f.scale }});transform-origin:0 0;position:relative;display:flex;flex-direction:column;background:var(--md-bg);color:var(--md-on-surface);font-family:var(--font-sans);overflow:hidden">
+
+                <sc-if value="{{ f.isPhone }}" hint-placeholder-val="{{ true }}">
+                  <div style="height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:13px;font-weight:500;background:var(--md-surface);color:var(--md-on-surface)">
+                    <span style="font-family:var(--font-mono);font-variant-numeric:tabular-nums">10:00</span>
+                  </div>
+                </sc-if>
+
+                <div style="flex:1;min-height:0;display:flex">
+                  <sc-if value="{{ f.isDesktop }}" hint-placeholder-val="{{ false }}">
+                    <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.AdaptiveNav" variant="drawer" items="{{ f.nav }}" active="{{ f.navActive }}" onSelect="{{ f.onNav }}" hint-size="280px,100%"></x-import>
+                  </sc-if>
+                  <sc-if value="{{ f.isTablet }}" hint-placeholder-val="{{ false }}">
+                    <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.AdaptiveNav" variant="rail" items="{{ f.nav }}" active="{{ f.navActive }}" onSelect="{{ f.onNav }}" hint-size="80px,100%"></x-import>
+                  </sc-if>
+
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;min-height:0">
+                    <sc-if value="{{ f.isPhone }}" hint-placeholder-val="{{ true }}">
+                      <div style="position:relative;flex-shrink:0">
+                        <sc-if value="{{ f.phoneBrand }}" hint-placeholder-val="{{ true }}">
+                          <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.AppBar" mode="brand" hint-size="100%,64px"></x-import>
+                        </sc-if>
+                        <sc-if value="{{ f.phoneBack }}" hint-placeholder-val="{{ false }}">
+                          <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.AppBar" mode="back" title="{{ f.backTitle }}" onBack="{{ f.onBack }}" hint-size="100%,64px"></x-import>
+                        </sc-if>
+                        <sc-if value="{{ f.gearPhone }}" hint-placeholder-val="{{ false }}">
+                          <div style="position:absolute;right:8px;top:10px">
+                            <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.IconButton" label="{{ f.s.gear }}" onClick="{{ f.onGear }}" hint-size="44px,44px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="21" x2="14" y1="4" y2="4"></line><line x1="10" x2="3" y1="4" y2="4"></line><line x1="21" x2="12" y1="12" y2="12"></line><line x1="8" x2="3" y1="12" y2="12"></line><line x1="21" x2="16" y1="20" y2="20"></line><line x1="12" x2="3" y1="20" y2="20"></line><line x1="14" x2="14" y1="2" y2="6"></line><line x1="8" x2="8" y1="10" y2="14"></line><line x1="16" x2="16" y1="18" y2="22"></line></svg></x-import>
+                          </div>
+                        </sc-if>
+                        <sc-if value="{{ f.pillPhone }}" hint-placeholder-val="{{ false }}">
+                          <div style="position:absolute;right:{{ f.pillRight }};top:14px">
+                            <button type="button" aria-label="{{ f.pillAria }}" style="display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 10px;border:none;border-radius:var(--radius-full);background:var(--md-focus);color:var(--md-on-focus);font:500 13px var(--font-sans);cursor:pointer;box-shadow:var(--md-shadow-1)">
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="10" x2="14" y1="2" y2="2"></line><line x1="12" x2="15" y1="14" y2="11"></line><circle cx="12" cy="14" r="8"></circle></svg>
+                              <span style="font-family:var(--font-mono);font-variant-numeric:tabular-nums">24:10</span>
+                              <span>E 212</span>
+                            </button>
+                          </div>
+                        </sc-if>
+                      </div>
+                    </sc-if>
+
+                    <div style="flex:1;min-height:0;display:flex;flex-direction:{{ f.bodyDir }}">
+
+                      <sc-if value="{{ f.showMap }}" hint-placeholder-val="{{ false }}">
+                        <div style="position:relative;order:{{ f.mapOrder }};flex:{{ f.mapFlex }};min-width:0;min-height:0;overflow:hidden">
+                          <div aria-hidden="true" data-sig="{{ f.sig }}" style="position:absolute;inset:0">
+                            <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.CampusMap" campus="{{ campus }}" context="{{ ctx }}" mode="{{ f.theme }}" selected-key="{{ f.selKey }}" onSelect="{{ f.onBld }}" interactive="{{ f.mapInteractive }}" show-trees="{{ false }}" hint-size="100%,100%"></x-import>
+                          </div>
+                          <sc-if value="{{ f.gearWide }}" hint-placeholder-val="{{ false }}">
+                            <div style="position:absolute;top:12px;right:12px;border-radius:var(--radius-full);background:var(--md-surface);box-shadow:var(--md-shadow-1)">
+                              <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.IconButton" label="{{ f.s.gear }}" onClick="{{ f.onGear }}" hint-size="44px,44px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="21" x2="14" y1="4" y2="4"></line><line x1="10" x2="3" y1="4" y2="4"></line><line x1="21" x2="12" y1="12" y2="12"></line><line x1="8" x2="3" y1="12" y2="12"></line><line x1="21" x2="16" y1="20" y2="20"></line><line x1="12" x2="3" y1="20" y2="20"></line><line x1="14" x2="14" y1="2" y2="6"></line><line x1="8" x2="8" y1="10" y2="14"></line><line x1="16" x2="16" y1="18" y2="22"></line></svg></x-import>
+                            </div>
+                          </sc-if>
+                          <sc-if value="{{ f.showLegend }}" hint-placeholder-val="{{ true }}">
+                          <div style="position:absolute;left:12px;bottom:12px;max-width:calc(100% - 24px);display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:8px 12px;border-radius:var(--radius-m);background:var(--md-surface);color:var(--md-on-surface);box-shadow:var(--md-shadow-1);font-size:12px;line-height:1.3">
+                            <span style="display:inline-flex;align-items:center;gap:6px"><i aria-hidden="true" style="width:16px;height:12px;border-radius:3px;flex-shrink:0;background:var(--md-tertiary-container);box-shadow:inset 0 0 0 1.5px var(--md-tertiary)"></i>{{ f.s.legFree }}</span>
+                            <sc-if value="{{ f.legLive }}" hint-placeholder-val="{{ true }}">
+                              <span style="display:inline-flex;align-items:center;gap:6px">
+                                <sc-if value="{{ f.optA }}" hint-placeholder-val="{{ true }}"><i aria-hidden="true" style="width:16px;height:12px;border-radius:3px;flex-shrink:0;background:var(--md-tertiary-container);box-shadow:inset 0 0 0 2.5px var(--md-focus)"></i></sc-if>
+                                <sc-if value="{{ f.optB }}" hint-placeholder-val="{{ false }}"><i aria-hidden="true" style="width:16px;height:12px;border-radius:3px;flex-shrink:0;background:var(--md-focus-container);box-shadow:inset 0 0 0 1.5px var(--md-focus)"></i></sc-if>
+                                {{ f.legBatch }}</span>
+                              <span style="display:inline-flex;align-items:center;gap:6px"><i aria-hidden="true" style="width:12px;height:12px;border-radius:var(--radius-full);flex-shrink:0;background:var(--md-claimed)"></i>{{ f.s.legClaim }}</span>
+                            </sc-if>
+                            <sc-if value="{{ f.legNote }}" hint-placeholder-val="{{ false }}">
+                              <span style="display:inline-flex;align-items:center;gap:6px;color:var(--md-on-surface-variant)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>{{ f.legNoteText }}</span>
+                            </sc-if>
+                          </div>
+                          </sc-if>
+                        </div>
+                      </sc-if>
+
+                      <sc-if value="{{ f.showList }}" hint-placeholder-val="{{ true }}">
+                        <div style="order:{{ f.listOrder }};flex:{{ f.listFlex }};min-width:0;min-height:0;overflow-y:auto;scrollbar-width:thin;border-right:{{ f.listBorder }};background:var(--md-bg)">
+                          <div style="max-width:{{ f.listMax }};margin:0 auto;padding:{{ f.listPad }};display:flex;flex-direction:column;gap:16px">
+
+                            <sc-if value="{{ f.hdrShow }}" hint-placeholder-val="{{ true }}">
+                              <div style="display:flex;align-items:center;gap:8px;min-height:44px">
+                                <sc-if value="{{ f.hdrBack }}" hint-placeholder-val="{{ false }}">
+                                  <div style="margin-left:-8px">
+                                    <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.IconButton" label="{{ f.s.back }}" onClick="{{ f.onBack }}" hint-size="44px,44px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg></x-import>
+                                  </div>
+                                </sc-if>
+                                <div style="flex:1;min-width:0">
+                                  <h1 style="margin:0;font-size:{{ f.hdrSize }};font-weight:{{ f.hdrWeight }};line-height:1.25">{{ f.hdrTitle }}</h1>
+                                  <sc-if value="{{ f.hdrHasSub }}" hint-placeholder-val="{{ true }}">
+                                    <div style="font-size:13px;color:var(--md-on-surface-variant);margin-top:2px;text-wrap:pretty">{{ f.hdrSub }}</div>
+                                  </sc-if>
+                                </div>
+                                <sc-if value="{{ f.pillWide }}" hint-placeholder-val="{{ false }}">
+                                  <button type="button" aria-label="{{ f.pillAria }}" style="display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 10px;border:none;border-radius:var(--radius-full);background:var(--md-focus);color:var(--md-on-focus);font:500 13px var(--font-sans);cursor:pointer;box-shadow:var(--md-shadow-1);flex-shrink:0">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="10" x2="14" y1="2" y2="2"></line><line x1="12" x2="15" y1="14" y2="11"></line><circle cx="12" cy="14" r="8"></circle></svg>
+                                    <span style="font-family:var(--font-mono);font-variant-numeric:tabular-nums">24:10</span>
+                                    <span>E 212</span>
+                                  </button>
+                                </sc-if>
+                              </div>
+                            </sc-if>
+
+                            <sc-if value="{{ f.nTime }}" hint-placeholder-val="{{ false }}">
+                              <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:-4px">
+                                <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Chip" active="{{ true }}" hint-size="auto,44px">{{ f.s.timeChip }} ✕</x-import>
+                                <span style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--md-on-surface-variant);text-wrap:pretty">
+                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4"></path><path d="M8 2v4"></path><path d="M3 10h18"></path></svg>{{ f.s.timeNote }}</span>
+                              </div>
+                            </sc-if>
+                            <sc-if value="{{ f.nQuiet }}" hint-placeholder-val="{{ false }}">
+                              <div style="display:flex;align-items:center;gap:8px;margin-top:-4px;padding:0 4px;font-size:13px;color:var(--md-on-surface-variant)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                                <span style="text-wrap:pretty">{{ f.quietNote }}</span>
+                              </div>
+                            </sc-if>
+                            <sc-if value="{{ f.nUnknown }}" hint-placeholder-val="{{ false }}">
+                              <div role="status" style="display:flex;align-items:center;gap:8px;margin-top:-4px;padding:0 4px;font-size:13px;color:var(--md-on-surface-variant)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg>
+                                <span>{{ f.s.unknownNote }}</span>
+                              </div>
+                            </sc-if>
+
+                            <sc-if value="{{ f.isGroups }}" hint-placeholder-val="{{ true }}">
+                              <sc-for list="{{ f.groups }}" as="g" hint-placeholder-count="2">
+                                <section aria-label="{{ g.aria }}" style="display:flex;flex-direction:column;gap:8px">
+                                  <sc-if value="{{ g.hasTitle }}" hint-placeholder-val="{{ true }}">
+                                    <h2 style="margin:0;padding:0 4px;font-size:13px;font-weight:500;color:var(--md-on-surface-variant)">{{ g.title }}</h2>
+                                  </sc-if>
+                                  <div style="display:grid;grid-template-columns:{{ f.cols }};gap:8px">
+                                    <sc-for list="{{ g.rooms }}" as="r" hint-placeholder-count="3">
+                                      <a href="#" onClick="{{ r.go }}" aria-label="{{ r.aria }}" style="display:flex;align-items:center;gap:16px;padding:14px 16px;border-radius:var(--radius-l);background:var(--md-surface);box-shadow:var(--md-shadow-1);text-decoration:none;color:inherit;cursor:pointer;outline:{{ r.outline }};outline-offset:-2px;transition:box-shadow 150ms cubic-bezier(0.2,0,0,1)" style-hover="box-shadow:var(--md-shadow-2)">
+                                        <div style="flex:1;min-width:0">
+                                          <div style="font-weight:500;font-size:16px;color:var(--md-on-surface)">{{ r.name }}</div>
+                                          <div style="font-size:13px;color:var(--md-on-surface-variant);margin-top:2px">{{ r.meta }}</div>
+                                          <sc-if value="{{ r.isBatch }}" hint-placeholder-val="{{ false }}">
+                                            <span style="display:inline-flex;align-items:center;gap:4px;min-height:24px;margin-top:6px;padding:2px 8px;border-radius:var(--radius-s);background:var(--md-focus-container);color:var(--md-on-focus-container);font-size:12px;font-weight:500;line-height:1.3">
+                                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>{{ r.badge }}</span>
+                                          </sc-if>
+                                          <sc-if value="{{ r.isClaim }}" hint-placeholder-val="{{ false }}">
+                                            <span style="display:inline-flex;align-items:center;gap:4px;min-height:24px;margin-top:6px;padding:2px 8px;border-radius:var(--radius-s);background:var(--md-claimed-container);color:var(--md-on-claimed-container);font-size:12px;font-weight:500;line-height:1.3">
+                                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><circle cx="12" cy="8" r="5"></circle><path d="M20 21a8 8 0 0 0-16 0"></path></svg>{{ r.badge }}</span>
+                                          </sc-if>
+                                          <sc-if value="{{ r.isOwn }}" hint-placeholder-val="{{ false }}">
+                                            <span style="display:inline-flex;align-items:center;gap:4px;min-height:24px;margin-top:6px;padding:2px 8px;border-radius:var(--radius-s);background:var(--md-focus);color:var(--md-on-focus);font-size:12px;font-weight:500;line-height:1.3">
+                                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><line x1="10" x2="14" y1="2" y2="2"></line><line x1="12" x2="15" y1="14" y2="11"></line><circle cx="12" cy="14" r="8"></circle></svg>{{ r.badge }}</span>
+                                          </sc-if>
+                                        </div>
+                                        <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:2px;text-align:right;color:{{ r.tone }}">
+                                          <div style="font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase">{{ r.over }}</div>
+                                          <div style="font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:18px;font-weight:500;line-height:1.1;white-space:nowrap">{{ r.duration }}</div>
+                                        </div>
+                                      </a>
+                                    </sc-for>
+                                  </div>
+                                </section>
+                              </sc-for>
+                            </sc-if>
+
+                            <sc-if value="{{ f.isBlds }}" hint-placeholder-val="{{ false }}">
+                              <div style="background:var(--md-surface);border-radius:var(--radius-l);box-shadow:var(--md-shadow-1);overflow:hidden">
+                                <sc-for list="{{ f.blds }}" as="b" hint-placeholder-count="6">
+                                  <button type="button" onClick="{{ b.go }}" aria-label="{{ b.aria }}" style="width:100%;display:flex;align-items:center;gap:14px;min-height:64px;padding:10px 16px;border:none;border-top:{{ b.border }};background:{{ b.bg }};color:var(--md-on-surface);font-family:var(--font-sans);text-align:left;cursor:pointer" style-hover="background:color-mix(in srgb, var(--md-on-surface) 6%, transparent)">
+                                    <span aria-hidden="true" style="width:40px;height:40px;border-radius:var(--radius-m);background:var(--md-surface-variant);color:var(--md-on-surface-variant);display:grid;place-items:center;flex-shrink:0;font:500 13px var(--font-mono)">{{ b.label }}</span>
+                                    <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+                                      <span style="font-size:15px;font-weight:500;line-height:1.3;text-wrap:pretty">{{ b.name }}</span>
+                                      <span style="font-size:13px;color:var(--md-on-surface-variant)">{{ b.freeLine }}</span>
+                                      <sc-if value="{{ b.hasBadges }}" hint-placeholder-val="{{ false }}">
+                                        <span style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">
+                                          <sc-if value="{{ b.batch }}" hint-placeholder-val="{{ false }}">
+                                            <span style="display:inline-flex;align-items:center;gap:4px;min-height:24px;padding:2px 8px;border-radius:var(--radius-s);background:var(--md-focus-container);color:var(--md-on-focus-container);font-size:12px;font-weight:500;line-height:1.3">
+                                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>{{ b.batch }}</span>
+                                          </sc-if>
+                                          <sc-if value="{{ b.own }}" hint-placeholder-val="{{ false }}">
+                                            <span style="display:inline-flex;align-items:center;gap:4px;min-height:24px;padding:2px 8px;border-radius:var(--radius-s);background:var(--md-focus);color:var(--md-on-focus);font-size:12px;font-weight:500;line-height:1.3">
+                                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><line x1="10" x2="14" y1="2" y2="2"></line><line x1="12" x2="15" y1="14" y2="11"></line><circle cx="12" cy="14" r="8"></circle></svg>{{ b.own }}</span>
+                                          </sc-if>
+                                          <sc-if value="{{ b.claims }}" hint-placeholder-val="{{ false }}">
+                                            <span style="display:inline-flex;align-items:center;gap:4px;min-height:24px;padding:2px 8px;border-radius:var(--radius-s);background:var(--md-claimed-container);color:var(--md-on-claimed-container);font-size:12px;font-weight:500;line-height:1.3">
+                                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><circle cx="12" cy="8" r="5"></circle><path d="M20 21a8 8 0 0 0-16 0"></path></svg>{{ b.claims }}</span>
+                                          </sc-if>
+                                        </span>
+                                      </sc-if>
+                                    </span>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0;color:var(--md-on-surface-variant)"><path d="m9 18 6-6-6-6"></path></svg>
+                                  </button>
+                                </sc-for>
+                              </div>
+                            </sc-if>
+
+                            <sc-if value="{{ f.isLoading }}" hint-placeholder-val="{{ false }}">
+                              <div aria-busy="true" style="display:flex;flex-direction:column;gap:8px">
+                                <span role="status" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">{{ f.s.loading }}</span>
+                                <div style="width:96px;height:12px;margin:2px 4px;border-radius:var(--radius-xs);background:var(--md-surface-variant)"></div>
+                                <sc-for list="{{ f.skel }}" as="k" hint-placeholder-count="5">
+                                  <div style="height:72px;border-radius:var(--radius-l);background:var(--md-surface);box-shadow:var(--md-shadow-1);padding:14px 16px;display:flex;align-items:center;gap:12px">
+                                    <div style="flex:1;display:flex;flex-direction:column;gap:8px"><div style="width:72px;height:14px;border-radius:var(--radius-xs);background:var(--md-surface-variant)"></div><div style="width:128px;height:10px;border-radius:var(--radius-xs);background:var(--md-surface-variant)"></div></div>
+                                    <div style="width:48px;height:22px;border-radius:var(--radius-xs);background:var(--md-surface-variant)"></div>
+                                  </div>
+                                </sc-for>
+                              </div>
+                            </sc-if>
+                          </div>
+                        </div>
+                      </sc-if>
+
+                      <sc-if value="{{ f.showDetail }}" hint-placeholder-val="{{ false }}">
+                        <div style="flex:1;min-width:0;overflow-y:auto">
+                          <div style="max-width:600px;padding:32px 32px 40px;display:flex;flex-direction:column;gap:12px">
+                            <sc-if value="{{ f.isLoading }}" hint-placeholder-val="{{ false }}">
+                              <div style="width:140px;height:28px;border-radius:var(--radius-xs);background:var(--md-surface-variant)"></div>
+                              <div style="height:76px;border-radius:var(--radius-l);background:var(--md-surface);box-shadow:var(--md-shadow-1)"></div>
+                            </sc-if>
+                            <sc-if value="{{ f.hasD }}" hint-placeholder-val="{{ true }}">
+                              <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:4px">
+                                <h1 style="margin:0;font:400 32px var(--font-mono)">{{ f.d.name }}</h1>
+                                <span style="font-size:14px;color:var(--md-on-surface-variant)">{{ f.d.meta }}</span>
+                              </div>
+                              <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.StatusCard" status="{{ f.d.status }}" title="{{ f.d.title }}" sub="{{ f.d.sub }}" duration="{{ f.d.duration }}" hint-size="100%,76px"></x-import>
+                              <sc-if value="{{ f.d.batch }}" hint-placeholder-val="{{ false }}">
+                                <div role="status" style="display:flex;align-items:center;gap:12px;padding:12px 12px 12px 14px;border-radius:var(--radius-l);background:var(--md-focus-container);color:var(--md-on-focus-container)">
+                                  <span style="width:36px;height:36px;border-radius:var(--radius-full);background:var(--md-focus);color:var(--md-on-focus);display:grid;place-items:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span>
+                                  <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500">{{ f.d.batch }}</div><div style="font-size:12px;margin-top:2px">{{ f.s.batchSub }}</div></div>
+                                  <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Button" variant="tonal" size="small" dc-props="{{ btn.join }}" hint-size="auto,44px">{{ f.s.join }}</x-import>
+                                </div>
+                              </sc-if>
+                              <sc-if value="{{ f.d.claim }}" hint-placeholder-val="{{ false }}">
+                                <div role="status" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius-l);background:var(--md-claimed-container);color:var(--md-on-claimed-container)">
+                                  <span style="width:36px;height:36px;border-radius:var(--radius-full);background:var(--md-claimed);color:var(--md-on-claimed);display:grid;place-items:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="5"></circle><path d="M20 21a8 8 0 0 0-16 0"></path></svg></span>
+                                  <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500">{{ f.d.claim }}</div><div style="font-size:12px;margin-top:2px;line-height:1.4;text-wrap:pretty">{{ f.s.claimSub }}</div></div>
+                                </div>
+                              </sc-if>
+                              <sc-if value="{{ f.d.own }}" hint-placeholder-val="{{ false }}">
+                                <div role="status" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius-l);background:var(--md-focus-container);color:var(--md-on-focus-container)">
+                                  <span style="width:36px;height:36px;border-radius:var(--radius-full);background:var(--md-focus);color:var(--md-on-focus);display:grid;place-items:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="10" x2="14" y1="2" y2="2"></line><line x1="12" x2="15" y1="14" y2="11"></line><circle cx="12" cy="14" r="8"></circle></svg></span>
+                                  <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500">{{ f.d.own }}</div><div style="font-size:12px;margin-top:2px;line-height:1.4">{{ f.s.ownSub }}</div></div>
+                                </div>
+                              </sc-if>
+                              <sc-if value="{{ f.d.unknown }}" hint-placeholder-val="{{ false }}">
+                                <div role="status" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius-l);background:var(--md-surface-variant);color:var(--md-on-surface)">
+                                  <span style="width:36px;height:36px;border-radius:var(--radius-full);background:var(--md-surface);color:var(--md-on-surface-variant);display:grid;place-items:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg></span>
+                                  <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500">{{ f.s.unknownNote }}</div><div style="font-size:12px;margin-top:2px;line-height:1.4;color:var(--md-on-surface-variant);text-wrap:pretty">{{ f.s.unknownSub }}</div></div>
+                                </div>
+                              </sc-if>
+                              <sc-if value="{{ f.d.canStart }}" hint-placeholder-val="{{ true }}">
+                                <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px">
+                                  <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Button" variant="filled" dc-props="{{ btn.full }}" hint-size="100%,48px">{{ f.s.start }}</x-import>
+                                </div>
+                              </sc-if>
+                              <sc-if value="{{ f.d.note }}" hint-placeholder-val="{{ false }}">
+                                <div style="display:flex;align-items:flex-start;gap:8px;padding:0 4px;font-size:13px;line-height:1.45;color:var(--md-on-surface-variant)">
+                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+                                  <span style="text-wrap:pretty">{{ f.d.note }}</span>
+                                </div>
+                              </sc-if>
+                            </sc-if>
+                          </div>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </div>
+                </div>
+
+                <sc-if value="{{ f.menuOpen }}" hint-placeholder-val="{{ false }}">
+                  <div role="dialog" aria-label="{{ f.s.gear }}" style="position:absolute;z-index:6;top:{{ f.menuTop }};right:{{ f.menuRight }};width:280px;max-width:calc(100% - 16px);padding:16px;border-radius:var(--radius-l);background:var(--md-surface);color:var(--md-on-surface);box-shadow:var(--md-shadow-2);display:flex;flex-direction:column;gap:16px">
+                    <sc-for list="{{ f.menuRows }}" as="m" hint-placeholder-count="4">
+                      <div role="radiogroup" aria-label="{{ m.head }}" style="display:flex;flex-direction:column;gap:8px">
+                        <span style="font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--md-on-surface-variant)">{{ m.head }}</span>
+                        <div style="display:inline-flex;align-self:flex-start;flex-wrap:wrap;gap:4px;padding:4px;border-radius:var(--radius-full);background:var(--md-surface-variant)">
+                          <sc-for list="{{ m.opts }}" as="o" hint-placeholder-count="2">
+                            <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}">
+                              <button type="button" role="radio" aria-checked="true" onClick="{{ o.go }}" style="min-height:36px;padding:0 14px;border:none;border-radius:var(--radius-full);background:var(--md-secondary-container);color:var(--md-on-secondary-container);font:500 13px var(--font-sans);cursor:pointer">{{ o.label }}</button>
+                            </sc-if>
+                            <sc-if value="{{ o.off }}" hint-placeholder-val="{{ true }}">
+                              <button type="button" role="radio" aria-checked="false" onClick="{{ o.go }}" style="min-height:36px;padding:0 14px;border:none;border-radius:var(--radius-full);background:transparent;color:var(--md-on-surface-variant);font:500 13px var(--font-sans);cursor:pointer">{{ o.label }}</button>
+                            </sc-if>
+                          </sc-for>
+                        </div>
+                        <sc-if value="{{ m.hasNote }}" hint-placeholder-val="{{ false }}">
+                          <span style="font-size:12px;line-height:1.4;color:var(--md-on-surface-variant);text-wrap:pretty">{{ m.note }}</span>
+                        </sc-if>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ f.isPhone }}" hint-placeholder-val="{{ true }}">
+                  <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.AdaptiveNav" variant="bar" items="{{ f.nav }}" active="{{ f.navActive }}" onSelect="{{ f.onNav }}" hint-size="100%,80px"></x-import>
+                </sc-if>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </sc-for>
+
+  <sc-if value="{{ isComps }}" hint-placeholder-val="{{ false }}">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(440px,1fr));gap:24px;align-items:start">
+      <sc-for list="{{ comps }}" as="c" hint-placeholder-count="6">
+        <section style="background:var(--md-surface);border-radius:var(--radius-l);box-shadow:var(--md-shadow-1);padding:24px;display:flex;flex-direction:column;gap:16px;min-width:0">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+              <span style="font:500 18px var(--font-mono)">{{ c.name }}</span>
+              <span style="font-size:12px;font-weight:500;color:var(--md-on-surface-variant)">{{ c.kind }}</span>
+            </div>
+            <p style="margin:0;font-size:14px;line-height:1.5;color:var(--md-on-surface-variant);text-wrap:pretty">{{ c.purpose }}</p>
+          </div>
+          <sc-if value="{{ c.hasLinks }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;color:var(--md-on-surface-variant);background:var(--md-bg);border-radius:var(--radius-m);padding:12px 16px">
+              <span>Rendered live in</span>
+              <sc-for list="{{ c.links }}" as="l" hint-placeholder-count="3">
+                <x-import component-from-global-scope="THDRoomFinderDesignSystem_de229b.Chip" onClick="{{ l.go }}" hint-size="auto,44px">{{ l.label }}</x-import>
+              </sc-for>
+            </div>
+          </sc-if>
+          <div style="display:flex;flex-direction:column;font-size:13px">
+            <sc-for list="{{ c.props }}" as="p" hint-placeholder-count="3">
+              <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) minmax(0,1.6fr);gap:12px;padding:8px 0;border-top:1px solid var(--md-outline-variant)">
+                <span style="font-family:var(--font-mono);font-weight:500">{{ p.n }}</span>
+                <span style="font-family:var(--font-mono);color:var(--md-on-surface-variant);word-break:break-word">{{ p.t }}</span>
+                <span style="color:var(--md-on-surface-variant);text-wrap:pretty">{{ p.d }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:1.45;color:var(--md-on-surface-variant)">
+            <sc-for list="{{ c.notes }}" as="n" hint-placeholder-count="2">
+              <li style="text-wrap:pretty">{{ n }}</li>
+            </sc-for>
+          </ul>
+        </section>
+      </sc-for>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;batch&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;AIN 7&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;mapOption&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;A · Ring&quot;,&quot;B · Fill&quot;],&quot;default&quot;:&quot;A · Ring&quot;,&quot;tsType&quot;:&quot;'A · Ring' | 'B · Fill'&quot;,&quot;section&quot;:&quot;Map&quot;},&quot;showCounts&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;List&quot;}}">
+const P = (s, m) => s.replace(/\{(\w+)\}/g, (_, k) => (m[k] != null ? m[k] : ''));
+const pad = n => String(n).padStart(2, '0');
+const clock = m => `${pad(Math.floor(m / 60))}:${pad(m % 60)}`;
+const dur = m => { const h = Math.floor(m / 60), r = m % 60; return h ? (r ? `${h}h ${r}m` : `${h}h`) : `${r}m`; };
+
+// name, building, seats, [kind, value] now (Tue 10:00), then Thu 14:00. f = free minutes; l = lecture, value = minute it frees up.
+const ROOMS = [
+  ['E 212', 'E', 60, ['f', 360], ['f', 120]], ['E 105', 'E', 24, ['f', 210], ['l', 930]], ['E 101', 'E', 40, ['f', 90], ['f', 240]], ['E 003', 'E', 80, ['l', 720], ['f', 30]],
+  ['L 105', 'L', 36, ['f', 250], ['f', 180]], ['C 104', 'C', 45, ['f', 240], ['l', 930]], ['I 112', 'I', 40, ['f', 190], ['f', 300]], ['ITC2.17', 'ITC2', 32, ['f', 130], ['f', 90]],
+  ['HS 2', 'HS', 80, ['f', 150], ['l', 945]], ['J 213', 'J', 30, ['f', 25], ['f', 200]], ['D 108', 'D', 28, ['f', 35], ['f', 150]],
+  ['A 008', 'A', 120, ['l', 690], ['f', 60]], ['HS 1', 'HS', 200, ['l', 675], ['l', 960]],
+];
+const SAVED = ['E 212', 'ITC2.17', 'C 104', 'A 008'];
+const FOC = {
+  none: {}, batchOne: { 'E 212': ['b', 2] },
+  batchMany: { 'E 212': ['b', 2], 'L 105': ['b', 1], 'ITC2.17': ['b', 3], 'HS 2': ['b', 1] },
+  claims: { 'C 104': ['c', 40], 'I 112': ['c', 15], 'E 105': ['c', 20] },
+  mixed: { 'E 212': ['b', 2], 'HS 2': ['b', 1], 'C 104': ['c', 40], 'ITC2.17': ['c', 25], 'E 105': ['c', 20] },
+  own: { 'E 212': ['o'], 'C 104': ['c', 40], 'E 105': ['c', 20] },
+};
+
+const S = {
+  en: {
+    nav: ['Campus', 'Rooms', 'Profile'], back: 'Back', bldg: 'Building', hs: 'Lecture halls', seats: 'seats',
+    freeNow: 'Free now', subNow: 'Tue 13 Oct · 10:00 · longest free first', freeAt: 'Free at 14:00', subTime: 'Thu 15 Oct · 14:00 · longest free first',
+    timeChip: 'Thu 15 Oct · 14:00', timeNote: 'Schedule only. Focus activity shows for now.', quietNote: '{b} sessions show as claimed (Settings).', unknownNote: 'Focus activity unknown',
+    unknownSub: 'Live focus activity isn’t available. The schedule is current.', loading: 'Checking rooms…',
+    buckets: ['Free', 'Closing soon', 'Claimed', 'Lecture'], over: ['free', 'closing', 'claimed', 'busy'], until: 'until {t}',
+    batchBadge: '{b} · {n} studying', claimBadge: 'Focus session · {m} min', ownBadge: 'Your session · 24:10',
+    buildings: 'Buildings', ofFree: '{f} of {t} rooms free', claims1: '1 focus session', claimsN: '{n} focus sessions', you: 'You',
+    legFree: 'Free rooms', legBatch: '{b} studying', legClaim: 'Focus session', legTap: 'Tap a building for focus activity', gear: 'Display settings', mTheme: 'Theme', mSystem: 'System', mLight: 'Light', mDark: 'Dark', mLang: 'Language', mAmen: 'Map amenities', mFocus: 'Focus labels', mFocusNote: 'Off: rings only; tap a building for its counts.', mOn: 'On', mOff: 'Off', mapUnknown: 'Focus activity unknown', mapTime: 'Schedule only',
+    saved: 'Saved rooms', savedSub: 'Profile, below your focus graph',
+    freeUntil: 'Free until {t}', closing: 'Closing soon', lectureNow: 'Lecture now', lectureUntil: 'Until {t}', freeAtT: 'Free Thu 14:00', freeUntilThu: 'Free until {t} on Thu',
+    start: 'Start focus', join: 'Join', batchSub: 'Public sessions · since 09:40', claimTitle: 'Focus session · started {m} min ago',
+    claimSub: 'A claim is not a booking, so you can still focus here.', ownTitle: 'Your session · 24:10', ownSub: 'Private · others see “Focus session”',
+    lectureNote: 'Focus sessions can’t start during a lecture.', timeDetail: 'Focus sessions start from now, not a picked time.',
+    pillAria: 'Focus session in E 212, 24 minutes. Open room.', bucketAria: '{t}, {n} rooms',
+    aFree: 'free for {d}', aSoon: 'closing soon, free for {d}', aClaim: 'free for {d}, claimed by a focus session', aBusy: 'lecture, free {t}',
+  },
+  de: {
+    nav: ['Campus', 'Räume', 'Profil'], back: 'Zurück', bldg: 'Gebäude', hs: 'Hörsäle', seats: 'Plätze',
+    freeNow: 'Jetzt frei', subNow: 'Di 13. Okt. · 10:00 · am längsten frei zuerst', freeAt: 'Frei um 14:00', subTime: 'Do 15. Okt. · 14:00 · am längsten frei zuerst',
+    timeChip: 'Do 15. Okt. · 14:00', timeNote: 'Nur Belegung. Fokus-Aktivität gibt es nur für jetzt.', quietNote: 'Sessions von {b} erscheinen als Fokus-Session (Einstellungen).', unknownNote: 'Fokus-Aktivität unbekannt',
+    unknownSub: 'Live-Fokus-Aktivität ist nicht verfügbar. Die Belegung ist aktuell.', loading: 'Räume werden geprüft …',
+    buckets: ['Frei', 'Schließt bald', 'Fokus-Session', 'Vorlesung'], over: ['frei', 'schließt', 'Fokus', 'belegt'], until: 'bis {t}',
+    batchBadge: '{b} · {n} lernen hier', batchBadge1: '{b} · 1 lernt hier', claimBadge: 'Fokus-Session · {m} Min.', ownBadge: 'Deine Session · 24:10',
+    buildings: 'Gebäude', ofFree: '{f} von {t} Räumen frei', claims1: '1 Fokus-Session', claimsN: '{n} Fokus-Sessions', you: 'Du',
+    legFree: 'Freie Räume', legBatch: '{b} lernt hier', legClaim: 'Fokus-Session', legTap: 'Gebäude antippen für Fokus-Aktivität', gear: 'Anzeige-Einstellungen', mTheme: 'Design', mSystem: 'System', mLight: 'Hell', mDark: 'Dunkel', mLang: 'Sprache', mAmen: 'Karten-Ausstattung', mFocus: 'Fokus-Beschriftung', mFocusNote: 'Aus: nur Ringe; Gebäude antippen für die Anzahl.', mOn: 'An', mOff: 'Aus', mapUnknown: 'Fokus-Aktivität unbekannt', mapTime: 'Nur Belegung',
+    saved: 'Gespeicherte Räume', savedSub: 'Profil, unter deinem Fokus-Verlauf',
+    freeUntil: 'Frei bis {t}', closing: 'Schließt bald', lectureNow: 'Vorlesung läuft', lectureUntil: 'Bis {t}', freeAtT: 'Frei Do 14:00', freeUntilThu: 'Frei bis {t} am Do',
+    start: 'Fokus starten', join: 'Beitreten', batchSub: 'Öffentliche Sessions · seit 09:40', claimTitle: 'Fokus-Session · seit {m} Min.',
+    claimSub: 'Eine Fokus-Session ist keine Buchung – du kannst hier trotzdem lernen.', ownTitle: 'Deine Session · 24:10', ownSub: 'Privat · andere sehen „Fokus-Session“',
+    lectureNote: 'Während einer Vorlesung kannst du keinen Fokus starten.', timeDetail: 'Fokus-Sessions starten ab jetzt, nicht zu einer gewählten Zeit.',
+    pillAria: 'Fokus-Session in E 212, 24 Minuten. Raum öffnen.', bucketAria: '{t}, {n} Räume',
+    aFree: '{d} frei', aSoon: 'schließt bald, {d} frei', aClaim: '{d} frei, Fokus-Session läuft', aBusy: 'Vorlesung, frei {t}',
+  },
+};
+
+const META = [
+  ['none', 'Rooms · no focus activity', { foc: 'none' }],
+  ['batchOne', 'Rooms · your batch in one room', { foc: 'batchOne' }],
+  ['batchMany', 'Rooms · your batch in several buildings', { foc: 'batchMany' }],
+  ['claims', 'Rooms · claims only', { foc: 'claims' }],
+  ['mixed', 'Rooms · mixed', { foc: 'mixed' }],
+  ['quiet', 'Rooms · quiet preference on', { foc: 'mixed', quiet: true }],
+  ['time', 'Rooms · time travel, Thu 14:00', { foc: 'mixed', time: true }],
+  ['unknown', 'Rooms · focus activity unknown', { foc: 'mixed', unknown: true }],
+  ['loading', 'Rooms · loading', { foc: 'mixed', loading: true }],
+  ['own', 'Rooms · your session running', { foc: 'own', own: true }],
+  ['saved', 'Profile · saved rooms', { foc: 'mixed', screen: 'saved' }],
+  ['mNone', 'Campus · no focus activity', { foc: 'none', screen: 'campus' }],
+  ['mBatchOne', 'Campus · your batch in one room', { foc: 'batchOne', screen: 'campus' }],
+  ['mBatchMany', 'Campus · your batch in several buildings', { foc: 'batchMany', screen: 'campus' }],
+  ['mClaims', 'Campus · claims only', { foc: 'claims', screen: 'campus' }],
+  ['mMixed', 'Campus · mixed', { foc: 'mixed', screen: 'campus' }],
+  ['mQuiet', 'Campus · quiet preference on', { foc: 'mixed', quiet: true, screen: 'campus' }],
+  ['mTime', 'Campus · time travel', { foc: 'mixed', time: true, screen: 'campus' }],
+  ['mUnknown', 'Campus · focus activity unknown', { foc: 'mixed', unknown: true, screen: 'campus' }],
+  ['mOwn', 'Campus · your session running', { foc: 'own', own: true, screen: 'campus' }],
+  ['mLoading', 'Campus · loading', { foc: 'mixed', loading: true, screen: 'campus' }],
+  ['mBuilding', 'Campus · building E opened', { foc: 'mixed', screen: 'building', building: 'E' }],
+  ['mMenu', 'Campus · settings menu', { foc: 'mixed', screen: 'campus', menu: true }],
+  ['mFocusOn', 'Campus · focus labels on', { foc: 'mixed', screen: 'campus', mapFocus: true }],
+  ['mFocusOnBld', 'Campus · focus labels on, building E opened', { foc: 'mixed', screen: 'building', building: 'E', mapFocus: true }],
+];
+const NUM = {}, LABEL = {}, CFG = {}; META.forEach(([k, l, c], i) => { NUM[k] = pad(i + 1); LABEL[k] = l; CFG[k] = c; });
+const scen = st => Object.assign({ st, screen: 'rooms', foc: 'none', quiet: false, time: false, unknown: false, loading: false, own: false, building: null, sel: 'E 212', mapFocus: false, menu: false }, CFG[st]);
+const GROUPS = {
+  rooms: ['Rooms list', ['none', 'batchOne', 'batchMany', 'claims', 'mixed', 'quiet', 'time', 'unknown', 'loading', 'own', 'saved']],
+  campus: ['Campus map', ['mNone', 'mBatchOne', 'mBatchMany', 'mClaims', 'mMixed', 'mQuiet', 'mTime', 'mUnknown', 'mOwn', 'mLoading', 'mBuilding', 'mMenu', 'mFocusOn', 'mFocusOnBld']],
+  options: ['Map options · A ring vs B fill', []],
+};
+const GROUP_OF = {}; Object.keys(GROUPS).forEach(g => GROUPS[g][1].forEach(st => { GROUP_OF[st] = g; }));
+const DEV = { phone: [380, 780], tablet: [768, 1024], desktop: [1280, 800] };
+const BORDER = i => (i ? '1px solid var(--md-outline-variant)' : 'none');
+const TONE = ['var(--status-free)', 'var(--status-soon)', 'var(--status-claimed)', 'var(--status-occupied)'];
+const BLD = (() => { const g = window.CAMPUS_GEOJSON; return g ? g.features.map(f => f.properties) : []; })();
+const bname = (k, s) => (k === 'ITC2' ? 'ITC²' : k === 'HS' ? s.hs : `${s.bldg} ${k}`);
+
+const NS = 'http://www.w3.org/2000/svg';
+const el = (tag, attrs, style) => { const n = document.createElementNS(NS, tag); Object.entries(attrs || {}).forEach(([k, v]) => n.setAttribute(k, v)); if (style) n.setAttribute('style', style); return n; };
+const decorateMaps = () => document.querySelectorAll('[data-sig]').forEach(w => {
+  const svg = w.querySelector('svg'); if (!svg || !svg.querySelector('.cm-bld')) return;
+  const sig = w.getAttribute('data-sig');
+  if (svg.__sig === sig && svg.querySelector('[data-ov]')) return;
+  svg.querySelectorAll('[data-ov]').forEach(n => n.remove());
+  svg.querySelectorAll('[data-ovfill]').forEach(p => { p.style.fill = ''; p.removeAttribute('data-ovfill'); });
+  svg.__sig = sig;
+  let S0; try { S0 = JSON.parse(sig); } catch (e) { return; }
+  const vb = svg.viewBox.baseVal, k = vb && vb.width ? Math.min(svg.clientWidth / vb.width, svg.clientHeight / vb.height) : 1, u = px => px / (k || 1);
+  const base = el('g', { 'data-ov': '1' }, 'pointer-events:none'), front = el('g', { 'data-ov': '1' }, 'pointer-events:none');
+  svg.appendChild(base); svg.appendChild(front);
+  const ents = Object.entries(S0.b || {}).sort((x, y) => (x[0] === S0.sel) - (y[0] === S0.sel));
+  ents.forEach(([k, v]) => {
+    const layer = k === S0.sel ? front : base;
+    const g = svg.querySelector(`.cm-bld[data-id="${k}"]`); if (!g) return;
+    const roof = g.querySelector('polygon[stroke-width="0.9"]'); if (!roof) return;
+    const bb = roof.getBBox();
+    const on = k === S0.sel, all = !!S0.all, txt = on || all;
+    const pts = roof.getAttribute('points').trim().split(/\s+/).map(p => p.split(',').map(Number));
+    const top = pts.reduce((m, p) => (p[1] < m[1] ? p : m), pts[0]);
+    const cen = [pts.reduce((s, p) => s + p[0], 0) / pts.length, pts.reduce((s, p) => s + p[1], 0) / pts.length];
+    if (v.chip && !on) {
+      if (S0.opt === 'B' && !v.lec) { roof.style.fill = 'var(--md-focus-container)'; roof.setAttribute('data-ovfill', '1'); }
+      else layer.appendChild(el('polygon', { points: roof.getAttribute('points'), fill: 'none', 'stroke-width': u(3), 'stroke-linejoin': 'round' }, 'stroke:var(--md-focus)'));
+    }
+    let pillRight = null;
+    if (v.chip && txt) {
+      const cg = el('g'); layer.appendChild(cg);
+      const t = el('text', { 'font-size': u(11), 'font-weight': '500', 'dominant-baseline': 'central' }, 'fill:var(--md-on-focus);font-family:var(--font-sans)'); t.textContent = v.chip;
+      const r = el('rect', { height: u(20), rx: u(10) }, 'fill:var(--md-focus)'); cg.appendChild(r); cg.appendChild(t);
+      const tw = t.getComputedTextLength(), x = cen[0] - (tw + u(16)) / 2, y = cen[1] + u(12);
+      r.setAttribute('x', x); r.setAttribute('y', y); r.setAttribute('width', tw + u(16)); t.setAttribute('x', x + u(8)); t.setAttribute('y', y + u(10.5));
+      pillRight = [x + tw + u(16), y + u(10)];
+      cg.insertBefore(el('rect', { x: x - u(1.5), y: y - u(1.5), width: tw + u(19), height: u(23), rx: u(11.5) }, 'fill:var(--md-surface)'), r);
+    }
+    if (v.claims && txt) {
+      const rr = 8, cx = pillRight ? pillRight[0] + u(14) : top[0], cy = pillRight ? pillRight[1] : top[1];
+      layer.appendChild(el('circle', { cx, cy, r: u(rr + 1.5) }, 'fill:var(--md-surface)'));
+      layer.appendChild(el('circle', { cx, cy, r: u(rr) }, 'fill:var(--md-claimed)'));
+      if (!txt) return;
+      const t = el('text', { x: cx, y: cy + u(0.5), 'font-size': u(11), 'font-weight': '500', 'text-anchor': 'middle', 'dominant-baseline': 'central' }, 'fill:var(--md-on-claimed);font-family:var(--font-sans)');
+      t.textContent = String(v.claims); layer.appendChild(t);
+    }
+  });
+});
+
+class Component extends DCLogic {
+  state = { view: 'proto', theme: 'light', lang: 'en', group: 'rooms', ps: scen('mixed') };
+
+  componentDidMount() { document.documentElement.setAttribute('data-theme', 'light'); this.iv = setInterval(decorateMaps, 300); }
+  componentWillUnmount() { clearInterval(this.iv); }
+
+  act = (name, arg) => this.setState(s0 => {
+    const p = Object.assign({}, s0.ps);
+    if (name === 'nav') { p.screen = arg === 'campus' ? 'campus' : arg === 'profile' ? 'saved' : 'rooms'; p.building = null; }
+    if (name === 'bld') { p.screen = 'building'; p.building = arg; }
+    if (name === 'back') { p.screen = 'campus'; p.building = null; }
+    if (name === 'sel') p.sel = arg;
+    if (name === 'menu') p.menu = !p.menu;
+    if (name === 'mapFocus') p.mapFocus = arg;
+    return { ps: p };
+  });
+
+  opts() { const p = this.props; return { batch: p.batch || 'AIN 7', opt: (p.mapOption ?? 'A · Ring')[0] === 'B' ? 'B' : 'A', counts: p.showCounts ?? true }; }
+
+  rows(c, s, b, lang, a, interactive, isDesktop) {
+    const live = !c.time && !c.unknown;
+    return ROOMS.map(([name, k, seats, nowS, thuS]) => {
+      const [kind, val] = c.time ? thuS : nowS, lec = kind === 'l', free = lec ? 0 : val;
+      let f = live ? (FOC[c.foc] || {})[name] : null;
+      if (f && f[0] === 'b' && c.quiet) f = ['c', 20];
+      const bucket = lec ? 3 : f && f[0] === 'c' ? 2 : free <= 40 ? 1 : 0;
+      const d = lec ? P(s.until, { t: clock(val) }) : dur(free);
+      let badge = '';
+      if (f && f[0] === 'b') badge = f[1] === 1 && s.batchBadge1 ? P(s.batchBadge1, { b }) : P(s.batchBadge, { b, n: f[1] });
+      if (f && f[0] === 'c') badge = P(s.claimBadge, { m: f[1] });
+      if (f && f[0] === 'o') badge = s.ownBadge;
+      const meta = `${bname(k, s)} · ${seats} ${s.seats}`;
+      const st = [P(s.aFree, { d }), P(s.aSoon, { d }), P(s.aClaim, { d }), P(s.aBusy, { t: d })][bucket];
+      return { name, k, lec, free, val, f, bucket, meta, over: s.over[bucket], tone: TONE[bucket], duration: d, badge,
+        isBatch: !!f && f[0] === 'b', isClaim: !!f && f[0] === 'c', isOwn: !!f && f[0] === 'o',
+        aria: `${name}, ${meta}, ${st}${badge ? '. ' + badge : ''}`,
+        outline: isDesktop && c.screen === 'rooms' && c.sel === name ? '2px solid var(--md-primary)' : 'none',
+        go: e => { e && e.preventDefault && e.preventDefault(); if (interactive) a('sel', name); } };
+    });
+  }
+
+  groups(rows, s, counts) {
+    return [0, 1, 2, 3].map(i => {
+      const r = rows.filter(x => x.bucket === i).sort((x, y) => (i === 3 ? x.val - y.val : y.free - x.free));
+      const t = s.buckets[i];
+      return { hasTitle: true, title: counts ? `${t} · ${r.length}` : t, aria: P(s.bucketAria, { t, n: r.length }), rooms: r };
+    }).filter(g => g.rooms.length);
+  }
+
+  signals(rows, c, s, b) {
+    const sig = {};
+    if (c.time || c.unknown) return sig;
+    rows.forEach(r => {
+      const o = sig[r.k] || (sig[r.k] = { n: 0, c: 0, own: false, lec: false });
+      if (r.lec) o.lec = true;
+      if (r.f && r.f[0] === 'b') o.n += r.f[1];
+      if (r.f && r.f[0] === 'c') o.c++;
+      if (r.f && r.f[0] === 'o') o.own = true;
+    });
+    Object.keys(sig).forEach(k => { const o = sig[k]; o.chip = o.own ? s.you : o.n ? `${b} · ${o.n}` : null; if (!o.chip && !o.c) delete sig[k]; });
+    return sig;
+  }
+
+  frame(c, { theme, lang, device, scale = 1, interactive = false, id, opt }) {
+    const [w, hh] = DEV[device], o = this.opts(), b = o.batch, s = S[lang], O = opt || o.opt;
+    const isPhone = device === 'phone', isTablet = device === 'tablet', isDesktop = device === 'desktop';
+    const a = interactive ? this.act : () => {};
+    const scr = c.screen, campusLike = scr === 'campus' || scr === 'building';
+    const rows = this.rows(c, s, b, lang, a, interactive, isDesktop);
+    const sig = this.signals(rows, c, s, b);
+    const showMap = !!window.CAMPUS_GEOJSON && (scr === 'campus' || scr === 'building');
+    let groups = [], blds = [], isGroups = false, isBlds = false;
+    if (scr === 'rooms') { groups = this.groups(rows, s, o.counts); isGroups = true; }
+    if (scr === 'building') { groups = this.groups(rows.filter(r => r.k === c.building), s, o.counts); isGroups = true; }
+    if (scr === 'saved') { groups = [{ hasTitle: false, title: '', aria: s.saved, rooms: SAVED.map(n => rows.find(r => r.name === n)) }]; isGroups = true; }
+    if (scr === 'campus') {
+      isBlds = true;
+      blds = BLD.map(p => {
+        const g = sig[p.key] || {}, batch = g.n ? P(s.batchBadge, { b, n: g.n }) : '', own = g.own ? s.ownBadge : '';
+        const claims = g.c ? (g.c === 1 ? s.claims1 : P(s.claimsN, { n: g.c })) : '';
+        const freeLine = P(s.ofFree, { f: p.free, t: p.total });
+        return { key: p.key, label: p.label, name: p.name, freeLine, batch, own, claims, hasBadges: !!(batch || own || claims), rank: (g.own || g.n ? 1000 : 0) + p.free,
+          aria: [p.name, freeLine, own, batch, claims].filter(Boolean).join('. '), go: () => a('bld', p.key) };
+      }).sort((x, y) => y.rank - x.rank).map((x, i) => Object.assign(x, { border: BORDER(i), bg: 'transparent' }));
+    }
+    if (c.loading) { isGroups = false; isBlds = false; }
+    const live = !c.time && !c.unknown;
+    const mapSig = {}; Object.entries(sig).forEach(([k, v]) => { mapSig[k] = { chip: v.chip, claims: v.c, lec: v.lec }; });
+    // header
+    let hdrTitle = c.time ? s.freeAt : s.freeNow, hdrSub = c.time ? s.subTime : s.subNow, hdrSize = '22px', hdrWeight = 400, hdrShow = true, hdrBack = false;
+    if (scr === 'campus') { hdrTitle = s.buildings; hdrSub = ''; hdrSize = '16px'; hdrWeight = 500; }
+    if (scr === 'building') { const p = BLD.find(x => x.key === c.building) || {}; hdrTitle = bname(c.building, s); hdrSub = `${p.name} · ${P(s.ofFree, { f: p.free, t: p.total })}`; hdrBack = !isPhone; if (isPhone) { hdrTitle = p.name; hdrSize = '16px'; hdrWeight = 500; hdrSub = P(s.ofFree, { f: p.free, t: p.total }); } }
+    if (scr === 'saved') { hdrTitle = s.saved; hdrSub = s.savedSub; hdrSize = '16px'; hdrWeight = 500; }
+    // detail
+    let d = {}, hasD = false;
+    if (isDesktop && scr === 'rooms' && !c.loading) {
+      const r = rows.find(x => x.name === c.sel) || rows[0]; hasD = true;
+      const until = clock((c.time ? 840 : 600) + r.free);
+      d = { name: r.name, meta: r.meta, status: r.lec ? 'occupied' : r.free <= 40 ? 'soon' : 'free',
+        title: r.lec ? s.lectureNow : c.time ? s.freeAtT : r.free <= 40 ? s.closing : s.freeNow,
+        sub: r.lec ? P(s.lectureUntil, { t: clock(r.val) }) : P(c.time ? s.freeUntilThu : s.freeUntil, { t: until }), duration: r.lec ? undefined : dur(r.free),
+        batch: r.isBatch ? r.badge : '', claim: r.isClaim ? P(s.claimTitle, { m: r.f[1] }) : '', own: r.isOwn ? s.ownTitle : '', unknown: c.unknown && !r.lec,
+        canStart: !r.lec && !r.isOwn && !c.time, note: r.lec ? s.lectureNote : c.time ? s.timeDetail : '' };
+    }
+    const bodyDir = isDesktop ? 'row' : 'column';
+    const listFlex = isDesktop && (scr === 'rooms' || scr === 'building' || scr === 'campus') ? '0 0 380px' : '1 1 auto';
+    return {
+      id, caption: LABEL[c.st] || 'Live', tag: `${device[0].toUpperCase() + device.slice(1)} · ${theme} · ${lang.toUpperCase()}${showMap ? ' · option ' + O : ''}`, theme, lang,
+      isPhone, isTablet, isDesktop, w, h: hh, scale, boxW: Math.round(w * scale), boxH: Math.round(hh * scale),
+      radius: isPhone ? 'var(--radius-xl)' : 'var(--radius-l)', s,
+      nav: [{ id: 'campus', label: s.nav[0], icon: I.map }, { id: 'rooms', label: s.nav[1], icon: I.rooms }, { id: 'profile', label: s.nav[2], icon: I.profile }],
+      navActive: campusLike ? 'campus' : scr === 'saved' ? 'profile' : 'rooms', onNav: id2 => a('nav', id2),
+      phoneBrand: scr !== 'building', phoneBack: scr === 'building', backTitle: bname(c.building || 'E', s), onBack: () => a('back'),
+      pillPhone: c.own && isPhone, pillWide: c.own && !isPhone, pillAria: s.pillAria, pillRight: campusLike ? '60px' : '12px',
+      gearPhone: isPhone && campusLike, gearWide: !isPhone && showMap, onGear: () => a('menu'), menuOpen: !!c.menu && campusLike,
+      menuTop: isPhone ? '88px' : '64px', menuRight: isPhone ? '8px' : '12px',
+      menuRows: [
+        { head: s.mTheme, opts: [['system', s.mSystem], ['light', s.mLight], ['dark', s.mDark]].map(([k2, l]) => ({ label: l, on: theme === k2, off: theme !== k2, go: () => interactive && k2 !== 'system' && this.setState({ theme: k2 }) })) },
+        { head: s.mLang, opts: [['en', 'English'], ['de', 'Deutsch']].map(([k2, l]) => ({ label: l, on: lang === k2, off: lang !== k2, go: () => interactive && this.setState({ lang: k2 }) })) },
+        { head: s.mAmen, opts: [[true, s.mOn], [false, s.mOff]].map(([k2, l]) => ({ label: l, on: k2, off: !k2, go: () => {} })) },
+        { head: s.mFocus, note: s.mFocusNote, opts: [[true, s.mOn], [false, s.mOff]].map(([k2, l]) => ({ label: l, on: !!c.mapFocus === k2, off: !!c.mapFocus !== k2, go: () => a('mapFocus', k2) })) },
+      ].map(r => Object.assign(r, { hasNote: !!r.note })),
+      bodyDir, showMap, showLegend: scr === 'campus' || isDesktop, mapOrder: isDesktop ? 1 : 0, mapFlex: isDesktop ? '1 1 auto' : scr === 'building' ? (isTablet ? '0 0 360px' : '0 0 220px') : isTablet ? '0 0 520px' : '0 0 320px',
+      sig: JSON.stringify({ opt: O, all: !!c.mapFocus, sel: scr === 'building' ? c.building : '', b: mapSig }), selKey: scr === 'building' ? c.building : '', onBld: k => a('bld', k), mapInteractive: interactive,
+      optA: O === 'A', optB: O === 'B', legLive: live, legBatch: P(s.legBatch, { b }), legNote: !live, legNoteText: c.time ? s.mapTime : s.mapUnknown,
+      showList: true, listOrder: isDesktop ? 0 : 1, listFlex, listBorder: isDesktop && listFlex !== '1 1 auto' ? '1px solid var(--md-outline-variant)' : 'none',
+      listMax: isTablet ? '640px' : scr === 'saved' && isDesktop ? '960px' : 'none', listPad: isPhone ? '16px 16px 24px' : isDesktop ? '24px 16px 24px' : '24px 24px 32px',
+      cols: scr === 'saved' && isDesktop ? 'repeat(auto-fill,minmax(280px,1fr))' : 'minmax(0,1fr)',
+      hdrShow, hdrBack, hdrTitle, hdrSub, hdrHasSub: !!hdrSub, hdrSize, hdrWeight,
+      nTime: c.time && !c.loading, nQuiet: c.quiet && !c.time && !c.unknown && !c.loading, quietNote: P(s.quietNote, { b }), nUnknown: c.unknown && !c.loading,
+      isGroups, groups, isBlds, blds, isLoading: c.loading, skel: [0, 1, 2, 3, 4].map(i => ({ border: BORDER(i) })),
+      showDetail: isDesktop && scr === 'rooms', hasD, d,
+    };
+  }
+
+  renderVals() {
+    const { view, theme, lang, ps, group } = this.state;
+    const T = theme === 'dark' ? 'dark' : 'light';
+    const fr = (st, device, scale, sfx, x = {}) => this.frame(scen(st), Object.assign({ theme: T, lang, device, scale, id: NUM[st] + sfx }, x));
+    let sections = [];
+    if (view === 'proto') {
+      sections = [{ title: 'Live prototype', sub: 'Phone and desktop share one state. Switch Campus / Rooms / Profile in the nav, tap a building on the map or in the list to open its rooms, pick a room on desktop. Jump to a scenario with the chips above.',
+        frames: [this.frame(ps, { theme: T, lang, device: 'phone', interactive: true, id: 'P1' }), this.frame(ps, { theme: T, lang, device: 'desktop', interactive: true, id: 'P2' })] }];
+    } else if (view === 'states' && group === 'options') {
+      const mk = (st, opt, dev, sc, sfx, tt = T) => Object.assign(this.frame(Object.assign(scen(st), { mapFocus: true }), { theme: tt, lang, device: dev, scale: sc, id: `O${sfx}`, opt }), { caption: `Option ${opt === 'A' ? 'A · Ring' : 'B · Fill'} · ${LABEL[st].split(' · ')[1]}` });
+      sections = [
+        { title: 'A · Ring vs B · Fill — chosen: A', sub: 'Same data, same buildings. A keeps the teal availability tint on every roof and adds a violet outline; the “AIN 7 · 2” label appears only on the tapped building. B swaps the roof to violet, but only where no room has a lecture — so Lecture halls (HS 2 has your batch, HS 1 a lecture) fall back to a ring anyway. One signal that means one thing beats two that depend on the schedule.',
+          frames: [mk('mBatchMany', 'A', 'phone', 1, '1a'), mk('mBatchMany', 'B', 'phone', 1, '1b'), mk('mMixed', 'A', 'phone', 1, '2a', 'dark'), mk('mMixed', 'B', 'phone', 1, '2b', 'dark')] },
+        { title: 'Desktop (shown at 50%)', sub: 'On a large map B reads louder, which is the problem: a violet roof hides how many rooms are free there, and it is the only way availability is shown at a glance.',
+          frames: [mk('mBatchMany', 'A', 'desktop', 0.5, '3a'), mk('mBatchMany', 'B', 'desktop', 0.5, '3b')] },
+      ];
+    } else if (view === 'states') {
+      const all = GROUPS[group][1], isCampus = group === 'campus';
+      const deskSet = isCampus ? ['mNone', 'mBatchMany', 'mMixed', 'mTime', 'mOwn', 'mBuilding'] : all;
+      sections = [
+        { title: 'Phone · compact (380 × 780)', sub: isCampus ? 'Map at rest: violet ring for your batch only; no claim dots, no text, no count. Tapping a building labels it; the gear’s Focus labels switch shows all labels (24–25). The building list below is the map’s list equivalent: every ring and dot is a badge with words in its row. Tap a row or a roof to label it and open its rooms.' : 'Four quiet bucket headers, one badge or one label per card, duration stays the hero. Each state is a single change against 05 Mixed.', frames: all.map(st => fr(st, 'phone', 1, 'a')) },
+        { title: 'Tablet · medium (768 × 1024, shown at 60%)', sub: 'Navigation rail; one centred 640 px column. The focus pill sits in the list header.', frames: (isCampus ? ['mMixed', 'mBuilding'] : ['mixed', 'quiet', 'own']).map(st => fr(st, 'tablet', 0.6, 'c')) },
+        { title: 'Desktop · expanded (1280 × 800, shown at 50%)', sub: isCampus ? 'List-detail: building list (or the opened building’s rooms) on the left, the map on the right with the opened building outlined in blue.' : 'List-detail: rooms on the left, the selected room on the right with the D1 activity row and Start focus.', frames: deskSet.map(st => fr(st, 'desktop', 0.5, 'b')) },
+      ];
+    } else if (view === 'matrix') {
+      const st = ps.st || 'mixed';
+      const combos = [['light', 'en'], ['light', 'de'], ['dark', 'en'], ['dark', 'de']];
+      const mk = (device, scale, sfx) => combos.map(([t, l], i) => this.frame(scen(st), { theme: t, lang: l, device, scale, id: `M${i + 1}${sfx}` }));
+      sections = [
+        { title: `${NUM[st]} · ${LABEL[st]} — phone`, sub: 'Light / dark × English / German. German badges (“AIN 7 · 2 lernen hier”, “Fokus-Session · 40 Min.”) sit on their own line under the meta, so they never squeeze the duration.', frames: mk('phone', 1, 'a') },
+        { title: 'Desktop (shown at 50%)', sub: 'Same state, same four combinations.', frames: mk('desktop', 0.5, 'b') },
+      ];
+    }
+    const goState = st => () => { this.setState({ view: 'states', group: GROUP_OF[st] }); setTimeout(() => { const e2 = document.getElementById(NUM[st] + 'a'); if (e2) window.scrollTo({ top: e2.getBoundingClientRect().top + window.scrollY - 24, behavior: 'smooth' }); }, 80); };
+    const links = sts => sts.map(st => ({ label: `${NUM[st]} ${LABEL[st]}`, go: goState(st) }));
+    return {
+      pageTheme: view === 'matrix' ? 'light' : T,
+      lang, setLang: l => this.setState({ lang: l }),
+      campus: window.CAMPUS_GEOJSON, ctx: window.CAMPUS_CONTEXT_LITE,
+      btn: { join: { style: { background: 'var(--md-focus)', color: 'var(--md-on-focus)' } }, full: { style: { width: '100%' } } },
+      viewChips: [['proto', 'Prototype'], ['states', 'All states'], ['matrix', 'Theme × language'], ['comps', 'Components']].map(([id, label]) => ({ label, active: view === id, go: () => this.setState({ view: id }) })),
+      themeChips: [['light', 'Light'], ['dark', 'Dark']].map(([id, label]) => ({ label, active: theme === id, go: () => this.setState({ theme: id }) })),
+      showStateChips: view !== 'comps',
+      stateChipsTitle: view === 'proto' ? 'Jump to a scenario' : view === 'states' ? 'State group' : 'State to compare',
+      stateChips: view === 'states'
+        ? Object.keys(GROUPS).map(g => ({ label: GROUPS[g][1].length ? `${GROUPS[g][0]} · ${NUM[GROUPS[g][1][0]]}–${NUM[GROUPS[g][1][GROUPS[g][1].length - 1]]}` : GROUPS[g][0], active: group === g, go: () => this.setState({ group: g }) }))
+        : META.map(([st, l]) => ({ label: `${NUM[st]} ${l}`, active: ps.st === st, go: () => this.setState({ ps: scen(st) }) })),
+      sections, isComps: view === 'comps',
+      comps: [
+        { name: 'RoomCard', kind: 'Extended', hasLinks: true, links: links(['mixed', 'quiet', 'own', 'saved']),
+          purpose: 'Same card, same hero. Adds one optional badge on its own line under the meta, and a fourth tone. Saved rooms on Profile use it unchanged, so they get the same signals.',
+          props: [{ n: 'status', t: "'free' | 'soon' | 'claimed' | 'occupied'", d: 'claimed = overline + duration in --status-claimed' }, { n: 'focus', t: "{kind: 'batch' | 'claimed' | 'own', label}?", d: '“AIN 7 · 2 studying” · “Focus session · 40 min” · “Your session · 24:10”' }, { n: 'overline', t: 'string', d: 'Caller-supplied so DE works: frei · schließt · Fokus · belegt' }],
+          notes: ['One badge at most. A room with your batch never also shows a claim badge; claims are counted, not listed.', 'Badge = icon + words + container colour. Own session uses the filled focus role so it reads as “you”, not “your batch”.', 'aria-label: “E 212, Building E · 60 seats, free for 6h. AIN 7 · 2 studying.”', 'The legacy overline labels (free / closing / busy) are hardcoded English today; they become props.'] },
+        { name: 'RoomBuckets', kind: 'New · list structure', hasLinks: true, links: links(['mixed', 'claims', 'time']),
+          purpose: 'Free (incl. your batch) → Closing soon → Claimed → Lecture. Longest free first inside each; lectures soonest-free first. Empty buckets are not rendered.',
+          props: [{ n: 'rooms', t: 'Room[]', d: 'With schedule + optional focus' }, { n: 'live', t: 'boolean', d: 'false (time travel, unknown) → focus ignored, three buckets' }, { n: 'quiet', t: 'boolean', d: 'Batch sessions sorted and styled as claims' }, { n: 'showCounts', t: 'boolean', d: '“Free · 6”. Tweak' }],
+          notes: ['Headers are h2 at 13 px on-surface-variant; each bucket is a labelled section (“Claimed, 3 rooms”).', 'Bucket 3 DE label: “Fokus-Session”, not “Belegt (Fokus)” — “belegt” already means a lecture (overline) and a claim is not a booking.', 'A claimed room that is also ≤ 40 min goes to Claimed; no sample room hits this (see open questions).'] },
+        { name: 'ListNotice', kind: 'New · one line', hasLinks: true, links: links(['quiet', 'time', 'unknown']),
+          purpose: 'A single icon + text line under the list header that explains why signals are missing or look different. Never more than one.',
+          props: [{ n: 'kind', t: "'quiet' | 'time' | 'unknown'", d: 'Time travel adds the custom-time chip with ✕' }],
+          notes: ['Unknown reads “Focus activity unknown”, never “empty” or “no one here”. role="status".', 'Time travel: “Schedule only. Focus activity shows for now.”'] },
+        { name: 'CampusMap', kind: 'Extended · focusSignals', hasLinks: true, links: links(['mBatchMany', 'mMixed', 'mBuilding']),
+          purpose: 'Option A chosen. Availability tint untouched. At rest: batch = violet ring only; claims are not shown. Tapped building: pill “AIN 7 · 2” (or “You”) + counted dot. Gear → Focus labels On: every building gets its pill and counted dot.',
+          props: [{ n: 'focusSignals', t: 'Record<key, {batchLabel?, claimCount?}>', d: 'Omitted or {} when time-travelling or unknown' }, { n: 'focusStyle', t: "'ring'", d: "'fill' kept for reference only" }],
+          notes: ['Why A: B replaces the one at-a-glance availability cue; B only applies when no lecture, so the same batch looks different in two buildings; violet vs teal fill is a hue-only distinction, weakest for colour-blind users; A’s chip carries words.', 'The map is aria-hidden; the building list below/beside it is the accessible equivalent and comes first in focus order on desktop.', 'Off by default: marks on every building crowded small phones and blocked taps, and showed activity nobody asked to see. Students who want the overview turn it on in the gear menu next to Theme and Language.', 'Signals never touch lecture rooms: they sit on top, not instead of the tint. No animation on signals.'] },
+        { name: 'MapLegend', kind: 'New', hasLinks: true, links: links(['mMixed', 'mTime']),
+          purpose: 'Small surface card on the map’s bottom-left: Free rooms · AIN 7 studying · Focus session. Time travel / unknown collapse it to Free rooms + one note.',
+          props: [{ n: 'items', t: '{swatch, label}[]', d: 'Swatch mirrors the map mark exactly' }],
+          notes: ['Wraps to two lines in German; never truncates.'] },
+        { name: 'BuildingRow', kind: 'New · map list equivalent', hasLinks: true, links: links(['mMixed', 'mOwn']),
+          purpose: 'Code tile, building name, “4 of 20 rooms free”, then the same badges the map shows. Batch and own buildings first, then most free rooms.',
+          props: [{ n: 'building', t: 'CampusBuilding', d: 'free / total from the schedule' }, { n: 'signals', t: '{batch?, own?, claims?}', d: 'Words, e.g. “2 focus sessions”' }, { n: 'onOpen', t: '() => void', d: 'Opens the building’s room list (same buckets)' }],
+          notes: ['Row is a button, ≥ 64 px; label reads name, free count, then signals.'] },
+        { name: 'FocusPill', kind: 'D1 · reused', hasLinks: true, links: links(['own', 'mOwn']),
+          purpose: 'Unchanged from D1. App bar on phone; list header on tablet and desktop. Your room carries “Your session · 24:10” in the list and “You” on the map.',
+          props: [{ n: 'elapsed', t: 'number (s)', d: 'Static in specimens' }], notes: ['Under reduced motion the timer updates once a minute instead of every second.'] },
+      ],
+    };
+  }
+}
+
+const h = React.createElement;
+const ico = kids => h('svg', { viewBox: '0 0 24 24', width: 22, height: 22, fill: 'none', stroke: 'currentColor', strokeWidth: 1.9, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true }, ...kids.map((k, i) => h(k[0], Object.assign({ key: i }, k[1]))));
+const I = {
+  map: ico([['path', { d: 'M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z' }], ['path', { d: 'M9 4v14' }], ['path', { d: 'M15 6v14' }]]),
+  rooms: ico([['path', { d: 'M4 6h16' }], ['path', { d: 'M4 12h16' }], ['path', { d: 'M4 18h16' }]]),
+  profile: ico([['circle', { cx: 12, cy: 8, r: 4 }], ['path', { d: 'M20 21a8 8 0 0 0-16 0' }]]),
+};
+</script>
+</body>
+</html>

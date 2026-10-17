@@ -1,6 +1,6 @@
 {
   "name": "thd-room-finder",
-  "version": "2.2.0",
+  "version": "2.4.0",
   "private": true,
   "description": "Find free study rooms at Technische Hochschule Deggendorf in real time. One React + TypeScript codebase: installable PWA on web, native Android via Capacitor.",
   "type": "module",
@@ -18,7 +18,9 @@
   "dependencies": {
     "@capacitor/app": "^6.0.0",
     "@capacitor/core": "^6.1.2",
+    "@supabase/supabase-js": "^2.117.2",
     "@vercel/analytics": "^2.0.1",
+    "@vercel/og": "^0.8.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.2"

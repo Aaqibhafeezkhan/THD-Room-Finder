@@ -9,11 +9,15 @@ import { formatDayTime, formatTime, freeRoomDuration, roomMeta, statusBannerText
 import { freeStatus } from '../../domain/availability';
 import { searchRooms } from '../../domain/roomSearch';
 import { favoritesFirst, matchesRoomFilters, mayBeLocked } from '../../domain/roomFilters';
+import { focusBucket, rankByBucket } from '../../domain/focusSignals';
+import { cardFocus, useBatchLabel, useFocusSignals } from '../focus/useFocusSignals';
+import { FocusListNotice } from '../focus/FocusListNotice';
 import { BrandHeader } from '../shared/BrandHeader';
 import { ClosedNotice } from '../shared/ClosedNotice';
 import { TimeControl } from '../shared/TimeControl';
 import { FilterMenu } from '../shared/FilterMenu';
 import { SearchControl } from '../shared/SearchControl';
+import { roomStatusLabel } from '../shared/roomStatusLabel';
 import { Page, Spinner, EmptyState, ErrorState } from '../shared/ui';
 
 export function HomeScreen() {
@@ -24,6 +28,8 @@ export function HomeScreen() {
 
   const { filters } = useRoomFilters();
   const { isFavorite } = useFavorites();
+  const { signalOf, notice } = useFocusSignals();
+  const batch = useBatchLabel();
   const [building, setBuilding] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const searching = query.trim().length > 0;
@@ -39,8 +45,12 @@ export function HomeScreen() {
   const shown = useMemo(() => {
     const inBuilding = building ? freeRooms.filter((f) => f.room.building === building) : freeRooms;
     const filtered = inBuilding.filter((f) => matchesRoomFilters(f.room, filters));
-    return favoritesFirst(filtered, isFavorite);
-  }, [freeRooms, building, filters, isFavorite]);
+    // Free (and your batch) → closing soon → claimed, each in the usual order
+    // (#20); saved rooms stay first inside their bucket.
+    return rankByBucket(favoritesFirst(filtered, isFavorite), (f) =>
+      focusBucket(freeStatus(f.freeUntil, planningTime), signalOf(f.room.ident)),
+    );
+  }, [freeRooms, building, filters, isFavorite, planningTime, signalOf]);
 
   // Search spans all teaching rooms (occupied included) and shows live status,
   // so a student who knows the room — or the equipment — can jump to it.
@@ -115,6 +125,8 @@ export function HomeScreen() {
               </div>
             </div>
 
+            {!searching && <FocusListNotice notice={notice} />}
+
             {/* The answer: search hits (any status) when searching, else free rooms. */}
             {error && freeRooms.length === 0 ? (
               <ErrorState message={error} onRetry={refresh} retryLabel={t('Try again', 'Erneut versuchen')} />
@@ -130,13 +142,20 @@ export function HomeScreen() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
                   {searchResults.map(({ room, availability }) => {
                     const b = statusBannerText(availability, planningTime);
+                    // A lecture always wins: focus signals only on free rooms.
+                    const signal =
+                      availability.status === 'occupied'
+                        ? { status: availability.status }
+                        : cardFocus(signalOf(room.ident), availability.status, planningTime, t, locale, batch);
                     return (
                       <RoomCard
                         key={room.ident}
                         name={room.code}
                         meta={roomMeta(room)}
                         hint={lockHint(room)}
-                        status={availability.status}
+                        status={signal.status}
+                        statusLabel={roomStatusLabel(signal.status, t)}
+                        focus={'focus' in signal ? signal.focus : undefined}
                         duration={b.duration}
                         href={`/room/${encodeURIComponent(room.ident)}`}
                         onClick={(e) => {
@@ -157,13 +176,16 @@ export function HomeScreen() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
                 {shown.map((f) => {
                   const ident = f.room.ident;
+                  const signal = cardFocus(signalOf(ident), freeStatus(f.freeUntil, planningTime), planningTime, t, locale, batch);
                   return (
                     <RoomCard
                       key={ident}
                       name={f.room.code}
                       meta={roomMeta(f.room)}
                       hint={lockHint(f.room)}
-                      status={freeStatus(f.freeUntil, planningTime)}
+                      status={signal.status}
+                      statusLabel={roomStatusLabel(signal.status, t)}
+                      focus={signal.focus}
                       duration={freeRoomDuration(f, planningTime)}
                       href={`/room/${encodeURIComponent(ident)}`}
                       onClick={(e) => {

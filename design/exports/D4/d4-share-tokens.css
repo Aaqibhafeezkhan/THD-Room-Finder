@@ -1,0 +1,26 @@
+/* D4 proposal · focus accents + snackbar (not yet in tokens/colors.css).
+   1. Focus accents. Each has a hand-tuned five-step graph ramp; level 0 (no focus)
+      is shared with D2. Violet (default) = D2 ramp in d2-graph-tokens.css.
+      Not allowed as accents: blue (action), teal, amber, red, claimed purple.
+      Contrast vs surface, levels 0–4:
+      orchid   light 1.13 · 1.42 · 2.26 · 4.55 · 8.90    dark 1.19 · 1.36 · 2.19 · 4.72 · 10.72
+      graphite light 1.13 · 1.41 · 2.40 · 4.96 · 12.52   dark 1.19 · 1.66 · 2.69 · 6.04 · 13.37
+      (violet  light 1.13 · 1.48 · 2.49 · 4.83 · 10.11   dark 1.19 · 1.47 · 2.25 · 5.01 · 10.55)
+      Put data-accent on the same element as data-theme.
+   2. Snackbar aliases (M3 inverse surface); the system has none yet. */
+[data-accent="orchid"] {
+  --md-graph-1: #F1CBE7; --md-graph-2: #DE92CB; --md-graph-3: #B24FA0; --md-graph-4: #7E1F6E;
+}
+[data-theme="dark"][data-accent="orchid"] {
+  --md-graph-1: #4F2346; --md-graph-2: #7B3A70; --md-graph-3: #BE68AE; --md-graph-4: #F3BCE6;
+}
+[data-accent="graphite"] {
+  --md-graph-1: #D6D7DC; --md-graph-2: #A3A5AE; --md-graph-3: #6C6E78; --md-graph-4: #303239;
+}
+[data-theme="dark"][data-accent="graphite"] {
+  --md-graph-1: #3F4047; --md-graph-2: #5D5F68; --md-graph-3: #9799A3; --md-graph-4: #E2E3E8;
+}
+:root, [data-theme] {
+  --md-inverse-surface: var(--md-on-surface);
+  --md-inverse-on-surface: var(--md-surface);
+}

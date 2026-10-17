@@ -11,6 +11,10 @@ Finder Design System* starts with the same context.
 | [02 · Focus layer](02-focus-layer.md) | States, colours with contrast, components to add, rules that never bend |
 | [03 · Sessions](03-sessions.md) | Design sessions D1–D4: goal, inputs, deliverables, done-when |
 | [04 · Handback](04-handback.md) | How an export becomes tokens, components and a PR |
+| [05 · D2 message](05-d2-message.md) | The D2 redo prompt (Profile tab and focus graph), for a fresh design chat |
+| [06 · D3 message](06-d3-message.md) | The D3 prompt (list and map signals), for a fresh design chat |
+| [07 · D4 message](07-d4-message.md) | The D3 map fix and the D4 prompt (share card) |
+| [08 · D4 revision](08-d4-revision.md) | Share as a link with the card as its preview; semester grid; accents |
 
 **Source of truth for behaviour:**
 [focus sessions spec](https://github.com/arudaev/THD-Room-Finder/blob/main/docs/product/focus-sessions.md)

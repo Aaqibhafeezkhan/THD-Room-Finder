@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Accepted (direction), values provisional until spike [#39](https://github.com/arudaev/THD-Room-Finder/issues/39) reports |
+| **Status** | Accepted (direction), values provisional until spike [#39](https://github.com/arudaev/THD-Room-Finder/issues/39) reports; §1 and §2 amended by [ADR 0004](0004-focus-rhythm.md) |
 | **Date** | 13 October 2026 |
 | **Decided by** | Maintainer |
 | **Amends** | [ADR 0001](0001-study-presence.md): sharing choices, lease and client state, history |
@@ -29,6 +29,9 @@ assumptions:
 
 ### 1. Two sharing modes, plus a signed-out timer
 
+> **Amended by [ADR 0004](0004-focus-rhythm.md):** a claim needs a study
+> profile; without one, focus runs on the device only.
+
 | Mode | Who sees what | Default |
 |---|---|---|
 | **Private** (claim) | Everyone: the room has *a focus session* (dark purple), no name, programme or batch. Owner: full detail. | **Yes** |
@@ -41,6 +44,11 @@ activity. A student may switch Private ↔ Public during a session; narrowing
 takes effect on the next read, and widening never happens implicitly.
 
 ### 2. Duration-bound session with a check-in lease
+
+> **Amended by [ADR 0004](0004-focus-rhythm.md):** a session is a rhythm of
+> focus blocks and breaks; each block after the first is confirmed, the lease
+> follows the rhythm, and joining adopts the group's rhythm. The 60-minute
+> lease and the 45-minute web check-in below no longer apply.
 
 ```mermaid
 stateDiagram-v2
@@ -78,6 +86,13 @@ At start, at server time `s`:
 - Expired sessions cannot be resurrected by a late request. Restarting is a
   new session, in line with ADR 0001's no-resurrection rule.
 
+**Joining is not a shared session.** *Join* on a batch row starts the
+joiner's own Public session in that room; *End* only ends the caller's own
+session. Batch signals are counts of individual Public sessions. When a
+session expires, the minutes recorded locally run to the last renewal
+(check-in or visible-app activity), not to `leaseUntil`. Shared groups are
+Phase 2.
+
 Unchanged from ADR 0001: one active session per identity, server time only,
 idempotent start and end, a single renewing tab per device, and summaries
 bounded to visible rooms.
@@ -89,10 +104,19 @@ Ending or expiring a session appends `{date, minutes, roomCode?}` to
 and rendered locally. The server still stores no completed sessions, so ADR
 0001's retention rule holds. Export/import as JSON covers phone changes.
 
+> **Amended by [ADR 0005](0005-focus-across-devices.md):** for signed-in
+> students the history syncs across their devices (dates and minutes, no
+> rooms); signed-out history stays on the device.
+
 The share card is a PNG of about 1200×630 and at most 150 KB, generated with
 `<canvas>` and shared through the Web Share API (download fallback). It
 contains the graph, streak and totals only; name, room and programme are
 opt-in.
+
+> **Amended by [ADR 0003](0003-focus-graph-share-links.md) (proposed):** the
+> card is shared as a link whose social preview is rendered statelessly from
+> the link itself; the PNG stays as "Save image". D4 chose 1080×1080 for the
+> image.
 
 ### 4. Ordering and signals
 

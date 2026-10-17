@@ -27,15 +27,52 @@ flowchart LR
 |---|---|---|---|
 | Web app | `npm run dev` | Vercel deployment per PR (includes all stack ancestors) | Vercel, from `main` |
 | THabella | Dev middleware proxy | `api/` proxy | `api/` proxy |
-| Supabase | `npx supabase start` (Docker) | One isolated staging project (planned) | Production project (planned, gated) |
+| Supabase | `npx supabase start` (Docker) | `thd-room-finder-staging` (Frankfurt, free plan) | Production project (planned, gated) |
 | Users | Seeded synthetic users | Seeded synthetic users | Real students |
 | Credentials | Local defaults printed by the CLI | Preview-scoped env vars in Vercel | Production env vars in Vercel |
 | Migrations | `supabase db reset` freely | Applied by the maintainer | Applied by the maintainer after review |
 
-**Status today:** the local Supabase configuration is being scaffolded under
-[#17](https://github.com/arudaev/THD-Room-Finder/issues/17). No hosted
-Supabase project exists for THD Room Finder yet; hosted activation follows the
-[pilot checklist](../architecture/pilot-verification.md).
+**Status today:** the local stack runs the focus service: schema, functions,
+seed and contract tests ([#17](https://github.com/arudaev/THD-Room-Finder/issues/17),
+[contract](../architecture/focus-service.md)). A hosted staging project backs
+Vercel previews and, for now, the live app; a separate production project
+follows the [pilot checklist](../architecture/pilot-verification.md).
+
+## Staging (previews)
+
+`thd-room-finder-staging` runs in Frankfurt on the free plan. The maintainer
+keeps its project ref outside the repo.
+
+- **Schema:** the same migrations as local, applied with
+  `npx supabase link --project-ref <ref>` and `npx supabase db push`. The CLI
+  uses a temporary login role, so no database password is needed.
+- **Data:** `supabase/seed.sql` (synthetic people and sample rooms) via
+  `npx supabase db push --include-seed`. Never real students.
+- **Vercel:** `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` are set
+  for **Preview and Production**. Since 15 October 2026 the live app uses this
+  project too, so previews and production share data until a production
+  project is split off. Set values with `printf '%s' … | vercel env add`, never
+  a Windows PowerShell pipe: it adds a byte-order mark, and every request then
+  fails in the browser ("You're offline").
+- **Auth:** site URL is `https://thd-room-finder.vercel.app`; redirects allow
+  that URL, `https://thd-room-finder-*-arudaev-projects.vercel.app/**` and
+  `http://localhost:5173/**`. Codes expire after 10 minutes.
+- **Email:** custom SMTP through Brevo (`smtp-relay.brevo.com:587`, the Brevo
+  SMTP login and an SMTP key). Brevo's *Authorized IPs* blocking is off for
+  SMTP keys, because Supabase sends from changing addresses (`525 5.7.1
+  Unauthorized IP address` otherwise). Email rate limit: 30 an hour.
+- **Email templates:** the app asks for a code, so both templates that can
+  answer a sign-in must show `{{ .Token }}`, not only a link. Paste them in
+  Authentication → Emails → Templates:
+
+  | Template | When Supabase sends it | Source |
+  |---|---|---|
+  | Confirm signup | The first sign-in of an address (Confirm email is on) | `supabase/templates/confirmation.html` |
+  | Magic Link | Every later sign-in | `supabase/templates/magic_link.html` |
+
+  Subject for both: `Your THD Room Finder code · Dein Code`. Locally,
+  `supabase/config.toml` wires the same files, so Inbucket shows what
+  students get.
 
 ## Run Supabase locally
 
@@ -62,7 +99,38 @@ npx supabase stop       # stop the containers (data persists)
 ```
 
 Sign-in emails never leave your machine locally: open Inbucket to read the
-one-time code.
+6-digit code (valid for 10 minutes).
+
+### Seeded people
+
+`supabase/seed.sql` creates synthetic people, five placeholder programmes
+(until the #40 taxonomy exists), a few sample rooms and two live sessions
+(Max, Public with his name in A008; Mia, Private in ITC 2: sem(1)). Sign in as any of them with the code from
+Inbucket.
+
+| Person | Email | Study profile | Sees a Public session of Lena's as |
+|---|---|---|---|
+| Lena | `lena@example.test` | AIN, winter 2023 | (her own) |
+| Max | `max@example.test` | AIN, winter 2023 | Same batch: "AIN 7 · studying" |
+| Jonas | `jonas@example.test` | AIN, winter 2024 | Anonymous claim |
+| Mia | `mia@example.test` | KI, winter 2023 | Anonymous claim |
+| Sam | `sam@example.test` | none (Private only) | Anonymous claim |
+| signed out | (publishable key) | none | Anonymous claim |
+
+### Contract tests
+
+```bash
+npx supabase test db    # pgTAP: access, audience, lease and lifecycle rules
+```
+
+After changing a migration, regenerate the app's types and commit them with
+the migration (the Database workflow checks this):
+
+```bash
+npx supabase gen types typescript --local --schema public
+```
+
+The output goes into `src/data/supabase.types.ts` below its two header lines.
 
 ## Rules
 

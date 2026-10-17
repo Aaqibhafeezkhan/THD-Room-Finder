@@ -18,9 +18,25 @@ guideline cards, UI kits, templates, assets, `readme.md` and `SKILL.md`.
 | `_ds_bundle.js`, `_ds_manifest.json`, `_adherence.oxlintrc.json` | Not in git. Claude Design compiles them from the components and `@dsCard` markers |
 | `uploads/` | Not in git. Ad-hoc uploads made inside Claude Design |
 
-`tokens/` here equals `src/styles/tokens/` in the app **plus** the Phase 1
-concept tokens (`--md-focus`, `--md-claimed`, `--md-event`). They move into
-`src/` when design session D1 approves them ([#21](https://github.com/arudaev/THD-Room-Finder/issues/21)).
+`tokens/colors.css` here equals `src/styles/tokens/colors.css` in the app,
+focus layer included. The other token files differ only in comments.
+
+## Components mirrored from the app
+
+Components that exist in the app are written once, in TypeScript under
+`src/components/`, and mirrored here so Claude Design renders exactly what the
+app ships. The mirror covers the D1–D4 focus layer, the new core controls and
+`RoomCard`:
+
+```bash
+node design/mirror-components.mjs
+```
+
+It writes `<Name>.jsx` (types stripped, comments kept) and `<Name>.d.ts` (from
+the TypeScript compiler, with the `@startingPoint` tag) for every component in
+its list. `.prompt.md` usage notes and the `.card.html` specimens are written
+by hand. Never edit a mirrored `.jsx` here; change the source and run the
+script in the same PR.
 
 ## Sync from the repo to the project
 
@@ -52,3 +68,4 @@ When a design session changes the system inside Claude Design:
 |---|---|
 | July 2026 | System created from the v1 apps and website; React recreations, campus map, templates |
 | 13 October 2026 | Mirrored into git; dark-theme selector aligned with the app; readme rewritten for v2; Phase 1 focus layer (tokens, five cards) and `brief/` added ([#31](https://github.com/arudaev/THD-Room-Finder/issues/31)) |
+| 14 October 2026 | D1–D4 approved: graph ramp, graph colours and inverse surface added; focus components, new core controls and the extended `RoomCard` mirrored from `src/components/`; focus graph card refreshed ([#62](https://github.com/arudaev/THD-Room-Finder/issues/62)) |

@@ -77,7 +77,7 @@ long as I need?"*:
 - **Room detail** – status banner, capacity, facilities, contact, the day's schedule
 - **Campus map** – free rooms on a 2.5D campus map, with amenity badges for
   dining (Mensa, cafés) and study/library spaces
-- **Saved rooms** – star your usual spot; the Saved tab answers "free right now?"
+- **Saved rooms** – star your usual spot; Profile answers "free right now?"
 - **Bilingual** – English UI with German preserved; live EN/DE toggle
 - **Adaptive navigation** – bottom bar (phone) → rail (tablet) → drawer (desktop)
 - **Dark theme** – follows the device, with a manual override
@@ -238,6 +238,11 @@ development and contributor guides. The design system is mirrored in
 [`design/`](design/README.md) and lives in Claude Design.
 
 ## Contributing
+
+Questions, ideas and feedback are welcome in
+[Discussions](https://github.com/arudaev/THD-Room-Finder/discussions). See the
+[roadmap](https://github.com/arudaev/THD-Room-Finder/discussions/122) for
+where the app is heading.
 
 Pick an issue in the **Ready** column of the
 [project board](https://github.com/users/arudaev/projects/8), comment `/take`,

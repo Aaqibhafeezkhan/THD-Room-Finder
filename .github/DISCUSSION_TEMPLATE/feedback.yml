@@ -1,0 +1,8 @@
+body:
+  - type: textarea
+    id: feedback
+    attributes:
+      label: What's working, and what isn't?
+      description: Honest is good. You don't need to suggest a fix.
+    validations:
+      required: true
