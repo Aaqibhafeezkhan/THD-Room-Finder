@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { useNavigate } from 'react-router-dom';
 import { Button, FocusGraph, ProfileHeader, Snackbar } from '../../components';
@@ -14,6 +14,10 @@ import { useFocusStats } from '../focus/useFocusStats';
 import { SavedRooms } from './SavedRooms';
 import { SetupSheet } from './SetupSheet';
 import { useStudyProfile } from './StudyProfileContext';
+import { getCampusHours, isFocusRestDay } from '../../domain/openingHours';
+import { campusNow } from '../../domain/time';
+import { formatDayTime } from '../../domain/format';
+import { accessReason } from '../shared/accessCopy';
 
 /**
  * Profile (D2): only what a student checks almost daily. A one-line header
@@ -27,7 +31,22 @@ export function ProfileScreen() {
   const { t, locale } = useI18n();
   const cls = useWindowClass();
   const compact = cls === 'compact';
-  const focus = useFocusStats();
+  const [now, setNow] = useState(campusNow);
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(campusNow()), 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
+  const focus = useFocusStats(now);
+  const hours = getCampusHours(now);
+  const reason = accessReason(hours.reason, t);
+  const accessStatus = hours.access === 'unconfirmed'
+    ? `${reason ? `${reason} · ` : ''}${t('Classroom access unconfirmed today.', 'Zugang zu Lehrräumen heute nicht bestätigt.')}`
+    : !hours.open
+      ? hours.nextOpen
+        ? t(`Classroom buildings closed · Next scheduled opening ${formatDayTime(hours.nextOpen, locale)}`, `Lehrgebäude geschlossen · Nächste reguläre Öffnung ${formatDayTime(hours.nextOpen, locale)}`)
+        : t('Classroom buildings closed today.', 'Lehrgebäude heute geschlossen.')
+      : null;
+  const pauseStatus = isFocusRestDay(now) ? t('Your study streak is paused.', 'Deine Lernserie pausiert.') : null;
   const [sharing, setSharing] = useState(false);
   const [snack, setSnack] = useState('');
   const [setup, setSetup] = useState(false);
@@ -59,7 +78,7 @@ export function ProfileScreen() {
   return (
     <>
       <BrandHeader title={t('Profile', 'Profil')} menu={false} />
-      <Page style={{ maxWidth: 840 }}>
+      <Page style={{ maxWidth: 960 }}>
         <ProfileHeader
           signedIn={signedIn}
           name={profile.displayName ?? undefined}
@@ -78,6 +97,7 @@ export function ProfileScreen() {
           compact={compact}
           stats={focus.hasHistory ? <>{formatHours(focus.semesterMinutes, locale)} <span className="thd-focus-period">{t('this semester', 'dieses Semester')}</span></> : stats}
           secondaryStats={focus.hasHistory ? t(`${focus.streak}-day study streak`, `${focus.streak} Lerntage in Folge`) : undefined}
+          status={accessStatus || pauseStatus ? <>{accessStatus} {pauseStatus}</> : undefined}
           label={`${t('Focus graph', 'Fokus-Verlauf')}. ${stats}`}
           text={graphText(t, locale)}
           onShare={focus.hasHistory ? () => setSharing(true) : undefined}

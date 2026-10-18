@@ -82,7 +82,7 @@ describe('streak', () => {
   it.each([
     ['2026-03-27', '2026-03-30'], // Berlin DST begins
     ['2026-10-23', '2026-10-26'], // Berlin DST ends
-    ['2027-12-31', '2028-01-03'], // year boundary
+    ['2026-12-23', '2027-01-07'], // Christmas shutdown across the year boundary
   ])('crosses the weekend from %s to %s using calendar days', (friday, monday) => {
     const [y, m, d] = monday.split('-').map(Number);
     expect(streak([{ date: friday, minutes: 25 }, { date: monday, minutes: 25 }], at(y, m, d))).toBe(2);

@@ -34,49 +34,51 @@ describe('periodFor', () => {
 });
 
 describe('getCampusHours', () => {
-  it('opens general buildings at 07:00 on a regular weekday', () => {
+  it('uses the house-rule 06:30–21:00 classroom default on a normal weekday', () => {
     const h = getCampusHours(dt(2026, 5, 13, 7, 15)); // Wed, just after open
     expect(h.open).toBe(true);
-    expect(h.todayOpen).toEqual(dt(2026, 5, 13, 7, 0));
-    expect(h.todayClose).toEqual(dt(2026, 5, 13, 20, 0));
+    expect(h.todayOpen).toEqual(dt(2026, 5, 13, 6, 30));
+    expect(h.todayClose).toEqual(dt(2026, 5, 13, 21, 0));
   });
 
   it('stays open on a regular Friday evening until 20:00', () => {
     const h = getCampusHours(dt(2026, 5, 15, 19, 0)); // Fri
     expect(h.open).toBe(true);
-    expect(h.todayClose).toEqual(dt(2026, 5, 15, 20, 0));
+    expect(h.todayClose).toEqual(dt(2026, 5, 15, 21, 0));
   });
 
-  it('is closed on a regular Saturday and points to Monday 07:00', () => {
+  it('withholds unconfirmed Saturday access and gives the next scheduled weekday', () => {
     const h = getCampusHours(dt(2026, 5, 16, 12, 0)); // Sat
     expect(h.open).toBe(false);
-    expect(h.nextOpen).toEqual(dt(2026, 5, 18, 7, 0)); // Mon
+    expect(h.access).toBe('unconfirmed');
+    expect(h.nextOpen).toEqual(dt(2026, 5, 18, 6, 30)); // Mon
   });
 
   it('reports next opening later the same day when before opening time', () => {
     const h = getCampusHours(dt(2026, 5, 13, 6, 0)); // Wed pre-open
     expect(h.open).toBe(false);
-    expect(h.nextOpen).toEqual(dt(2026, 5, 13, 7, 0));
+    expect(h.nextOpen).toEqual(dt(2026, 5, 13, 6, 30));
   });
 
   it('keeps normal weekday hours during the exam window (Library stays late)', () => {
     const h = getCampusHours(dt(2026, 7, 1, 19, 0)); // Wed in exam window
     expect(h.period).toBe('exam');
     expect(h.open).toBe(true);
-    expect(h.todayClose).toEqual(dt(2026, 7, 1, 20, 0));
+    expect(h.todayClose).toEqual(dt(2026, 7, 1, 21, 0));
   });
 
-  it('is closed on an exam-period Saturday (only the Library opens weekends)', () => {
+  it('does not infer classroom exam-weekend access from the library announcement', () => {
     const h = getCampusHours(dt(2026, 7, 4, 19, 0)); // Sat in exam window
     expect(h.period).toBe('exam');
     expect(h.open).toBe(false);
+    expect(h.access).toBe('unconfirmed');
   });
 
-  it('uses reduced hours during the semester break', () => {
+  it('does not copy library break hours into the classroom schedule', () => {
     const h = getCampusHours(dt(2026, 8, 12, 15, 0)); // Wed in Aug break
     expect(h.period).toBe('break');
     expect(h.open).toBe(true);
-    expect(h.todayClose).toEqual(dt(2026, 8, 12, 16, 30));
+    expect(h.todayClose).toEqual(dt(2026, 8, 12, 21, 0));
   });
 });
 
@@ -196,20 +198,25 @@ describe('getCopyShopHours', () => {
 
 
 describe('whole-day campus closures for focus', () => {
-  it('uses the classroom schedule in regular, exam and break periods at every hour', () => {
-    for (const month of [1, 3, 7, 9, 10]) {
-      for (let day = 1; day <= 31; day++) {
-        for (const hour of [0, 10, 23]) {
-          const date = new Date(2026, month - 1, day, hour);
-          expect(isCampusClosedDay(date)).toBe(getCampusHours(date).todayOpen === null);
-          expect(isCampusClosedDay(date)).toBe([0, 6].includes(date.getDay()));
-        }
-      }
+  it('marks Christmas closure at every hour, across New Year', () => {
+    for (const hour of [0, 10, 23]) {
+      expect(isCampusClosedDay(dt(2026, 12, 25, hour))).toBe(true);
+      expect(isCampusClosedDay(dt(2027, 1, 4, hour))).toBe(true);
     }
+    expect(getCampusHours(dt(2026, 12, 24, 10)).nextOpen).toEqual(dt(2027, 1, 7, 6, 30));
   });
 
-  it('does not mistake reduced hours or an unlisted holiday for a full closure', () => {
+  it('does not mistake semester breaks or unconfirmed Easter/weekend access for closure', () => {
     expect(isCampusClosedDay(new Date(2026, 8, 1))).toBe(false);
-    expect(isCampusClosedDay(new Date(2026, 11, 25))).toBe(false);
+    expect(isCampusClosedDay(dt(2026, 4, 2))).toBe(false);
+    expect(getCampusHours(dt(2026, 4, 2, 10)).access).toBe('unconfirmed');
+    expect(isCampusClosedDay(dt(2026, 10, 11))).toBe(false);
+  });
+
+  it('honours both dated 2026 library exam windows and the festival exception', () => {
+    expect(getLibraryHours(dt(2026, 1, 17, 20)).open).toBe(true);
+    expect(getLibraryHours(dt(2026, 7, 3, 19)).todayClose).toEqual(dt(2026, 7, 3, 18));
+    expect(getLibraryHours(dt(2027, 1, 17, 20)).open).toBe(false);
+    expect(getLibraryHours(dt(2025, 12, 23, 14)).todayClose).toEqual(dt(2025, 12, 23, 13));
   });
 });

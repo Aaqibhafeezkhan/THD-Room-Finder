@@ -1,5 +1,6 @@
 import { ImageResponse } from '@vercel/og';
 import { decodeShare, hoursText } from '../shared/shareLink.js';
+import { isClassroomClosedDate } from '../shared/campusCalendar.js';
 
 // GET /api/card?p=<payload> — the og:image of a focus graph share link
 // (ADR 0003). Draws the semester grid and figures from the payload alone:
@@ -64,18 +65,18 @@ export function cardTree(s, origin) {
       const future = i > s.today;
       const level = future ? 0 : s.levels[i] ?? 0;
       // Calendar dates use UTC here; browser/domain dates use local calendar days.
-      // Repository classroom schedules currently close only on weekends.
-      const weekday = new Date(start.getTime() + i * 86400000).getUTCDay();
-      const closed = weekday === 0 || weekday === 6;
+      const date = new Date(start.getTime() + i * 86400000).toISOString().slice(0, 10);
+      const closed = isClassroomClosedDate(date);
       cells.push(
         h('div', {
           width: cell,
           height: cell,
           marginBottom: pitch - cell,
           borderRadius: Math.max(3, Math.round(cell * 0.18)),
-          background: future ? 'transparent' : closed ? C.closed : level ? ramp[level - 1] : C.empty,
+          background: future ? 'transparent' : level ? ramp[level - 1] : C.empty,
+          position: 'relative',
           border: future ? `2px solid ${C.slot}` : i === s.today ? `3px solid ${C.on}` : 'none',
-        }),
+        }, !future && closed && !level ? h('div', { position: 'absolute', left: '25%', top: '50%', width: '50%', height: 1, background: C.onVar, opacity: 0.5, transform: 'rotate(-45deg)' }) : null),
       );
     }
     columns.push(
@@ -135,8 +136,8 @@ export function cardTree(s, origin) {
       h(
         'div',
         { alignItems: 'center' },
-        h('div', { width: 20, height: 20, borderRadius: 4, background: C.closed, marginRight: 8 }),
-        h('div', { marginRight: 18 }, de ? 'Campus geschlossen' : 'Campus closed'),
+        h('div', { width: 20, height: 20, borderRadius: 4, background: C.empty, marginRight: 8, position: 'relative' }, h('div', { position: 'absolute', left: '25%', top: '50%', width: '50%', height: 1, background: C.onVar, transform: 'rotate(-45deg)' })),
+        h('div', { marginRight: 18 }, de ? 'Bestätigt geschlossen' : 'Confirmed closure'),
         h('div', { marginRight: 10 }, de ? 'Weniger' : 'Less'),
         ...[C.empty, ...ramp].map((c) => h('div', { width: 20, height: 20, borderRadius: 4, background: c, marginRight: 5 })),
         h('div', { marginLeft: 5 }, de ? 'Mehr' : 'More'),

@@ -5,7 +5,8 @@
  * caps free-room durations at closing time and drives the "Campus closed" state.
  *
  * Two schedules share one resolver:
- *   • `getCampusHours`  — the general classroom buildings (07:00–20:00 weekdays).
+ *   • `getCampusHours`  — classroom defaults (06:30–21:00), with explicit
+ *     unconfirmed weekend/holiday access rather than a false opening promise.
  *   • `getLibraryHours` — the Joachim C. Römer Bibliothek (building G), which
  *     keeps its own, later hours and stays open on exam-period weekends. The
  *     Library hosts no THabella teaching, so it is surfaced separately as a
@@ -13,9 +14,13 @@
  *
  * Framework-free (domain layer). Source: THD published library/building hours.
  */
+import type { ClassroomDay } from '../../shared/campusCalendar.js';
 /** Which hours table applies on a given date. */
 export type CampusPeriod = 'regular' | 'exam' | 'break';
 export interface CampusHours {
+    /** Missing special-opening notices must not be presented as confirmed closure. */
+    access?: ClassroomDay['access'];
+    reason?: ClassroomDay['reason'];
     /** Active hours table at the reference time. */
     period: CampusPeriod;
     /** Whether the venue is open at the reference time. */
@@ -31,11 +36,10 @@ export interface CampusHours {
 export declare function periodFor(date: Date): CampusPeriod;
 /** Opening state of the general classroom buildings at `now`. */
 export declare function getCampusHours(now: Date): CampusHours;
-/** Whole-day classroom closure, not whether the doors are open at this hour.
- * No dated holiday/closure calendar is currently available in the repository.
- * Reduced semester-break weekdays remain study days; library hours do not apply.
- */
+/** Confirmed whole-day closure; unknown access is not a closed-day fact. */
 export declare function isCampusClosedDay(date: Date): boolean;
+/** Weekend streak pauses are a product rule, distinct from building access. */
+export declare function isFocusRestDay(date: Date): boolean;
 /** Opening state of the Library (building G) at `now` — its own schedule. */
 export declare function getLibraryHours(now: Date): CampusHours;
 /** Opening state of the Mensa canteen (building F, 1st floor lunch service) at `now`. */

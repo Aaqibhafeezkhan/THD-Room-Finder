@@ -177,12 +177,12 @@ export function CampusScreen() {
   );
   const mapAvailability = useMemo<Availability>(() => {
     const hoursTints: Record<string, boolean | undefined> = {
-      G: libraryHours.open,
+      G: libraryHours.access === 'unconfirmed' ? undefined : libraryHours.open,
       ...Object.fromEntries(Object.entries(cafeteriaHours).map(([k, h]) => [k, h?.open])),
     };
     const overrides = Object.fromEntries(
       Object.entries(hoursTints)
-        .filter(([key]) => (availability[key]?.total ?? 0) === 0)
+        .filter(([key, open]) => open !== undefined && (availability[key]?.total ?? 0) === 0)
         .map(([key, open]) => [key, { free: open ? 1 : 0, total: 1 }]),
     );
     return { ...availability, ...overrides };
@@ -301,7 +301,7 @@ export function CampusScreen() {
   // The panel below / beside the map: a "campus closed" banner when the
   // buildings are shut (and not previewing), else the selected building's rooms,
   // else the free-now hero + longest-free list.
-  const panel = !(campusHours.open || preview) ? (
+  const panel = !(campusHours.open || preview) && !selectedMeta ? (
     <ClosedNotice hours={campusHours} />
   ) : selectedKey ? (
     <>

@@ -7,8 +7,9 @@ import { useFavorites } from '../favorites/favorites';
 import { useI18n } from '../../i18n';
 import { computeRoomAvailability, getRoomSchedule } from '../../domain/availability';
 import { mayBeLocked } from '../../domain/roomFilters';
-import { formatDayTime, formatTime, statusBannerText } from '../../domain/format';
+import { formatTime, statusBannerText } from '../../domain/format';
 import { Page, Spinner, EmptyState } from '../shared/ui';
+import { ClosedNotice } from '../shared/ClosedNotice';
 import { RoomFocusPanel } from '../focus/RoomFocusPanel';
 
 const stickyBar = { position: 'sticky' as const, top: 0, zIndex: 10 };
@@ -45,7 +46,6 @@ export function RoomDetailScreen() {
   const availability = computeRoomAvailability(schedule, queryTime, campusHours.todayClose);
   const banner = statusBannerText(availability, queryTime);
   const closed = !campusHours.open;
-  const opensLabel = campusHours.nextOpen ? formatDayTime(campusHours.nextOpen, locale) : null;
   const fav = isFavorite(ident);
 
   const dayLabel = new Intl.DateTimeFormat(locale === 'de' ? 'de-DE' : 'en-GB', {
@@ -74,11 +74,7 @@ export function RoomDetailScreen() {
       />
       <Page>
         {closed ? (
-          <StatusCard
-            status="occupied"
-            title={t('Campus closed', 'Campus geschlossen')}
-            sub={opensLabel ? `${t('Opens', 'Öffnet')} ${opensLabel}` : undefined}
-          />
+          <ClosedNotice hours={campusHours} compact />
         ) : (
           <StatusCard
             status={banner.status}

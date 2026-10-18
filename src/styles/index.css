@@ -77,8 +77,9 @@ button {
   }
 }
 
-/* Native swipe, trackpad and keyboard scrolling without a bright scrollbar. */
-.thd-focus-graph-scroll::-webkit-scrollbar { display: none; }
+/* Readable cells on phones; a compact full-year overview when the card fits it. */
+.thd-focus-card { --focus-cell: 18px; }
+.thd-focus-graph-scroll { overscroll-behavior-x: contain; }
 .thd-focus-graph-scroll:focus-visible {
   outline: 2px solid var(--md-focus);
   outline-offset: 3px;
@@ -87,7 +88,12 @@ button {
 
 /* Focus cards use their own width, including split-screen and zoomed layouts. */
 .thd-focus-period { font-size: 0.6em; font-weight: 400; color: var(--md-on-surface-variant); display: inline-block; }
-.thd-focus-navigation { display: flex; justify-content: flex-end; gap: 0; margin-left: -8px; }
-@media (hover: none) and (pointer: coarse) { .thd-focus-navigation { display: none; } }
-
-@container (max-width: 480px) { .thd-focus-navigation { display: none; } }
+.thd-focus-navigation { display: flex; gap: 0; flex-shrink: 0; }
+.thd-focus-history-controls { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--space-2); flex-wrap: wrap; }
+.thd-focus-month-label { display: flex; flex-direction: column; max-width: 240px; color: var(--md-on-surface-variant); font-size: var(--body-small-size); flex: 1 1 140px; }
+.thd-focus-month-label select { width: 100%; min-height: var(--tap-target); font: inherit; font-size: var(--body-medium-size); color: var(--md-on-surface); background: var(--md-surface-variant); border: none; border-radius: var(--radius-s); padding: var(--space-2); }
+.thd-focus-day { position: relative; }
+.thd-focus-day[data-rest="true"]::after { content: ''; position: absolute; width: 55%; height: 1px; left: 23%; top: 49%; transform: rotate(-45deg); background: var(--md-on-surface-variant); opacity: .45; pointer-events: none; }
+.thd-focus-detail { margin: 0; min-height: 1.4em; font-size: var(--body-small-size); line-height: 1.4; color: var(--md-on-surface-variant); }
+.thd-focus-status { font-size: var(--body-medium-size); color: var(--md-on-surface-variant); line-height: 1.5; }
+@container (min-width: 760px) { .thd-focus-grid { --focus-cell: clamp(12px, calc((100cqw - 194px) / 53), 16px); } }

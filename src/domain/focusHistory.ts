@@ -5,7 +5,7 @@
  * validate an exported file before it is imported.
  */
 
-import { isCampusClosedDay } from './openingHours';
+import { isFocusRestDay } from './openingHours';
 
 export interface FocusEntry {
   /** Stable id, so importing the same file twice adds nothing. */
@@ -69,9 +69,9 @@ export function streak(days: DayMinutes[], today: Date): number {
   const cursor = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   const previousOpenDay = () => {
     do cursor.setDate(cursor.getDate() - 1);
-    while (isCampusClosedDay(cursor));
+    while (isFocusRestDay(cursor));
   };
-  while (isCampusClosedDay(cursor)) cursor.setDate(cursor.getDate() - 1);
+  while (isFocusRestDay(cursor)) cursor.setDate(cursor.getDate() - 1);
   // Only today's open day gets grace, not the last open day before a closure.
   if (localDay(cursor) === localDay(today) && !active.has(localDay(cursor))) previousOpenDay();
   let n = 0;

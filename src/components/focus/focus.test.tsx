@@ -99,7 +99,7 @@ describe('FocusGraph', () => {
     expect(rows).toHaveLength(3);
     // Newest week first: Sun closed, Mon 200, Tue 45 + 40, the rest of the week is still to come.
     const newest = Array.from(rows[0].querySelectorAll('td')).map((td) => td.textContent);
-    expect(newest).toEqual(['0 · Campus closed', '200', '85', '—', '—', '—', '—']);
+    expect(newest).toEqual(['0', '200', '85', '—', '—', '—', '—']);
     const outlined = Array.from(container.querySelectorAll<HTMLElement>('[aria-hidden="true"] div')).filter((el) =>
       el.style.outline.includes('solid'),
     );
@@ -107,19 +107,40 @@ describe('FocusGraph', () => {
     expect(outlined[0].style.background).toBe('var(--md-graph-2)');
   });
 
-  it.each([false, true])('grays weekends with minutes and labels them accessibly (compact=%s)', async (compact) => {
-    await render(<FocusGraph days={[{ date: '2026-10-10', minutes: 175 }]} today="2026-10-11" weeks={2}
+  it.each([false, true])('keeps activity violet and slashes empty confirmed closures (compact=%s)', async (compact) => {
+    await render(<FocusGraph days={[{ date: '2026-12-25', minutes: 175 }]} today="2026-12-26" weeks={2}
       compact={compact} stats="0-day streak" label="Focus graph" text={graphText} />);
-    const saturday = container.querySelector<HTMLElement>('[data-date="2026-10-10"]')!;
-    const sunday = container.querySelector<HTMLElement>('[data-date="2026-10-11"]')!;
-    expect(saturday.style.background).toBe('color-mix(in srgb, var(--md-graph-closed) 72%, var(--md-surface))');
-    expect(sunday.style.background).toBe('color-mix(in srgb, var(--md-graph-closed) 72%, var(--md-surface))');
-    expect(sunday.style.outline).toContain('solid');
-    expect(saturday.title).toBe('10 · 175 min · Campus closed');
+    const active = container.querySelector<HTMLElement>('[data-date="2026-12-25"]')!;
+    const empty = container.querySelector<HTMLElement>('[data-date="2026-12-26"]')!;
+    expect(active.style.background).toBe('var(--md-graph-4)');
+    expect(active.dataset.rest).toBeUndefined();
+    expect(empty.style.background).toBe('var(--md-graph-0)');
+    expect(empty.dataset.rest).toBe('true');
+    expect(empty.style.outline).toContain('solid');
+    expect(active.title).toBe('25 · 175 min · Campus closed');
     expect(container.querySelector('tbody')?.textContent).toContain('175 · Campus closed');
-    await act(async () => saturday.click());
-    expect(container.textContent).toContain('10 · 175 min · Campus closed');
-    expect(container.textContent).toContain(graphText.closureNote);
+    await act(async () => active.click());
+    expect(container.querySelector('.thd-focus-detail')?.textContent).toBe('25 · 175 min · Campus closed');
+  });
+
+  it('lets a phone user jump to an older month and return to the latest week', async () => {
+    await render(<FocusGraph days={[]} today="2026-10-18" stats="No focus yet." label="Focus graph" text={graphText} />);
+    const scroller = container.querySelector<HTMLElement>('.thd-focus-graph-scroll')!;
+    Object.defineProperty(scroller, 'scrollWidth', { value: 1200 });
+    Object.defineProperty(scroller, 'clientWidth', { value: 320 });
+    const month = container.querySelector('select')!;
+    const january = Array.from(month.options).find(option => option.textContent === 'Jan 2026')!;
+    const marker = container.querySelector<HTMLElement>(`[data-week="${january.value}"]`)!;
+    marker.getBoundingClientRect = () => ({ left: 400 } as DOMRect);
+    await act(async () => { month.value = january.value; month.dispatchEvent(new Event('change', { bubbles: true })); });
+    expect(scroller.scrollLeft).toBeGreaterThan(0);
+    expect(scroller.scrollLeft).toBeLessThan(880);
+    const latest = container.querySelector<HTMLElement>('[data-week="52"]')!;
+    latest.getBoundingClientRect = () => ({ left: 1000 } as DOMRect);
+    await act(async () => container.querySelector<HTMLButtonElement>('[aria-label="Latest week"]')!.click());
+    expect(scroller.scrollLeft).toBe(880);
+    expect(container.textContent).toContain('Less');
+    expect(container.textContent).toContain('More');
   });
 
   it('hides Share until there is something to share', async () => {

@@ -4,8 +4,8 @@ import type { CSSProperties, ReactNode } from 'react';
  * seven rows Sun → Sat, one column per week, the current week rightmost, today
  * outlined, days after today left as empty slots. Five levels from the
  * --md-graph-0…4 ramp (it follows the student's graph colour via data-accent).
- * Cell size follows the card width; every layout scrolls through the full year
- * and opens at the current week. The grid itself is hidden from
+ * Phones keep readable cells and scroll through the year; wide cards fit it
+ * in full. Month navigation opens at the current week. The grid itself is hidden from
  * screen readers: the section label carries the stats and a visually hidden
  * table lists every day's minutes. Hover or tap a cell for its day.
  */
@@ -30,6 +30,8 @@ export interface FocusGraphText {
     closureNote: string;
     older?: string;
     newer?: string;
+    jumpToMonth?: string;
+    latest?: string;
     /** "Share focus graph" */
     share: string;
     /** Hidden table caption, "Focus minutes per day, newest week first". */
@@ -51,6 +53,8 @@ export interface FocusGraphProps {
     stats: ReactNode;
     /** Optional secondary line beneath the semester total, e.g. study-day streak. */
     secondaryStats?: ReactNode;
+    /** Live classroom access; independent of the date being viewed in history. */
+    status?: ReactNode;
     /** Accessible name of the card; should repeat the stats. */
     label: string;
     text: FocusGraphText;

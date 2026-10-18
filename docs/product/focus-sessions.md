@@ -229,29 +229,35 @@ from a server, leaderboards. See [later phases](later-phases.md).
 
 ### Campus closures and focus streaks
 
-Focus streaks count consecutive **open classroom-campus days**, not calendar
-days. Saturday and Sunday pause the streak: focusing Monday through Friday
-produces five days, it remains five over the weekend and on Monday before a
-session, and becomes six after focusing Monday. Missing an open weekday breaks
-the streak once that day ends. Closed days never add streak days, even if an
-older/imported session falls on one; all saved minutes remain in history and
-semester totals. An empty history always has a zero streak.
+Study streaks count study days: weekends and confirmed Christmas shutdown days
+pause the streak without adding days. Recorded study on any date remains in
+history and totals. Missing a non-rest weekday breaks the streak when it ends.
+Weekend pauses are a product rule, not a statement that every campus venue is
+physically locked.
 
-The profile graph, compact mobile graph, saved PNG and link-preview card show
-elapsed closed dates in neutral gray (`--md-graph-closed`), independent of graph
-colour, in light and dark themes. Today retains its outline, including on a
-closed day. Future dates retain the graph's blank slots / share card's outlined
-slots. Tooltips and the accessible table include "Campus closed" / "Campus
-geschlossen" alongside any recorded minutes; the compact graph footer explains the
-paused streak. The semester total leads the card, with the study-day streak on a secondary line. The footer pairs a pause icon and a short weekend note with the five-swatch intensity ramp; its less-to-more label remains accessible. At every screen width, native swipe, trackpad and keyboard scrolling reveal the full year without a visible scrollbar. Cells scale with the card width (14–26 px); the profile column is capped at 840 px. Wider pointer layouts also offer older/newer navigation buttons. The viewed week is preserved when resizing or rotating. Weekend cells blend the closed-day token into the surface for softer contrast. A subtle left-edge fade signals more history and disappears at the oldest week.
+The source-backed classroom calendar distinguishes scheduled, closed and
+unconfirmed access. House rules give a 06:30â€“21:00 default, subject to notices;
+library break hours do not apply to classrooms. Christmas shuts down across
+New Year. Easter, Pentecost, public holidays and dated lecture-free days do not
+prove physical closure. Classroom exam-weekend access remains unconfirmed;
+the library has separately published, dated extended hours. See
+[calendar research and maintenance](../development/campus-calendar.md).
 
-The source is the general classroom schedule in `src/domain/openingHours.ts`,
-not the library schedule or the absence of THabella lectures. The repository
-currently has **no dated holiday or exceptional campus-closure calendar**, so
-no extra closure dates are guessed. Semester breaks have reduced weekday hours
-and therefore do not pause weekday streaks. If verified dated closures are
-added later, update the classroom calendar and the server share-card renderer
-together and extend their consistency tests.
+Only empty confirmed-closure cells carry a subtle slash on the normal pale
+background. Recorded activity retains its accent colour even on a closed date.
+Tooltips, the day-detail line and the accessible table retain the minutes and
+closure annotation. Future dates stay blank. Profile shows live access status
+separately from the historic graph; Rooms explains unconfirmed access before
+promising a free room. The library's card remains independently accessible.
+
+The profile column is capped at 960 px. Desktop fits the rolling year when the
+card has room, with a 12 px minimum cell. Smaller cards use readable 18 px cells
+and native scrolling. A labeled month picker, older/newer controls and a latest
+week action remain available to touch, keyboard and pointer users. Controls
+have 44 px targets. Less/More and closure legends remain visible. Resize work
+is deferred and width-only so graph height changes cannot create an observer
+loop. Short month labels and 12 px day labels remain readable without enlarging
+the entire desktop card.
 
 Weeks start on Sunday in the graph and new share cards/links, matching the
 GitHub contribution calendar reference. Visible row labels remain Monday,

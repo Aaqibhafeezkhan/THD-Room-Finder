@@ -6,7 +6,8 @@
  * caps free-room durations at closing time and drives the "Campus closed" state.
  *
  * Two schedules share one resolver:
- *   • `getCampusHours`  — the general classroom buildings (07:00–20:00 weekdays).
+ *   • `getCampusHours`  — classroom defaults (06:30–21:00), with explicit
+ *     unconfirmed weekend/holiday access rather than a false opening promise.
  *   • `getLibraryHours` — the Joachim C. Römer Bibliothek (building G), which
  *     keeps its own, later hours and stays open on exam-period weekends. The
  *     Library hosts no THabella teaching, so it is surfaced separately as a
@@ -14,25 +15,29 @@
  *
  * Framework-free (domain layer). Source: THD published library/building hours.
  */
+import { academicBreak, classroomDay, isClassroomClosedDate, isStudyRestDate } from './campusCalendar.jsx';
+function calendarDate(date) {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
 const H = (h, m = 0) => h * 60 + m;
 // Weekday index: 0=Sun … 6=Sat.
 // ── General classroom buildings ──────────────────────────────────────────────
-// Regular term: Mon–Fri 07:00–20:00, weekends closed.
+// Hausordnung (14 May 2024), §2: default 06:30–21:00 unless separately announced.
+// Weekend/holiday classroom access is unconfirmed; see classroomDay, not library hours.
 const CAMPUS_REGULAR = [
     null, // Sun
-    { open: H(7), close: H(20) }, // Mon
-    { open: H(7), close: H(20) }, // Tue
-    { open: H(7), close: H(20) }, // Wed
-    { open: H(7), close: H(20) }, // Thu
-    { open: H(7), close: H(20) }, // Fri
+    { open: H(6, 30), close: H(21) }, // Mon
+    { open: H(6, 30), close: H(21) }, // Tue
+    { open: H(6, 30), close: H(21) }, // Wed
+    { open: H(6, 30), close: H(21) }, // Thu
+    { open: H(6, 30), close: H(21) }, // Fri
     null, // Sat
 ];
 // Exam-prep window (22.06 – 31.07.2026): general buildings keep normal weekday
 // hours; only the Library stays open late and on weekends (see LIBRARY_EXAM).
 const CAMPUS_EXAM = CAMPUS_REGULAR;
-// Semester break (15.02 – 14.03 and 01.08 – 30.09): reduced weekday hours,
-// weekends closed.
-const CAMPUS_BREAK = [
+// Published LIBRARY semester-break hours; not the classroom building schedule.
+const LIBRARY_BREAK_HOURS = [
     null, // Sun
     { open: H(9, 30), close: H(16, 30) }, // Mon
     { open: H(9, 30), close: H(16, 30) }, // Tue
@@ -41,7 +46,7 @@ const CAMPUS_BREAK = [
     { open: H(9, 30), close: H(13) }, // Fri
     null, // Sat
 ];
-const CAMPUS = { regular: CAMPUS_REGULAR, exam: CAMPUS_EXAM, break: CAMPUS_BREAK };
+const CAMPUS = { regular: CAMPUS_REGULAR, exam: CAMPUS_EXAM, break: CAMPUS_REGULAR };
 // ── Library (Joachim C. Römer Bibliothek, building G) ─────────────────────────
 // Regular term: Mon–Thu 08:30–20:00, Fri 08:30–18:00, weekends closed.
 const LIBRARY_REGULAR = [
@@ -65,14 +70,14 @@ const LIBRARY_EXAM = [
     { open: H(8), close: H(23, 45) }, // Sat
 ];
 // Semester break: Mon–Thu 09:30–16:30, Fri 09:30–13:00, weekends closed.
-const LIBRARY_BREAK = CAMPUS_BREAK;
+const LIBRARY_BREAK = LIBRARY_BREAK_HOURS;
 const LIBRARY = { regular: LIBRARY_REGULAR, exam: LIBRARY_EXAM, break: LIBRARY_BREAK };
 /** The active hours table for `date`. */
 export function periodFor(date) {
     const y = date.getFullYear();
     const md = (date.getMonth() + 1) * 100 + date.getDate();
     // Exam-prep window is a specific 2026 date range.
-    if (y === 2026 && md >= 622 && md <= 731)
+    if (y === 2026 && ((md >= 112 && md <= 214) || (md >= 622 && md <= 731)))
         return 'exam';
     // Semester breaks recur yearly.
     if ((md >= 215 && md <= 314) || (md >= 801 && md <= 930))
@@ -81,6 +86,18 @@ export function periodFor(date) {
 }
 /** This schedule's hours for `date`, honouring the period that day falls in. */
 function dayHoursFor(schedule, date) {
+    const iso = calendarDate(date);
+    if (schedule === CAMPUS && classroomDay(iso).access !== 'scheduled')
+        return null;
+    if (schedule === LIBRARY) {
+        // Dated library notices, not an annual extension of last year's exam hours.
+        if (academicBreak(iso))
+            return null;
+        if (iso === '2025-12-23')
+            return { open: H(8, 30), close: H(13) };
+        if (iso === '2026-07-03')
+            return { open: H(8, 30), close: H(18) };
+    }
     return schedule[periodFor(date)][date.getDay()];
 }
 /** A Date at `minutes` past midnight on the same calendar day as `ref`. */
@@ -97,7 +114,7 @@ function addDays(date, n) {
 /**
  * Resolve a venue's opening state at `now` from its schedule: whether it's open,
  * today's window, and — when closed — the next opening moment (scanning up to a
- * week ahead, re-evaluating the period for each future day).
+ * year ahead, re-evaluating the period and dated exceptions for each day).
  */
 function resolveHours(now, schedule) {
     const period = periodFor(now);
@@ -111,7 +128,7 @@ function resolveHours(now, schedule) {
             nextOpen = todayOpen;
         }
         else {
-            for (let i = 1; i <= 7; i++) {
+            for (let i = 1; i <= 370; i++) {
                 const d = addDays(now, i);
                 const h = dayHoursFor(schedule, d);
                 if (h) {
@@ -125,18 +142,20 @@ function resolveHours(now, schedule) {
 }
 /** Opening state of the general classroom buildings at `now`. */
 export function getCampusHours(now) {
-    return resolveHours(now, CAMPUS);
+    return { ...resolveHours(now, CAMPUS), ...classroomDay(calendarDate(now)) };
 }
-/** Whole-day classroom closure, not whether the doors are open at this hour.
- * No dated holiday/closure calendar is currently available in the repository.
- * Reduced semester-break weekdays remain study days; library hours do not apply.
- */
+/** Confirmed whole-day closure; unknown access is not a closed-day fact. */
 export function isCampusClosedDay(date) {
-    return dayHoursFor(CAMPUS, date) === null;
+    return isClassroomClosedDate(calendarDate(date));
+}
+/** Weekend streak pauses are a product rule, distinct from building access. */
+export function isFocusRestDay(date) {
+    return isStudyRestDate(calendarDate(date));
 }
 /** Opening state of the Library (building G) at `now` — its own schedule. */
 export function getLibraryHours(now) {
-    return resolveHours(now, LIBRARY);
+    const reason = academicBreak(calendarDate(now));
+    return { ...resolveHours(now, LIBRARY), access: reason === 'christmas' ? 'closed' : reason ? 'unconfirmed' : 'scheduled', reason };
 }
 // ── Cafeterias (STWNO gastronomy) ─────────────────────────────────────────────
 // The café/canteen buildings keep their own STWNO hours, unrelated to teaching.

@@ -205,9 +205,18 @@ export async function renderShareCard(o: ShareCardOptions): Promise<Blob> {
         x.stroke();
         continue;
       }
-      x.fillStyle = isCampusClosedDay(date) ? C.closed : C.ramp[focusLevel(minutes.get(dayKey(date)) ?? 0)];
+      const focused = minutes.get(dayKey(date)) ?? 0;
+      x.fillStyle = C.ramp[focusLevel(focused)];
       roundRect(x, X, Y, cell, cell, r);
       x.fill();
+      if (isCampusClosedDay(date) && focused === 0) {
+        x.strokeStyle = C.onVar;
+        x.lineWidth = Math.max(1, cell * 0.04);
+        x.beginPath();
+        x.moveTo(X + cell * 0.3, Y + cell * 0.7);
+        x.lineTo(X + cell * 0.7, Y + cell * 0.3);
+        x.stroke();
+      }
       if (dayKey(date) === o.today) {
         const tw = Math.max(2, cell * 0.07);
         const off = tw * 0.5 + 1;
