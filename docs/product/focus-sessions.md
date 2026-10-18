@@ -250,15 +250,24 @@ rest/closure annotation. Future dates stay blank. Profile shows live access stat
 separately from the historic graph; Rooms explains unconfirmed access before
 promising a free room. The library's card remains independently accessible.
 
-The profile column is capped at 960 px. The quiet profile layout follows the
-closed-days preview: a short icon/status line, semester hours and streak, the
-compact graph, intensity/rest-day legends and a selected-day detail. There is
-no month picker or history navigation toolbar. Smaller screens reach older
-weeks through native touch/keyboard scrolling; desktop fits the year when it
-has room. Cells are 12-14 px. Width-only resize work is deferred to avoid
-observer loops. Empty weekend and confirmed-shutdown cells carry a subtle
-rest-day slash; this is the streak policy, not a claim that every building is
-locked. Recorded activity keeps its accent colour.
+The profile column is capped at 960 px. The quiet profile follows the closed-days
+preview: a short status, exact semester time and streak, compact calendar,
+intensity/rest-day legends and a stable selected-day detail. Empty history links
+to Rooms; loading history uses a static skeleton instead of flashing false zeros.
+There is no month picker or navigation toolbar. Older history uses native
+scrolling. The calendar is an accessible data grid with one tab stop; arrows
+move by day/week, Home/End stay in the weekday row, and Control+Home/End reach
+the first/latest day. Selection persists on touch; hover provides a temporary
+preview. Labels include the year and wrap without clipping. A wider card fits
+the rolling year; cells and labels grow with enlarged text. Width-only resize
+work is deferred and preserves the viewed position.
+
+Short landscape windows use the compact navigation rail rather than a desktop
+drawer. Returning between Profile and Settings starts at the heading without
+resetting the view when rotating. Saved rooms with unknown access use a neutral
+unavailable tone, not an occupied-room warning. The access notice keeps its
+heading and next scheduled opening visible, with source details in a disclosure.
+Plan-ahead availability is labelled as a selected time, never as live right now.
 
 Weeks start on Sunday in the graph and new share cards/links, matching the
 GitHub contribution calendar reference. Visible row labels remain Monday,

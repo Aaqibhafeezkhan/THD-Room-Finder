@@ -1,8 +1,7 @@
 The quiet Profile hero follows the closed-days preview: short icon/status,
-semester hours with the study streak beneath, compact square calendar, a small
-intensity/rest-day legend and selected-day detail. No month selector or history
-navigation buttons. Real profiles show real totals, including zero, rather than
-sample activity.
+exact semester time with the study streak beneath, compact square calendar,
+a small intensity/rest-day legend and a stable selected-day detail. Keep the
+month picker and previous/next toolbar out of this component.
 
 ```jsx
 <FocusGraph days={days} today="2026-10-18" weeks={53}
@@ -11,13 +10,23 @@ sample activity.
   label="Focus graph" text={copy} onShare={openShare} />
 ```
 
-Rows are Sun-Sat and the newest week is rightmost. Today is outlined; future
-days are blank. Levels follow --md-graph-0 through 4 and data-accent. Empty
-weekend/confirmed-shutdown cells get a quiet rest-day slash. Recorded study
-keeps its accent colour. This rest-day mark does not claim buildings are locked.
+Calendar geometry, day aggregation, levels and keyboard moves live in the
+framework-free domain/focusGraph model. Rows are Sun-Sat and the newest week
+is rightmost. Today is outlined; future days are blank. Empty weekend and
+confirmed-shutdown cells have a quiet rest-day slash; recorded study always
+keeps its accent colour. Rest days do not imply physically locked buildings.
 
-Cards use 12-14 px cells, native touch/keyboard scrolling for older weeks and a
-full-year desktop overview where it fits. Width-only resize observation defers
-writes. The profile column is capped at 960 px. The hidden table exposes all
-dates; hover/tap updates the stable detail line. Supply text.closed, rest, less
-and more in EN/DE. Omit onShare if no history exists.
+The calendar is a data grid with one tab stop. Arrow keys explore neighbouring
+days/weeks without wrapping into future dates. Home/End select the first/last
+week of a row; Control+Home/End select the first/latest day in the calendar.
+Touch selects a day persistently. Mouse hover previews it. Details remain in a
+stable, wrapping text area with a full year in the label. Native scrolling
+keeps older history available; rotation preserves the viewed part of the year.
+
+Tokens govern typography, spacing, surfaces, focus rings and colours. Cells
+scale with enlarged text; full-year fitting uses the card width, not viewport
+width. Narrow cards scroll. Never hide overflow by clipping the entire page.
+
+Supply closed/rest/less/more/share and keyboardHint/loading copy in EN/DE.
+Use loading=true while reading history, so zero totals do not flash. Hide Share
+until there is history. The app's empty state links to Rooms for a first session.

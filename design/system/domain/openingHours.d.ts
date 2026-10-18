@@ -14,7 +14,7 @@
  *
  * Framework-free (domain layer). Source: THD published library/building hours.
  */
-import type { ClassroomDay } from '../../shared/campusCalendar.js';
+import type { ClassroomDay } from './campusCalendar.jsx';
 /** Which hours table applies on a given date. */
 export type CampusPeriod = 'regular' | 'exam' | 'break';
 export interface CampusHours {

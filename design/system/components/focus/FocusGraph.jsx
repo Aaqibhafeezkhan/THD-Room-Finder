@@ -1,84 +1,43 @@
 // Mirror of src/components/focus/FocusGraph.tsx with the types stripped. Edit the source, then run design/mirror-components.mjs.
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { Skeleton } from '../core/Skeleton.jsx';
 import { IconButton } from '../core/IconButton.jsx';
 import { IconShare } from './focusIcons.jsx';
-import { isCampusClosedDay, isFocusRestDay } from '../../domain/openingHours.jsx';
+import { focusCalendar, focusGridMove } from '../../domain/focusGraph.jsx';
 
-/**
- * The Profile hero (D2): a contribution graph of focus minutes. Square cells,
- * seven rows Sun → Sat, one column per week, the current week rightmost, today
- * outlined, days after today left as empty slots. Five levels from the
- * --md-graph-0…4 ramp (it follows the student's graph colour via data-accent).
- * A compact graph follows the card width; older history is available by
- * native scrolling, with the current week shown initially. The grid itself is hidden from
- * screen readers: the section label carries the stats and a visually hidden
- * table lists every day's minutes. Hover or tap a cell for its day.
- */
-/** One Pomodoro block, the default rhythm's unit of focus (ADR 0004). */
-const BLOCK_MINUTES = 25;
-/**
- * Daily minutes → ramp level, counted in whole Pomodoro blocks: 0 · 1 ·
- * 2–3 · 4–6 · 7+ (0 · <50 · <100 · <175 · 175+ min). Any focus at all is
- * level 1. Fixed, not relative to the best day, so cards compare.
- */
-export function focusLevel(minutes) {
-    if (minutes <= 0)
-        return 0;
-    const blocks = Math.floor(minutes / BLOCK_MINUTES);
-    if (blocks < 2)
-        return 1;
-    if (blocks < 4)
-        return 2;
-    if (blocks < 7)
-        return 3;
-    return 4;
-}
-export function parseDay(iso) {
-    const [y, m, d] = iso.split('-').map(Number);
-    return new Date(y, m - 1, d);
-}
-export function dayKey(d) {
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
-export function addDays(d, n) {
-    return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
-}
-/** Sunday of the week that contains d. */
-export function sundayOf(d) {
-    return addDays(d, -d.getDay());
-}
-const hidden = {
-    position: 'absolute',
-    width: 1,
-    height: 1,
-    overflow: 'hidden',
-    clip: 'rect(0 0 0 0)',
-    whiteSpace: 'nowrap',
-};
-export function FocusGraph({ days, today, weeks = 53, compact: _compact = false, stats, secondaryStats, status, label, text, onShare, style = {}, }) {
-    const [tip, setTip] = useState(null);
+/** Retained for existing design specimens; CSS uses the card's actual width. */
+/** Quiet year overview: native swiping, direct day selection and one keyboard stop. */
+export function FocusGraph({ days, today, weeks = 53, stats, secondaryStats, status, label, text, onShare, loading = false, style }) {
+    const hintId = useId();
+    const columns = useMemo(() => focusCalendar(days, today, weeks), [days, today, weeks]);
+    const cells = useMemo(() => columns.flatMap(column => column.cells), [columns]);
+    const lastIndex = cells.findIndex(cell => cell.today);
+    const [selection, setSelection] = useState(null);
+    const [hover, setHover] = useState(null);
+    const selected = cells.find(cell => cell.date === selection && !cell.future) ?? cells[lastIndex];
+    const detail = cells.find(cell => cell.date === hover) ?? selected;
     const scroller = useRef(null);
+    const viewPosition = useRef(1);
+    const cellLabel = (cell) => `${text.cellLabel(cell.dateValue, cell.minutes)}${cell.closed ? ` · ${text.closed}` : cell.rest ? ` · ${text.rest ?? text.closed}` : ''}`;
     useEffect(() => {
         const el = scroller.current;
         if (!el)
             return;
         el.scrollLeft = Math.max(0, el.scrollWidth - el.clientWidth);
+        viewPosition.current = 1;
         if (typeof ResizeObserver === 'undefined')
             return;
-        let previousWidth = el.clientWidth;
+        let width = el.clientWidth;
         let frame = null;
-        let previousMax = Math.max(0, el.scrollWidth - el.clientWidth);
         const observer = new ResizeObserver(() => {
-            if (el.clientWidth === previousWidth)
+            if (el.clientWidth === width)
                 return;
-            previousWidth = el.clientWidth;
+            width = el.clientWidth;
             if (frame !== null)
                 cancelAnimationFrame(frame);
             frame = requestAnimationFrame(() => {
-                const ratio = previousMax > 0 ? el.scrollLeft / previousMax : 1;
-                previousMax = Math.max(0, el.scrollWidth - el.clientWidth);
-                el.scrollLeft = ratio * previousMax;
-                setTip(null);
+                el.scrollLeft = viewPosition.current * Math.max(0, el.scrollWidth - el.clientWidth);
+                setHover(null);
                 frame = null;
             });
         });
@@ -86,161 +45,73 @@ export function FocusGraph({ days, today, weeks = 53, compact: _compact = false,
         return () => { observer.disconnect(); if (frame !== null)
             cancelAnimationFrame(frame); };
     }, [today, weeks]);
-    const minutesByDay = new Map();
-    for (const d of days)
-        minutesByDay.set(d.date, (minutesByDay.get(d.date) ?? 0) + d.minutes);
-    const todayDate = parseDay(today);
-    const firstSunday = addDays(sundayOf(todayDate), -(weeks - 1) * 7);
-    const columns = [];
-    for (let w = 0; w < weeks; w++) {
-        const sunday = addDays(firstSunday, w * 7);
-        const prev = addDays(sunday, -7);
-        let month = sunday.getMonth() !== prev.getMonth() ? text.months[sunday.getMonth()] : '';
-        if (w === 0) {
-            const sameAhead = addDays(sunday, 7).getMonth() === sunday.getMonth() && addDays(sunday, 14).getMonth() === sunday.getMonth();
-            month = sameAhead ? text.months[sunday.getMonth()] : '';
-        }
-        const cells = [];
-        for (let d = 0; d < 7; d++) {
-            const date = addDays(sunday, d);
-            const key = dayKey(date);
-            cells.push({ key, date, minutes: minutesByDay.get(key) ?? 0, future: date > todayDate, today: key === today });
-        }
-        columns.push({ sunday, month, cells });
-    }
-    const items = [<div key="corner" style={{ position: 'sticky', left: 0, zIndex: 1, minWidth: 32, background: 'var(--md-surface)' }}/>];
-    text.days.forEach((d, i) => items.push(<div key={`day${i}`} style={{ position: 'sticky', left: 0, zIndex: 1, alignSelf: 'stretch', minWidth: 32, background: 'var(--md-surface)' }}>
-        <span style={{
-            position: 'absolute',
-            left: 0,
-            top: '50%',
-            transform: 'translateY(-50%)',
-            fontSize: 12,
-            lineHeight: 1,
-            color: 'var(--md-on-surface-variant)',
-            whiteSpace: 'nowrap',
-        }}>
-          {i % 2 === 1 && i < 6 ? d : ''}
-        </span>
-      </div>));
-    columns.forEach((col, c) => {
-        items.push(<div key={`m${c}`} data-week={c} style={{ height: 16, fontSize: 12, lineHeight: '14px', color: 'var(--md-on-surface-variant)', whiteSpace: 'nowrap' }}>
-        {col.month}
-      </div>);
-        col.cells.forEach((cell) => {
-            if (cell.future) {
-                items.push(<div key={cell.key} style={{ width: '100%', aspectRatio: '1', alignSelf: 'start' }}/>);
-                return;
-            }
-            const closed = isCampusClosedDay(cell.date);
-            const cellText = `${text.cellLabel(cell.date, cell.minutes)}${closed ? ` · ${text.closed}` : isFocusRestDay(cell.date) ? ` · ${text.rest ?? text.closed}` : ''}`;
-            const show = () => {
-                setTip({ key: cell.key, text: cellText });
-            };
-            items.push(<div key={cell.key} data-date={cell.key} data-closed={closed || undefined} data-rest={isFocusRestDay(cell.date) && cell.minutes === 0 || undefined} className="thd-focus-day" title={cellText} onMouseEnter={show} onMouseLeave={() => setTip(null)} onClick={() => (tip?.key === cell.key ? setTip(null) : show())} style={{
-                    width: '100%',
-                    aspectRatio: '1',
-                    alignSelf: 'start',
-                    borderRadius: 3,
-                    background: `var(--md-graph-${focusLevel(cell.minutes)})`,
-                    outline: cell.today ? '1.5px solid var(--md-on-surface)' : 'none',
-                    outlineOffset: 1,
-                }}/>);
-        });
-    });
-    const legendCell = { width: 9, height: 9, borderRadius: 2, display: 'inline-block' };
-    const currentDay = columns[columns.length - 1]?.cells.find(cell => cell.today);
-    const currentDetail = currentDay
-        ? `${text.cellLabel(currentDay.date, currentDay.minutes)}${isCampusClosedDay(currentDay.date) ? ` · ${text.closed}` : isFocusRestDay(currentDay.date) ? ` · ${text.rest ?? text.closed}` : ''}`
-        : '';
-    return (<section className="thd-focus-card" aria-label={label} style={{
-            background: 'var(--md-surface)',
-            borderRadius: 'var(--radius-l)',
-            boxShadow: 'var(--md-shadow-1)',
-            padding: 'var(--space-5)',
-            containerType: 'inline-size',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 'var(--space-4)',
-            minWidth: 0,
-            position: 'relative',
-            fontFamily: 'var(--font-sans)',
-            ...style,
-        }}>
-      {status && <div className="thd-focus-status" role="status">{status}</div>}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <p style={{
-            margin: 0,
-            flex: 1,
-            minWidth: 0,
-            fontSize: secondaryStats ? 'var(--title-large-size)' : 'var(--body-medium-size)',
-            fontWeight: 400,
-            lineHeight: 1.4,
-            color: secondaryStats ? 'var(--md-on-surface)' : 'var(--md-on-surface-variant)',
-            textWrap: 'pretty',
-        }}>
+    const reveal = (button) => {
+        const el = scroller.current;
+        if (!el)
+            return;
+        const cell = button.getBoundingClientRect();
+        const view = el.getBoundingClientRect();
+        // Keep the sticky weekday labels clear; never scroll the outer page.
+        const inset = (el.querySelector('.thd-focus-axis')?.getBoundingClientRect().width ?? 32) + 4;
+        if (cell.left < view.left + inset)
+            el.scrollLeft -= view.left + inset - cell.left;
+        else if (cell.right > view.right - 4)
+            el.scrollLeft += cell.right - view.right + 4;
+    };
+    const navigate = (event, index) => {
+        if (event.altKey)
+            return;
+        if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key))
+            return;
+        event.preventDefault();
+        const next = cells[focusGridMove(index, lastIndex, event.key, event.ctrlKey || event.metaKey)];
+        const button = scroller.current?.querySelector(`[data-date="${next.date}"]`);
+        button?.focus({ preventScroll: true });
+        if (button)
+            reveal(button);
+    };
+    return (<section className="thd-focus-card" aria-label={label} aria-busy={loading || undefined} style={style}>
+      {status && <div className="thd-focus-status">{status}</div>}
+      <div className="thd-focus-summary">
+        {loading ? <Skeleton label={text.loading ?? 'Loading study history'} blocks={[24, 16]} radius="var(--radius-xs)" gap={4} style={{ flex: 1, maxWidth: '14rem' }}/> : <p className={secondaryStats ? 'thd-focus-total' : 'thd-focus-empty'}>
           {stats}
-          {secondaryStats && <span style={{ display: 'block', marginTop: 4, fontSize: 'var(--body-small-size)', fontWeight: 400, color: 'var(--md-on-surface-variant)' }}>{secondaryStats}</span>}
-        </p>
-        {onShare && (<IconButton label={text.share} onClick={onShare}>
-            <IconShare size={20} strokeWidth={1.9}/>
-          </IconButton>)}
+          {secondaryStats && <span className="thd-focus-streak">{secondaryStats}</span>}
+        </p>}
+        {onShare && !loading && <IconButton label={text.share} onClick={onShare}><IconShare size={20} strokeWidth={1.9}/></IconButton>}
       </div>
-      <div style={{ position: 'relative', minWidth: 0 }}>
-      <div className="thd-focus-graph-scroll" ref={scroller} onScroll={() => setTip(null)} tabIndex={0} role="region" aria-label={text.tableCaption} style={{
-            overflowX: 'auto',
-            overflowY: 'hidden',
-            scrollbarWidth: 'thin',
-            padding: '3px 3px 6px 0',
+      <div className="thd-focus-graph-scroll" ref={scroller} onScroll={() => {
+            const el = scroller.current;
+            if (el && el.scrollWidth > el.clientWidth)
+                viewPosition.current = el.scrollLeft / (el.scrollWidth - el.clientWidth);
+            setHover(null);
         }}>
-        <div className="thd-focus-grid" aria-hidden="true" style={{
-            direction: 'ltr',
-            position: 'relative',
-            display: 'grid',
-            gridAutoFlow: 'column',
-            gridTemplateRows: 'auto repeat(7, auto)',
-            gridTemplateColumns: `32px repeat(${weeks}, var(--focus-cell))`,
-            gap: 3,
-            width: 'max-content',
-        }}>
-          {items}
+        <div className="thd-focus-grid" role="grid" aria-label={text.tableCaption} aria-rowcount={8} aria-colcount={weeks + 1} aria-describedby={text.keyboardHint ? hintId : undefined} style={{ '--focus-weeks': weeks }} onPointerLeave={() => setHover(null)}>
+          <div role="row" className="thd-focus-row">
+            <span role="columnheader" className="thd-focus-axis thd-focus-month" style={{ gridRow: 1, gridColumn: 1 }}/>
+            {columns.map((column, col) => <span key={col} role="columnheader" className="thd-focus-month" aria-label={`${text.weekOf} ${text.weekLabel(column.sunday)}`} style={{ gridRow: 1, gridColumn: col + 2 }}>{column.month === null ? '' : text.months[column.month]}</span>)}
+          </div>
+          {text.days.map((day, row) => (<div key={day} role="row" className="thd-focus-row">
+              <span role="rowheader" aria-label={day} className="thd-focus-axis" style={{ gridRow: row + 2, gridColumn: 1 }}>{row % 2 === 1 && row < 6 ? day : ''}</span>
+              {columns.map((column, col) => {
+                const cell = column.cells[row];
+                const position = { gridRow: row + 2, gridColumn: col + 2 };
+                return cell.future
+                    ? <span key={cell.date} role="gridcell" aria-disabled="true" className="thd-focus-future" style={position}/>
+                    : <button key={cell.date} type="button" role="gridcell" className="thd-focus-day" data-date={cell.date} data-today={cell.today || undefined} data-closed={cell.closed || undefined} data-rest={cell.rest && !cell.minutes || undefined} data-selected={cell.date === selected.date && !cell.today || undefined} disabled={loading} tabIndex={!loading && cell.date === selected.date ? 0 : -1} aria-selected={cell.date === selected.date} aria-current={cell.today ? 'date' : undefined} aria-label={cellLabel(cell)} style={{ ...position, background: `var(--md-graph-${cell.level})` }} onKeyDown={event => navigate(event, col * 7 + row)} onPointerEnter={event => { if (event.pointerType === 'mouse')
+                        setHover(cell.date); }} onFocus={event => { setSelection(cell.date); setHover(null); reveal(event.currentTarget); }} onClick={() => { setSelection(cell.date); setHover(null); }}/>;
+            })}
+            </div>))}
         </div>
       </div>
+      <div className="thd-focus-legend">
+        <div role="img" aria-label={`${text.less} → ${text.more}`} className="thd-focus-ramp">
+          <span>{text.less}</span>
+          {[0, 1, 2, 3, 4].map(level => <i key={level} style={{ background: `var(--md-graph-${level})` }}/>)}
+          <span>{text.more}</span>
+        </div>
+        <span className="thd-focus-rest-key"><i className="thd-focus-day" data-rest="true" aria-hidden="true"/>{text.rest ?? text.closed}</span>
       </div>
-      <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '12px 20px',
-            fontSize: 12,
-            color: 'var(--md-on-surface-variant)',
-        }}>
-        <div role="img" aria-label={`${text.less} → ${text.more}`} style={{ display: 'flex', gap: 3, alignItems: 'center', flexShrink: 0 }}>
-        <span>{text.less}</span>
-        {[0, 1, 2, 3, 4].map((l) => (<i key={l} style={{ ...legendCell, background: `var(--md-graph-${l})` }}/>))}
-        <span>{text.more}</span></div>
-        <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}><i className="thd-focus-day" data-rest="true" style={{ ...legendCell, background: 'var(--md-graph-0)' }}/>{text.rest ?? text.closed}</span>
-      </div>
-      <p className="thd-focus-detail" aria-live="polite">{tip?.text ?? currentDetail}</p>
-      <div style={hidden}>
-        <table>
-          <caption>{text.tableCaption}</caption>
-          <thead>
-            <tr>
-              <th scope="col">{text.weekOf}</th>
-              {text.days.map((d) => (<th key={d} scope="col">
-                  {d}
-                </th>))}
-            </tr>
-          </thead>
-          <tbody>
-            {[...columns].reverse().map((col) => (<tr key={dayKey(col.sunday)}>
-                <th scope="row">{text.weekLabel(col.sunday)}</th>
-                {col.cells.map((cell) => (<td key={cell.key}>{cell.future ? '—' : `${cell.minutes}${isCampusClosedDay(cell.date) ? ` · ${text.closed}` : isFocusRestDay(cell.date) ? ` · ${text.rest ?? text.closed}` : ''}`}</td>))}
-              </tr>))}
-          </tbody>
-        </table>
-      </div>
+      <p className="thd-focus-detail" aria-live="polite" aria-atomic="true">{detail ? cellLabel(detail) : ''}</p>
+      {text.keyboardHint && <p id={hintId} className="thd-visually-hidden">{text.keyboardHint}</p>}
     </section>);
 }

@@ -1,5 +1,5 @@
-import { addDays, dayKey, focusLevel, sundayOf, parseDay } from '../../components/focus/FocusGraph';
-import type { FocusDay } from '../../components/focus/FocusGraph';
+import { addDays, dayKey, focusLevel, sundayOf, parseDay } from '../../domain/focusGraph';
+import type { FocusDay } from '../../domain/focusGraph';
 import { semesterWeeks } from '../../components/focus/ShareCard';
 import { encodeShare } from '../../../shared/shareLink.js';
 import type { ShareAccent } from '../../../shared/shareLink.js';

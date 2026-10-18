@@ -7,7 +7,8 @@ import { RoomCard } from '../app/RoomCard';
 import { SegmentedControl } from '../core/SegmentedControl';
 import { Sheet } from '../core/Sheet';
 import { ActivityRow } from './ActivityRow';
-import { FocusGraph, focusLevel } from './FocusGraph';
+import { FocusGraph } from './FocusGraph';
+import { focusLevel } from '../../domain/focusGraph';
 import type { FocusGraphText } from './FocusGraph';
 import { FocusSurface } from './FocusSurface';
 import type { FocusSurfaceText } from './FocusSurface';
@@ -79,63 +80,58 @@ describe('focus graph levels', () => {
 });
 
 describe('FocusGraph', () => {
-  it('ends on the week of today, outlines today and leaves later days empty', async () => {
-    // Tue 13 Oct 2026: Sun 11 Oct starts the last column.
-    await render(
-      <FocusGraph
-        days={[
-          { date: '2026-10-12', minutes: 200 },
-          { date: '2026-10-13', minutes: 45 },
-          { date: '2026-10-13', minutes: 40 },
-        ]}
-        today="2026-10-13"
-        weeks={3}
-        stats="1 h this semester"
-        label="Focus graph"
-        text={graphText}
-      />,
-    );
-    const rows = container.querySelectorAll('tbody tr');
-    expect(rows).toHaveLength(3);
-    // Newest week first: Sun closed, Mon 200, Tue 45 + 40, the rest of the week is still to come.
-    const newest = Array.from(rows[0].querySelectorAll('td')).map((td) => td.textContent);
-    expect(newest).toEqual(['0 · Rest day', '200', '85', '—', '—', '—', '—']);
-    const outlined = Array.from(container.querySelectorAll<HTMLElement>('[aria-hidden="true"] div')).filter((el) =>
-      el.style.outline.includes('solid'),
-    );
-    expect(outlined).toHaveLength(1);
-    expect(outlined[0].style.background).toBe('var(--md-graph-2)');
+  it('keeps calendar dates, accumulated minutes and future slots aligned', async () => {
+    await render(<FocusGraph days={[{ date: '2026-10-13', minutes: 45 }, { date: '2026-10-13', minutes: 40 }]}
+      today="2026-10-13" weeks={3} stats="1 h 25 min" label="Focus graph" text={graphText} />);
+    const active = container.querySelector<HTMLElement>('[data-date="2026-10-13"]')!;
+    expect(active.style.background).toBe('var(--md-graph-2)');
+    expect(active.dataset.today).toBe('true');
+    expect(active.getAttribute('aria-label')).toBe('13 · 85 min');
+    expect(container.querySelectorAll('.thd-focus-future')).toHaveLength(4);
   });
 
-  it.each([false, true])('keeps activity violet and slashes empty confirmed closures (compact=%s)', async (compact) => {
+  it.each([false, true])('keeps study coloured and only slashes empty rest days (compact=%s)', async compact => {
     await render(<FocusGraph days={[{ date: '2026-12-25', minutes: 175 }]} today="2026-12-26" weeks={2}
       compact={compact} stats="0-day streak" label="Focus graph" text={graphText} />);
-    const active = container.querySelector<HTMLElement>('[data-date="2026-12-25"]')!;
+    const active = container.querySelector<HTMLButtonElement>('[data-date="2026-12-25"]')!;
     const empty = container.querySelector<HTMLElement>('[data-date="2026-12-26"]')!;
     expect(active.style.background).toBe('var(--md-graph-4)');
     expect(active.dataset.rest).toBeUndefined();
-    expect(empty.style.background).toBe('var(--md-graph-0)');
     expect(empty.dataset.rest).toBe('true');
-    expect(empty.style.outline).toContain('solid');
-    expect(active.title).toBe('25 · 175 min · Campus closed');
-    expect(container.querySelector('tbody')?.textContent).toContain('175 · Campus closed');
-    await act(async () => active.click());
+    expect(active.getAttribute('aria-label')).toBe('25 · 175 min · Campus closed');
+    await act(async () => { active.focus(); active.click(); });
     expect(container.querySelector('.thd-focus-detail')?.textContent).toBe('25 · 175 min · Campus closed');
+    expect(active.getAttribute('aria-selected')).toBe('true');
   });
 
-  it('keeps the quiet profile layout without a month picker or navigation toolbar', async () => {
-    await render(<FocusGraph days={[]} today="2026-10-18" stats="0 h this semester" secondaryStats="0 study days in a row" label="Focus graph" text={graphText} />);
+  it('offers one keyboard stop and moves without wrapping into future days', async () => {
+    await render(<FocusGraph days={[]} today="2026-10-13" weeks={3} stats="0 h" label="Focus graph" text={graphText} />);
+    const today = container.querySelector<HTMLButtonElement>('[data-date="2026-10-13"]')!;
+    await act(async () => today.focus());
+    await act(async () => today.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true })));
+    expect((document.activeElement as HTMLElement).dataset.date).toBe('2026-10-06');
+    expect(container.querySelectorAll('button[tabindex="0"]')).toHaveLength(1);
+    await act(async () => document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { key: 'End', ctrlKey: true, bubbles: true })));
+    expect((document.activeElement as HTMLElement).dataset.date).toBe('2026-10-13');
+    await act(async () => document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true })));
+    expect((document.activeElement as HTMLElement).dataset.date).toBe('2026-10-13');
+  });
+
+  it('preserves direct scrolling without restoring the rejected toolbar', async () => {
+    await render(<FocusGraph days={[]} today="2026-10-18" stats="0 h" label="Focus graph" text={graphText} />);
     expect(container.querySelector('select')).toBeNull();
     expect(container.querySelector('.thd-focus-history-controls')).toBeNull();
-    expect(container.querySelector('button')).toBeNull();
-    const scroller = container.querySelector<HTMLElement>('.thd-focus-graph-scroll')!;
-    expect(scroller.style.overflowX).toBe('auto');
-    expect(scroller.tabIndex).toBe(0);
-    expect(container.querySelectorAll('tbody tr')).toHaveLength(53);
-    expect(container.querySelector('.thd-focus-detail')?.textContent).toBe('18 · No focus · Rest day');
+    expect(container.querySelector('.thd-focus-grid')?.getAttribute('role')).toBe('grid');
     const weekend = container.querySelector<HTMLElement>('[data-date="2026-10-17"]')!;
     expect(weekend.dataset.rest).toBe('true');
     expect(weekend.dataset.closed).toBeUndefined();
+  });
+
+  it('does not flash a false zero or share action while history is loading', async () => {
+    await render(<FocusGraph loading days={[]} today="2026-10-13" weeks={2} stats="0 h" label="Focus graph" text={graphText} onShare={() => undefined} />);
+    expect(container.querySelector('.thd-focus-card')?.getAttribute('aria-busy')).toBe('true');
+    expect(container.querySelector('.thd-focus-summary')?.textContent).not.toContain('0 h');
+    expect(container.querySelector('button[aria-label="Share focus graph"]')).toBeNull();
   });
 
   it('hides Share until there is something to share', async () => {
@@ -193,6 +189,12 @@ describe('FocusSurface', () => {
 });
 
 describe('RoomCard focus signals', () => {
+  it('keeps unknown building access neutral instead of implying occupancy', async () => {
+    await render(<RoomCard name="E 212" meta="Building E" status="unavailable" statusLabel="access unconfirmed" duration="-" />);
+    const tag = [...container.querySelectorAll<HTMLElement>('div')].find(el => el.textContent === 'access unconfirmed')!;
+    expect(tag.style.color).toBe('var(--md-on-surface-variant)');
+  });
+
   it('tints a claimed room dark purple but keeps its free duration', async () => {
     await render(
       <RoomCard

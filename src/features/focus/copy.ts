@@ -45,15 +45,17 @@ export function graphText(t: Translate, locale: Locale): FocusGraphText {
     days: dayNames(locale),
     months,
     cellLabel: (d, m) =>
-      `${shortDate(d, locale)} · ${m ? formatMinutes(m, locale) : t('No focus', 'Kein Fokus')}`,
+      `${shortDate(d, locale)} ${d.getFullYear()} · ${m ? formatMinutes(m, locale) : t('No focus', 'Kein Fokus')}`,
     less: t('Less', 'Weniger'),
     more: t('More', 'Mehr'),
     closed: t('Campus closed', 'Campus geschlossen'),
     rest: t('Rest day', 'Ruhetag'),
+    loading: t('Loading study history', 'Lernverlauf wird geladen'),
+    keyboardHint: t('Use arrow keys to explore days. Home and End move across a row; Control with Home or End jumps to the first or last day.', 'Mit den Pfeiltasten Tage erkunden. Pos1 und Ende bewegen innerhalb einer Zeile; mit Strg zum ersten oder letzten Tag springen.'),
     share: t('Share focus graph', 'Fokus-Verlauf teilen'),
-    tableCaption: t('Focus minutes per day, newest week first', 'Fokus-Minuten pro Tag, neueste Woche zuerst'),
+    tableCaption: t('Daily focus history', 'Täglicher Fokus-Verlauf'),
     weekOf: t('Week of', 'Woche ab'),
-    weekLabel: (d) => `${d.getDate()}${locale === 'de' ? '.' : ''} ${months[d.getMonth()]}`,
+    weekLabel: (d) => `${d.getDate()}${locale === 'de' ? '.' : ''} ${months[d.getMonth()]} ${d.getFullYear()}`,
   };
 }
 
@@ -69,6 +71,6 @@ export function statsLine(t: Translate, locale: Locale, semesterMinutes: number,
   if (semesterMinutes <= 0 && streakDays <= 0) {
     return t('No focus yet. Start a session in any free room.', 'Noch kein Fokus. Starte eine Session in einem freien Raum.');
   }
-  const h = formatHours(semesterMinutes, locale);
+  const h = formatMinutes(semesterMinutes, locale);
   return t(`${h} this semester · ${streakDays}-day streak`, `${h} in diesem Semester · ${streakDays} Tage in Folge`);
 }

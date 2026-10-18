@@ -44,7 +44,8 @@ The graph marks empty streak rest days (weekends and confirmed shutdowns)
 with a quiet slash; recorded study stays on the violet/accent ramp. Its legend
 says **Rest day**, not that physical access is confirmed closed. Future cells
 remain empty. The profile follows the compact closed-days preview, with a short
-status, real totals, a small legend and selected-day detail. The rolling year
+status, exact totals, a small legend and persistent selected-day detail. The
+calendar grid supports a single keyboard tab stop and arrow navigation. The rolling year
 remains available through native scrolling, without a month/navigation toolbar.
 
 When a building-specific opening notice becomes available, add a dated,

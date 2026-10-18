@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import type { FocusDay } from './FocusGraph';
+import type { FocusDay } from '../../domain/focusGraph';
 /**
  * The focus graph as an image (D4): drawn with Canvas 2D, so the same picture
  * serves the share sheet preview, Save Image and the link preview. Square

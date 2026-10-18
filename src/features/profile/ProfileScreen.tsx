@@ -7,7 +7,7 @@ import { useTheme } from '../../lib/theme';
 import { useWindowClass } from '../../lib/useWindowClass';
 import { BrandHeader } from '../shared/BrandHeader';
 import { Page } from '../shared/ui';
-import { formatHours, graphText, statsLine } from '../focus/copy';
+import { formatMinutes, graphText, statsLine } from '../focus/copy';
 import { ShareSheet } from '../focus/ShareSheet';
 import { inviteLink, PUBLIC_ORIGIN } from '../focus/shareSnapshot';
 import { useFocusStats } from '../focus/useFocusStats';
@@ -16,7 +16,7 @@ import { SetupSheet } from './SetupSheet';
 import { useStudyProfile } from './StudyProfileContext';
 import { getCampusHours, isFocusRestDay } from '../../domain/openingHours';
 import { campusNow } from '../../domain/time';
-import { accessReason } from '../shared/accessCopy';
+import { profileAccessStatus } from '../shared/accessCopy';
 
 /**
  * Profile (D2): only what a student checks almost daily. A one-line header
@@ -37,17 +37,8 @@ export function ProfileScreen() {
   }, []);
   const focus = useFocusStats(now);
   const hours = getCampusHours(now);
-  const reason = accessReason(hours.reason, t);
   const restDay = isFocusRestDay(now);
-  const accessStatus = hours.reason === 'weekend'
-    ? t('Weekend · Streak paused', 'Wochenende · Lernserie pausiert')
-    : hours.access === 'closed'
-      ? t('Campus closed today · Streak paused', 'Campus heute geschlossen · Lernserie pausiert')
-      : hours.access === 'unconfirmed'
-        ? `${reason} · ${t('Check campus access', 'Campuszugang prüfen')}`
-        : hours.open
-          ? t('Classroom buildings are open today', 'Lehrgebäude sind heute geöffnet')
-          : t('Outside classroom opening hours', 'Außerhalb der Gebäudeöffnungszeit');
+  const accessStatus = profileAccessStatus(hours, t);
   const [sharing, setSharing] = useState(false);
   const [snack, setSnack] = useState('');
   const [setup, setSetup] = useState(false);
@@ -93,11 +84,16 @@ export function ProfileScreen() {
         />
         <FocusGraph
           days={focus.days}
+          loading={!focus.ready}
           today={focus.today}
           weeks={53}
           compact={compact}
-          stats={<>{focus.semesterMinutes ? formatHours(focus.semesterMinutes, locale) : t('0 h', '0 Std.')} <span className="thd-focus-period">{t('this semester', 'dieses Semester')}</span></>}
-          secondaryStats={t(`${focus.streak} study days in a row`, `${focus.streak} Lerntage in Folge`)}
+          stats={<>{focus.semesterMinutes ? formatMinutes(focus.semesterMinutes, locale) : t('0 h', '0 Std.')} <span className="thd-focus-period">{t('this semester', 'dieses Semester')}</span></>}
+          secondaryStats={focus.hasHistory
+            ? t(`${focus.streak} study days in a row`, `${focus.streak} Lerntage in Folge`)
+            : <a href="/rooms" onClick={event => { event.preventDefault(); navigate('/rooms'); }}>
+                {t('Find a room for your first session', 'Finde einen Raum für deine erste Session')}
+              </a>}
           status={
             <>
               <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">

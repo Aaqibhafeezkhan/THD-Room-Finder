@@ -12,3 +12,15 @@ export function accessReason(reason: CampusHours['reason'], t: Translate): strin
     default: return null;
   }
 }
+
+/** Short profile copy; the room finder carries the full access notice. */
+export function profileAccessStatus(hours: CampusHours, t: Translate): string {
+  if (hours.reason === 'weekend') return t('Weekend · Streak paused', 'Wochenende · Lernserie pausiert');
+  if (hours.access === 'closed') return t('Campus closed today · Streak paused', 'Campus heute geschlossen · Lernserie pausiert');
+  if (hours.access === 'unconfirmed') {
+    return [accessReason(hours.reason, t), t('Check campus access', 'Campuszugang prüfen')].filter(Boolean).join(' · ');
+  }
+  return hours.open
+    ? t('Classroom buildings are open today', 'Lehrgebäude sind heute geöffnet')
+    : t('Outside classroom opening hours', 'Außerhalb der Gebäudeöffnungszeit');
+}

@@ -1,53 +1,36 @@
 import type { CampusHours } from '../../domain/openingHours';
 import { formatDayTime } from '../../domain/format';
 import { useI18n } from '../../i18n';
-import { CAMPUS_HOURS_SOURCE } from '../../../shared/campusCalendar.js';
+import { CAMPUS_HOURS_SOURCE, ACADEMIC_CALENDAR_SOURCE } from '../../../shared/campusCalendar.js';
 import { accessReason } from './accessCopy';
 
-/**
- * Answer-first "campus is closed" banner — shown instead of a free-room count
- * whenever the buildings are shut at the query time. Leads with when it reopens.
- */
-export function ClosedNotice({ hours, compact = false }: { hours: CampusHours; compact?: boolean }) {
+/** A calm access notice, with the evidence one disclosure away. */
+export function ClosedNotice({ hours, compact: _compact = false }: { hours: CampusHours; compact?: boolean }) {
   const { t, locale } = useI18n();
   const unconfirmed = hours.access === 'unconfirmed';
   const reason = accessReason(hours.reason, t);
-  const opensLabel = hours.nextOpen ? formatDayTime(hours.nextOpen, locale) : null;
-
+  const next = hours.nextOpen ? formatDayTime(hours.nextOpen, locale) : null;
+  const title = unconfirmed ? t('Classroom access unconfirmed', 'Zugang zu Lehrräumen unbestätigt') : t('Classroom buildings closed', 'Lehrgebäude geschlossen');
   return (
-    <div
-      style={{
-        background: 'var(--md-surface)',
-        borderRadius: 'var(--radius-l)',
-        boxShadow: 'var(--md-shadow-1)',
-        padding: 'var(--space-5) var(--space-4)',
-        textAlign: 'center',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 'var(--space-2)',
-      }}
-    >
-      <div
-        style={{
-          fontSize: compact ? 'var(--title-large-size)' : 'var(--display-small-size)',
-          fontWeight: 'var(--weight-medium)',
-          color: 'var(--md-on-surface)',
-        }}
-      >
-        {unconfirmed ? t('Classroom access unconfirmed', 'Zugang zu Lehrräumen unbestätigt') : t('Classroom buildings closed', 'Lehrgebäude geschlossen')}
+    <aside className="thd-access-notice" aria-label={title}>
+      <span className="thd-access-icon" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+          {unconfirmed ? <><circle cx="12" cy="12" r="9" /><path d="M12 7v6m0 3h.01" /></> : <path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z" />}
+        </svg>
+      </span>
+      <div className="thd-access-content">
+        <h2 className="thd-access-title">{title}</h2>
+        {reason && <p className="thd-access-reason">{reason}</p>}
+        {next && <p className="thd-access-next">{t('Next scheduled opening', 'Nächste reguläre Öffnung')}: {next}</p>}
+        <details className="thd-access-details">
+          <summary>{t('Opening hours and sources', 'Öffnungszeiten und Quellen')}</summary>
+          <p>{unconfirmed
+            ? t('Special notices may allow access. Check THD notices before travelling; an empty timetable does not confirm an unlocked room.', 'Sonderöffnungen sind möglich. Prüfe vor der Anfahrt die THD-Hinweise; ein leerer Stundenplan bestätigt keinen offenen Raum.')
+            : t('Published building hours are 06:30–21:00 unless THD announces an exception. Library hours are separate.', 'Veröffentlichte Gebäudeöffnungszeit: 06:30–21:00, sofern die THD keine Ausnahme bekanntgibt. Die Bibliothek hat eigene Zeiten.')}</p>
+          <p><a href={CAMPUS_HOURS_SOURCE} target="_blank" rel="noopener noreferrer">{t('THD house rules', 'THD-Hausordnung')}</a>
+          {' · '}<a href={ACADEMIC_CALENDAR_SOURCE} target="_blank" rel="noopener noreferrer">{t('Academic calendar rules', 'Regeln zu Vorlesungszeiten')}</a></p>
+        </details>
       </div>
-      {opensLabel && (
-        <div style={{ fontSize: 'var(--title-medium-size)', color: 'var(--md-primary)' }}>
-          {t('Next scheduled opening', 'Nächste reguläre Öffnung')} {opensLabel}
-        </div>
-      )}
-      {reason && <div style={{ fontSize: 'var(--body-medium-size)', color: 'var(--md-on-surface-variant)' }}>{reason}</div>}
-      <div style={{ fontSize: 'var(--body-small-size)', color: 'var(--md-on-surface-variant)', marginTop: 'var(--space-2)' }}>
-        {unconfirmed
-          ? t('Weekend, holiday and special-opening notices can change access. Check THD notices before travelling.', 'Wochenenden, Feiertage und Sonderöffnungen können den Zugang ändern. Prüfe vor der Anfahrt die THD-Aushänge.')
-          : t('Default building hours: 06:30–21:00, unless THD announces an exception. Library hours are separate.', 'Reguläre Gebäudeöffnungszeit: 06:30–21:00, sofern die THD nichts anderes bekanntgibt. Die Bibliothek hat eigene Zeiten.')}
-        {' '}<a href={CAMPUS_HOURS_SOURCE} target="_blank" rel="noopener noreferrer">{t('THD house rules', 'THD-Hausordnung')}</a>
-      </div>
-    </div>
+    </aside>
   );
 }

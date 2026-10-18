@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
-import { addDays, dayKey, focusLevel, sundayOf, parseDay } from './FocusGraph';
-import type { FocusDay } from './FocusGraph';
+import { addDays, calendarMonth, dayKey, focusLevel, sundayOf, parseDay } from '../../domain/focusGraph';
+import type { FocusDay } from '../../domain/focusGraph';
 import { isFocusRestDay } from '../../domain/openingHours';
 
 /**
@@ -185,10 +185,8 @@ export async function renderShareCard(o: ShareCardOptions): Promise<Blob> {
   x.font = font(400, F.month);
   x.fillStyle = C.onVar;
   for (let w = 0; w < weeks; w++) {
-    const m = addDays(first, w * 7 + 3).getMonth();
-    if (w === 0 || m !== addDays(first, (w - 1) * 7 + 3).getMonth()) {
-      x.fillText(o.months[m], F.pad + w * pitch, gTop - F.month * 0.5);
-    }
+    const month = calendarMonth(first, w);
+    if (month !== null) x.fillText(o.months[month], F.pad + w * pitch, gTop - F.month * 0.5);
   }
 
   const r = Math.max(2, cell * 0.16);

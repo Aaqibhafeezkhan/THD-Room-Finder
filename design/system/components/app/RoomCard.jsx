@@ -19,6 +19,7 @@ export function RoomCard({ name, meta, status = 'free', statusLabel, duration = 
         soon: { fg: 'var(--status-soon)', label: 'closing' },
         claimed: { fg: 'var(--status-claimed)', label: 'claimed' },
         occupied: { fg: 'var(--status-occupied)', label: 'busy' },
+        unavailable: { fg: 'var(--md-on-surface-variant)', label: 'unavailable' },
     }[status];
     const card = {
         display: 'flex',
@@ -69,6 +70,7 @@ export function RoomCard({ name, meta, status = 'free', statusLabel, duration = 
       </div>
       <div style={{
             flexShrink: 0,
+            maxWidth: '55%',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'flex-end',
@@ -81,6 +83,7 @@ export function RoomCard({ name, meta, status = 'free', statusLabel, duration = 
             letterSpacing: '0.06em',
             textTransform: 'uppercase',
             color: TONE.fg,
+            overflowWrap: 'anywhere',
         }}>
           {statusLabel ?? TONE.label}
         </div>

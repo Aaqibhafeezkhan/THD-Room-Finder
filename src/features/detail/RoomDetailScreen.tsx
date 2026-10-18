@@ -45,6 +45,23 @@ export function RoomDetailScreen() {
   const schedule = getRoomSchedule(events, ident);
   const availability = computeRoomAvailability(schedule, queryTime, campusHours.todayClose);
   const banner = statusBannerText(availability, queryTime);
+  const occupied = availability.status === 'occupied';
+  const titles = {
+    occupied: isCustomTime ? t('Occupied at this time', 'Zu dieser Zeit belegt') : t('Occupied now', 'Jetzt belegt'),
+    soon: t('Closing soon', 'Bald belegt'),
+    free: isCustomTime ? t('Free at this time', 'Zu dieser Zeit frei') : t('Free now', 'Jetzt frei'),
+  };
+  let subtitle: string | undefined;
+  if (occupied && availability.occupiedUntil) {
+    subtitle = t(`Free again at ${formatTime(availability.occupiedUntil)}`, `Wieder frei ab ${formatTime(availability.occupiedUntil)}`);
+  } else if (!occupied && availability.freeUntil) {
+    subtitle = t(`Free until ${formatTime(availability.freeUntil)}`, `Frei bis ${formatTime(availability.freeUntil)}`);
+  } else if (!occupied) {
+    subtitle = t('Free for the rest of the day', 'Für den Rest des Tages frei');
+  }
+  const duration = occupied && availability.occupiedUntil
+    ? t(`until ${formatTime(availability.occupiedUntil)}`, `bis ${formatTime(availability.occupiedUntil)}`)
+    : banner.duration;
   const closed = !campusHours.open;
   const fav = isFavorite(ident);
 
@@ -78,15 +95,9 @@ export function RoomDetailScreen() {
         ) : (
           <StatusCard
             status={banner.status}
-            title={
-              banner.status === 'occupied'
-                ? t('Occupied now', 'Jetzt belegt')
-                : banner.status === 'soon'
-                  ? t('Closing soon', 'Bald belegt')
-                  : t('Free now', 'Jetzt frei')
-            }
-            sub={banner.sub}
-            duration={banner.duration}
+            title={titles[banner.status]}
+            sub={subtitle}
+            duration={duration}
           />
         )}
 

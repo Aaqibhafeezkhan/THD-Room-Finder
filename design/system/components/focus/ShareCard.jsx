@@ -1,6 +1,6 @@
 // Mirror of src/components/focus/ShareCard.tsx with the types stripped. Edit the source, then run design/mirror-components.mjs.
 import React, { useEffect, useState } from 'react';
-import { addDays, dayKey, focusLevel, sundayOf, parseDay } from './FocusGraph.jsx';
+import { addDays, calendarMonth, dayKey, focusLevel, sundayOf, parseDay } from '../../domain/focusGraph.jsx';
 import { isFocusRestDay } from '../../domain/openingHours.jsx';
 
 /**
@@ -137,10 +137,9 @@ export async function renderShareCard(o) {
     x.font = font(400, F.month);
     x.fillStyle = C.onVar;
     for (let w = 0; w < weeks; w++) {
-        const m = addDays(first, w * 7 + 3).getMonth();
-        if (w === 0 || m !== addDays(first, (w - 1) * 7 + 3).getMonth()) {
-            x.fillText(o.months[m], F.pad + w * pitch, gTop - F.month * 0.5);
-        }
+        const month = calendarMonth(first, w);
+        if (month !== null)
+            x.fillText(o.months[month], F.pad + w * pitch, gTop - F.month * 0.5);
     }
     const r = Math.max(2, cell * 0.16);
     const lw = Math.max(2, cell * 0.08);
