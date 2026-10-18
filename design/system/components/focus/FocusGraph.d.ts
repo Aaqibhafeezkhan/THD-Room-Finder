@@ -4,8 +4,8 @@ import type { CSSProperties, ReactNode } from 'react';
  * seven rows Sun → Sat, one column per week, the current week rightmost, today
  * outlined, days after today left as empty slots. Five levels from the
  * --md-graph-0…4 ramp (it follows the student's graph colour via data-accent).
- * Phones keep readable cells and scroll through the year; wide cards fit it
- * in full. Month navigation opens at the current week. The grid itself is hidden from
+ * A compact graph follows the card width; older history is available by
+ * native scrolling, with the current week shown initially. The grid itself is hidden from
  * screen readers: the section label carries the stats and a visually hidden
  * table lists every day's minutes. Hover or tap a cell for its day.
  */
@@ -27,11 +27,8 @@ export interface FocusGraphText {
     more: string;
     /** Closed-day tooltip/table annotation (EN/DE supplied by caller). */
     closed: string;
-    closureNote: string;
-    older?: string;
-    newer?: string;
-    jumpToMonth?: string;
-    latest?: string;
+    /** Streak rest day; does not assert that a building is locked. */
+    rest?: string;
     /** "Share focus graph" */
     share: string;
     /** Hidden table caption, "Focus minutes per day, newest week first". */

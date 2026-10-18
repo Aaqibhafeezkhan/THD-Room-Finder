@@ -243,21 +243,22 @@ prove physical closure. Classroom exam-weekend access remains unconfirmed;
 the library has separately published, dated extended hours. See
 [calendar research and maintenance](../development/campus-calendar.md).
 
-Only empty confirmed-closure cells carry a subtle slash on the normal pale
+Only empty streak rest-day cells carry a subtle slash on the normal pale
 background. Recorded activity retains its accent colour even on a closed date.
 Tooltips, the day-detail line and the accessible table retain the minutes and
-closure annotation. Future dates stay blank. Profile shows live access status
+rest/closure annotation. Future dates stay blank. Profile shows live access status
 separately from the historic graph; Rooms explains unconfirmed access before
 promising a free room. The library's card remains independently accessible.
 
-The profile column is capped at 960 px. Desktop fits the rolling year when the
-card has room, with a 12 px minimum cell. Smaller cards use readable 18 px cells
-and native scrolling. A labeled month picker, older/newer controls and a latest
-week action remain available to touch, keyboard and pointer users. Controls
-have 44 px targets. Less/More and closure legends remain visible. Resize work
-is deferred and width-only so graph height changes cannot create an observer
-loop. Short month labels and 12 px day labels remain readable without enlarging
-the entire desktop card.
+The profile column is capped at 960 px. The quiet profile layout follows the
+closed-days preview: a short icon/status line, semester hours and streak, the
+compact graph, intensity/rest-day legends and a selected-day detail. There is
+no month picker or history navigation toolbar. Smaller screens reach older
+weeks through native touch/keyboard scrolling; desktop fits the year when it
+has room. Cells are 12-14 px. Width-only resize work is deferred to avoid
+observer loops. Empty weekend and confirmed-shutdown cells carry a subtle
+rest-day slash; this is the streak policy, not a claim that every building is
+locked. Recorded activity keeps its accent colour.
 
 Weeks start on Sunday in the graph and new share cards/links, matching the
 GitHub contribution calendar reference. Visible row labels remain Monday,

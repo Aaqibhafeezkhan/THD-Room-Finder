@@ -1,6 +1,6 @@
 import { ImageResponse } from '@vercel/og';
 import { decodeShare, hoursText } from '../shared/shareLink.js';
-import { isClassroomClosedDate } from '../shared/campusCalendar.js';
+import { isStudyRestDate } from '../shared/campusCalendar.js';
 
 // GET /api/card?p=<payload> — the og:image of a focus graph share link
 // (ADR 0003). Draws the semester grid and figures from the payload alone:
@@ -66,7 +66,7 @@ export function cardTree(s, origin) {
       const level = future ? 0 : s.levels[i] ?? 0;
       // Calendar dates use UTC here; browser/domain dates use local calendar days.
       const date = new Date(start.getTime() + i * 86400000).toISOString().slice(0, 10);
-      const closed = isClassroomClosedDate(date);
+      const closed = isStudyRestDate(date);
       cells.push(
         h('div', {
           width: cell,
@@ -137,7 +137,7 @@ export function cardTree(s, origin) {
         'div',
         { alignItems: 'center' },
         h('div', { width: 20, height: 20, borderRadius: 4, background: C.empty, marginRight: 8, position: 'relative' }, h('div', { position: 'absolute', left: '25%', top: '50%', width: '50%', height: 1, background: C.onVar, transform: 'rotate(-45deg)' })),
-        h('div', { marginRight: 18 }, de ? 'Bestätigt geschlossen' : 'Confirmed closure'),
+        h('div', { marginRight: 18 }, de ? 'Ruhetag' : 'Rest day'),
         h('div', { marginRight: 10 }, de ? 'Weniger' : 'Less'),
         ...[C.empty, ...ramp].map((c) => h('div', { width: 20, height: 20, borderRadius: 4, background: c, marginRight: 5 })),
         h('div', { marginLeft: 5 }, de ? 'Mehr' : 'More'),

@@ -16,7 +16,6 @@ import { SetupSheet } from './SetupSheet';
 import { useStudyProfile } from './StudyProfileContext';
 import { getCampusHours, isFocusRestDay } from '../../domain/openingHours';
 import { campusNow } from '../../domain/time';
-import { formatDayTime } from '../../domain/format';
 import { accessReason } from '../shared/accessCopy';
 
 /**
@@ -39,14 +38,16 @@ export function ProfileScreen() {
   const focus = useFocusStats(now);
   const hours = getCampusHours(now);
   const reason = accessReason(hours.reason, t);
-  const accessStatus = hours.access === 'unconfirmed'
-    ? `${reason ? `${reason} · ` : ''}${t('Classroom access unconfirmed today.', 'Zugang zu Lehrräumen heute nicht bestätigt.')}`
-    : !hours.open
-      ? hours.nextOpen
-        ? t(`Classroom buildings closed · Next scheduled opening ${formatDayTime(hours.nextOpen, locale)}`, `Lehrgebäude geschlossen · Nächste reguläre Öffnung ${formatDayTime(hours.nextOpen, locale)}`)
-        : t('Classroom buildings closed today.', 'Lehrgebäude heute geschlossen.')
-      : null;
-  const pauseStatus = isFocusRestDay(now) ? t('Your study streak is paused.', 'Deine Lernserie pausiert.') : null;
+  const restDay = isFocusRestDay(now);
+  const accessStatus = hours.reason === 'weekend'
+    ? t('Weekend · Streak paused', 'Wochenende · Lernserie pausiert')
+    : hours.access === 'closed'
+      ? t('Campus closed today · Streak paused', 'Campus heute geschlossen · Lernserie pausiert')
+      : hours.access === 'unconfirmed'
+        ? `${reason} · ${t('Check campus access', 'Campuszugang prüfen')}`
+        : hours.open
+          ? t('Classroom buildings are open today', 'Lehrgebäude sind heute geöffnet')
+          : t('Outside classroom opening hours', 'Außerhalb der Gebäudeöffnungszeit');
   const [sharing, setSharing] = useState(false);
   const [snack, setSnack] = useState('');
   const [setup, setSetup] = useState(false);
@@ -95,9 +96,20 @@ export function ProfileScreen() {
           today={focus.today}
           weeks={53}
           compact={compact}
-          stats={focus.hasHistory ? <>{formatHours(focus.semesterMinutes, locale)} <span className="thd-focus-period">{t('this semester', 'dieses Semester')}</span></> : stats}
-          secondaryStats={focus.hasHistory ? t(`${focus.streak}-day study streak`, `${focus.streak} Lerntage in Folge`) : undefined}
-          status={accessStatus || pauseStatus ? <>{accessStatus} {pauseStatus}</> : undefined}
+          stats={<>{focus.semesterMinutes ? formatHours(focus.semesterMinutes, locale) : t('0 h', '0 Std.')} <span className="thd-focus-period">{t('this semester', 'dieses Semester')}</span></>}
+          secondaryStats={t(`${focus.streak} study days in a row`, `${focus.streak} Lerntage in Folge`)}
+          status={
+            <>
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+                {restDay || !hours.open
+                  ? <path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z" />
+                  : <path d="M5 21V3h14v18M9 21V6l7-2v17M12 13h1" />}
+              </svg>
+              <span title={hours.access === 'unconfirmed'
+                ? t('Classroom access is unconfirmed. Check THD notices before travelling.', 'Zugang zu Lehrräumen unbestätigt. Prüfe vor der Anfahrt die THD-Hinweise.')
+                : undefined}>{accessStatus}</span>
+            </>
+          }
           label={`${t('Focus graph', 'Fokus-Verlauf')}. ${stats}`}
           text={graphText(t, locale)}
           onShare={focus.hasHistory ? () => setSharing(true) : undefined}

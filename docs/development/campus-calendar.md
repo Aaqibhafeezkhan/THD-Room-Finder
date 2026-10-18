@@ -40,11 +40,12 @@ building is locked. Weekends and confirmed shutdown dates pause the streak;
 unverified lecture-free weekdays do not silently forgive a missing study day.
 All recorded minutes remain in history and totals, including rest-day study.
 
-The graph marks only empty confirmed-closure cells with a quiet slash; recorded
-study stays on the violet/accent ramp. Unknown access never receives a confirmed
-closure marker. Future cells remain empty. Phone cells remain readable and the
-full rolling year can be reached by native scrolling, month selection, and
-previous/newer/latest controls.
+The graph marks empty streak rest days (weekends and confirmed shutdowns)
+with a quiet slash; recorded study stays on the violet/accent ramp. Its legend
+says **Rest day**, not that physical access is confirmed closed. Future cells
+remain empty. The profile follows the compact closed-days preview, with a short
+status, real totals, a small legend and selected-day detail. The rolling year
+remains available through native scrolling, without a month/navigation toolbar.
 
 When a building-specific opening notice becomes available, add a dated,
 source-linked override to the shared classroom policy and test its exact start,

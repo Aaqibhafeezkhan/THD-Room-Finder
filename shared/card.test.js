@@ -33,5 +33,14 @@ describe('focus link-preview closures', () => {
     expect(cells[1].props.children).toHaveLength(0);
     expect(cells[3].props.style.background).toBe('transparent');
   });
+  it('marks an empty weekend as a rest day in exported cards', () => {
+    const tree = cardTree({ start: '2026-10-17', weeks: 1, today: 0, levels: [0], dark: false, accent: 'violet', lang: 'en', minutes: 0, streak: 0 }, 'https://example.test');
+    const nodes = elements(tree);
+    const cells = nodes.filter(node => node.props?.style?.marginBottom !== undefined);
+    expect(cells[0].props.children).toHaveLength(1);
+    expect(nodes.some(node => node.props?.children?.includes('Rest day'))).toBe(true);
+    expect(nodes.some(node => node.props?.children?.includes('Confirmed closure'))).toBe(false);
+  });
+
 });
 

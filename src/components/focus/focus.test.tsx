@@ -43,7 +43,7 @@ const graphText: FocusGraphText = {
   less: 'Less',
   more: 'More',
   closed: 'Campus closed',
-  closureNote: 'Closed campus days pause your streak. Only open days count.',
+  rest: 'Rest day',
   share: 'Share focus graph',
   tableCaption: 'Focus minutes per day, newest week first',
   weekOf: 'Week of',
@@ -99,7 +99,7 @@ describe('FocusGraph', () => {
     expect(rows).toHaveLength(3);
     // Newest week first: Sun closed, Mon 200, Tue 45 + 40, the rest of the week is still to come.
     const newest = Array.from(rows[0].querySelectorAll('td')).map((td) => td.textContent);
-    expect(newest).toEqual(['0', '200', '85', '—', '—', '—', '—']);
+    expect(newest).toEqual(['0 · Rest day', '200', '85', '—', '—', '—', '—']);
     const outlined = Array.from(container.querySelectorAll<HTMLElement>('[aria-hidden="true"] div')).filter((el) =>
       el.style.outline.includes('solid'),
     );
@@ -123,24 +123,19 @@ describe('FocusGraph', () => {
     expect(container.querySelector('.thd-focus-detail')?.textContent).toBe('25 · 175 min · Campus closed');
   });
 
-  it('lets a phone user jump to an older month and return to the latest week', async () => {
-    await render(<FocusGraph days={[]} today="2026-10-18" stats="No focus yet." label="Focus graph" text={graphText} />);
+  it('keeps the quiet profile layout without a month picker or navigation toolbar', async () => {
+    await render(<FocusGraph days={[]} today="2026-10-18" stats="0 h this semester" secondaryStats="0 study days in a row" label="Focus graph" text={graphText} />);
+    expect(container.querySelector('select')).toBeNull();
+    expect(container.querySelector('.thd-focus-history-controls')).toBeNull();
+    expect(container.querySelector('button')).toBeNull();
     const scroller = container.querySelector<HTMLElement>('.thd-focus-graph-scroll')!;
-    Object.defineProperty(scroller, 'scrollWidth', { value: 1200 });
-    Object.defineProperty(scroller, 'clientWidth', { value: 320 });
-    const month = container.querySelector('select')!;
-    const january = Array.from(month.options).find(option => option.textContent === 'Jan 2026')!;
-    const marker = container.querySelector<HTMLElement>(`[data-week="${january.value}"]`)!;
-    marker.getBoundingClientRect = () => ({ left: 400 } as DOMRect);
-    await act(async () => { month.value = january.value; month.dispatchEvent(new Event('change', { bubbles: true })); });
-    expect(scroller.scrollLeft).toBeGreaterThan(0);
-    expect(scroller.scrollLeft).toBeLessThan(880);
-    const latest = container.querySelector<HTMLElement>('[data-week="52"]')!;
-    latest.getBoundingClientRect = () => ({ left: 1000 } as DOMRect);
-    await act(async () => container.querySelector<HTMLButtonElement>('[aria-label="Latest week"]')!.click());
-    expect(scroller.scrollLeft).toBe(880);
-    expect(container.textContent).toContain('Less');
-    expect(container.textContent).toContain('More');
+    expect(scroller.style.overflowX).toBe('auto');
+    expect(scroller.tabIndex).toBe(0);
+    expect(container.querySelectorAll('tbody tr')).toHaveLength(53);
+    expect(container.querySelector('.thd-focus-detail')?.textContent).toBe('18 · No focus · Rest day');
+    const weekend = container.querySelector<HTMLElement>('[data-date="2026-10-17"]')!;
+    expect(weekend.dataset.rest).toBe('true');
+    expect(weekend.dataset.closed).toBeUndefined();
   });
 
   it('hides Share until there is something to share', async () => {

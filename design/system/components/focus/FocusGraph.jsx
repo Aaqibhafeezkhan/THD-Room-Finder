@@ -2,15 +2,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { IconButton } from '../core/IconButton.jsx';
 import { IconShare } from './focusIcons.jsx';
-import { isCampusClosedDay } from '../../domain/openingHours.jsx';
+import { isCampusClosedDay, isFocusRestDay } from '../../domain/openingHours.jsx';
 
 /**
  * The Profile hero (D2): a contribution graph of focus minutes. Square cells,
  * seven rows Sun → Sat, one column per week, the current week rightmost, today
  * outlined, days after today left as empty slots. Five levels from the
  * --md-graph-0…4 ramp (it follows the student's graph colour via data-accent).
- * Phones keep readable cells and scroll through the year; wide cards fit it
- * in full. Month navigation opens at the current week. The grid itself is hidden from
+ * A compact graph follows the card width; older history is available by
+ * native scrolling, with the current week shown initially. The grid itself is hidden from
  * screen readers: the section label carries the stats and a visually hidden
  * table lists every day's minutes. Hover or tap a cell for its day.
  */
@@ -57,21 +57,12 @@ const hidden = {
 };
 export function FocusGraph({ days, today, weeks = 53, compact: _compact = false, stats, secondaryStats, status, label, text, onShare, style = {}, }) {
     const [tip, setTip] = useState(null);
-    const [olderAvailable, setOlderAvailable] = useState(false);
     const scroller = useRef(null);
-    const [newerAvailable, setNewerAvailable] = useState(false);
-    const updateOverflow = (el) => {
-        if (el) {
-            setOlderAvailable(el.scrollLeft > 2);
-            setNewerAvailable(el.scrollWidth - el.clientWidth - el.scrollLeft > 2);
-        }
-    };
     useEffect(() => {
         const el = scroller.current;
         if (!el)
             return;
         el.scrollLeft = Math.max(0, el.scrollWidth - el.clientWidth);
-        updateOverflow(el);
         if (typeof ResizeObserver === 'undefined')
             return;
         let previousWidth = el.clientWidth;
@@ -87,7 +78,6 @@ export function FocusGraph({ days, today, weeks = 53, compact: _compact = false,
                 const ratio = previousMax > 0 ? el.scrollLeft / previousMax : 1;
                 previousMax = Math.max(0, el.scrollWidth - el.clientWidth);
                 el.scrollLeft = ratio * previousMax;
-                updateOverflow(el);
                 setTip(null);
                 frame = null;
             });
@@ -96,12 +86,6 @@ export function FocusGraph({ days, today, weeks = 53, compact: _compact = false,
         return () => { observer.disconnect(); if (frame !== null)
             cancelAnimationFrame(frame); };
     }, [today, weeks]);
-    const navigateWeeks = (direction) => {
-        const el = scroller.current;
-        if (el)
-            el.scrollBy({ left: direction * el.clientWidth * 0.75,
-                behavior: typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
-    };
     const minutesByDay = new Map();
     for (const d of days)
         minutesByDay.set(d.date, (minutesByDay.get(d.date) ?? 0) + d.minutes);
@@ -149,11 +133,11 @@ export function FocusGraph({ days, today, weeks = 53, compact: _compact = false,
                 return;
             }
             const closed = isCampusClosedDay(cell.date);
-            const cellText = `${text.cellLabel(cell.date, cell.minutes)}${closed ? ` · ${text.closed}` : ''}`;
+            const cellText = `${text.cellLabel(cell.date, cell.minutes)}${closed ? ` · ${text.closed}` : isFocusRestDay(cell.date) ? ` · ${text.rest ?? text.closed}` : ''}`;
             const show = () => {
                 setTip({ key: cell.key, text: cellText });
             };
-            items.push(<div key={cell.key} data-date={cell.key} data-closed={closed || undefined} data-rest={closed && cell.minutes === 0 || undefined} className="thd-focus-day" title={cellText} onMouseEnter={show} onMouseLeave={() => setTip(null)} onClick={() => (tip?.key === cell.key ? setTip(null) : show())} style={{
+            items.push(<div key={cell.key} data-date={cell.key} data-closed={closed || undefined} data-rest={isFocusRestDay(cell.date) && cell.minutes === 0 || undefined} className="thd-focus-day" title={cellText} onMouseEnter={show} onMouseLeave={() => setTip(null)} onClick={() => (tip?.key === cell.key ? setTip(null) : show())} style={{
                     width: '100%',
                     aspectRatio: '1',
                     alignSelf: 'start',
@@ -164,18 +148,11 @@ export function FocusGraph({ days, today, weeks = 53, compact: _compact = false,
                 }}/>);
         });
     });
-    const legendCell = { width: 12, height: 12, borderRadius: 2, display: 'inline-block' };
-    const monthOptions = columns.flatMap((col, index) => index === 0 || col.sunday.getMonth() !== columns[index - 1].sunday.getMonth()
-        ? [{ index, label: `${text.months[col.sunday.getMonth()]} ${col.sunday.getFullYear()}` }] : []);
-    const jump = (index) => {
-        const el = scroller.current;
-        const cell = el?.querySelector(`[data-week="${index}"]`);
-        if (!el || !cell)
-            return;
-        const left = cell.getBoundingClientRect().left - el.getBoundingClientRect().left + el.scrollLeft - 36;
-        el.scrollLeft = Math.max(0, Math.min(left, el.scrollWidth - el.clientWidth));
-        updateOverflow(el);
-    };
+    const legendCell = { width: 9, height: 9, borderRadius: 2, display: 'inline-block' };
+    const currentDay = columns[columns.length - 1]?.cells.find(cell => cell.today);
+    const currentDetail = currentDay
+        ? `${text.cellLabel(currentDay.date, currentDay.minutes)}${isCampusClosedDay(currentDay.date) ? ` · ${text.closed}` : isFocusRestDay(currentDay.date) ? ` · ${text.rest ?? text.closed}` : ''}`
+        : '';
     return (<section className="thd-focus-card" aria-label={label} style={{
             background: 'var(--md-surface)',
             borderRadius: 'var(--radius-l)',
@@ -184,7 +161,7 @@ export function FocusGraph({ days, today, weeks = 53, compact: _compact = false,
             containerType: 'inline-size',
             display: 'flex',
             flexDirection: 'column',
-            gap: 'var(--space-3)',
+            gap: 'var(--space-4)',
             minWidth: 0,
             position: 'relative',
             fontFamily: 'var(--font-sans)',
@@ -197,20 +174,20 @@ export function FocusGraph({ days, today, weeks = 53, compact: _compact = false,
             flex: 1,
             minWidth: 0,
             fontSize: secondaryStats ? 'var(--title-large-size)' : 'var(--body-medium-size)',
-            fontWeight: secondaryStats ? 500 : 400,
+            fontWeight: 400,
             lineHeight: 1.4,
             color: secondaryStats ? 'var(--md-on-surface)' : 'var(--md-on-surface-variant)',
             textWrap: 'pretty',
         }}>
           {stats}
-          {secondaryStats && <span style={{ display: 'block', marginTop: 4, fontSize: 'var(--body-medium-size)', fontWeight: 400, color: 'var(--md-on-surface-variant)' }}>{secondaryStats}</span>}
+          {secondaryStats && <span style={{ display: 'block', marginTop: 4, fontSize: 'var(--body-small-size)', fontWeight: 400, color: 'var(--md-on-surface-variant)' }}>{secondaryStats}</span>}
         </p>
         {onShare && (<IconButton label={text.share} onClick={onShare}>
             <IconShare size={20} strokeWidth={1.9}/>
           </IconButton>)}
       </div>
       <div style={{ position: 'relative', minWidth: 0 }}>
-      <div className="thd-focus-graph-scroll" ref={scroller} onScroll={(event) => { updateOverflow(event.currentTarget); setTip(null); }} tabIndex={0} role="region" aria-label={text.tableCaption} style={{
+      <div className="thd-focus-graph-scroll" ref={scroller} onScroll={() => setTip(null)} tabIndex={0} role="region" aria-label={text.tableCaption} style={{
             overflowX: 'auto',
             overflowY: 'hidden',
             scrollbarWidth: 'thin',
@@ -239,33 +216,13 @@ export function FocusGraph({ days, today, weeks = 53, compact: _compact = false,
             fontSize: 12,
             color: 'var(--md-on-surface-variant)',
         }}>
-        <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}><i className="thd-focus-day" data-rest="true" style={{ ...legendCell, background: 'var(--md-graph-0)' }}/>{text.closed}</span>
         <div role="img" aria-label={`${text.less} → ${text.more}`} style={{ display: 'flex', gap: 3, alignItems: 'center', flexShrink: 0 }}>
         <span>{text.less}</span>
         {[0, 1, 2, 3, 4].map((l) => (<i key={l} style={{ ...legendCell, background: `var(--md-graph-${l})` }}/>))}
         <span>{text.more}</span></div>
+        <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}><i className="thd-focus-day" data-rest="true" style={{ ...legendCell, background: 'var(--md-graph-0)' }}/>{text.rest ?? text.closed}</span>
       </div>
-      <p className="thd-focus-detail" aria-live="polite">{tip?.text ?? text.closureNote}</p>
-      <div className="thd-focus-history-controls">
-        <label className="thd-focus-month-label"><span style={hidden}>{text.jumpToMonth ?? 'Jump to month'}</span>
-          <select aria-label={text.jumpToMonth ?? 'Jump to month'} defaultValue="" onChange={(event) => { if (event.target.value !== '')
-        jump(Number(event.target.value)); }}>
-            <option value="" disabled>{text.jumpToMonth ?? 'Jump to month'}</option>
-            {monthOptions.map(({ index, label: monthLabel }) => <option key={index} value={index}>{monthLabel}</option>)}
-          </select>
-        </label>
-        <div className="thd-focus-navigation">
-        <IconButton label={text.older ?? 'Older weeks'} disabled={!olderAvailable} onClick={() => navigateWeeks(-1)} style={{ opacity: olderAvailable ? 1 : 0.35 }}>
-          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="m14 6-6 6 6 6"/></svg>
-        </IconButton>
-        <IconButton label={text.newer ?? 'Newer weeks'} disabled={!newerAvailable} onClick={() => navigateWeeks(1)} style={{ opacity: newerAvailable ? 1 : 0.35 }}>
-          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="m10 6 6 6-6 6"/></svg>
-        </IconButton>
-        <IconButton label={text.latest ?? 'Latest week'} onClick={() => { jump(weeks - 1); setTip(null); }}>
-          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M5 12h14m-5-5 5 5-5 5M21 5v14"/></svg>
-        </IconButton>
-       </div>
-      </div>
+      <p className="thd-focus-detail" aria-live="polite">{tip?.text ?? currentDetail}</p>
       <div style={hidden}>
         <table>
           <caption>{text.tableCaption}</caption>
@@ -280,7 +237,7 @@ export function FocusGraph({ days, today, weeks = 53, compact: _compact = false,
           <tbody>
             {[...columns].reverse().map((col) => (<tr key={dayKey(col.sunday)}>
                 <th scope="row">{text.weekLabel(col.sunday)}</th>
-                {col.cells.map((cell) => (<td key={cell.key}>{cell.future ? '—' : `${cell.minutes}${isCampusClosedDay(cell.date) ? ` · ${text.closed}` : ''}`}</td>))}
+                {col.cells.map((cell) => (<td key={cell.key}>{cell.future ? '—' : `${cell.minutes}${isCampusClosedDay(cell.date) ? ` · ${text.closed}` : isFocusRestDay(cell.date) ? ` · ${text.rest ?? text.closed}` : ''}`}</td>))}
               </tr>))}
           </tbody>
         </table>

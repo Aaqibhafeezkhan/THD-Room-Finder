@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { addDays, dayKey, focusLevel, sundayOf, parseDay } from './FocusGraph';
 import type { FocusDay } from './FocusGraph';
-import { isCampusClosedDay } from '../../domain/openingHours';
+import { isFocusRestDay } from '../../domain/openingHours';
 
 /**
  * The focus graph as an image (D4): drawn with Canvas 2D, so the same picture
@@ -209,7 +209,7 @@ export async function renderShareCard(o: ShareCardOptions): Promise<Blob> {
       x.fillStyle = C.ramp[focusLevel(focused)];
       roundRect(x, X, Y, cell, cell, r);
       x.fill();
-      if (isCampusClosedDay(date) && focused === 0) {
+      if (isFocusRestDay(date) && focused === 0) {
         x.strokeStyle = C.onVar;
         x.lineWidth = Math.max(1, cell * 0.04);
         x.beginPath();
