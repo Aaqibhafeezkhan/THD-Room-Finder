@@ -42,7 +42,7 @@ export function shortDate(d: Date, locale: Locale): string {
 export function graphText(t: Translate, locale: Locale): FocusGraphText {
   const months = monthNames(locale);
   return {
-    days: dayNames(locale),
+    days: [...dayNames(locale).slice(1), dayNames(locale)[0]],
     months,
     cellLabel: (d, m) =>
       `${shortDate(d, locale)} ${d.getFullYear()} · ${m ? formatMinutes(m, locale) : t('No focus', 'Kein Fokus')}`,
@@ -53,6 +53,7 @@ export function graphText(t: Translate, locale: Locale): FocusGraphText {
     loading: t('Loading study history', 'Lernverlauf wird geladen'),
     keyboardHint: t('Use arrow keys to explore days. Home and End move across a row; Control with Home or End jumps to the first or last day.', 'Mit den Pfeiltasten Tage erkunden. Pos1 und Ende bewegen innerhalb einer Zeile; mit Strg zum ersten oder letzten Tag springen.'),
     share: t('Share focus graph', 'Fokus-Verlauf teilen'),
+    shareLabel: t('Share', 'Teilen'),
     tableCaption: t('Daily focus history', 'Täglicher Fokus-Verlauf'),
     weekOf: t('Week of', 'Woche ab'),
     weekLabel: (d) => `${d.getDate()}${locale === 'de' ? '.' : ''} ${months[d.getMonth()]} ${d.getFullYear()}`,

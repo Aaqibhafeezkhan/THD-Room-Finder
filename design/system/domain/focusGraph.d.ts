@@ -11,7 +11,7 @@ export interface FocusCell extends FocusDay {
     level: number;
 }
 export interface FocusColumn {
-    sunday: Date;
+    weekStart: Date;
     month: number | null;
     cells: FocusCell[];
 }
@@ -21,6 +21,7 @@ export declare function parseDay(iso: string): Date;
 export declare function dayKey(d: Date): string;
 export declare function addDays(d: Date, n: number): Date;
 export declare function sundayOf(d: Date): Date;
+export declare function mondayOf(d: Date): Date;
 /** Skip a short leading month so adjacent month labels cannot collide. */
 export declare function calendarMonth(first: Date, week: number): number | null;
 /** Calendar arithmetic stays on local dates, including daylight-saving changes. */

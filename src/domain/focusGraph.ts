@@ -9,7 +9,7 @@ export interface FocusCell extends FocusDay {
   rest: boolean;
   level: number;
 }
-export interface FocusColumn { sunday: Date; month: number | null; cells: FocusCell[] }
+export interface FocusColumn { weekStart: Date; month: number | null; cells: FocusCell[] }
 
 /** Stable Pomodoro thresholds shared by the graph and exported images. */
 export function focusLevel(minutes: number): 0 | 1 | 2 | 3 | 4 {
@@ -28,6 +28,7 @@ export function addDays(d: Date, n: number): Date {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
 }
 export function sundayOf(d: Date): Date { return addDays(d, -d.getDay()); }
+export function mondayOf(d: Date): Date { return addDays(d, -((d.getDay() + 6) % 7)); }
 
 /** Skip a short leading month so adjacent month labels cannot collide. */
 export function calendarMonth(first: Date, week: number): number | null {
@@ -41,14 +42,14 @@ export function focusCalendar(days: FocusDay[], today: string, weeks: number): F
   const totals = new Map<string, number>();
   for (const day of days) totals.set(day.date, (totals.get(day.date) ?? 0) + day.minutes);
   const now = parseDay(today);
-  const first = addDays(sundayOf(now), -(weeks - 1) * 7);
+  const first = addDays(mondayOf(now), -(weeks - 1) * 7);
   return Array.from({ length: weeks }, (_, week) => {
-    const sunday = addDays(first, week * 7);
+    const weekStart = addDays(first, week * 7);
     return {
-      sunday,
+      weekStart,
       month: calendarMonth(first, week),
       cells: Array.from({ length: 7 }, (_, row) => {
-        const dateValue = addDays(sunday, row);
+        const dateValue = addDays(weekStart, row);
         const date = dayKey(dateValue);
         const minutes = totals.get(date) ?? 0;
         return { date, dateValue, minutes, level: focusLevel(minutes), future: date > today,

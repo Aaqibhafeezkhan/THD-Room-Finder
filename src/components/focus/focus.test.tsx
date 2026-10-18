@@ -38,7 +38,7 @@ async function render(node: ReactNode) {
 }
 
 const graphText: FocusGraphText = {
-  days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+  days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
   months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
   cellLabel: (d, m) => `${d.getDate()} · ${m ? `${m} min` : 'No focus'}`,
   less: 'Less',
@@ -87,7 +87,7 @@ describe('FocusGraph', () => {
     expect(active.style.background).toBe('var(--md-graph-2)');
     expect(active.dataset.today).toBe('true');
     expect(active.getAttribute('aria-label')).toBe('13 · 85 min');
-    expect(container.querySelectorAll('.thd-focus-future')).toHaveLength(4);
+    expect(container.querySelectorAll('.thd-focus-future')).toHaveLength(5);
   });
 
   it.each([false, true])('keeps study coloured and only slashes empty rest days (compact=%s)', async compact => {

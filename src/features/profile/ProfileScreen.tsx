@@ -77,7 +77,7 @@ export function ProfileScreen() {
           batch={profile.batch ?? undefined}
           batchLabel={profile.batch ? t(`Batch ${profile.batch}`, `Jahrgang ${profile.batch}`) : undefined}
           notSignedIn={profile.email ? t('No study profile yet', 'Noch kein Studienprofil') : t('Not signed in', 'Nicht angemeldet')}
-          setupLabel={t('Set Up Study Profile', 'Studienprofil einrichten')}
+          setupLabel={t('Set up study profile', 'Studienprofil einrichten')}
           settingsLabel={t('Settings', 'Einstellungen')}
           onSetup={profile.available ? () => setSetup(true) : undefined}
           onSettings={() => navigate('/profile/settings')}

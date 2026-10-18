@@ -60,3 +60,14 @@ frame. Source components, design mirrors and usage notes change together.
 
 This is responsive browser verification, not a claim of physical testing on
 every phone, browser engine or assistive-technology combination.
+
+## Alignment with the approved quiet-profile preview
+
+The profile uses Monday-first weeks so Saturday and Sunday form one quiet
+band at the bottom, rather than separating weekend marks across the top and
+bottom. The calendar retains exact local dates and arrow-key navigation.
+Exported links retain their existing Sunday-based encoding for compatibility.
+The visible Share label, 24 px total, compact day-detail line and softer rest
+marks follow the approved preview. Phone cells stay 16 px; wide cards fit the
+full year. Native horizontal scrolling has no persistent desktop scrollbar
+inside the card. No month controls were added.

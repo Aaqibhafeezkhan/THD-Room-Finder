@@ -10,9 +10,10 @@ export interface FocusGraphText {
     closed: string;
     rest?: string;
     share: string;
+    shareLabel?: string;
     tableCaption: string;
     weekOf: string;
-    weekLabel: (sunday: Date) => string;
+    weekLabel: (weekStart: Date) => string;
     keyboardHint?: string;
     loading?: string;
 }

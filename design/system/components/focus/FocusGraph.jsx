@@ -1,7 +1,6 @@
 // Mirror of src/components/focus/FocusGraph.tsx with the types stripped. Edit the source, then run design/mirror-components.mjs.
 import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Skeleton } from '../core/Skeleton.jsx';
-import { IconButton } from '../core/IconButton.jsx';
 import { IconShare } from './focusIcons.jsx';
 import { focusCalendar, focusGridMove } from '../../domain/focusGraph.jsx';
 
@@ -77,7 +76,7 @@ export function FocusGraph({ days, today, weeks = 53, stats, secondaryStats, sta
           {stats}
           {secondaryStats && <span className="thd-focus-streak">{secondaryStats}</span>}
         </p>}
-        {onShare && !loading && <IconButton label={text.share} onClick={onShare}><IconShare size={20} strokeWidth={1.9}/></IconButton>}
+        {onShare && !loading && <button type="button" className="thd-focus-share" aria-label={text.share} onClick={onShare}><IconShare size={20} strokeWidth={1.9}/><span>{text.shareLabel ?? text.share}</span></button>}
       </div>
       <div className="thd-focus-graph-scroll" ref={scroller} onScroll={() => {
             const el = scroller.current;
@@ -88,10 +87,10 @@ export function FocusGraph({ days, today, weeks = 53, stats, secondaryStats, sta
         <div className="thd-focus-grid" role="grid" aria-label={text.tableCaption} aria-rowcount={8} aria-colcount={weeks + 1} aria-describedby={text.keyboardHint ? hintId : undefined} style={{ '--focus-weeks': weeks }} onPointerLeave={() => setHover(null)}>
           <div role="row" className="thd-focus-row">
             <span role="columnheader" className="thd-focus-axis thd-focus-month" style={{ gridRow: 1, gridColumn: 1 }}/>
-            {columns.map((column, col) => <span key={col} role="columnheader" className="thd-focus-month" aria-label={`${text.weekOf} ${text.weekLabel(column.sunday)}`} style={{ gridRow: 1, gridColumn: col + 2 }}>{column.month === null ? '' : text.months[column.month]}</span>)}
+            {columns.map((column, col) => <span key={col} role="columnheader" className="thd-focus-month" aria-label={`${text.weekOf} ${text.weekLabel(column.weekStart)}`} style={{ gridRow: 1, gridColumn: col + 2 }}>{column.month === null ? '' : text.months[column.month]}</span>)}
           </div>
           {text.days.map((day, row) => (<div key={day} role="row" className="thd-focus-row">
-              <span role="rowheader" aria-label={day} className="thd-focus-axis" style={{ gridRow: row + 2, gridColumn: 1 }}>{row % 2 === 1 && row < 6 ? day : ''}</span>
+              <span role="rowheader" aria-label={day} className="thd-focus-axis" style={{ gridRow: row + 2, gridColumn: 1 }}>{row % 2 === 0 && row < 5 ? day : ''}</span>
               {columns.map((column, col) => {
                 const cell = column.cells[row];
                 const position = { gridRow: row + 2, gridColumn: col + 2 };
@@ -106,7 +105,7 @@ export function FocusGraph({ days, today, weeks = 53, stats, secondaryStats, sta
       <div className="thd-focus-legend">
         <div role="img" aria-label={`${text.less} → ${text.more}`} className="thd-focus-ramp">
           <span>{text.less}</span>
-          {[0, 1, 2, 3, 4].map(level => <i key={level} style={{ background: `var(--md-graph-${level})` }}/>)}
+          <span className="thd-focus-swatches">{[0, 1, 2, 3, 4].map(level => <i key={level} style={{ background: `var(--md-graph-${level})` }}/>)}</span>
           <span>{text.more}</span>
         </div>
         <span className="thd-focus-rest-key"><i className="thd-focus-day" data-rest="true" aria-hidden="true"/>{text.rest ?? text.closed}</span>
