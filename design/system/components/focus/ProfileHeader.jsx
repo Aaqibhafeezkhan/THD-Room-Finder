@@ -31,7 +31,7 @@ export function ProfileHeader({ signedIn, name, batch, batchLabel, notSignedIn, 
             {(name ?? '?').slice(0, 1).toUpperCase()}
           </span>
           <div style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '4px 10px' }}>
-            {name && <span style={{ fontSize: 20, fontWeight: 400, color: 'var(--md-on-surface)' }}>{name}</span>}
+            {name && <span style={{ fontSize: 'var(--title-large-size)', fontWeight: 400, color: 'var(--md-on-surface)', overflowWrap: 'anywhere' }}>{name}</span>}
             {batch && (<span aria-label={batchLabel} style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -41,7 +41,7 @@ export function ProfileHeader({ signedIn, name, batch, batchLabel, notSignedIn, 
                     borderRadius: 'var(--radius-s)',
                     background: 'var(--md-focus-container)',
                     color: 'var(--md-on-focus-container)',
-                    fontSize: 12,
+                    fontSize: 'var(--label-small-size)',
                     fontWeight: 500,
                     whiteSpace: 'nowrap',
                 }}>
@@ -54,11 +54,11 @@ export function ProfileHeader({ signedIn, name, batch, batchLabel, notSignedIn, 
             <IconPerson size={20}/>
           </span>
           <div style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0 4px' }}>
-            <span style={{ fontSize: 16, color: 'var(--md-on-surface-variant)', marginRight: 4, whiteSpace: 'nowrap' }}>
+            <span style={{ fontSize: 'var(--body-large-size)', color: 'var(--md-on-surface-variant)', marginRight: 4 }}>
               {notSignedIn}
             </span>
-            {onSetup && (<div style={{ marginLeft: -12 }}>
-                <Button variant="text" size="small" onClick={onSetup}>
+            {onSetup && (<div style={{ marginLeft: -12, maxWidth: 'calc(100% + 12px)' }}>
+                <Button variant="text" size="small" onClick={onSetup} style={{ whiteSpace: 'normal', textAlign: 'left', maxWidth: '100%' }}>
                   {setupLabel}
                 </Button>
               </div>)}

@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import type { FocusDay } from './FocusGraph';
+import type { FocusDay } from '../../domain/focusGraph';
 /**
  * The focus graph as an image (D4): drawn with Canvas 2D, so the same picture
  * serves the share sheet preview, Save Image and the link preview. Square
@@ -42,7 +42,7 @@ export interface ShareCardOptions {
     /** Footer text on the right. */
     url?: string;
 }
-/** Number of week columns from the semester's first Monday through its end. */
+/** Number of week columns from the semester's first Sunday through its end. */
 export declare function semesterWeeks(semesterStart: string, semesterEnd: string): number;
 /** Draws the card and resolves to a PNG blob. */
 export declare function renderShareCard(o: ShareCardOptions): Promise<Blob>;
