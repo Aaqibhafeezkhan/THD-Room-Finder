@@ -425,6 +425,8 @@ begin
   if cur.version <> p_expected_version then
     raise exception 'changed elsewhere' using errcode = '40001', hint = 'stale_version';
   end if;
+  -- An empty reference on a change keeps the one on record.
+  p_approval_ref := coalesce(nullif(btrim(p_approval_ref), ''), cur.approval_ref);
   perform focus.check_gathering_input(p_kind, p_title, p_description, p_room_key, p_starts_at, p_minutes, p_capacity, p_approval_ref);
   if p_capacity < focus.gathering_count(cur.id, 'going') then
     raise exception 'more people are going' using errcode = '22023', hint = 'capacity_taken';
