@@ -3,16 +3,16 @@
   "milestones": [
     {"name": "Foundation", "chip": "Wrapping up", "stories": [
       ["Design system", "done"], ["Docs, board and automation", "done"], ["Discussions", "doing"]]},
-    {"name": "Focus sessions", "chip": "Now", "stories": [
+    {"name": "Focus sessions", "chip": "Wrapping up", "stories": [
       ["Free rooms, live", "done"], ["Focus sessions and rhythms", "done"], ["Study profile and batch", "done"],
       ["Lock-screen notifications", "done"], ["Focus graph and share links", "done"], ["Sync across devices", "done"],
       ["App updates itself", "done"], ["Device and privacy testing", "doing"], ["Programme and batch list", "doing"]]},
-    {"name": "Group focus", "chip": "Next", "stories": [
-      ["Study tables", "planned"], ["Table links and seats", "planned"], ["Your tables and reminders", "planned"],
-      ["Start together, in step", "planned"], ["Handles and display names", "planned"], ["Group focus graph", "planned"]]},
-    {"name": "Student groups", "chip": "Later", "stories": [
-      ["Groups register themselves", "planned"], ["Verified tag", "planned"], ["Organizer links", "planned"],
-      ["Gatherings in approved rooms", "planned"], ["Halls and replies", "planned"], ["Group pages", "planned"]]},
+    {"name": "Group focus", "chip": "Now", "stories": [
+      ["Study tables", "done"], ["Table links and seats", "done"], ["Your tables and reminders", "done"],
+      ["Start together, in step", "done"], ["Handles and display names", "planned"], ["Group focus graph", "planned"]]},
+    {"name": "Student groups", "chip": "Now", "stories": [
+      ["Groups register themselves", "done"], ["Verified tag", "done"], ["Organizer links", "done"],
+      ["Gatherings in approved rooms", "done"], ["Halls and replies", "done"], ["Group pages", "done"]]},
     {"name": "Around Deggendorf", "chip": "Later", "stories": [
       ["City map", "planned"], ["Events in town", "planned"], ["Museums and venues", "planned"],
       ["Automatic updates", "planned"]]}
