@@ -94,3 +94,13 @@ export { TableRow } from './tables/TableRow';
 export type { TableRowProps } from './tables/TableRow';
 export { TableBanner } from './tables/TableBanner';
 export type { TableBannerProps } from './tables/TableBanner';
+
+// Gatherings (M3, docs/product/organizations.md).
+export { Hall } from './gatherings/Hall';
+export type { HallProps } from './gatherings/Hall';
+export { KindIcon } from './gatherings/KindIcon';
+export type { KindIconProps } from './gatherings/KindIcon';
+export { KindPicker } from './gatherings/KindPicker';
+export type { KindPickerProps } from './gatherings/KindPicker';
+export { VerifiedTag } from './gatherings/VerifiedTag';
+export type { VerifiedTagProps } from './gatherings/VerifiedTag';

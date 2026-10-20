@@ -47,6 +47,10 @@ const COMPONENTS = {
   'tables/ReplyBar': { section: 'Study tables', subtitle: "Take a seat, Maybe, Can't; seated and full states", viewport: '700x200' },
   'tables/TableRow': { section: 'Study tables', subtitle: 'One table in Your tables, row or card', viewport: '700x200' },
   'tables/TableBanner': { section: 'Study tables', subtitle: '15-minute reminder above the nav', viewport: '700x90' },
+  'gatherings/Hall': { section: 'Gatherings', subtitle: 'The room set up for its kind, people in reply order', viewport: '700x320' },
+  'gatherings/KindIcon': { section: 'Gatherings', subtitle: 'Group focus, Game night, Talk, Meeting marks', viewport: '700x80' },
+  'gatherings/KindPicker': { section: 'Gatherings', subtitle: 'The four kinds as tiles', viewport: '420x100' },
+  'gatherings/VerifiedTag': { section: 'Gatherings', subtitle: 'The group with its verified shield', viewport: '700x60' },
 };
 
 const SRC = join(ROOT, 'src/components');
@@ -64,7 +68,12 @@ for (const rel of Object.keys(COMPONENTS)) {
   let code = ts.transpileModule(src, {
     compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext, jsx: ts.JsxEmit.Preserve },
   }).outputText;
-  code = code.replace(/from '(\.{1,2}\/[^']+)'/g, (_, p) => `from '${p}.jsx'`);
+  // shared/*.js modules (pure geometry) are copied next to the component.
+  code = code.replace(/from '(?:\.\.\/)+shared\/([\w-]+)\.js'/g, (_, name) => {
+    writeOut(join(dirname(rel), name), '.js', `// Copy of shared/${name}.js. Edit the source, then run design/mirror-components.mjs.\n` + readFileSync(join(ROOT, 'shared', name + '.js'), 'utf8'));
+    return `from './${name}.js'`;
+  });
+  code = code.replace(/from '(\.{1,2}\/[^']+?)(?<!\.js)'/g, (_, p) => `from '${p}.jsx'`);
   code = /^import \{([^}]*)\} from 'react';$/m.test(code)
     ? code.replace(/^import \{([^}]*)\} from 'react';$/m, "import React, {$1} from 'react';")
     : "import React from 'react';\n" + code;
@@ -100,6 +109,8 @@ for (const [rel, meta] of Object.entries(COMPONENTS)) {
   // Room status lives in the app's domain layer; inline it for the mirror.
   d = d.replace(/^import type \{ RoomStatus \} from '[^']+';\n/m, '').replace(/\bRoomStatus\b/g, "'free' | 'soon' | 'occupied'");
   d = d.replace(/import\("react"\)\.JSX\.Element/g, 'JSX.Element');
+  // The gathering kinds come from shared/hall.js; inline them for the mirror.
+  d = d.replace(/^import type \{ HallKind \} from '[^']+';\n/m, "type HallKind = 'focus' | 'games' | 'talk' | 'meeting';\n");
   if (meta) {
     const name = rel.split('/').pop();
     const re = new RegExp(`export declare function ${name}(<[^>]*>)?\\(\\{[\\s\\S]*?\\}: (\\w+(?:<\\w+>)?)\\): (JSX\\.Element(?: \\| null)?);`);
