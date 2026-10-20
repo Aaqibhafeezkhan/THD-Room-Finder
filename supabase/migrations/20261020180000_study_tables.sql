@@ -549,7 +549,7 @@ begin
     raise exception 'table is closed' using errcode = '22023', hint = 'table_closed';
   end if;
   if cur.version <> p_expected_version then
-    raise exception 'table changed elsewhere' using errcode = '40001', hint = 'stale_version';
+    raise exception 'table changed elsewhere' using errcode = 'PT409', hint = 'stale_version';
   end if;
   perform focus.check_table_input(p_topic, p_room_key, p_starts_at, p_minutes, p_seats, p_focus_minutes, p_break_minutes);
   if p_seats < focus.seats_taken(cur.id) then
