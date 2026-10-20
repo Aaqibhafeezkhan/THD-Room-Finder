@@ -14,11 +14,11 @@ export function monthNames(locale: Locale): string[] {
     : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 }
 
-/** Mon … Sun. */
+/** Sun … Sat. */
 export function dayNames(locale: Locale): string[] {
   return locale === 'de'
-    ? ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']
-    : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    ? ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa']
+    : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 }
 
 /** 85 → "1 h 25 min" / "1 Std. 25 Min."; whole hours drop the minutes. */
@@ -35,23 +35,28 @@ export function formatMinutes(minutes: number, locale: Locale): string {
 
 /** "Tue 13 Oct" / "Di 13. Okt". */
 export function shortDate(d: Date, locale: Locale): string {
-  const day = dayNames(locale)[(d.getDay() + 6) % 7];
+  const day = dayNames(locale)[d.getDay()];
   return `${day} ${d.getDate()}${locale === 'de' ? '.' : ''} ${monthNames(locale)[d.getMonth()]}`;
 }
 
 export function graphText(t: Translate, locale: Locale): FocusGraphText {
   const months = monthNames(locale);
   return {
-    days: dayNames(locale),
+    days: [...dayNames(locale).slice(1), dayNames(locale)[0]],
     months,
     cellLabel: (d, m) =>
-      `${shortDate(d, locale)} · ${m ? formatMinutes(m, locale) : t('No focus', 'Kein Fokus')}`,
+      `${shortDate(d, locale)} ${d.getFullYear()} · ${m ? formatMinutes(m, locale) : t('No focus', 'Kein Fokus')}`,
     less: t('Less', 'Weniger'),
     more: t('More', 'Mehr'),
+    closed: t('Campus closed', 'Campus geschlossen'),
+    rest: t('Rest day', 'Ruhetag'),
+    loading: t('Loading study history', 'Lernverlauf wird geladen'),
+    keyboardHint: t('Use arrow keys to explore days. Home and End move across a row; Control with Home or End jumps to the first or last day.', 'Mit den Pfeiltasten Tage erkunden. Pos1 und Ende bewegen innerhalb einer Zeile; mit Strg zum ersten oder letzten Tag springen.'),
     share: t('Share focus graph', 'Fokus-Verlauf teilen'),
-    tableCaption: t('Focus minutes per day, newest week first', 'Fokus-Minuten pro Tag, neueste Woche zuerst'),
+    shareLabel: t('Share', 'Teilen'),
+    tableCaption: t('Daily focus history', 'Täglicher Fokus-Verlauf'),
     weekOf: t('Week of', 'Woche ab'),
-    weekLabel: (d) => `${d.getDate()}${locale === 'de' ? '.' : ''} ${months[d.getMonth()]}`,
+    weekLabel: (d) => `${d.getDate()}${locale === 'de' ? '.' : ''} ${months[d.getMonth()]} ${d.getFullYear()}`,
   };
 }
 
@@ -63,10 +68,17 @@ export function formatHours(minutes: number, locale: Locale): string {
 }
 
 /** "21 h this semester · 12-day streak" (D2), or the new-user line. */
+/** The streak under the semester total; no "1 days", no bare zero. */
+export function streakLine(t: Translate, days: number): string {
+  if (days <= 0) return t('No streak yet · one session starts it', 'Noch keine Serie · eine Session startet sie');
+  if (days === 1) return t('1 study day in a row', '1 Lerntag in Folge');
+  return t(`${days} study days in a row`, `${days} Lerntage in Folge`);
+}
+
 export function statsLine(t: Translate, locale: Locale, semesterMinutes: number, streakDays: number): string {
   if (semesterMinutes <= 0 && streakDays <= 0) {
     return t('No focus yet. Start a session in any free room.', 'Noch kein Fokus. Starte eine Session in einem freien Raum.');
   }
-  const h = formatHours(semesterMinutes, locale);
+  const h = formatMinutes(semesterMinutes, locale);
   return t(`${h} this semester · ${streakDays}-day streak`, `${h} in diesem Semester · ${streakDays} Tage in Folge`);
 }
