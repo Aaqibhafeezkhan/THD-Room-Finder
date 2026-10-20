@@ -2,7 +2,7 @@
 -- Uses the synthetic people from supabase/seed.sql plus twelve extra test
 -- people made here, so a 13-person gathering can fill up. Sam has no profile.
 begin;
-select plan(39);
+select plan(40);
 
 create function pg_temp.act_as(p_email text) returns void language plpgsql as $$
 declare uid uuid;
@@ -140,6 +140,10 @@ select pg_temp.act_as('p12@example.test');
 select is((public.get_gathering(pg_temp.v('g', 'link')))->>'my_answer', 'going', 'the first in line moves up');
 
 -- ── Organizers ────────────────────────────────────────────────────────
+select pg_temp.act_as('max@example.test');
+select is((public.change_gathering(pg_temp.v('g', 'link'), 1, 'games', 'Game night!', null, 'thd:r000000001',
+  now() + interval '2 days', 180, 20, ''))->>'changed', 'true', 'a change with no new reference keeps the room approval');
+
 select pg_temp.act_as('jonas@example.test');
 select throws_ok($$select public.gathering_people(pg_temp.v('g', 'link'))$$, 'P0002', null, 'a guest cannot see the people list');
 select pg_temp.act_as('lena@example.test');
