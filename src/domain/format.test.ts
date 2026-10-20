@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatDuration, formatTime, statusBannerText } from './format';
+import { formatDuration, formatTime, formatDayTime, statusBannerText } from './format';
 
 describe('formatDuration', () => {
   it('formats hours and minutes, dropping zero parts', () => {
@@ -39,5 +39,14 @@ describe('statusBannerText', () => {
     );
     expect(t.title).toBe('Closing soon');
     expect(t.duration).toBe('25m');
+  });
+});
+
+describe('formatDayTime', () => {
+  it('identifies the actual reopening date across a Christmas shutdown', () => {
+    const date = new Date(2027, 0, 7, 6, 30);
+    expect(formatDayTime(date, 'en')).toContain('7 Jan 2027');
+    expect(formatDayTime(date, 'de')).toContain('7. Jan. 2027');
+    expect(formatDayTime(date, 'en')).toContain('06:30');
   });
 });

@@ -1,0 +1,70 @@
+// Reviewed 2026-10-18. Sources and the limits of each rule:
+// docs/development/campus-calendar.md. Calendar dates are ISO dates, never instants.
+export const CAMPUS_HOURS_SOURCE = 'https://www.th-deg.de/Studierende/Antraege-und-Organisatorisches/Hochschulrecht/hausordnung_2024_de.pdf';
+export const ACADEMIC_CALENDAR_SOURCE = 'https://www.th-deg.de/Studierende/Antraege-und-Organisatorisches/Hochschulrecht/satzung_vorlesungzeiten.pdf';
+
+function dateParts(iso) {
+  const [year, month, day] = iso.split('-').map(Number);
+  return { year, month, day, date: new Date(Date.UTC(year, month - 1, day)) };
+}
+
+// Gregorian computus; Easter moves each year, so fixed April dates are incorrect.
+export function easterSunday(year) {
+  const a = year % 19, b = Math.floor(year / 100), c = year % 100;
+  const d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const month = Math.floor((h + l - 7 * m + 114) / 31);
+  return new Date(Date.UTC(year, month - 1, (h + l - 7 * m + 114) % 31 + 1));
+}
+
+/** Lecture-free is a calendar annotation, not evidence of locked buildings. */
+export function academicBreak(iso) {
+  const { year, month, day, date } = dateParts(iso);
+  const md = month * 100 + day;
+  if (md >= 1224 || md <= 106) return 'christmas';
+  // The statute can extend the lecture holiday around weekends; that is not
+  // evidence that the physical Christmas shutdown extends by the same days.
+  if (md >= 1220 || md <= 110) {
+    const winter = month === 1 ? year - 1 : year;
+    const start = new Date(Date.UTC(winter, 11, 24));
+    if (start.getUTCDay() <= 2) start.setUTCDate(start.getUTCDate() - start.getUTCDay() - 1);
+    const end = new Date(Date.UTC(winter + 1, 0, 7));
+    if ([0, 5, 6].includes(end.getUTCDay())) end.setUTCDate(end.getUTCDate() + (8 - end.getUTCDay()) % 7);
+    if (date >= start && date < end) return 'lecture-free';
+  }
+  const distance = Math.round((date.getTime() - easterSunday(year).getTime()) / 86400000);
+  if (distance >= -3 && distance <= 2) return 'easter';
+  if (distance >= 47 && distance <= 51) return 'pentecost';
+  // Published presidential lecture-free days; do not extrapolate annually.
+  if (['2026-06-05', '2026-11-02', '2027-05-28', '2027-11-02', '2028-01-07'].includes(iso)) return 'lecture-free';
+  // Statewide holidays plus Assumption, confirmed locally by the city of
+  // Deggendorf (see source notes). Neither proves physical classroom closure.
+  if ([101, 106, 501, 815, 1003, 1101, 1225, 1226].includes(md) || [-2, 1, 39, 50, 60].includes(distance)) return 'holiday';
+  return null;
+}
+
+/**
+ * House rules §2 give 06:30–21:00 unless a separate notice overrides them.
+ * Public sources do not establish classroom weekend/exam access. Withhold a
+ * free-room promise on those days instead of calling them confirmed closures.
+ * THD states the university shuts at Christmas; its calendar gives 24 Dec–6 Jan.
+ */
+export function classroomDay(iso) {
+  const { date } = dateParts(iso);
+  const reason = academicBreak(iso);
+  if (reason === 'christmas') return { access: 'closed', reason };
+  if (reason) return { access: 'unconfirmed', reason };
+  if ([0, 6].includes(date.getUTCDay())) return { access: 'unconfirmed', reason: 'weekend' };
+  return { access: 'scheduled', reason: null };
+}
+
+export function isClassroomClosedDate(iso) {
+  return classroomDay(iso).access === 'closed';
+}
+
+/** App streak policy: weekends are rest days even when a special opening exists. */
+export function isStudyRestDate(iso) {
+  return [0, 6].includes(dateParts(iso).date.getUTCDay()) || isClassroomClosedDate(iso);
+}

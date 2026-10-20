@@ -1,6 +1,7 @@
 // Mirror of src/components/focus/ShareCard.tsx with the types stripped. Edit the source, then run design/mirror-components.mjs.
 import React, { useEffect, useState } from 'react';
-import { addDays, dayKey, focusLevel, mondayOf, parseDay } from './FocusGraph.jsx';
+import { addDays, calendarMonth, dayKey, focusLevel, sundayOf, parseDay } from '../../domain/focusGraph.jsx';
+import { isFocusRestDay } from '../../domain/openingHours.jsx';
 
 /**
  * The focus graph as an image (D4): drawn with Canvas 2D, so the same picture
@@ -34,6 +35,7 @@ function readPalette(theme, accent) {
         on: col('--md-on-surface'),
         onVar: col('--md-on-surface-variant'),
         ramp: [0, 1, 2, 3, 4].map((i) => col(`--md-graph-${i}`)),
+        closed: col('--md-graph-closed'),
         sans: getComputedStyle(probe).getPropertyValue('--font-sans').trim() || 'Roboto, sans-serif',
     };
     probe.remove();
@@ -65,10 +67,10 @@ function roundRect(x, X, Y, W, H, r) {
     else
         x.rect(X, Y, W, H);
 }
-/** Number of week columns from the semester's first Monday through its end. */
+/** Number of week columns from the semester's first Sunday through its end. */
 export function semesterWeeks(semesterStart, semesterEnd) {
-    const first = mondayOf(parseDay(semesterStart));
-    const last = mondayOf(parseDay(semesterEnd));
+    const first = sundayOf(parseDay(semesterStart));
+    const last = sundayOf(parseDay(semesterEnd));
     return Math.round((last.getTime() - first.getTime()) / (7 * 86400000)) + 1;
 }
 /** Draws the card and resolves to a PNG blob. */
@@ -80,7 +82,7 @@ export async function renderShareCard(o) {
     const minutes = new Map();
     for (const d of o.days)
         minutes.set(d.date, (minutes.get(d.date) ?? 0) + d.minutes);
-    const first = mondayOf(parseDay(o.semesterStart));
+    const first = sundayOf(parseDay(o.semesterStart));
     const weeks = semesterWeeks(o.semesterStart, o.semesterEnd);
     const today = parseDay(o.today);
     const inner = F.w - 2 * F.pad;
@@ -135,10 +137,9 @@ export async function renderShareCard(o) {
     x.font = font(400, F.month);
     x.fillStyle = C.onVar;
     for (let w = 0; w < weeks; w++) {
-        const m = addDays(first, w * 7 + 3).getMonth();
-        if (w === 0 || m !== addDays(first, (w - 1) * 7 + 3).getMonth()) {
-            x.fillText(o.months[m], F.pad + w * pitch, gTop - F.month * 0.5);
-        }
+        const month = calendarMonth(first, w);
+        if (month !== null)
+            x.fillText(o.months[month], F.pad + w * pitch, gTop - F.month * 0.5);
     }
     const r = Math.max(2, cell * 0.16);
     const lw = Math.max(2, cell * 0.08);
@@ -154,9 +155,18 @@ export async function renderShareCard(o) {
                 x.stroke();
                 continue;
             }
-            x.fillStyle = C.ramp[focusLevel(minutes.get(dayKey(date)) ?? 0)];
+            const focused = minutes.get(dayKey(date)) ?? 0;
+            x.fillStyle = C.ramp[focusLevel(focused)];
             roundRect(x, X, Y, cell, cell, r);
             x.fill();
+            if (isFocusRestDay(date) && focused === 0) {
+                x.strokeStyle = C.onVar;
+                x.lineWidth = Math.max(1, cell * 0.04);
+                x.beginPath();
+                x.moveTo(X + cell * 0.3, Y + cell * 0.7);
+                x.lineTo(X + cell * 0.7, Y + cell * 0.3);
+                x.stroke();
+            }
             if (dayKey(date) === o.today) {
                 const tw = Math.max(2, cell * 0.07);
                 const off = tw * 0.5 + 1;
