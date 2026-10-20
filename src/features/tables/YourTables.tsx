@@ -11,6 +11,8 @@ import { seatsTitle, topicOf } from './copy';
  * Profile → Your tables (S3, T14): tables the student hosts, sits at or said
  * maybe to, next first; each with a small ring and at most one chip. A list
  * on phones, a grid of cards on wide windows. Tables drop off when they end.
+ * Profile shows the list at the top while there are tables (`when="some"`)
+ * and the empty state above Saved rooms otherwise (`when="none"`).
  */
 export function tableChip(table: StudyTable, now: Date, t: Translate) {
   const state = tableState(table, now);
@@ -22,7 +24,7 @@ export function tableChip(table: StudyTable, now: Date, t: Translate) {
   return undefined;
 }
 
-export function YourTables({ grid = false }: { grid?: boolean }) {
+export function YourTables({ grid = false, when }: { grid?: boolean; when?: 'some' | 'none' }) {
   const navigate = useNavigate();
   const { t, locale } = useI18n();
   const { api, mine } = useTables();
@@ -30,6 +32,7 @@ export function YourTables({ grid = false }: { grid?: boolean }) {
   if (!api) return null;
   const heading = t('Your tables', 'Deine Tische');
   const list = mine.filter((x) => tableState(x, now) !== 'ended');
+  if ((when === 'some' && !list.length) || (when === 'none' && list.length)) return null;
 
   return (
     <section aria-label={heading} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>

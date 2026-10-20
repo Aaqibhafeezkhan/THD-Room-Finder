@@ -28,7 +28,7 @@ export function tablePreview(preview) {
     : taken >= seats
       ? `Full · ${taken} of ${seats} seats. You can still say maybe. An invite, not a room booking.`
       : `${taken} of ${seats} seats taken. Take a seat or say maybe. An invite, not a room booking.`;
-  const q = new URLSearchParams({ s: String(seats), k: String(taken), r: room, t: topic, w: `${when}–${time(preview.ends_at)}` });
+  const q = new URLSearchParams({ s: String(seats), k: String(taken), r: room });
   if (preview.cancelled) q.set('x', '1');
   return { title, description, card: q.toString() };
 }
@@ -54,7 +54,7 @@ export function tablePage(preview, link, origin) {
 <meta property="og:image" content="${esc(image)}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="${esc(`A round table seen from above with ${card ? 'its seats' : 'seats'}`)}">
+<meta property="og:image:alt" content="A round table seen from above, its seats around the room code">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="${esc(image)}">
 <link rel="icon" type="image/svg+xml" href="/icons/app-icon.svg">

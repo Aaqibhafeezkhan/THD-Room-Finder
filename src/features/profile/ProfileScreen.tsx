@@ -72,6 +72,8 @@ export function ProfileScreen() {
           onSetup={profile.available ? () => setSetup(true) : undefined}
           onSettings={() => navigate('/profile/settings')}
         />
+        {/* Tables are time-bound, so they come first when there are any (S3). */}
+        <YourTables grid={cls === 'expanded'} when="some" />
         <FocusGraph
           days={focus.days}
           today={focus.today}
@@ -82,7 +84,7 @@ export function ProfileScreen() {
           text={graphText(t, locale)}
           onShare={focus.hasHistory ? () => setSharing(true) : undefined}
         />
-        <YourTables grid={cls === 'expanded'} />
+        <YourTables grid={cls === 'expanded'} when="none" />
         <SavedRooms grid={cls === 'expanded'} />
         <Button variant="text" onClick={invite} style={{ alignSelf: 'center', minHeight: 48 }}>
           {t('Invite a Friend', 'Freunde einladen')}
