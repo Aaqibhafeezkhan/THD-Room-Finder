@@ -423,7 +423,7 @@ begin
     raise exception 'gathering is closed' using errcode = '22023', hint = 'gathering_closed';
   end if;
   if cur.version <> p_expected_version then
-    raise exception 'changed elsewhere' using errcode = '40001', hint = 'stale_version';
+    raise exception 'changed elsewhere' using errcode = 'PT409', hint = 'stale_version';
   end if;
   -- An empty reference on a change keeps the one on record.
   p_approval_ref := coalesce(nullif(btrim(p_approval_ref), ''), cur.approval_ref);
