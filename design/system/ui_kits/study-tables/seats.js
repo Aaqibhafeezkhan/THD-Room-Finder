@@ -15,49 +15,54 @@ function seatRing(seats, { size = 168, code = 'C001', cancelled = false } = {}) 
   return parts.join('');
 }
 
-// Hall: a gathering's seat picture. setup: tables | circle | stage | rows.
-// replies: number going, number maybe; seats fill from the front / table by table.
-function hall(setup, capacity, going, maybe, { width = 520, mine = -1, cancelled = false } = {}) {
-  const per = capacity > 80 ? 2 : 1;            // one dot per seat, or per two
+// Hall: a gathering's seat picture (docs/product/organizations.md → Hall rules).
+// setup: 'tables' (long tables of perTable, 8/10/12) or 'rows'.
+// Seats fill one table at a time, or front row first, centre outwards.
+function hall(setup, capacity, going, maybe, { width = 520, perTable = 8, maxCols = 4, mine = -1, cancelled = false } = {}) {
+  const per = capacity > 120 ? 2 : 1;                  // one dot per seat, or per two
   const n = Math.ceil(capacity / per), g = Math.ceil(going / per), m = Math.ceil(maybe / per);
-  const pts = [];
-  let height;
-  if (setup === 'circle') {
-    height = width * 0.7; const cx = width / 2, cy = height / 2, R = height * 0.42;
-    for (let i = 0; i < n; i++) { const a = -Math.PI / 2 + i * 2 * Math.PI / n; pts.push([cx + R * Math.cos(a), cy + R * Math.sin(a)]); }
-  } else if (setup === 'stage') {
-    height = width * 0.56; const cx = width / 2, cy = height * 0.86;
-    const rowsN = Math.max(3, Math.round(Math.sqrt(n / 4)));
-    const radii = Array.from({ length: rowsN }, (_, r) => width * (0.17 + 0.29 * r / (rowsN - 1)));
-    const sum = radii.reduce((a, b) => a + b, 0); let left = n;
-    radii.forEach((R, r) => {
-      const cnt = r === rowsN - 1 ? left : Math.round(n * R / sum); left -= cnt;
-      for (let i = 0; i < cnt; i++) { const a = Math.PI + (i + 0.5) * Math.PI / cnt; pts.push([cx + R * Math.cos(a), cy + R * Math.sin(a)]); }
-    });
-  } else if (setup === 'rows') {
-    const cols = Math.min(16, Math.ceil(Math.sqrt(n * 2.2))), rowsN = Math.ceil(n / cols);
-    const gap = width / (cols + 1); height = gap * (rowsN + 2.2);
-    for (let i = 0; i < n; i++) { const r = Math.floor(i / cols), c = i % cols; pts.push([gap * (c + 1) + (c >= cols / 2 ? gap * 0.35 : -gap * 0.35) * 0.6, gap * (r + 2)]); }
-  } else { // tables of 6
-    const per6 = 6, tables = Math.ceil(n / per6), cols = Math.min(5, Math.ceil(Math.sqrt(tables * 1.6)));
-    const cell = width / cols, rowsN = Math.ceil(tables / cols); height = cell * rowsN;
-    for (let t = 0; t < tables; t++) {
-      const cx = cell * (t % cols + 0.5), cy = cell * (Math.floor(t / cols) + 0.5);
-      const k = Math.min(per6, n - t * per6);
-      for (let i = 0; i < k; i++) { const a = -Math.PI / 2 + i * 2 * Math.PI / per6; pts.push([cx + cell * 0.3 * Math.cos(a), cy + cell * 0.3 * Math.sin(a), cx, cy]); }
+  const pts = [], shapes = [];
+  let height, dot;
+  if (setup === 'rows') {
+    let cols = Math.max(6, Math.min(16, Math.round(Math.sqrt(n * 1.6))));
+    if (cols >= 8 && cols % 2) cols += 1;              // even, so the aisle is centred
+    const rowsN = Math.ceil(n / cols), aisle = cols >= 8;
+    const gap = width / (cols + (aisle ? 1.6 : 1));
+    dot = Math.min(10, gap * 0.32);
+    const top = gap * 0.9;                               // the front line sits just above the first row
+    shapes.push(`<line x1="${gap * 0.5}" y1="${top - gap * 0.45}" x2="${width - gap * 0.5}" y2="${top - gap * 0.45}" stroke="var(--md-outline)" stroke-width="3" stroke-linecap="round"/>`);
+    // Centre-out order within each row.
+    const order = [...Array(cols).keys()].sort((a, b) => Math.abs(a - (cols - 1) / 2) - Math.abs(b - (cols - 1) / 2) || a - b);
+    for (let r = 0; r < rowsN; r++) {
+      const inRow = Math.min(cols, n - r * cols);
+      order.filter((c, k) => k < inRow).forEach((c) => {
+        const x = gap * (c + 1) + (aisle && c >= cols / 2 ? gap * 0.6 : 0) - gap * 0.2;
+        pts.push([x, top + r * gap + gap * 0.3]);
+      });
     }
+    height = top + rowsN * gap + gap * 0.1;
+  } else {
+    const side = perTable / 2, tables = Math.ceil(n / perTable);
+    const cols = Math.min(maxCols, tables), rowsN = Math.ceil(tables / cols);
+    const cellW = width / cols, seatGap = (cellW * 0.82) / side, cellH = seatGap * 3.4;
+    dot = Math.min(10, seatGap * 0.3);
+    for (let t = 0; t < tables; t++) {
+      const x0 = cellW * (t % cols) + cellW * 0.09, y0 = cellH * Math.floor(t / cols) + seatGap * 0.7;
+      const k = Math.min(perTable, n - t * perTable), w = side * seatGap;
+      shapes.push(`<rect x="${x0}" y="${y0 + seatGap * 0.55}" width="${w}" height="${seatGap * 0.9}" rx="${seatGap * 0.2}" fill="var(--md-surface-variant)" stroke="var(--md-outline-variant)"/>`);
+      for (let i = 0; i < k; i++) {
+        const col = i % side, top = i < side;
+        pts.push([x0 + seatGap * (col + 0.5), top ? y0 + seatGap * 0.2 : y0 + seatGap * 1.8]);
+      }
+    }
+    height = cellH * rowsN;
   }
-  const dot = Math.max(3, Math.min(9, width / (Math.sqrt(n) * 5.2)));
-  const out = [`<svg width="${width}" height="${Math.round(height)}" viewBox="0 0 ${width} ${Math.round(height)}" role="img" aria-label="${going} going, ${maybe} maybe, ${capacity} seats" style="opacity:${cancelled ? .38 : 1};max-width:100%;height:auto">`];
-  if (setup === 'stage') out.push(`<rect x="${width / 2 - width * 0.12}" y="${height * 0.86}" width="${width * 0.24}" height="${height * 0.11}" rx="8" fill="var(--md-surface-variant)" stroke="var(--md-outline-variant)"/><text x="${width / 2}" y="${height * 0.93}" text-anchor="middle" font-size="12" fill="var(--md-on-surface-variant)">Stage</text>`);
-  if (setup === 'rows') out.push(`<rect x="${width * 0.2}" y="6" width="${width * 0.6}" height="10" rx="5" fill="var(--md-surface-variant)"/><text x="${width / 2}" y="32" text-anchor="middle" font-size="11" fill="var(--md-on-surface-variant)">Front</text>`);
-  if (setup === 'circle') out.push(`<circle cx="${width / 2}" cy="${height / 2}" r="${height * 0.3}" fill="var(--md-surface-variant)" opacity=".6"/>`);
-  if (setup === 'tables') { const seen = new Set(); pts.forEach(p => { const k = p[2] + ',' + p[3]; if (!seen.has(k)) { seen.add(k); out.push(`<circle cx="${p[2]}" cy="${p[3]}" r="${(width / Math.min(5, Math.ceil(Math.sqrt(Math.ceil(n / 6) * 1.6)))) * 0.17}" fill="var(--md-surface-variant)" stroke="var(--md-outline-variant)"/>`); } }); }
+  const out = [`<svg width="${width}" height="${Math.round(height)}" viewBox="0 0 ${width} ${Math.round(height)}" role="img" aria-label="${going} going, ${maybe} maybe, ${capacity} seats" style="opacity:${cancelled ? .38 : 1};max-width:100%;height:auto">`, ...shapes];
   pts.forEach(([x, y], i) => {
     if (i < g) out.push(`<circle cx="${x}" cy="${y}" r="${dot}" fill="var(--md-focus)"/>`);
-    else if (i < g + m) out.push(`<circle cx="${x}" cy="${y}" r="${dot - 1}" fill="var(--md-focus-container)" stroke="var(--md-focus)" stroke-width="1.5"/>`);
-    else out.push(`<circle cx="${x}" cy="${y}" r="${dot - 1}" fill="none" stroke="var(--md-outline)" stroke-width="1.2"/>`);
-    if (i === mine) out.push(`<circle cx="${x}" cy="${y}" r="${dot + 3}" fill="none" stroke="var(--md-focus)" stroke-width="2"/>`);
+    else if (i < g + m) out.push(`<circle cx="${x}" cy="${y}" r="${dot - 0.75}" fill="var(--md-focus-container)" stroke="var(--md-focus)" stroke-width="1.5"/>`);
+    else out.push(`<circle cx="${x}" cy="${y}" r="${dot - 0.75}" fill="none" stroke="var(--md-outline)" stroke-width="1.5"/>`);
+    if (i === mine) out.push(`<circle cx="${x}" cy="${y}" r="${dot + 3.5}" fill="none" stroke="var(--md-focus)" stroke-width="2"/>`);
   });
   out.push('</svg>');
   return out.join('');

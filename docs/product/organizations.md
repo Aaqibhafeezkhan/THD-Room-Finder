@@ -35,30 +35,58 @@ sees the room as taken for that time, ahead of time.
 |---|---|---|
 | Gathering | An organization's planned get-together in one room | Event booking, reservation |
 | Hall | The seat picture of a gathering | Seating chart |
-| Setup | How the room is arranged: Tables, Circle, Stage, Rows | Layout mode |
+| Setup | How the room is arranged: Long tables or Rows | Layout mode |
 | Going · Maybe · Can't | Replies | RSVP |
 | Organizers | The group's members who host it | Admins |
 | Verified | The group passed the registry | Official, partner |
 
-German: Treffen, Saal, Aufbau (Tische, Kreis, Bühne, Reihen), Komme,
+German: Treffen, Saal, Aufbau (Lange Tische, Reihen), Komme,
 Vielleicht, Kann nicht, Organisationsteam, Verifiziert.
 
 ## Setups
 
-How the people in the room relate to each other decides the picture. The
-organizer picks one; it changes nothing else.
+Two setups, picked by the organizer. They change the picture and the fill
+order, nothing else.
 
 | Setup | For | Picture |
 |---|---|---|
-| **Tables** | Game night, workshop, big group focus | Round tables of 4 to 8 spread over the room; tables fill one by one |
-| **Circle** | Debate, discussion, stammtisch | One ring of seats facing each other |
-| **Stage** | Talk, performance, presentation | A half circle of rows facing a speaker; the organizer's seat is on the stage |
-| **Rows** | Planning meeting, lecture-style, film night | Straight rows facing the front, like a classroom or cinema |
+| **Long tables** | Game night, workshop, a big group focus session | Rectangular tables of 8, 10 or 12, seats on both long sides; tables fill one by one so people end up sitting together |
+| **Rows** | Talk, planning meeting, film night | Straight rows behind a line for the front, like a classroom or cinema; rows fill from the front, centre first |
 
-Seats fill from the front (Stage, Rows) or table by table (Tables), so a
-half-full hall reads as half full at a glance. Going is filled violet, Maybe
-is a half-filled seat, empty seats are outlined. Over about 80 seats each dot
-stands for two seats and the label says so.
+A study table is still the place where a few people look at each other while
+they focus; a long table is its bigger, louder cousin.
+
+## Hall rules
+
+| Rule | Value |
+|---|---|
+| Size | 13 seats up to the room's seat count from THabella, at most 300. 12 and below is a study table |
+| Unknown room size | The organizer enters the seats, 13 to 300 |
+| Lowering | Allowed any time down to the people already going; never above the room |
+| Long tables | 8, 10 or 12 per table, default 8. Tables = seats ÷ size, rounded up; the last table is shorter |
+| Table grid | In a row on phones: 3 tables of 8, or 2 of 10–12; on wide windows 4 of 8 or 3 of 10–12. More tables add rows, so seats stay at least 20 px apart |
+| Rows | 6 to 16 seats per row: about the square root of 1.6 × seats. Rows of 8 or more are made even and split by a centred aisle |
+| Fill order | Long tables: one table at a time, from the top left. Rows: front row first, centre outwards |
+| Seats | Not numbered and not assigned. "Your seat" marks where you would be in the fill order, and the page says so |
+| Dots | One dot per seat up to 120 seats; above that one dot per two seats, and the count line says so |
+| Smallest dot | 6 px on phones. If the hall would need smaller dots it shows a summary picture with **Full view** |
+| Going · Maybe · Free | Filled violet · violet ring with a light fill · outline. Full halls also show the waiting list count |
+
+## Sizes and views
+
+| Window | Hall | Details | Actions |
+|---|---|---|---|
+| Phone | Full width of the card, up to 280 px high, labels at 14 px or more | Below the hall | Going · Maybe · Can't at the bottom, in thumb reach |
+| Phone, big hall | Summary (one dot per two seats) and **Full view** | Below | Same |
+| Full view | Full screen, pinch to zoom and pan, the count line pinned on top | — | Close |
+| Tablet and desktop | 560 px wide beside the details, or above them under 840 px | Right of the hall | Under the details |
+
+| Who | Sees |
+|---|---|
+| Guest, signed out | The hall, counts, room, time, the approval line, **Going** |
+| Going | Their place in the fill order ringed, "You're going", Maybe and Can't |
+| Organizer | The same hall plus counts by programme, **People**, **Export**, Change, Cancel; on wide windows People opens beside the hall |
+| Waiting | "You're number 3 on the waiting list" instead of the reply bar |
 
 ## Flow
 
@@ -125,8 +153,9 @@ flowchart LR
 │ ‹  Gathering                  Verified ✓ │
 │ Campus Connect                           │
 │ Game night                               │
-│        ▢ ▢ ▢     ▢ ▢ ▢     ▢ ▢ ▢         │  hall: Tables setup,
-│        ▢ ● ▢     ● ● ●     ○ ○ ○         │  filling table by table
+│   ●●●●  ●●○○  ○○○○                       │  hall: long tables
+│   ▬▬▬▬  ▬▬▬▬  ▬▬▬▬                       │  of 8, filling one
+│   ●●●●  ●○○○  ○○○○                       │  table at a time
 │ 47 going · 12 maybe · 120 seats · I 112  │
 │ Thu 5 Nov · 19:00–23:00                  │
 │ Room approved by THD                     │
