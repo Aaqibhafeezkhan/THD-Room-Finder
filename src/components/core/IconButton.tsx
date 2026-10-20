@@ -8,6 +8,7 @@ export interface IconButtonProps {
   onClick?: MouseEventHandler;
   children?: ReactNode;
   style?: CSSProperties;
+  className?: string;
   [key: string]: unknown;
 }
 
@@ -18,6 +19,7 @@ export function IconButton({
   onClick,
   children,
   style = {},
+  className = '',
   ...rest
 }: IconButtonProps) {
   const tones = {
@@ -48,6 +50,7 @@ export function IconButton({
   const Tag: any = href ? 'a' : 'button';
   return (
     <Tag
+      className={`thd-icon-button ${className}`.trim()}
       href={href || undefined}
       onClick={onClick}
       aria-label={label}

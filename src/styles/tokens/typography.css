@@ -25,6 +25,7 @@
   --display-small-lh:      1.15;
 
   /* Headline — section headers, page H2 */
+  --headline-small-size:   1.5rem;   /* 24px */
   --headline-size:         1.75rem;  /* 28px */
   --headline-lh:           1.25;
 

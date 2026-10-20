@@ -10,3 +10,88 @@
 @import url('./tokens/spacing.css');
 @import url('./tokens/breakpoints.css');
 @import url('./tokens/elevation.css');
+
+/* Quiet focus history: the same tokens and spacing on every screen. */
+.thd-focus-card {
+  --focus-cell: 1rem;
+  --focus-gap: .1875rem;
+  --focus-axis: 1.75rem;
+  container-type: inline-size;
+  position: relative;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  border-radius: var(--radius-l);
+  background: var(--md-surface);
+  box-shadow: var(--md-shadow-1);
+  font-family: var(--font-sans);
+}
+.thd-focus-status {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: var(--body-small-size);
+  line-height: var(--body-small-lh);
+  color: var(--md-on-surface-variant);
+}
+.thd-focus-status svg { flex: 0 0 auto; margin-top: .125rem; }
+.thd-focus-summary { min-height: 3.75rem; display: flex; align-items: center; gap: var(--space-3); }
+.thd-focus-summary > p { flex: 1; min-width: 0; margin: 0; }
+.thd-focus-total { font-size: var(--headline-small-size); font-weight: var(--weight-regular); line-height: var(--title-large-lh); }
+.thd-focus-share { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-1); min-width: 3rem; min-height: 3rem; padding: var(--space-2); border: 0; border-radius: var(--radius-s); background: transparent; color: var(--md-primary); font-size: var(--label-large-size); line-height: var(--label-large-lh); cursor: pointer; flex-shrink: 0; }
+.thd-focus-share:hover { background: color-mix(in srgb, var(--md-primary) 8%, transparent); }
+.thd-focus-share:focus-visible { outline: 2px solid var(--md-primary); outline-offset: 2px; }
+.thd-focus-empty { font-size: var(--body-medium-size); color: var(--md-on-surface-variant); }
+.thd-focus-period { font-size: var(--body-medium-size); color: var(--md-on-surface-variant); display: inline-block; }
+.thd-focus-streak { display: block; margin-top: var(--space-1); font-size: var(--body-small-size); line-height: var(--body-small-lh); color: var(--md-on-surface-variant); }
+.thd-focus-graph-scroll { min-width: 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; overscroll-behavior-x: contain; padding: .25rem .25rem .25rem 0; }
+.thd-focus-graph-scroll::-webkit-scrollbar { display: none; }
+.thd-focus-grid {
+  display: grid;
+  grid-template-columns: var(--focus-axis) repeat(var(--focus-weeks), var(--focus-cell));
+  grid-template-rows: 1.125rem repeat(7, var(--focus-cell));
+  gap: var(--focus-gap);
+  width: max-content;
+}
+.thd-focus-row { display: contents; }
+.thd-focus-axis { position: sticky; left: 0; z-index: 1; background: var(--md-surface); display: flex; align-items: center; }
+.thd-focus-axis, .thd-focus-month { font-size: var(--label-small-size); line-height: 1; color: var(--md-on-surface-variant); white-space: nowrap; }
+.thd-focus-day { position: relative; min-width: 0; width: 100%; height: 100%; padding: 0; border: 0; border-radius: .1875rem; background: var(--md-graph-0); color: var(--md-on-surface-variant); }
+button.thd-focus-day { cursor: pointer; touch-action: manipulation; }
+.thd-focus-day[data-today="true"] { outline: 1px solid var(--md-on-surface-variant); outline-offset: 1px; }
+.thd-focus-day[data-selected="true"] { outline: 1px solid var(--md-primary); outline-offset: 1px; }
+.thd-focus-day:focus-visible { outline: 2px solid var(--md-primary); outline-offset: 2px; z-index: 2; }
+.thd-focus-day[data-rest="true"]::after { content: ''; position: absolute; width: 55%; height: 1px; left: 23%; top: 49%; transform: rotate(-45deg); background: currentColor; opacity: .35; pointer-events: none; }
+.thd-focus-legend { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-2) var(--space-4); font-size: var(--label-small-size); color: var(--md-on-surface-variant); }
+.thd-focus-ramp, .thd-focus-rest-key, .thd-focus-swatches { display: inline-flex; gap: .1875rem; align-items: center; }
+.thd-focus-ramp { flex-wrap: wrap; max-width: 100%; }
+.thd-focus-swatches { flex-shrink: 0; }
+.thd-focus-rest-key { gap: var(--space-1); }
+.thd-focus-ramp i, .thd-focus-rest-key i { display: inline-block; width: .625rem; height: .625rem; border-radius: .125rem; }
+.thd-focus-ramp > span:first-child { margin-right: .125rem; }
+.thd-focus-ramp > span:last-child { margin-left: .125rem; }
+.thd-focus-detail { margin: 0; min-height: 1.5em; font-size: var(--body-small-size); line-height: var(--body-medium-lh); color: var(--md-on-surface-variant); overflow-wrap: anywhere; }
+.thd-visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@container (min-width: 760px) {
+  .thd-focus-grid { --focus-cell: clamp(.75rem, calc((100cqw - var(--focus-axis) - .5rem - var(--focus-weeks) * var(--focus-gap)) / var(--focus-weeks)), .875rem); }
+}
+@media (max-width: 599px) { .thd-focus-card { padding: var(--space-4); } }
+@media (forced-colors: active) {
+  .thd-focus-day { border: 1px solid CanvasText; }
+  .thd-focus-day[data-selected="true"], .thd-focus-day:focus-visible { outline-color: Highlight; }
+}
+
+/* Access facts lead; source details stay available without dominating the page. */
+.thd-access-notice { display: flex; align-items: flex-start; gap: var(--space-3); padding: var(--space-4); border-radius: var(--radius-l); background: var(--md-secondary-container); color: var(--md-on-secondary-container); }
+.thd-access-icon { display: inline-flex; flex-shrink: 0; padding-top: .125rem; }
+.thd-access-content { flex: 1; min-width: 0; }
+.thd-access-title { margin: 0; font-size: var(--title-medium-size); font-weight: var(--weight-medium); line-height: var(--title-medium-lh); }
+.thd-access-next, .thd-access-reason { margin: var(--space-1) 0 0; font-size: var(--body-medium-size); line-height: var(--body-medium-lh); overflow-wrap: anywhere; }
+.thd-access-details { margin-top: var(--space-2); font-size: var(--body-small-size); line-height: var(--body-small-lh); }
+.thd-access-details summary { cursor: pointer; min-height: var(--tap-target); display: list-item; align-content: center; }
+.thd-access-details p { margin: var(--space-2) 0; }
+.thd-access-details a { text-decoration: underline; text-underline-offset: .15em; }
+
+.thd-icon-button:focus-visible { outline: 2px solid var(--md-primary); outline-offset: 2px; }

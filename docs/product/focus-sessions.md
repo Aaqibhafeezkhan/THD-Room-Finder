@@ -226,3 +226,50 @@ Phase 2 ([later phases](later-phases.md)).
 
 Group objects and invitations, chat, friends, organization accounts, events, city layer, push
 from a server, leaderboards. See [later phases](later-phases.md).
+
+### Campus closures and focus streaks
+
+Study streaks count study days: weekends and confirmed Christmas shutdown days
+pause the streak without adding days. Recorded study on any date remains in
+history and totals. Missing a non-rest weekday breaks the streak when it ends.
+Weekend pauses are a product rule, not a statement that every campus venue is
+physically locked.
+
+The source-backed classroom calendar distinguishes scheduled, closed and
+unconfirmed access. House rules give a 06:30–21:00 default, subject to notices;
+library break hours do not apply to classrooms. Christmas shuts down across
+New Year. Easter, Pentecost, public holidays and dated lecture-free days do not
+prove physical closure. Classroom exam-weekend access remains unconfirmed;
+the library has separately published, dated extended hours. See
+[calendar research and maintenance](../development/campus-calendar.md).
+
+Only empty streak rest-day cells carry a subtle slash on the normal pale
+background. Recorded activity retains its accent colour even on a closed date.
+Tooltips, the day-detail line and the accessible table retain the minutes and
+rest/closure annotation. Future dates stay blank. Profile shows live access status
+separately from the historic graph; Rooms explains unconfirmed access before
+promising a free room. The library's card remains independently accessible.
+
+The profile column is capped at 960 px. The quiet profile follows the closed-days
+preview: a short status, exact semester time and streak, compact calendar,
+intensity/rest-day legends and a stable selected-day detail. Empty history links
+to Rooms; loading history uses a static skeleton instead of flashing false zeros.
+There is no month picker or navigation toolbar. Older history uses native
+scrolling. The calendar is an accessible data grid with one tab stop; arrows
+move by day/week, Home/End stay in the weekday row, and Control+Home/End reach
+the first/latest day. Selection persists on touch; hover provides a temporary
+preview. Labels include the year and wrap without clipping. A wider card fits
+the rolling year; cells and labels grow with enlarged text. Width-only resize
+work is deferred and preserves the viewed position.
+
+Short landscape windows use the compact navigation rail rather than a desktop
+drawer. Returning between Profile and Settings starts at the heading without
+resetting the view when rotating. Saved rooms with unknown access use a neutral
+unavailable tone, not an occupied-room warning. The access notice keeps its
+heading and next scheduled opening visible, with source details in a disclosure.
+Plan-ahead availability is labelled as a selected time, never as live right now.
+
+Weeks start on Sunday in the graph and new share cards/links, matching the
+GitHub contribution calendar reference. Visible row labels remain Monday,
+Wednesday and Friday (rows 2, 4 and 6). Existing share payloads retain their
+encoded start date, so older links still map minutes to the correct dates.
