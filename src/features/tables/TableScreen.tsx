@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Capacitor } from '@capacitor/core';
-import { AppBar, Button, ConfirmDialog, ReplyBar, SeatRing, Sheet, Snackbar, StudyTableCard, Switch, TableTag } from '../../components';
+import { AppBar, Button, ConfirmDialog, ReplyBar, SeatRing, Sheet, Snackbar, StudyTableCard, TableTag } from '../../components';
 import { IconMail } from '../../components/icons';
 import { IconShare } from '../../components/focus/focusIcons';
 import { ServiceError } from '../../data/identityApi';
@@ -242,6 +242,7 @@ export function TableScreen() {
   const state = tableState(table, new Date());
   const open = state !== 'cancelled' && state !== 'ended';
   const full = table.taken >= table.seats;
+  const minutesTo = Math.max(1, Math.ceil((table.startsAt.getTime() - Date.now()) / 60_000));
   const room = ident ? rooms.find((r) => r.ident === ident) : undefined;
   const code = table.roomCode ?? room?.code ?? '';
 
@@ -249,12 +250,12 @@ export function TableScreen() {
     state === 'cancelled' ? <TableTag tone="alert">{t('Cancelled by the host', 'Vom Gastgeber abgesagt')}</TableTag>
     : state === 'ended' ? <TableTag tone="info">{t('This table has ended', 'Dieser Tisch ist vorbei')}</TableTag>
     : state === 'live' ? <TableTag tone="focus">{t('Now', 'Jetzt')}</TableTag>
-    : state === 'soon' ? <TableTag tone="focus">{t('Starts soon', 'Beginnt gleich')}</TableTag>
+    : state === 'soon' ? <TableTag tone="focus">{t(`Starts in ${minutesTo} min`, `Beginnt in ${minutesTo} Min.`)}</TableTag>
     : full && table.seats > 1 ? <TableTag tone="info">{t(`Full · ${table.taken} of ${table.seats}`, `Voll · ${table.taken} von ${table.seats}`)}</TableTag>
     : table.changed ? <TableTag tone="info">{t('Changed', 'Geändert')}</TableTag>
     : undefined;
 
-  const where: ReactNode = (
+  const where: ReactNode = !open ? code : (
     <>
       {room ? (
         <a href={`/room/${encodeURIComponent(room.ident)}`} onClick={(e) => { e.preventDefault(); navigate(`/room/${encodeURIComponent(room.ident)}`); }} style={{ color: 'var(--md-primary)' }}>{code}</a>
@@ -302,12 +303,7 @@ export function TableScreen() {
       {open && !table.isHost && table.seats > 1 && (
         <ReplyBar answer={table.myAnswer} full={full && table.myAnswer !== 'seat'} busy={busy} onReply={(a) => void reply(a)} text={replyText} inline={wide} />
       )}
-      {open && !table.isHost && table.myAnswer && (
-        <Switch tone="focus" checked={table.myShowName} label={t('Show my first name', 'Meinen Vornamen zeigen')}
-          sub={t('Otherwise you are "a student"', 'Sonst bist du „ein Studi"')}
-          onChange={(v) => void reply(table.myAnswer as Answer, v)} />
-      )}
-      {open && table.seats > 1 && (
+      {open && table.seats > 1 && (table.isHost || table.myAnswer) && (
         <div style={row}>
           <Button variant="tonal" icon={<IconShare size={18} />} onClick={share}>{t('Share link', 'Link teilen')}</Button>
           <Button variant="text" icon={<IconMail size={18} />} href={mail}>{t('Email', 'E-Mail')}</Button>
@@ -330,7 +326,7 @@ export function TableScreen() {
       {open && table.isHost && table.seats > 1 && (
         <p style={fine}>{url.replace(/^https?:\/\//, '').replace(table.link, '')}<b style={{ color: 'var(--md-on-surface)' }}>{table.link}</b></p>
       )}
-      {table.seats > 1 && (
+      {open && !table.isHost && !table.myAnswer && table.seats > 1 && (
         <p style={fine}>{t('Anyone with this link can see the table. An invite, not a room booking.', 'Alle mit diesem Link sehen den Tisch. Eine Einladung, keine Raumbuchung.')}</p>
       )}
     </div>
@@ -346,7 +342,7 @@ export function TableScreen() {
           topic={topicOf(table, t)}
           when={tableWhen(table.startsAt, table.endsAt, locale, new Date())}
           where={where}
-          who={whoLine(table, t)}
+          who={open ? whoLine(table, t) : undefined}
           muted={!open}
           wide={wide}
         >

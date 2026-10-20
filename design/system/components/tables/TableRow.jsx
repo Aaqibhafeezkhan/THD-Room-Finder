@@ -39,6 +39,6 @@ export function TableRow({ ring, title, meta, detail, tag, struck = false, card 
         <span style={{ fontSize: 'var(--body-small-size)', color: 'var(--md-on-surface-variant)' }}>{meta}</span>
         {card && detail && <span style={{ fontSize: 'var(--body-small-size)', color: 'var(--md-on-surface-variant)' }}>{detail}</span>}
       </span>
-      {tag}
+      {tag && <span style={{ alignSelf: 'flex-start', flexShrink: 0 }}>{tag}</span>}
     </button>);
 }

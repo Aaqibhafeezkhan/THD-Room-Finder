@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
-import { Button, SeatRing, Sheet, SlotChips, Switch, choiceChip } from '../../components';
+import { Button, SeatRing, Sheet, SlotChips, choiceChip } from '../../components';
 import type { SlotDay, SlotOption } from '../../components';
 import { ServiceError } from '../../data/identityApi';
 import type { StudyTable } from '../../data/tablesApi';
@@ -83,7 +83,8 @@ export function TableSheet({ open, room, onClose, onSaved, table }: TableSheetPr
   const [rhythm, setRhythm] = useState(preferred);
   const [pickRhythm, setPickRhythm] = useState(false);
   const [showName, setShowName] = useState(false);
-  const [events, setEvents] = useState<ScheduledEvent[] | null>(null);
+  // The room's events, tagged with the day they belong to.
+  const [loaded, setLoaded] = useState<{ day: string; events: ScheduledEvent[] } | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
@@ -94,7 +95,7 @@ export function TableSheet({ open, room, onClose, onSaved, table }: TableSheetPr
     const start = table ? toCampusWallClock(table.startsAt) : null;
     const firstOpen = tableDays(at, hoursOn).find((d) => d.open && d.close && d.close > at);
     setDay(start ? dayId(start) : (firstOpen?.id ?? dayId(at)));
-    setEvents(null);
+    setLoaded(null);
     setSlot(start ? `${String(start.getHours()).padStart(2, '0')}:${String(start.getMinutes()).padStart(2, '0')}` : null);
     setSeats(table?.seats ?? DEFAULT_SEATS);
     setTopic(table?.topic ?? '');
@@ -110,18 +111,18 @@ export function TableSheet({ open, room, onClose, onSaved, table }: TableSheetPr
   useEffect(() => {
     if (!open || !picked) return;
     let stale = false;
-    setEvents(null);
+    const id = picked.id;
     getEventsForDate(picked.date)
-      .then((e) => !stale && setEvents(e.filter((x) => x.roomIdent === room.ident)))
-      .catch(() => !stale && setEvents([]));
+      .then((e) => !stale && setLoaded({ day: id, events: e.filter((x) => x.roomIdent === room.ident) }))
+      .catch(() => !stale && setLoaded({ day: id, events: [] }));
     return () => {
       stale = true;
     };
   }, [open, day, room.ident]);
 
   const slots: FreeSlot[] | null = useMemo(() => {
-    if (!picked || !events) return null;
-    const list = freeSlots(picked, events, now);
+    if (!picked || !loaded || loaded.day !== picked.id) return null;
+    const list = freeSlots(picked, loaded.events, now);
     // Changing a table keeps its own time on offer even off the grid.
     if (table) {
       const start = toCampusWallClock(table.startsAt);
@@ -132,11 +133,10 @@ export function TableSheet({ open, room, onClose, onSaved, table }: TableSheetPr
       }
     }
     return list;
-  }, [picked, events, now, table]);
+  }, [picked, loaded, now, table]);
 
   useEffect(() => {
-    if (slots && slot && !slots.some((s) => s.id === slot)) setSlot(null);
-    if (slots && !slot && slots.length) setSlot(slots[0].id);
+    if (slots && !(slot && slots.some((s) => s.id === slot))) setSlot(slots[0]?.id ?? null);
   }, [slots]);
 
   // On open, move on to the next day when the first one has no free slot.
@@ -157,10 +157,13 @@ export function TableSheet({ open, room, onClose, onSaved, table }: TableSheetPr
     }
   }, [slots, next]);
 
-  // Closed days are left out; from the day after tomorrow the date is shown.
-  const dayChips: SlotDay[] = days
-    .filter((d) => d.open && !(d.offset === 0 && d.close && d.close <= now))
-    .map((d) => ({ id: d.id, label: d.offset < 2 ? dayName(d.date, locale, now) : `${dayName(d.date, locale)} ${d.date.getDate()}` }));
+  // One row of days (S1): Today, Tomorrow, weekdays, then weekday and date
+  // in the second week. Closed days are shown greyed out.
+  const dayChips: SlotDay[] = days.map((d) => ({
+    id: d.id,
+    label: d.offset < 7 ? dayName(d.date, locale, now) : `${dayName(d.date, locale)} ${d.date.getDate()}`,
+    disabled: !d.open || (d.offset === 0 && Boolean(d.close && d.close <= now)),
+  }));
   const slotChips: SlotOption[] | null = slots?.map((s) => ({ id: s.id, start: s.id, free: slotLength(s.minutes) })) ?? null;
   const emptyLine = picked
     ? t(
@@ -222,11 +225,7 @@ export function TableSheet({ open, room, onClose, onSaved, table }: TableSheetPr
                   </button>
                 ))}
               </div>
-              <p style={fine}>
-                {seats === 1
-                  ? t('A planned solo session. No link to share.', 'Eine geplante Solo-Session. Kein Link zum Teilen.')
-                  : t('More than 12? Gatherings for student groups are coming.', 'Mehr als 12? Treffen für Studigruppen kommen.')}
-              </p>
+              {seats === 1 && <p style={fine}>{t('A planned solo session. No link to share.', 'Eine geplante Solo-Session. Kein Link zum Teilen.')}</p>}
             </div>
             {wide && <SeatRing seats={seats} taken={1} mine={0} label={room.code} size={120} title={t(`${seats} seats`, `${seats} Plätze`)} />}
           </div>
@@ -244,11 +243,6 @@ export function TableSheet({ open, room, onClose, onSaved, table }: TableSheetPr
               {t('Change', 'Ändern')}
             </button>
           </p>
-          {seats > 1 && (
-            <Switch tone="focus" checked={showName} onChange={setShowName}
-              label={t('Show my first name', 'Meinen Vornamen zeigen')}
-              sub={profile.identity?.displayName ? t(`Shown as "${profile.identity.displayName}"`, `Als „${profile.identity.displayName}"`) : t('Otherwise you are "a student"', 'Sonst bist du „ein Studi"')} />
-          )}
           {error && <p role="alert" style={{ ...fine, color: 'var(--md-error)' }}>{error}</p>}
           <div style={{ display: 'flex', gap: 8, justifyContent: wide ? 'flex-end' : 'stretch' }}>
             {wide && <Button variant="text" onClick={onClose}>{t('Cancel', 'Abbrechen')}</Button>}

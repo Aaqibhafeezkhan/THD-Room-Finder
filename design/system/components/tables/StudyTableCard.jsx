@@ -3,12 +3,13 @@ import React from 'react';
 
 /**
  * The table page's main card (M2): the seat ring, then the topic and three
- * short lines (when, where, who). On phones the ring sits on top; on wide
- * windows it sits left of the details, and the actions move into the card.
+ * short lines (when, where, who). On phones the tag and the ring sit on top;
+ * on wide windows the ring sits left of the details, the tag above the
+ * topic, and the actions move into the card.
  */
 export function StudyTableCard({ ring, topic, when, where, who, tag, wide = false, muted = false, children, style = {} }) {
     const details = (<div style={{ display: 'flex', flexDirection: 'column', gap: 10, minWidth: 0 }}>
-      {tag}
+      {wide && tag}
       <h2 style={{
             margin: 0,
             fontSize: wide ? 'var(--headline-size)' : 'var(--title-large-size)',
@@ -39,6 +40,7 @@ export function StudyTableCard({ ring, topic, when, where, who, tag, wide = fals
             fontFamily: 'var(--font-sans)',
             ...style,
         }}>
+      {!wide && tag}
       <div style={{ display: 'flex', justifyContent: 'center' }}>{ring}</div>
       {details}
     </section>);
