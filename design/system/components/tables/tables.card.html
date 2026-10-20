@@ -1,0 +1,109 @@
+<!-- @dsCard group="Components" viewport="760x1000" name="Study tables — Components" subtitle="M2: seat ring, table tag, study table card (phone and wide), slot chips, reply bar (guest, full, seated), table rows and cards, reminder banner" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: var(--font-sans); background: var(--md-bg); color: var(--md-on-surface); padding: 20px 24px; }
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; align-items: start; }
+  .group { display: flex; flex-direction: column; gap: 10px; }
+  .lbl { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .04em; color: var(--md-on-surface-variant); }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .panel { background: var(--md-surface); border-radius: var(--radius-l); box-shadow: var(--md-shadow-1); overflow: hidden; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel">
+  const { SeatRing, TableTag, StudyTableCard, SlotChips, ReplyBar, TableRow, TableBanner } = window.THDRoomFinderDesignSystem_de229b;
+
+  const text = {
+    seat: 'Take a seat', maybe: 'Maybe', cant: "Can't", cantLong: "Can't make it",
+    seated: "You're at this table", maybeStatus: 'You said maybe', full: 'Full · 6 of 6',
+  };
+  const days = [
+    { id: 'mon', label: 'Today' }, { id: 'tue', label: 'Tomorrow' }, { id: 'wed', label: 'Wed' },
+    { id: 'thu', label: 'Thu' }, { id: 'sat', label: 'Sat', disabled: true, note: 'Closed' },
+  ];
+  const slots = [{ id: '09:45', start: '09:45', free: '1h 30' }, { id: '13:15', start: '13:15', free: '3 h' }, { id: '16:45', start: '16:45', free: '1h 45' }];
+  const noop = () => {};
+
+  function Demo() {
+    const [day, setDay] = React.useState('tue');
+    const [slot, setSlot] = React.useState('13:15');
+    const [answer, setAnswer] = React.useState(null);
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <div className="group">
+          <div className="lbl">SeatRing · 6, yours, 4 cancelled, 12, small</div>
+          <div className="row">
+            <SeatRing seats={6} taken={3} label="C001" title="3 of 6 seats taken" />
+            <SeatRing seats={6} taken={4} mine={1} label="C001" title="4 of 6, one is yours" />
+            <SeatRing seats={4} taken={2} cancelled label="J004" size={120} title="Cancelled" />
+            <SeatRing seats={12} taken={7} size={120} label="A008" title="7 of 12 seats taken" />
+            <SeatRing seats={1} taken={1} mine={0} size={44} title="Just me" />
+          </div>
+        </div>
+        <div className="group">
+          <div className="lbl">TableTag</div>
+          <div className="row">
+            <TableTag tone="focus">Starts in 10 min</TableTag><TableTag tone="focus">Now</TableTag>
+            <TableTag tone="info">Changed</TableTag><TableTag tone="info">Full · 4 of 4</TableTag>
+            <TableTag tone="alert">Cancelled</TableTag>
+          </div>
+        </div>
+        <div className="cols">
+          <div className="group">
+            <div className="lbl">StudyTableCard · phone + ReplyBar</div>
+            <StudyTableCard
+              ring={<SeatRing seats={6} taken={answer === 'seat' ? 4 : 3} mine={answer === 'seat' ? 3 : null} label="C001" title="Seats" />}
+              topic="Algorithms" when="Wed 21 Oct · 13:15–14:45" where="C001 · free then · Pomodoro"
+              who="Max, Lena and 1 more · 1 maybe"
+            />
+            <ReplyBar answer={answer} onReply={(a) => setAnswer(a === 'no' ? null : a)} text={text} />
+            <ReplyBar answer={null} full onReply={noop} text={text} />
+          </div>
+          <div className="group">
+            <div className="lbl">SlotChips</div>
+            <div className="panel" style={{ padding: 16 }}>
+              <SlotChips days={days} day={day} onDay={setDay} slots={day === 'wed' ? null : day === 'thu' ? [] : slots}
+                slot={slot} onSlot={setSlot} empty="No free slot on Thursday · next: Fri 09:45" daysLabel="Day" slotsLabel="Start" />
+            </div>
+            <div className="lbl">TableRow · list</div>
+            <div className="panel">
+              <TableRow ring={<SeatRing seats={6} taken={4} mine={1} size={44} title="4 of 6" />} title="Algorithms" meta="Today 13:15 · C001 · 4 of 6" tag={<TableTag tone="focus">Soon</TableTag>} onClick={noop} />
+              <TableRow ring={<SeatRing seats={4} taken={4} mine={0} size={44} title="Full" />} title="Exam prep · Maths 3" meta="Fri 09:45 · E 212 · 4 of 4" tag={<TableTag tone="info">Changed</TableTag>} onClick={noop} style={{ borderTop: '1px solid var(--md-outline-variant)' }} />
+              <TableRow ring={<SeatRing seats={4} taken={1} size={44} cancelled title="Cancelled" />} title="Physics lab notes" meta="Tue 15:00 · J 004" struck tag={<TableTag tone="alert">Cancelled</TableTag>} onClick={noop} style={{ borderTop: '1px solid var(--md-outline-variant)' }} />
+            </div>
+          </div>
+        </div>
+        <div className="group">
+          <div className="lbl">StudyTableCard · wide, TableRow · card, TableBanner</div>
+          <StudyTableCard wide
+            ring={<SeatRing seats={6} taken={4} mine={1} size={200} label="C001" title="4 of 6, one is yours" />}
+            tag={<TableTag tone="focus">Starts in 10 min</TableTag>}
+            topic="Algorithms" when="Today · 13:15–14:45" where="C001 · free now · Pomodoro 25/5" who="You, Max, Lena and 1 more">
+            <ReplyBar answer="seat" inline onReply={noop} text={text} />
+          </StudyTableCard>
+          <div className="row" style={{ alignItems: 'stretch' }}>
+            <TableRow card ring={<SeatRing seats={12} taken={7} mine={0} size={72} title="7 of 12" />} title="Study group SE" meta="Wed 15:00 · A 008" detail="7 of 12 seats" onClick={noop} style={{ width: 320 }} />
+            <TableRow card ring={<SeatRing seats={1} taken={1} mine={0} size={72} title="Just me" />} title="Just me" meta="Mon 08:00 · I 112" detail="Planned solo session" onClick={noop} style={{ width: 320 }} />
+          </div>
+          <TableBanner openLabel="Open" dismissLabel="Dismiss" onOpen={noop} onDismiss={noop} style={{ maxWidth: 420 }}>
+            <b>Algorithms</b> starts at 13:15 · C001
+          </TableBanner>
+        </div>
+      </div>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+</script>
+</body>
+</html>

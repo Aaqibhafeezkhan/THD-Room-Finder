@@ -78,3 +78,19 @@ export { MapLegend } from './focus/MapLegend';
 export type { MapLegendProps } from './focus/MapLegend';
 export { BuildingRow } from './focus/BuildingRow';
 export type { BuildingRowProps } from './focus/BuildingRow';
+
+// Study tables (M2, docs/product/study-tables.md).
+export { SeatRing } from './tables/SeatRing';
+export type { SeatRingProps } from './tables/SeatRing';
+export { TableTag } from './tables/TableTag';
+export type { TableTagProps, TableTagTone } from './tables/TableTag';
+export { StudyTableCard } from './tables/StudyTableCard';
+export type { StudyTableCardProps } from './tables/StudyTableCard';
+export { SlotChips } from './tables/SlotChips';
+export type { SlotChipsProps, SlotDay, SlotOption } from './tables/SlotChips';
+export { ReplyBar } from './tables/ReplyBar';
+export type { ReplyBarProps, ReplyBarText, ReplyAnswer } from './tables/ReplyBar';
+export { TableRow } from './tables/TableRow';
+export type { TableRowProps } from './tables/TableRow';
+export { TableBanner } from './tables/TableBanner';
+export type { TableBannerProps } from './tables/TableBanner';

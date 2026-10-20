@@ -40,6 +40,13 @@ const COMPONENTS = {
   'focus/ListNotice': { section: 'Focus', subtitle: 'Quiet / time travel / unknown line over the list', viewport: '700x60' },
   'focus/MapLegend': { section: 'Focus', subtitle: 'Campus map key: free, batch ring, claim dot', viewport: '700x80' },
   'focus/BuildingRow': { section: 'Focus', subtitle: 'Building list row, the map in words', viewport: '700x100' },
+  'tables/SeatRing': { section: 'Study tables', subtitle: 'A round table from above: seats taken, yours, free', viewport: '700x220' },
+  'tables/TableTag': { section: 'Study tables', subtitle: 'Soon, Now, Changed, Full, Cancelled', viewport: '700x80' },
+  'tables/StudyTableCard': { section: 'Study tables', subtitle: 'Table page card: ring, topic, when, where, who', viewport: '760x420' },
+  'tables/SlotChips': { section: 'Study tables', subtitle: 'Days, then the free slots of one room', viewport: '700x160' },
+  'tables/ReplyBar': { section: 'Study tables', subtitle: "Take a seat, Maybe, Can't; seated and full states", viewport: '700x200' },
+  'tables/TableRow': { section: 'Study tables', subtitle: 'One table in Your tables, row or card', viewport: '700x200' },
+  'tables/TableBanner': { section: 'Study tables', subtitle: '15-minute reminder above the nav', viewport: '700x90' },
 };
 
 const SRC = join(ROOT, 'src/components');
