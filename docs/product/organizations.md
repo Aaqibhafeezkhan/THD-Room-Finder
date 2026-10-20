@@ -6,10 +6,11 @@ verified tag. Decisions are in
 
 ## The idea in one line
 
-Organizations are **planned sessions with a verified host**. Registration and
-verification happen in the open, in a public registry run by the
-[THD AI](https://github.com/THD-AI) organization on GitHub, so anyone can see
-who is verified and why.
+Organizations are **study tables with a verified host**, open to everyone.
+Registering is a form: a GitHub issue form in the
+[THD AI](https://github.com/THD-AI) organization, so anyone can see who is
+verified and why. THD AI is a group of people, not one person, and each
+organization keeps its own name, page and support link.
 
 Nobody creates an organization for someone else. The only organization set
 up by us is THD AI itself.
@@ -53,12 +54,14 @@ only the public fields and a request number.
 ## Org page
 
 `/o/<slug>`: name, verified tag, short description, website, upcoming open
-sessions and, if the group has one, a **Support** link to its own donation
-page. The app handles no money.
+tables and, if the group has one, a **Support** link to its own donation
+page (GitHub Sponsors, Buy Me a Coffee, a club account). Support goes to that
+group only; the app handles no money and takes no share.
 
 ## Registry
 
-`THD-AI/organizations` holds one JSON file per verified group and the issue
-form. The app reads verified orgs from the database, which the workflow keeps
+`THD-AI/organizations` holds the issue form, one JSON file per verified
+group and the approval workflow. The form is the whole application; the repo
+is just where it is kept. The app reads verified orgs from the database, which the workflow keeps
 in step with the registry. The registry is the public record; the database is
 the copy the app uses.

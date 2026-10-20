@@ -9,7 +9,7 @@ nearly done. The epics hold the candidate stories.
 **Outcome:** a public focus session can grow into a group that studies
 together, and students recognise each other.
 
-First slice, specified: [planned sessions and invites](planned-sessions.md).
+First slice, specified: [study tables](study-tables.md).
 
 | Capability | Notes |
 |---|---|
