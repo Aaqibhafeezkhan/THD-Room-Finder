@@ -17,6 +17,10 @@ export function FocusGraph({ days, today, weeks = 53, stats, secondaryStats, sta
     const detail = cells.find(cell => cell.date === hover) ?? selected;
     const scroller = useRef(null);
     const viewPosition = useRef(1);
+    // Last wheel, touch, pointer or key input on the calendar. Only scrolling
+    // that follows it is the reader's; resizes also clamp scrollLeft and fire
+    // scroll events, sometimes before the ResizeObserver runs.
+    const input = useRef(0);
     const cellLabel = (cell) => `${text.cellLabel(cell.dateValue, cell.minutes)}${cell.closed ? ` · ${text.closed}` : cell.rest ? ` · ${text.rest ?? text.closed}` : ''}`;
     useEffect(() => {
         const el = scroller.current;
@@ -35,7 +39,8 @@ export function FocusGraph({ days, today, weeks = 53, stats, secondaryStats, sta
             if (frame !== null)
                 cancelAnimationFrame(frame);
             frame = requestAnimationFrame(() => {
-                el.scrollLeft = viewPosition.current * Math.max(0, el.scrollWidth - el.clientWidth);
+                const max = Math.max(0, el.scrollWidth - el.clientWidth);
+                el.scrollLeft = viewPosition.current >= 0.99 ? max : viewPosition.current * max;
                 setHover(null);
                 frame = null;
             });
@@ -44,6 +49,7 @@ export function FocusGraph({ days, today, weeks = 53, stats, secondaryStats, sta
         return () => { observer.disconnect(); if (frame !== null)
             cancelAnimationFrame(frame); };
     }, [today, weeks]);
+    const markInput = () => { input.current = Date.now(); };
     const reveal = (button) => {
         const el = scroller.current;
         if (!el)
@@ -78,10 +84,11 @@ export function FocusGraph({ days, today, weeks = 53, stats, secondaryStats, sta
         </p>}
         {onShare && !loading && <button type="button" className="thd-focus-share" aria-label={text.share} onClick={onShare}><IconShare size={20} strokeWidth={1.9}/><span>{text.shareLabel ?? text.share}</span></button>}
       </div>
-      <div className="thd-focus-graph-scroll" ref={scroller} onScroll={() => {
+      <div className="thd-focus-graph-scroll" ref={scroller} onWheel={markInput} onPointerDown={markInput} onTouchStart={markInput} onTouchMove={markInput} onKeyDown={markInput} onScroll={() => {
             const el = scroller.current;
-            if (el && el.scrollWidth > el.clientWidth)
-                viewPosition.current = el.scrollLeft / (el.scrollWidth - el.clientWidth);
+            const max = el ? el.scrollWidth - el.clientWidth : 0;
+            if (el && max > 4 && Date.now() - input.current < 1500)
+                viewPosition.current = el.scrollLeft >= max - 4 ? 1 : el.scrollLeft / max;
             setHover(null);
         }}>
         <div className="thd-focus-grid" role="grid" aria-label={text.tableCaption} aria-rowcount={8} aria-colcount={weeks + 1} aria-describedby={text.keyboardHint ? hintId : undefined} style={{ '--focus-weeks': weeks }} onPointerLeave={() => setHover(null)}>
