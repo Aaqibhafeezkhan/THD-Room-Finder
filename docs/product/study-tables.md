@@ -93,7 +93,7 @@ flowchart LR
 | T9 | see the table without an account | I decide before signing up | Table page with the seat ring, room, time, rhythm and replies |
 | T10 | take a seat in two steps | joining is quick | **Take a seat** → email → code → first name → seated. The page never reloads into something else |
 | T11 | say maybe or can't | the host can plan | Maybe holds no seat; Can't removes me from the table |
-| T12 | see who sits there | I know who to expect | First names of people who share them; others are "a student". The host's name shows if they share it |
+| T12 | see who sits there | I know who to expect | First names, the host's too; someone without a first name counts as "1 more". There is no name switch: the first name is asked for tables |
 | T13 | know when the table is full | I don't turn up for nothing | Full tables show "Full · 6 of 6"; Maybe stays possible |
 
 ### Before and at the time
@@ -186,7 +186,7 @@ not under the rail or drawer.
 | State | Shows |
 |---|---|
 | Guest, signed out | Ring, details, **Take a seat** |
-| Seated | Ring with my seat highlighted, "You're at this table", Maybe / Can't, share-name switch |
+| Seated | Ring with my seat highlighted, "You're at this table", Maybe / Can't |
 | Host | "Your table", Share and Email first, Change and Cancel table |
 | Full | "Full · 6 of 6"; Take a seat disabled, Maybe possible |
 | Starting soon / now | **Start focus in C001** in focus violet |
@@ -231,7 +231,7 @@ nothing new in the palette. Ochre stays reserved for the city layer.
 ## Privacy
 
 - The server keeps the table (host, room, time, seats, topic, link) and each
-  reply (who, which, whether the first name is shown). No email with a table.
+  reply (who, which). No email with a table.
 - Anyone with the link can read the table; previews carry no names.
 - No list of tables for strangers, no search, no friend graph.
 - Everything goes 24 hours after the table ends; deleting your account
