@@ -1,7 +1,7 @@
 -- Study tables contract tests (pgTAP, ADR 0007). Run: npx supabase test db
 -- Uses the synthetic people from supabase/seed.sql. Sam has no study profile.
 begin;
-select plan(41);
+select plan(42);
 
 create function pg_temp.act_as(p_email text) returns void language plpgsql as $$
 declare uid uuid;
@@ -115,6 +115,9 @@ select throws_ok($$select public.cancel_table(pg_temp.link('table'))$$,
   'P0002', null, 'a guest cannot cancel the table');
 
 select pg_temp.act_as('max@example.test');
+select throws_ok(format($$select public.change_table(%L, 99, 'Algorithms', 'thd:r000000002',
+  now() + interval '2 days', 50, 4, 25, 5)$$, pg_temp.link('table')),
+  'PT409', null, 'a stale change answers a conflict, not a retry');
 select is((public.change_table(pg_temp.link('table'), 1, 'Algorithms', 'thd:r000000002',
   now() + interval '2 days', 50, 4, 25, 5))->>'changed', 'true', 'the host moves the table; it shows as changed');
 select is((public.cancel_table(pg_temp.link('table')))->>'cancelled', 'true', 'the host cancels it');
