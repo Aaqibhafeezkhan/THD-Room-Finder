@@ -17,13 +17,13 @@ import { ClosedNotice } from '../shared/ClosedNotice';
 import { TimeControl } from '../shared/TimeControl';
 import { FilterMenu } from '../shared/FilterMenu';
 import { SearchControl } from '../shared/SearchControl';
-import { roomStatusLabel } from '../shared/roomStatusLabel';
+import { freeRoomsLabel, roomStatusLabel } from '../shared/roomStatusLabel';
 import { Page, Spinner, EmptyState, ErrorState } from '../shared/ui';
 
 export function HomeScreen() {
   const { t, locale } = useI18n();
   const navigate = useNavigate();
-  const { rooms, events, teachingIdents, freeRooms, planningTime, preview, campusHours, loading, error, refresh, setQueryTime } =
+  const { rooms, events, teachingIdents, freeRooms, planningTime, preview, isCustomTime, campusHours, loading, error, refresh, setQueryTime } =
     useRoomData();
 
   const { filters } = useRoomFilters();
@@ -104,15 +104,7 @@ export function HomeScreen() {
                 {loading && freeRooms.length === 0 ? '—' : searching ? searchResults.length : shown.length}
               </div>
               <div style={{ fontSize: 'var(--title-medium-size)', color: 'var(--md-on-surface-variant)' }}>
-                {searching
-                  ? t('rooms match', 'Treffer')
-                  : preview
-                    ? building
-                      ? t(`rooms free in ${building} when it opens`, `Räume frei in ${building} bei Öffnung`)
-                      : t('rooms free when it opens', 'Räume frei bei Öffnung')
-                    : building
-                      ? t(`rooms free in ${building}`, `Räume frei in ${building}`)
-                      : t('rooms free right now', 'Räume jetzt frei')}
+                {searching ? t('rooms match', 'Treffer') : freeRoomsLabel(t, { preview, customTime: isCustomTime, building })}
               </div>
             </div>
 
@@ -207,6 +199,7 @@ export function HomeScreen() {
                 onClick={() => setQueryTime(campusHours.nextOpen as Date)}
                 style={{
                   alignSelf: 'center',
+                  minHeight: 'var(--tap-target)',
                   border: 'none',
                   cursor: 'pointer',
                   background: 'var(--md-secondary-container)',

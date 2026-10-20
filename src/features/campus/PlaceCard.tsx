@@ -48,7 +48,9 @@ export function PlaceCard({
       : status(h);
   };
 
-  const hoursText = (h: CampusHours) => (meta.fullHoursFormat ? fullRangeText(h) : abbreviatedText(h));
+  const hoursText = (h: CampusHours) => h.access === 'unconfirmed'
+    ? t('Special opening hours unconfirmed · check the venue notice', 'Sonderöffnungszeiten unbestätigt · Hinweise der Einrichtung prüfen')
+    : (meta.fullHoursFormat ? fullRangeText(h) : abbreviatedText(h));
 
   return (
     <div

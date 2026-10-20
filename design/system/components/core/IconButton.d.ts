@@ -1,19 +1,16 @@
-import React from 'react';
-
+import type { CSSProperties, MouseEventHandler, ReactNode } from 'react';
+/** Circular icon button (app-bar actions, back, sponsor). 44px tap target. */
 export interface IconButtonProps {
-  /** Accessible label (also the tooltip). Required. */
-  label: string;
-  /** standard = neutral; sponsor = pink heart; primary = blue. */
-  tone?: 'standard' | 'sponsor' | 'primary';
-  href?: string;
-  onClick?: () => void;
-  /** Inline SVG glyph. */
-  children?: React.ReactNode;
-  style?: React.CSSProperties;
+    label: string;
+    tone?: 'standard' | 'sponsor' | 'primary';
+    href?: string | null;
+    onClick?: MouseEventHandler;
+    children?: ReactNode;
+    style?: CSSProperties;
+    className?: string;
+    [key: string]: unknown;
 }
-
 /**
- * Circular 44px icon button for app-bar actions (back, sponsor heart, overflow).
- * @startingPoint section="Core" subtitle="Circular app-bar icon button" viewport="700x100"
+ * @startingPoint section="Core" subtitle="Icon action with a visible keyboard focus ring" viewport="400x100"
  */
-export function IconButton(props: IconButtonProps): JSX.Element;
+export declare function IconButton(props: IconButtonProps): JSX.Element;
