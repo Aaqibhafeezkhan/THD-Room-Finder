@@ -9,6 +9,8 @@ nearly done. The epics hold the candidate stories.
 **Outcome:** a public focus session can grow into a group that studies
 together, and students recognise each other.
 
+First slice, specified: [planned sessions and invites](planned-sessions.md).
+
 | Capability | Notes |
 |---|---|
 | Group session | Several participants, each with their own lease; the group lives while anyone is in it |
@@ -23,6 +25,9 @@ together, and students recognise each other.
 **Outcome:** student organizations (for example ESN, Campus Connect, faculty
 councils, clubs) announce gatherings and open study sessions with a verified
 tag.
+
+Specified: [student organizations](organizations.md), verified in a public
+registry run by THD AI.
 
 | Capability | Notes |
 |---|---|

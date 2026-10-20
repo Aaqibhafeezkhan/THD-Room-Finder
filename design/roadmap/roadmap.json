@@ -8,11 +8,11 @@
       ["Lock-screen notifications", "done"], ["Focus graph and share links", "done"], ["Sync across devices", "done"],
       ["App updates itself", "done"], ["Device and privacy testing", "doing"], ["Programme and batch list", "doing"]]},
     {"name": "Group focus", "chip": "Next", "stories": [
-      ["Group sessions", "planned"], ["Join with one tap", "planned"], ["Handles and display names", "planned"],
-      ["Friends-lite", "planned"], ["Planned sessions", "planned"], ["Group focus graph", "planned"]]},
+      ["Planned sessions", "planned"], ["Invite links and replies", "planned"], ["Upcoming and reminders", "planned"],
+      ["Start together, in step", "planned"], ["Handles and display names", "planned"], ["Group focus graph", "planned"]]},
     {"name": "Student groups", "chip": "Later", "stories": [
-      ["Organization accounts", "planned"], ["Verified tag", "planned"], ["Announced gatherings", "planned"],
-      ["Open study sessions", "planned"], ["Moderation", "planned"]]},
+      ["Public registry with THD AI", "planned"], ["Verified tag", "planned"], ["Member links", "planned"],
+      ["Org pages and open sessions", "planned"], ["Moderation", "planned"]]},
     {"name": "Around Deggendorf", "chip": "Later", "stories": [
       ["City map", "planned"], ["Events in town", "planned"], ["Museums and venues", "planned"],
       ["Automatic updates", "planned"]]}
