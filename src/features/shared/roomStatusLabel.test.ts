@@ -30,4 +30,9 @@ describe('availability captions', () => {
     expect(freeRoomsLabel(en, {preview: true, customTime: true, building: 'A'})).toBe('rooms free in A when it opens');
     expect(freeRoomsLabel(de, {preview: false, customTime: true})).toBe('Räume frei zur gewählten Zeit');
   });
+
+  it('says the campus hero counts only rooms on the map', () => {
+    expect(freeRoomsLabel(en, {preview: false, customTime: false, onMap: true})).toBe('rooms free on the map right now');
+    expect(freeRoomsLabel(en, {preview: false, customTime: false, onMap: true, building: 'A'})).toBe('rooms free in A right now');
+  });
 });

@@ -372,7 +372,7 @@ export function CampusScreen() {
           {loading && filteredFree.length === 0 ? '—' : filteredFree.length}
         </div>
         <div style={{ fontSize: 'var(--title-medium-size)', color: 'var(--md-on-surface)', marginTop: 'var(--space-2)' }}>
-          {freeRoomsLabel(t, { preview, customTime: isCustomTime })}
+          {freeRoomsLabel(t, { preview, customTime: isCustomTime, onMap: true })}
         </div>
         <div style={{ fontSize: 'var(--body-small-size)', color: 'var(--md-on-surface-variant)', marginTop: 'var(--space-3)' }}>
           {t('Tap a building on the map to see its free rooms.', 'Tippe ein Gebäude auf der Karte für freie Räume.')}

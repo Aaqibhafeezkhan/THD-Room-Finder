@@ -15,6 +15,7 @@ import { CampusScreen } from '../features/campus/CampusScreen';
 import { ProfileScreen } from '../features/profile/ProfileScreen';
 import { SettingsScreen } from '../features/profile/SettingsScreen';
 import { RoomDetailScreen } from '../features/detail/RoomDetailScreen';
+import { activeId } from './activeTab';
 
 // Component specimen for `npm run dev` and Vercel previews; the import is
 // dropped from production builds because the condition is a build-time
@@ -23,13 +24,6 @@ const FocusGallery = import.meta.env.DEV || __DEV_GALLERY__
   ? lazy(() => import('../features/dev/FocusGallery').then((m) => ({ default: m.FocusGallery })))
   : null;
 
-/** Maps the current path to the active nav destination. */
-function activeId(pathname: string): string {
-  if (pathname.startsWith('/rooms')) return 'rooms';
-  if (pathname.startsWith('/profile') || pathname.startsWith('/saved')) return 'profile';
-  return 'campus';
-}
-
 export function AppShell() {
   const variant = useNavigationVariant();
   const wide = variant !== 'bar';
@@ -37,6 +31,8 @@ export function AppShell() {
   const navigate = useNavigate();
   const location = useLocation();
   const page = useRef<HTMLElement>(null);
+  const tab = useRef('campus');
+  tab.current = activeId(location.pathname, tab.current);
   useLayoutEffect(() => {
     // Profile and Settings open at their heading; rotations keep the current position.
     if (location.pathname.startsWith('/profile') && page.current) page.current.scrollTop = 0;
@@ -61,7 +57,7 @@ export function AppShell() {
   const nav = (
     <AdaptiveNav key="navigation"
       items={items}
-      active={activeId(location.pathname)}
+      active={tab.current}
       onSelect={onSelect}
       variant={variant}
     />
