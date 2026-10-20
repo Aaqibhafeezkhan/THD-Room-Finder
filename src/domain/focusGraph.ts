@@ -1,0 +1,74 @@
+import { isCampusClosedDay, isFocusRestDay } from './openingHours';
+
+export interface FocusDay { date: string; minutes: number }
+export interface FocusCell extends FocusDay {
+  dateValue: Date;
+  future: boolean;
+  today: boolean;
+  closed: boolean;
+  rest: boolean;
+  level: number;
+}
+export interface FocusColumn { weekStart: Date; month: number | null; cells: FocusCell[] }
+
+/** Stable Pomodoro thresholds shared by the graph and exported images. */
+export function focusLevel(minutes: number): 0 | 1 | 2 | 3 | 4 {
+  if (minutes <= 0) return 0;
+  const blocks = Math.floor(minutes / 25);
+  return blocks < 2 ? 1 : blocks < 4 ? 2 : blocks < 7 ? 3 : 4;
+}
+export function parseDay(iso: string): Date {
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+export function dayKey(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+export function addDays(d: Date, n: number): Date {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+}
+export function sundayOf(d: Date): Date { return addDays(d, -d.getDay()); }
+export function mondayOf(d: Date): Date { return addDays(d, -((d.getDay() + 6) % 7)); }
+
+/** Skip a short leading month so adjacent month labels cannot collide. */
+export function calendarMonth(first: Date, week: number): number | null {
+  const sunday = addDays(first, week * 7);
+  if (week === 0) return addDays(sunday, 14).getMonth() === sunday.getMonth() ? sunday.getMonth() : null;
+  return sunday.getMonth() !== addDays(sunday, -7).getMonth() ? sunday.getMonth() : null;
+}
+
+/** Calendar arithmetic stays on local dates, including daylight-saving changes. */
+export function focusCalendar(days: FocusDay[], today: string, weeks: number): FocusColumn[] {
+  const totals = new Map<string, number>();
+  for (const day of days) totals.set(day.date, (totals.get(day.date) ?? 0) + day.minutes);
+  const now = parseDay(today);
+  const first = addDays(mondayOf(now), -(weeks - 1) * 7);
+  return Array.from({ length: weeks }, (_, week) => {
+    const weekStart = addDays(first, week * 7);
+    return {
+      weekStart,
+      month: calendarMonth(first, week),
+      cells: Array.from({ length: 7 }, (_, row) => {
+        const dateValue = addDays(weekStart, row);
+        const date = dayKey(dateValue);
+        const minutes = totals.get(date) ?? 0;
+        return { date, dateValue, minutes, level: focusLevel(minutes), future: date > today,
+          today: date === today, closed: isCampusClosedDay(dateValue), rest: isFocusRestDay(dateValue) };
+      }),
+    };
+  });
+}
+
+/** A data grid does not wrap at row/column edges or enter future dates. */
+export function focusGridMove(index: number, last: number, key: string, control = false): number {
+  const row = index % 7;
+  switch (key) {
+    case 'ArrowLeft': return index >= 7 ? index - 7 : index;
+    case 'ArrowRight': return index + 7 <= last ? index + 7 : index;
+    case 'ArrowUp': return row > 0 ? index - 1 : index;
+    case 'ArrowDown': return row < 6 && index < last ? index + 1 : index;
+    case 'Home': return control ? 0 : row;
+    case 'End': return control ? last : row + Math.floor((last - row) / 7) * 7;
+    default: return index;
+  }
+}

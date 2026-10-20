@@ -11,7 +11,7 @@ import type { FocusBadgeKind } from '../focus/FocusBadge';
  * line under the meta. A claimed room that is also closing soon passes
  * status "soon" with a claimed badge, so the duration stays amber.
  */
-export type RoomCardStatus = 'free' | 'soon' | 'occupied' | 'claimed';
+export type RoomCardStatus = 'free' | 'soon' | 'occupied' | 'claimed' | 'unavailable';
 export interface RoomCardFocus {
     kind: FocusBadgeKind;
     /** "AIN 7 · 2 studying", "Focus session · 40 min", "Your session · 24:10". */

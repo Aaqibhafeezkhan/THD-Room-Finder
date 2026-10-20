@@ -8,11 +8,13 @@ an organization. Decisions are in
 
 ## The idea in one paragraph
 
-A study table is a table; a gathering is a **hall**. The organization picks a
-room it has THD's approval for, the app knows how many seats that room has
-(60, 120, 40), and the hall fills up as people reply. The organizers see who
-is coming, from which programme, and how many maybes there are. Everyone else
-sees the room as taken for that time, ahead of time.
+A gathering is **a study table for a whole group**. A verified group sets it
+in a room THD approved for them, and its page reads like a table's: one card,
+one picture, one violet action, the same link, replies and reminder. The
+picture is the room set up for the gathering's type, with the room code
+where the front is, and people appear in it in the order they replied.
+Organizers see who is coming and what to plan for; everyone else sees the
+room as taken for that time.
 
 ## Principles
 
@@ -22,71 +24,74 @@ sees the room as taken for that time, ahead of time.
 2. **Rooms are approved by THD, not by the app.** A gathering needs the
    group's room approval from THD. The app records it and shows it; it never
    books a room.
-3. **Capacity comes from the room.** Seats are the room's real seat count
-   from THabella; the organizer can lower it, never raise it.
-4. **Replies tell organizers what they need.** Going, Maybe, Can't, and for
+3. **Capacity comes from the room.** The room's seat count from THabella;
+   the organizer can lower it, never raise it.
+4. **Like a study table.** Same card, same words, one violet action. The
+   room code is the label on the picture, as on a table.
+5. **People, not numbers.** The picture shows people arriving, not a score.
+   Counts are a quiet line under the title; there is no big number and no
+   "of 120", so a new or small gathering never looks dead.
+6. **Nobody reserves a seat.** A dot is a person who replied, placed in reply
+   order. Your own dot is not marked.
+7. **Replies tell organizers what they need.** Going, Maybe, Can't, and for
    organizers a list with name, programme and batch, shared only with consent.
-5. **Same design system.** A gathering reuses the table's words, colours and
-   reply bar; only the seat picture changes from a ring to a hall.
 
 ## Words
 
 | Word | Means | Never say |
 |---|---|---|
 | Gathering | An organization's planned get-together in one room | Event booking, reservation |
-| Hall | The seat picture of a gathering | Seating chart |
-| Setup | How the room is arranged: Long tables or Rows | Layout mode |
+| Type | Group focus, Game night, Talk or Meeting | Layout, setup |
 | Going · Maybe · Can't | Replies | RSVP |
+| Waiting list | Replies after the room is full | Queue |
 | Organizers | The group's members who host it | Admins |
 | Verified | The group passed the registry | Official, partner |
 
-German: Treffen, Saal, Aufbau (Lange Tische, Reihen), Komme,
-Vielleicht, Kann nicht, Organisationsteam, Verifiziert.
+German: Treffen, Art (Gemeinsam lernen, Spieleabend, Vortrag, Treffen),
+Komme, Vielleicht, Kann nicht, Warteliste, Organisationsteam, Verifiziert.
 
-## Setups
+## Types
 
-Two setups, picked by the organizer. They change the picture and the fill
-order, nothing else.
+The type sets the picture, the tag and the words. There is no circle setup.
 
-| Setup | For | Picture |
-|---|---|---|
-| **Long tables** | Game night, workshop, a big group focus session | Rectangular tables of 8, 10 or 12, seats on both long sides; tables fill one by one so people end up sitting together |
-| **Rows** | Talk, planning meeting, film night | Straight rows behind a line for the front, like a classroom or cinema; rows fill from the front, centre first |
+| Type | For | Picture | Where the room code sits |
+|---|---|---|---|
+| **Group focus** | A big study session, exam prep for a whole module; starts a focus session for everyone, like a table | Round tables of 6, like study tables | A plate above the tables |
+| **Game night** | Game nights, socials, workshops | Long tables of 8, four a side | A plate above the tables |
+| **Talk** | A talk, a pitch night, a performance | An auditorium: a half circle of rows facing the stage | On the stage |
+| **Meeting** | A club or planning meeting | A classroom: rows facing the front | On the front plate |
 
-A study table is still the place where a few people look at each other while
-they focus; a long table is its bigger, louder cousin.
-
-## Hall rules
+## The picture
 
 | Rule | Value |
 |---|---|
-| Size | 13 seats up to the room's seat count from THabella, at most 300. 12 and below is a study table |
-| Unknown room size | The organizer enters the seats, 13 to 300 |
-| Lowering | Allowed any time down to the people already going; never above the room |
-| Long tables | 8, 10 or 12 per table, default 8. Tables = seats ÷ size, rounded up; the last table is shorter |
-| Table grid | In a row on phones: 3 tables of 8, or 2 of 10–12; on wide windows 4 of 8 or 3 of 10–12. More tables add rows, so seats stay at least 20 px apart |
-| Rows | 6 to 16 seats per row: about the square root of 1.6 × seats. Rows of 8 or more are made even and split by a centred aisle |
-| Fill order | Long tables: one table at a time, from the top left. Rows: front row first, centre outwards |
-| Seats | Not numbered and not assigned. "Your seat" marks where you would be in the fill order, and the page says so |
-| Dots | One dot per seat up to 120 seats; above that one dot per two seats, and the count line says so |
-| Smallest dot | 6 px on phones. If the hall would need smaller dots it shows a summary picture with **Full view** |
-| Going · Maybe · Free | Filled violet · violet ring with a light fill · outline. Full halls also show the waiting list count |
+| Size | 13 people up to the room's seat count from THabella, at most 300. 12 and below is a study table |
+| Unknown room size | The organizer enters it, 13 to 300 |
+| Lowering | Any time, down to the people already going; never above the room |
+| Order | People appear in the order they replied: table by table (Group focus, Game night), or row by row from the front, centre first (Talk, Meeting) |
+| Going | A violet dot |
+| Maybe | A light violet dot with a violet edge |
+| Free place | A faint outline. It shows the room's size without competing with the people |
+| Changing a reply | Maybe → Going changes that dot in place. Can't removes it; later dots move up one |
+| Many people | One dot per person up to 120; above that one dot per two, said in the details |
+| Full | Going reaches the size: "Full" tag, and the one action is **Join the waiting list** |
+| Counts | One line under the title: "27 going · 8 maybe". The room's seats are a detail: "I 112 · 48 seats" |
 
-## Sizes and views
+## Share banner
 
-| Window | Hall | Details | Actions |
-|---|---|---|---|
-| Phone | Full width of the card, up to 280 px high, labels at 14 px or more | Below the hall | Going · Maybe · Can't at the bottom, in thumb reach |
-| Phone, big hall | Summary (one dot per two seats) and **Full view** | Below | Same |
-| Full view | Full screen, pinch to zoom and pan, the count line pinned on top | — | Close |
-| Tablet and desktop | 560 px wide beside the details, or above them under 840 px | Right of the hall | Under the details |
+The link preview is how most people first see a gathering, so it carries the
+picture: the room set up, the room code at the front and the people in it, in
+white on the violet brand background. The text says "Founders talk · Wed 18
+Nov, 18:30 · A 008" and "Talk by Fast Forward. Reply Going, Maybe or Can't."
+No counts and no names. Tables use the same banner with their seat ring.
 
-| Who | Sees |
-|---|---|
-| Guest, signed out | The hall, counts, room, time, the approval line, **Going** |
-| Going | Their place in the fill order ringed, "You're going", Maybe and Can't |
-| Organizer | The same hall plus counts by programme, **People**, **Export**, Change, Cancel; on wide windows People opens beside the hall |
-| Waiting | "You're number 3 on the waiting list" instead of the reply bar |
+## Phones, tablets and desktops
+
+As for [study tables](study-tables.md#phones-tablets-and-desktops): one
+column on phones with the action in thumb reach; on wide windows the picture
+at 480 px beside the details. Organizers see two plain lines under the card,
+"Plan for about 25" (going plus half the maybes) and the top programmes, with
+**People** opening the list beside the card on wide windows.
 
 ## Flow
 
@@ -99,7 +104,7 @@ flowchart LR
     C -->|missing| B
   end
   subgraph Gather
-    D --> E[Organizer: New gathering<br/>room, time, setup]
+    D --> E[Organizer: New gathering<br/>room, time, type]
     E --> F[THD room approval<br/>reference]
     F --> G[Gathering page<br/>link + poster QR]
     G --> H[Students reply<br/>Going · Maybe · Can't]
@@ -124,7 +129,7 @@ flowchart LR
 
 | # | As a… | I want to… | So that… | Acceptance |
 |---|---|---|---|---|
-| O7 | organizer | create a gathering in a room | people know where and when | Pick room, day and time (the room's free windows, like tables), name, setup, optional description |
+| O7 | organizer | create a gathering in a room | people know where and when | **New gathering** on room detail, for organizers only: day and free slot (like tables), type, name, capacity, approval reference |
 | O8 | organizer | record THD's room approval | students trust it | A required field for the approval reference and a confirmation that THD approved this room and time |
 | O9 | organizer | get capacity from the room | I don't count chairs | Seats = the room's seat count; I can lower it. Rooms without a known count ask for one, up to 300 |
 | O10 | organizer | share it with many people | it reaches everyone | The same word link (`/g/mossy-lagoon-42`), a chat preview, and a printable poster with a QR code |
@@ -141,37 +146,38 @@ flowchart LR
 |---|---|---|
 | Room detail | "Taken · Game night · Campus Connect" for the time of a gathering | Everyone |
 | Map and room list | The room counts as taken during a gathering | Everyone |
-| Profile | **Your gatherings** with your replies; for organizers, **Organizing** with counts | Me |
-| `/g/<link>` | Gathering page with the hall | Anyone with the link |
+| Profile | Gatherings sit in **Your tables** with your reply; organizers also see them there with counts | Me |
+| `/g/<link>` | Gathering page with the picture | Anyone with the link |
 | `/o/<slug>` | Group page | Everyone |
 | Profile → Register your group | The registry form | Signed-in students |
 
 ## Gathering page
 
 ```
-┌──────────────────────────────────────────┐
-│ ‹  Gathering                  Verified ✓ │
-│ Campus Connect                           │
-│ Game night                               │
-│   ●●●●  ●●○○  ○○○○                       │  hall: long tables
-│   ▬▬▬▬  ▬▬▬▬  ▬▬▬▬                       │  of 8, filling one
-│   ●●●●  ●○○○  ○○○○                       │  table at a time
-│ 47 going · 12 maybe · 120 seats · I 112  │
-│ Thu 5 Nov · 19:00–23:00                  │
-│ Room approved by THD                     │
-│ [ Going ]   Maybe   Can't                │
-│ Share · Poster                           │
-└──────────────────────────────────────────┘
+┌────────────────────────────────┐
+│ ‹  Gathering                   │
+│ Talk           ✓ Fast Forward  │
+│      ○ ○ ○ ○ ○ ○ ○ ○ ○         │
+│    ○ ○ ● ● ◍ ● ○ ○ ○ ○         │  the room set up as an
+│   ○ ● ● ● ● ● ◍ ● ○ ○          │  auditorium; people from
+│        [ A008 ]                │  the front, in reply order
+│ Founders talk                  │
+│ Wed 18 Nov · 18:30–20:00       │
+│ A 008 · 120 seats · approved   │
+│ 52 going · 16 maybe            │
+│ [ Going ]   Maybe   Can't      │
+└────────────────────────────────┘
 ```
 
 | State | Shows |
 |---|---|
-| Guest | Hall, counts, **Going** asks for the email code |
-| Going | My seat highlighted, "You're going", Maybe / Can't |
-| Full | "Full · 120 of 120", **Join the waiting list** |
-| Organizer | Counts by programme, **People**, **Export**, Change, Cancel |
-| Cancelled | Hall greyed, "Cancelled by Campus Connect" |
-| Not verified any more | "No longer verified" banner, replies closed |
+| Guest | Picture, details, **Going**; replying asks for the email code and shows what the group sees |
+| Going or maybe | "You're going" or "You said maybe", the other two answers, Share link; Group focus adds **Start focus** from 15 minutes before |
+| Full | "Full" tag, **Join the waiting list** |
+| Waiting | "You're number 3 on the waiting list" |
+| Organizer | "Plan for about 25", top programmes, **People**, Share link, Poster, Export, Change, Cancel |
+| Cancelled | Picture greyed, "Cancelled by Campus Connect" |
+| Not verified any more | "No longer verified" tag, replies closed |
 
 ## What verification means
 
