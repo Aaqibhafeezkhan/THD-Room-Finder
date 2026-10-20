@@ -86,7 +86,7 @@ select is((select claims from public.room_summaries('deggendorf') where room_key
 -- ── Switching to Public ────────────────────────────────────────────────
 select pg_temp.act_as('lena@example.test');
 select throws_ok(format($$select public.update_focus(%L, 'public', false, 99)$$, (select v->>'id' from t where k = 'start')),
-  '40001', null, 'a stale version is rejected');
+  'PT409', null, 'a stale version is rejected');
 insert into t values ('public', public.update_focus((select (v->>'id')::uuid from t where k = 'start'), 'public', false, 1));
 
 select pg_temp.act_as('max@example.test');
