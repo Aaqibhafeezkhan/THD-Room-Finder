@@ -9,6 +9,8 @@ on:
     branches: [main]
     paths:
       - 'supabase/**'
+  # Re-run the hosted sync by hand, e.g. after adding the secrets.
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -34,3 +36,29 @@ jobs:
           supabase gen types typescript --local --schema public > /tmp/types.ts
           { head -2 src/data/supabase.types.ts; cat /tmp/types.ts; } > /tmp/expected.ts
           diff -u src/data/supabase.types.ts /tmp/expected.ts
+
+  # Migrations reach the hosted project when they land on main (ADR 0007).
+  # Needs the SUPABASE_ACCESS_TOKEN and SUPABASE_DB_PASSWORD secrets.
+  deploy:
+    name: Database — push migrations to the hosted project
+    needs: contract
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: database-deploy
+      cancel-in-progress: false
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      PROJECT_REF: ytfalniwpozxnqrvywbt
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.120.0
+      - name: Link the hosted project
+        run: supabase link --project-ref "$PROJECT_REF" --password "$SUPABASE_DB_PASSWORD"
+      - name: Migrations still to apply
+        run: supabase migration list --linked
+      - name: Push migrations
+        run: supabase db push --linked --password "$SUPABASE_DB_PASSWORD"

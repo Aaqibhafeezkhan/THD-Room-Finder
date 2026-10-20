@@ -71,6 +71,22 @@ identity results are JSON objects; times are server time.
 | `get_focus_history(since = null)` | signed in | `{server_now, entries}`: own entries stored after `since`, oldest first |
 | `clear_focus_history()` | signed in | Deletes own synced history; returns how many entries went |
 
+### Study tables ([ADR 0007](adr/0007-study-tables.md))
+
+| Function | Who | Does |
+|---|---|---|
+| `set_table(topic, room_key, starts_at, minutes, seats, focus_minutes, break_minutes, long_break_minutes = 0, long_every = 0, show_name = false)` | study profile | A table in a room, up to 14 days ahead, 25–180 minutes, 1/2/4/6/8/12 seats, topic up to 40 characters. Returns a word link such as `mossy-lagoon-42`. Up to 5 upcoming per host: `table_limit` |
+| `change_table(link, expected_version, …same fields)` | host | Moves or edits it; guests see `changed`. Seats can't drop below those taken: `seats_taken` |
+| `cancel_table(link)` | host | Marks it cancelled; the page stays until it ends |
+| `get_table(link)` | anyone | The table, seats taken, maybes, names of people who show them, the viewer's own answer; `null` when unknown or ended over 24 h ago. Links match case-insensitively |
+| `table_preview(link)` | anyone | Topic, room code, time, seats and seats taken, cancelled. No names, for link cards |
+| `reply_table(link, answer, show_name = false)` | study profile | `seat`, `maybe` or `no`; `no` removes the reply. Full: `table_full`. The host can't reply; a one-seat table has no guests: `solo_table` |
+| `my_tables()` | signed in | Upcoming tables the caller hosts, sits at or said maybe to, next first |
+
+Tables and replies are deleted 24 hours after the table ends (`focus.cleanup`).
+Migrations reach the hosted project on merge to `main` (the Database
+workflow's deploy job).
+
 ### What a viewer sees
 
 `room_summaries` returns `room_key`, `claims`, `claim_since`, `batch_count`,
@@ -103,6 +119,9 @@ Errors carry a stable `hint` for the app to branch on; `message` is for logs.
 | `rate_limited` | 53400 | More than 20 starts in an hour |
 | `invalid_history`, `too_many_entries` | 22023 | History upload that is not an array, or over 500 entries |
 | `history_full` | 53400 | 5,000 synced entries already stored |
+| `invalid_time`, `invalid_length`, `invalid_seats`, `invalid_topic`, `invalid_answer`, `host_reply`, `solo_table`, `table_closed`, `seats_taken` | 22023 | Study tables: bad input, the host replying, or a cancelled/ended table |
+| `table_full`, `table_limit` | 22023 | No seat left; 5 upcoming hosted tables |
+| `not_found` | P0002 | Unknown table link, or not the host |
 
 ## Not in this contract yet
 

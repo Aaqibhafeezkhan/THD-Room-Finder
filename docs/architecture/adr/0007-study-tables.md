@@ -26,9 +26,11 @@ no group, friend or follower entity.
 
 ### 2. A link made of words
 
-The link is two words and two digits, `mossy-lagoon-42`, drawn from a fixed
-list of 1,024 short, plain English words that are easy to say and type. That
-gives about 100 million links. Anyone with the link can read the table and,
+The link is two words and two digits, `mossy-lagoon-42`: a describing word
+and a thing, each from a fixed list of 512 short, plain English words that
+are easy to say and type, then 10 to 99. That gives about 23 million links,
+far more than the few hundred tables open at once. Links are matched in lower
+case with spaces trimmed. Anyone with the link can read the table and,
 once signed in, reply, so the link is the permission. It is readable aloud in
 a lab and survives being typed from a screen. The host can cancel and set a
 new table to get a new link.

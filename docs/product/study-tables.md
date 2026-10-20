@@ -225,7 +225,7 @@ nothing new in the palette. Ochre stays reserved for the city layer.
 | Seats | 2, 4, 6, 8 or 12; Just me = 1. Larger groups register as an organization |
 | Tables you host | Up to 5 upcoming |
 | Topic | Optional, up to 40 characters |
-| Link | Two words and two digits, e.g. `mossy-lagoon-42`, from a list of 1,024 short plain English words |
+| Link | Two words and two digits, e.g. `mossy-lagoon-42`: a describing word and a thing, each from a list of 512 short plain English words, then 10–99 |
 | Kept | Until 24 hours after the end, then deleted |
 
 ## Privacy

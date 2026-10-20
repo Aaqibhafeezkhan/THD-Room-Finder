@@ -13,7 +13,13 @@ export type Database = {
             [_ in never]: never
           }
           Functions: {
-            "clear_focus_history":
+            "cancel_table":
+{ Args: { "p_link": string }; Returns: Json
+                           },
+"change_table":
+{ Args: { "p_break_minutes": number,"p_expected_version": number,"p_focus_minutes": number,"p_link": string,"p_long_break_minutes"?: number,"p_long_every"?: number,"p_minutes": number,"p_room_key": string,"p_seats": number,"p_show_name"?: boolean,"p_starts_at": string,"p_topic": string }; Returns: Json
+                           },
+"clear_focus_history":
 { Args: Record<PropertyKey, never>; Returns: number
                            },
 "delete_identity":
@@ -31,16 +37,25 @@ export type Database = {
 "get_identity":
 { Args: Record<PropertyKey, never>; Returns: Json
                            },
+"get_table":
+{ Args: { "p_link": string }; Returns: Json
+                           },
 "list_programmes":
 { Args: Record<PropertyKey, never>; Returns: {
               "code": string,"id": string,"intake_terms": (string)[],"name_de": string,"name_en": string
             }[]
+                           },
+"my_tables":
+{ Args: Record<PropertyKey, never>; Returns: Json
                            },
 "put_focus_history":
 { Args: { "p_entries": Json }; Returns: number
                            },
 "renew_focus":
 { Args: { "p_expected_version": number,"p_session_id": string }; Returns: Json
+                           },
+"reply_table":
+{ Args: { "p_answer": string,"p_link": string,"p_show_name"?: boolean }; Returns: Json
                            },
 "room_summaries":
 { Args: { "p_campus": string }; Returns: {
@@ -50,8 +65,14 @@ export type Database = {
 "save_identity":
 { Args: { "p_default_visibility": string,"p_display_name": string,"p_expected_version"?: number,"p_intake_term": string,"p_intake_year": number,"p_programme_id": string,"p_show_name": boolean }; Returns: Json
                            },
+"set_table":
+{ Args: { "p_break_minutes": number,"p_focus_minutes": number,"p_long_break_minutes"?: number,"p_long_every"?: number,"p_minutes": number,"p_room_key": string,"p_seats": number,"p_show_name"?: boolean,"p_starts_at": string,"p_topic": string }; Returns: Json
+                           },
 "start_focus":
 { Args: { "p_anchor_at"?: string,"p_break_minutes"?: number,"p_focus_minutes"?: number,"p_long_break_minutes"?: number,"p_long_every"?: number,"p_planned_minutes": number,"p_replace"?: boolean,"p_request_id": string,"p_room_key": string,"p_show_name": boolean,"p_visibility": string }; Returns: Json
+                           },
+"table_preview":
+{ Args: { "p_link": string }; Returns: Json
                            },
 "update_focus":
 { Args: { "p_expected_version": number,"p_session_id": string,"p_show_name": boolean,"p_visibility": string }; Returns: Json
