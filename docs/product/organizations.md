@@ -8,12 +8,13 @@ an organization. Decisions are in
 
 ## The idea in one paragraph
 
-A gathering is **a study table, grown**. A verified group sets it in a room
-THD approved for them; the room's seats are the capacity. The page, the link,
-the replies and the reminder are the table's. Only the ring changes: instead
-of a few seats around the room code it carries one dot per person who
-replied, with the count in the middle. Organizers see who is coming and what
-to plan with; everyone else sees the room as taken for that time.
+A gathering is **a study table for a whole group**. A verified group sets it
+in a room THD approved for them, and its page reads like a table's: one card,
+one picture, one violet action, the same link, replies and reminder. The
+picture is the room set up for the gathering's type, with the room code
+where the front is, and people appear in it in the order they replied.
+Organizers see who is coming and what to plan for; everyone else sees the
+room as taken for that time.
 
 ## Principles
 
@@ -25,11 +26,14 @@ to plan with; everyone else sees the room as taken for that time.
    books a room.
 3. **Capacity comes from the room.** The room's seat count from THabella;
    the organizer can lower it, never raise it.
-4. **The table, grown.** Same card, same ring shape, one violet action, the
-   same words. Nothing new to learn after a study table.
-5. **People, not seats.** A dot is a person who replied, in the order they
-   replied. Nobody reserves a place; outlines only show how many more fit.
-6. **Replies tell organizers what they need.** Going, Maybe, Can't, and for
+4. **Like a study table.** Same card, same words, one violet action. The
+   room code is the label on the picture, as on a table.
+5. **People, not numbers.** The picture shows people arriving, not a score.
+   Counts are a quiet line under the title; there is no big number and no
+   "of 120", so a new or small gathering never looks dead.
+6. **Nobody reserves a seat.** A dot is a person who replied, placed in reply
+   order. Your own dot is not marked.
+7. **Replies tell organizers what they need.** Going, Maybe, Can't, and for
    organizers a list with name, programme and batch, shared only with consent.
 
 ## Words
@@ -37,7 +41,7 @@ to plan with; everyone else sees the room as taken for that time.
 | Word | Means | Never say |
 |---|---|---|
 | Gathering | An organization's planned get-together in one room | Event booking, reservation |
-| Type | Group focus, Game night, Talk or Meeting: a tag and its words | Layout, setup |
+| Type | Group focus, Game night, Talk or Meeting | Layout, setup |
 | Going · Maybe · Can't | Replies | RSVP |
 | Waiting list | Replies after the room is full | Queue |
 | Organizers | The group's members who host it | Admins |
@@ -46,52 +50,48 @@ to plan with; everyone else sees the room as taken for that time.
 German: Treffen, Art (Gemeinsam lernen, Spieleabend, Vortrag, Treffen),
 Komme, Vielleicht, Kann nicht, Warteliste, Organisationsteam, Verifiziert.
 
-## The ring
+## Types
+
+The type sets the picture, the tag and the words. There is no circle setup.
+
+| Type | For | Picture | Where the room code sits |
+|---|---|---|---|
+| **Group focus** | A big study session, exam prep for a whole module; starts a focus session for everyone, like a table | Round tables of 6, like study tables | A plate above the tables |
+| **Game night** | Game nights, socials, workshops | Long tables of 8, four a side | A plate above the tables |
+| **Talk** | A talk, a pitch night, a performance | An auditorium: a half circle of rows facing the stage | On the stage |
+| **Meeting** | A club or planning meeting | A classroom: rows facing the front | On the front plate |
+
+## The picture
 
 | Rule | Value |
 |---|---|
 | Size | 13 people up to the room's seat count from THabella, at most 300. 12 and below is a study table |
 | Unknown room size | The organizer enters it, 13 to 300 |
 | Lowering | Any time, down to the people already going; never above the room |
-| Shape | The study table's ring: a round table in the middle, dots on one circle around it |
-| Middle | The going count, large, and "of 60" under it (the room code moves to the details) |
-| Order | Dots fill clockwise from the top in the order people replied |
-| Going · Maybe · Room left | A full violet dot · a dot half violet, half white · an outline |
-| Changing a reply | Maybe → Going fills that dot in place. Can't removes it; later dots move up one |
-| Many people | At most 36 dots on a page or banner, 12 on a small ring in a list; above that one dot stands for several people, a pair with any maybe draws as a maybe, and the details say "one dot = 7 people" |
-| Full | Going reaches the size: the ring is closed and the one action is **Join the waiting list** |
-| Your own dot | Not marked. "You're going" says it |
-
-Only violet and white carry meaning, so the ring reads the same in light and
-dark mode and at chat size.
-
-## Types
-
-A type is a tag on the card and the words around it; it changes nothing
-else.
-
-| Type | For |
-|---|---|
-| **Group focus** | A big study session, exam prep for a whole module; starts a focus session for everyone, like a table |
-| **Game night** | Game nights, socials, workshops |
-| **Talk** | A talk, a pitch night, a performance |
-| **Meeting** | A club or planning meeting |
+| Order | People appear in the order they replied: table by table (Group focus, Game night), or row by row from the front, centre first (Talk, Meeting) |
+| Going | A violet dot |
+| Maybe | A light violet dot with a violet edge |
+| Free place | A faint outline. It shows the room's size without competing with the people |
+| Changing a reply | Maybe → Going changes that dot in place. Can't removes it; later dots move up one |
+| Many people | One dot per person up to 120; above that one dot per two, said in the details |
+| Full | Going reaches the size: "Full" tag, and the one action is **Join the waiting list** |
+| Counts | One line under the title: "27 going · 8 maybe". The room's seats are a detail: "I 112 · 48 seats" |
 
 ## Share banner
 
 The link preview is how most people first see a gathering, so it carries the
-ring. A 1200 × 630 image per link: the ring large on the violet brand
-background with the count on it, and the text "Game night · Thu 5 Nov, 19:00
-· I 112" and "Campus Connect · 27 of 60 going, 8 maybe. Reply Going, Maybe or
-Can't." No names. Tables use the same banner with their seat ring.
+picture: the room set up, the room code at the front and the people in it, in
+white on the violet brand background. The text says "Founders talk · Wed 18
+Nov, 18:30 · A 008" and "Talk by Fast Forward. Reply Going, Maybe or Can't."
+No counts and no names. Tables use the same banner with their seat ring.
 
 ## Phones, tablets and desktops
 
 As for [study tables](study-tables.md#phones-tablets-and-desktops): one
-column on phones with the action in thumb reach; on wide windows the ring at
-240 beside the details. Organizers see two plain lines under the card,
-"Expect about 150" (going plus half the maybes) and the top programmes, with
-**People** opening the list, beside the card on wide windows.
+column on phones with the action in thumb reach; on wide windows the picture
+at 480 px beside the details. Organizers see two plain lines under the card,
+"Plan for about 25" (going plus half the maybes) and the top programmes, with
+**People** opening the list beside the card on wide windows.
 
 ## Flow
 
@@ -147,7 +147,7 @@ flowchart LR
 | Room detail | "Taken · Game night · Campus Connect" for the time of a gathering | Everyone |
 | Map and room list | The room counts as taken during a gathering | Everyone |
 | Profile | Gatherings sit in **Your tables** with your reply; organizers also see them there with counts | Me |
-| `/g/<link>` | Gathering page with the ring | Anyone with the link |
+| `/g/<link>` | Gathering page with the picture | Anyone with the link |
 | `/o/<slug>` | Group page | Everyone |
 | Profile → Register your group | The registry form | Signed-in students |
 
@@ -156,28 +156,27 @@ flowchart LR
 ```
 ┌────────────────────────────────┐
 │ ‹  Gathering                   │
-│ Game night      ✓ Campus Conn. │
-│         ◐ ● ● ●                │
-│      ○    ┌──┐   ●             │  the table's ring, grown:
-│      ○    │27│   ●             │  dots in reply order,
-│      ○    └──┘   ◐             │  count in the middle
-│         ○ ○ ● ●                │
-│ Game night                     │
-│ Thu 5 Nov · 19:00–22:00        │
-│ I 112 · room approved by THD   │
-│ 27 going · 8 maybe · 60 seats  │
+│ Talk           ✓ Fast Forward  │
+│      ○ ○ ○ ○ ○ ○ ○ ○ ○         │
+│    ○ ○ ● ● ◍ ● ○ ○ ○ ○         │  the room set up as an
+│   ○ ● ● ● ● ● ◍ ● ○ ○          │  auditorium; people from
+│        [ A008 ]                │  the front, in reply order
+│ Founders talk                  │
+│ Wed 18 Nov · 18:30–20:00       │
+│ A 008 · 120 seats · approved   │
+│ 52 going · 16 maybe            │
 │ [ Going ]   Maybe   Can't      │
 └────────────────────────────────┘
 ```
 
 | State | Shows |
 |---|---|
-| Guest | Ring, details, **Going**; replying asks for the email code and shows what the group sees |
-| Going or maybe | "You're going" or "You said maybe", the other two answers, Share link |
-| Full | "Full · 40 of 40" tag, **Join the waiting list** |
+| Guest | Picture, details, **Going**; replying asks for the email code and shows what the group sees |
+| Going or maybe | "You're going" or "You said maybe", the other two answers, Share link; Group focus adds **Start focus** from 15 minutes before |
+| Full | "Full" tag, **Join the waiting list** |
 | Waiting | "You're number 3 on the waiting list" |
-| Organizer | "Expect about 150", top programmes, **People**, Share link, Poster, Export, Change, Cancel |
-| Cancelled | Ring greyed with a dashed edge, "Cancelled by Campus Connect" |
+| Organizer | "Plan for about 25", top programmes, **People**, Share link, Poster, Export, Change, Cancel |
+| Cancelled | Picture greyed, "Cancelled by Campus Connect" |
 | Not verified any more | "No longer verified" tag, replies closed |
 
 ## What verification means
