@@ -27,66 +27,85 @@ sees the room as taken for that time, ahead of time.
 4. **Replies tell organizers what they need.** Going, Maybe, Can't, and for
    organizers a list with name, programme and batch, shared only with consent.
 5. **Same design system.** A gathering reuses the table's words, colours and
-   reply bar; only the seat picture changes from a ring to a hall.
+   reply bar; only the picture changes from a ring to a hall.
+6. **People, not seats.** A dot is a person who replied, in the order they
+   replied. Nobody reserves a place; the outlines only show how many fit.
 
 ## Words
 
 | Word | Means | Never say |
 |---|---|---|
 | Gathering | An organization's planned get-together in one room | Event booking, reservation |
-| Hall | The seat picture of a gathering | Seating chart |
-| Setup | How the room is arranged: Long tables or Rows | Layout mode |
+| Hall | The picture of a gathering: who replied, against the room's capacity | Seating chart |
+| Type | Group focus, Game night, Talk or Meeting; picks the picture | Layout, setup |
 | Going · Maybe · Can't | Replies | RSVP |
 | Organizers | The group's members who host it | Admins |
 | Verified | The group passed the registry | Official, partner |
 
-German: Treffen, Saal, Aufbau (Lange Tische, Reihen), Komme,
+German: Treffen, Saal, Art (Gemeinsam lernen, Spieleabend, Vortrag, Treffen), Komme,
 Vielleicht, Kann nicht, Organisationsteam, Verifiziert.
 
-## Setups
+## Types
 
-Two setups, picked by the organizer. They change the picture and the fill
-order, nothing else.
+The organizer picks one of four types. The type gives the gathering its
+icon, its words and its picture; it never changes the rules.
 
-| Setup | For | Picture |
+| Type | For | Picture |
 |---|---|---|
-| **Long tables** | Game night, workshop, a big group focus session | Rectangular tables of 8, 10 or 12, seats on both long sides; tables fill one by one so people end up sitting together |
-| **Rows** | Talk, planning meeting, film night | Straight rows behind a line for the front, like a classroom or cinema; rows fill from the front, centre first |
+| **Group focus** | A big study session, exam prep for a whole module | Round tables of 6, like study tables, in a grid |
+| **Game night** | Game nights, workshops, hackathons | Long tables of 8, two rows of 4 facing each other |
+| **Talk** | A talk, a pitch night, a performance | A half circle of rows facing a plain block at the front |
+| **Meeting** | A planning meeting, a club meeting, a film night | Straight rows behind a line, like a classroom |
 
-A study table is still the place where a few people look at each other while
-they focus; a long table is its bigger, louder cousin.
-
-## Hall rules
+## The hall
 
 | Rule | Value |
 |---|---|
-| Size | 13 seats up to the room's seat count from THabella, at most 300. 12 and below is a study table |
-| Unknown room size | The organizer enters the seats, 13 to 300 |
-| Lowering | Allowed any time down to the people already going; never above the room |
-| Long tables | 8, 10 or 12 per table, default 8. Tables = seats ÷ size, rounded up; the last table is shorter |
-| Table grid | In a row on phones: 3 tables of 8, or 2 of 10–12; on wide windows 4 of 8 or 3 of 10–12. More tables add rows, so seats stay at least 20 px apart |
-| Rows | 6 to 16 seats per row: about the square root of 1.6 × seats. Rows of 8 or more are made even and split by a centred aisle |
-| Fill order | Long tables: one table at a time, from the top left. Rows: front row first, centre outwards |
-| Seats | Not numbered and not assigned. "Your seat" marks where you would be in the fill order, and the page says so |
-| Dots | One dot per seat up to 120 seats; above that one dot per two seats, and the count line says so |
-| Smallest dot | 6 px on phones. If the hall would need smaller dots it shows a summary picture with **Full view** |
-| Going · Maybe · Free | Filled violet · violet ring with a light fill · outline. Full halls also show the waiting list count |
+| Size | 13 up to the room's seat count from THabella, at most 300. 12 and below is a study table |
+| Unknown room size | The organizer enters it, 13 to 300 |
+| Lowering | Any time, down to the people already going; never above the room |
+| What a dot is | One person who replied, not a seat. Nobody's dot is marked, not even your own |
+| Order | Dots fill in the order people replied: table by table (Group focus, Game night) or row by row from the front, left to right (Talk, Meeting) |
+| Going | A full violet dot |
+| Maybe | A dot that is half violet, half white |
+| Not yet | An outline. The outlines are the rest of the room's capacity |
+| Changing a reply | Maybe → Going fills that dot in place. Can't removes it; later dots move up one |
+| Many people | One dot per person up to 120; above that one dot per two people, and the count line says so. A pair with any maybe draws as a maybe |
+| Full | Going reaches the size: the hall is full and new replies join the waiting list, shown as "+ 8 waiting" under the hall |
+| Count line | Always under the hall: "47 going · 12 maybe · 120 seats" |
+
+Only two colours carry meaning: violet and white. There is no third tone for
+maybe, so the hall reads the same in light and dark mode and in a chat
+preview.
+
+## Share banner
+
+The link preview is how most people first see a gathering or a table, so it
+is designed first. It is a 1200 × 630 image drawn per link, refreshed when
+replies change, with no names.
+
+| Part | Content |
+|---|---|
+| Left half | The picture, large: the seat ring for a table, the hall for a gathering. At most 48 dots so they stay visible at chat size; above that one dot per 2, 3 or more people |
+| Right half | Type or "Study table", then the title, day and time, room, and a big count: "47 / 120" with "going" under it |
+| Corner | THD Room Finder logo; Verified for groups |
+| Title text | "Game night · Thu 5 Nov, 19:00 · I 112" |
+| Description | "47 going, 12 maybe. Reply Going, Maybe or Can't." |
 
 ## Sizes and views
 
 | Window | Hall | Details | Actions |
 |---|---|---|---|
-| Phone | Full width of the card, up to 280 px high, labels at 14 px or more | Below the hall | Going · Maybe · Can't at the bottom, in thumb reach |
-| Phone, big hall | Summary (one dot per two seats) and **Full view** | Below | Same |
-| Full view | Full screen, pinch to zoom and pan, the count line pinned on top | — | Close |
+| Phone | Card width, up to 280 px high; dots at least 6 px | Below the hall | Going · Maybe · Can't at the bottom, in thumb reach |
+| Phone, more than 120 people | One dot per two | Below | Same |
 | Tablet and desktop | 560 px wide beside the details, or above them under 840 px | Right of the hall | Under the details |
 
 | Who | Sees |
 |---|---|
-| Guest, signed out | The hall, counts, room, time, the approval line, **Going** |
-| Going | Their place in the fill order ringed, "You're going", Maybe and Can't |
+| Guest, signed out | The hall, the count line, room, time, the approval line, **Going** |
+| Going or maybe | The same hall, "You're going" or "You said maybe", the other two answers |
+| Waiting | "You're number 3 on the waiting list" |
 | Organizer | The same hall plus counts by programme, **People**, **Export**, Change, Cancel; on wide windows People opens beside the hall |
-| Waiting | "You're number 3 on the waiting list" instead of the reply bar |
 
 ## Flow
 
@@ -99,7 +118,7 @@ flowchart LR
     C -->|missing| B
   end
   subgraph Gather
-    D --> E[Organizer: New gathering<br/>room, time, setup]
+    D --> E[Organizer: New gathering<br/>room, time, type]
     E --> F[THD room approval<br/>reference]
     F --> G[Gathering page<br/>link + poster QR]
     G --> H[Students reply<br/>Going · Maybe · Can't]
@@ -124,7 +143,7 @@ flowchart LR
 
 | # | As a… | I want to… | So that… | Acceptance |
 |---|---|---|---|---|
-| O7 | organizer | create a gathering in a room | people know where and when | Pick room, day and time (the room's free windows, like tables), name, setup, optional description |
+| O7 | organizer | create a gathering in a room | people know where and when | Pick room, day and time (the room's free windows, like tables), name, type, optional description |
 | O8 | organizer | record THD's room approval | students trust it | A required field for the approval reference and a confirmation that THD approved this room and time |
 | O9 | organizer | get capacity from the room | I don't count chairs | Seats = the room's seat count; I can lower it. Rooms without a known count ask for one, up to 300 |
 | O10 | organizer | share it with many people | it reaches everyone | The same word link (`/g/mossy-lagoon-42`), a chat preview, and a printable poster with a QR code |
@@ -153,9 +172,9 @@ flowchart LR
 │ ‹  Gathering                  Verified ✓ │
 │ Campus Connect                           │
 │ Game night                               │
-│   ●●●●  ●●○○  ○○○○                       │  hall: long tables
-│   ▬▬▬▬  ▬▬▬▬  ▬▬▬▬                       │  of 8, filling one
-│   ●●●●  ●○○○  ○○○○                       │  table at a time
+│   ●●◐●  ●◐●●  ○○○○                       │  hall: long tables,
+│   ▬▬▬▬  ▬▬▬▬  ▬▬▬▬                       │  ● going, ◐ maybe,
+│   ●●●◐  ●○○○  ○○○○                       │  in reply order
 │ 47 going · 12 maybe · 120 seats · I 112  │
 │ Thu 5 Nov · 19:00–23:00                  │
 │ Room approved by THD                     │
@@ -167,7 +186,7 @@ flowchart LR
 | State | Shows |
 |---|---|
 | Guest | Hall, counts, **Going** asks for the email code |
-| Going | My seat highlighted, "You're going", Maybe / Can't |
+| Going | "You're going", Maybe / Can't; my dot is not marked |
 | Full | "Full · 120 of 120", **Join the waiting list** |
 | Organizer | Counts by programme, **People**, **Export**, Change, Cancel |
 | Cancelled | Hall greyed, "Cancelled by Campus Connect" |

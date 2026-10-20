@@ -1,4 +1,4 @@
-<!-- @dsCard group="Gatherings (M3)" viewport="1500x3400" name="Gatherings — halls" subtitle="Verified groups host gatherings in rooms THD approved; capacity is the room's seat count (13 to 300). Two setups: Long tables (8, 10 or 12 a table) and Rows. Phone guest, organizer and full view; desktop guest and organizer with People beside the hall." -->
+<!-- @dsCard group="Gatherings (M3)" viewport="1500x4200" name="Gatherings — halls and share banners" subtitle="Four types (Group focus, Game night, Talk, Meeting). Dots are people in reply order: full violet = going, half violet = maybe, outline = room capacity left. Share banners for a table and a gathering in WhatsApp, phone guest and organizer, desktop." -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,11 +9,9 @@
 <link rel="stylesheet" href="../study-tables/kit.css">
 <style>
   .setups { display: grid; grid-template-columns: repeat(2, 640px); gap: 24px; margin-bottom: 48px; }
-  .setup { background: var(--md-surface); border-radius: var(--radius-l); box-shadow: var(--md-shadow-1); padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .setup { background: var(--md-surface); border-radius: var(--radius-l); box-shadow: var(--md-shadow-1); padding: 20px; display: flex; flex-direction: column; gap: 12px; }
   .setup h3 { margin: 0; font-size: var(--title-medium-size); font-weight: 500; display: flex; gap: 10px; align-items: baseline; }
-  .count { display: flex; gap: 16px; font-size: var(--body-medium-size); color: var(--md-on-surface-variant); flex-wrap: wrap; }
-  .key { display: inline-flex; gap: 6px; align-items: center; }
-  .key i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  .count { display: flex; gap: 16px; font-size: var(--body-medium-size); color: var(--md-on-surface-variant); flex-wrap: wrap; align-items: center; }
   .verified { display: inline-flex; gap: 4px; align-items: center; font-size: 13px; font-weight: 500; color: var(--md-primary); }
   .bars { display: flex; flex-direction: column; gap: 6px; }
   .bars div { display: grid; grid-template-columns: 56px 1fr 30px; gap: 8px; align-items: center; font-size: 14px; }
@@ -22,6 +20,7 @@
   .people td { padding: 8px 4px; border-top: 1px solid var(--md-outline-variant); }
   .people td:last-child { color: var(--md-on-surface-variant); text-align: right; }
   .line { font-size: var(--body-medium-size); color: var(--md-on-surface-variant); margin: 0; }
+  .line b { color: var(--md-on-surface); font-weight: 500; }
   h2 { font-size: 18px; font-weight: 500; margin: 0 0 4px; }
   .device { position: relative; overflow: hidden; border-radius: 18px; background: var(--md-bg); color: var(--md-on-surface);
     box-shadow: 0 10px 40px rgba(30,20,60,.18); display: flex; font-size: var(--body-medium-size); }
@@ -32,136 +31,160 @@
   .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
   .main .bar { padding: 0 32px; }
   .content { flex: 1; padding: 8px 32px 32px; }
-  .full { position: absolute; inset: 0; background: var(--md-bg); display: flex; flex-direction: column; }
-  .full .top { padding: 12px 16px; display: flex; align-items: center; gap: 12px; background: var(--md-surface); box-shadow: var(--md-shadow-1); }
-  .zoom { position: absolute; right: 16px; bottom: 24px; display: flex; flex-direction: column; gap: 8px; }
-  .zoom span { width: 48px; height: 48px; border-radius: 16px; background: var(--md-secondary-container); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .typechip { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: var(--radius-full); background: var(--md-focus-container); color: var(--md-on-focus-container); font-size: 12px; font-weight: 500; align-self: flex-start; }
+  .k { display: inline-flex; gap: 6px; align-items: center; }
+
+  /* Share banner: 1200 × 630, drawn per link. Scaled into chat bubbles. */
+  .og { width: 1200px; height: 630px; display: grid; grid-template-columns: 600px 1fr; background: var(--md-surface); color: var(--md-on-surface); font-family: var(--font-sans); overflow: hidden; }
+  .og .pic { display: flex; align-items: center; justify-content: center; background: var(--md-surface-variant); padding: 40px; }
+  .og .txt { padding: 56px 56px 48px; display: flex; flex-direction: column; gap: 14px; }
+  .og .kind { font-size: 28px; font-weight: 500; color: var(--md-focus); }
+  .og .ttl { font-size: 54px; font-weight: 600; line-height: 1.08; }
+  .og .when { font-size: 32px; color: var(--md-on-surface-variant); line-height: 1.3; }
+  .og .big { margin-top: auto; display: flex; align-items: baseline; gap: 14px; }
+  .og .big b { font-size: 120px; font-weight: 600; line-height: .9; color: var(--md-focus); font-variant-numeric: tabular-nums; }
+  .og .big span { font-size: 34px; color: var(--md-on-surface-variant); }
+  .og .brand { font-size: 24px; color: var(--md-on-surface-variant); display: flex; justify-content: space-between; }
+  .scaled { width: 288px; height: 151px; overflow: hidden; position: relative; }
+  .scaled > .og { transform: scale(.24); transform-origin: 0 0; position: absolute; }
+  .chat { width: 360px; }
+  .bubble .prev { overflow: hidden; }
 </style>
 </head>
 <body>
 <h1>Gatherings</h1>
-<p class="lede">A study table is a table; a gathering is a hall. Verified groups pick a room THD approved them for; the room's seat count from THabella is the capacity (13 to 300), and the hall fills as people reply. Filled violet = going, ringed light = maybe, outlined = free. Seats are not numbered. Spec: docs/product/organizations.md → Setups, Hall rules, Sizes and views.</p>
+<p class="lede">A study table is a table; a gathering is a hall. Verified groups pick a room THD approved them for; the room's seat count is the capacity (13 to 300). Each dot is a person who replied, in the order they replied: full violet = going, half violet = maybe. The outlines only show how many more fit. Nobody reserves a seat. Spec: docs/product/organizations.md → Types, The hall, Share banner.</p>
 
-<h2>Two setups</h2>
-<p class="label" style="margin:0 0 14px;max-width:900px">Long tables fill one table at a time, so people end up sitting together. Rows fill from the front, centre first; the line marks the front. Above 120 seats one dot stands for two.</p>
+<h2>Share banner first</h2>
+<p class="label" style="margin:0 0 14px;max-width:900px">Most people meet a table or a gathering as a link preview in a group chat, so the banner is designed first: the picture big on the left (at most 48 dots), the count big on the right. No names.</p>
+<div class="row" id="chats"></div>
+<div id="ogfull" style="margin-bottom:48px"></div>
+
+<h2>Four types</h2>
+<p class="label" style="margin:0 0 14px;max-width:900px">The type picks the picture. Tables fill one at a time; Talk and Meeting fill row by row from the front, left to right. Above 120 people one dot stands for two.</p>
 <div class="setups" id="setups"></div>
 
 <h2>Phone</h2>
-<p class="label" style="margin:0 0 14px;max-width:900px">The hall takes the card's width; dots stay 6 px or larger and labels 14 px or larger. A hall that would need smaller dots shows a summary and Full view, which pans and zooms.</p>
 <div class="row" id="phones"></div>
 
 <h2>Desktop</h2>
-<p class="label" style="margin:0 0 14px;max-width:900px">The hall sits at 560 px beside the details. Organizers open People beside the hall instead of a new page.</p>
 <div id="desk"></div>
 
 <div class="row" data-theme="dark" id="dark" style="background:none;margin-top:40px"></div>
 
 <script src="../study-tables/seats.js"></script>
 <script>
-const key = `<div class="count"><span class="key"><i style="background:var(--md-focus)"></i>Going</span><span class="key"><i style="background:var(--md-focus-container);border:1.5px solid var(--md-focus)"></i>Maybe</span><span class="key"><i style="border:1.5px solid var(--md-outline)"></i>Free</span></div>`;
-const setup = (name, use, svg, line) => `<div class="setup"><h3>${name} <span class="fine">${use}</span></h3>${svg}<p class="line">${line}</p>${key}</div>`;
-document.getElementById('setups').innerHTML =
-  setup('Long tables', 'Tables of 8', hall('tables', 60, 26, 8, { width: 600, maxCols: 4 }), '<b>Game night</b> · Campus Connect · I 112 · 26 going, 8 maybe, 60 seats, 8 tables') +
-  setup('Long tables', 'Tables of 12', hall('tables', 96, 51, 10, { width: 600, perTable: 12, maxCols: 3 }), '<b>Hackathon</b> · THD AI · ITC 1.01 · 51 going, 10 maybe, 96 seats, 8 tables') +
-  setup('Rows', '40 seats', hall('rows', 40, 22, 6, { width: 600 }), '<b>Quarterly planning</b> · C 105 · 22 going, 6 maybe, 40 seats') +
-  setup('Rows', '200 seats', hall('rows', 200, 118, 30, { width: 600 }), '<b>Fast Forward talk</b> · A 008 · 118 going, 30 maybe, 200 seats · one dot = two seats');
+const legend = `<span class="k"><svg width="14" height="14"><circle cx="7" cy="7" r="6" fill="var(--md-focus)"/></svg>Going</span>
+  <span class="k"><svg width="14" height="14"><circle cx="7" cy="7" r="5.3" fill="var(--md-surface)" stroke="var(--md-focus)" stroke-width="1.5"/><path d="M7 1.7 A5.3 5.3 0 0 0 7 12.3Z" fill="var(--md-focus)"/></svg>Maybe</span>
+  <span class="k"><svg width="14" height="14"><circle cx="7" cy="7" r="5.3" fill="none" stroke="var(--md-outline)" stroke-width="1.5"/></svg>Room left</span>`;
+const check = `<svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Zm-1.2 14.2-3.5-3.5 1.4-1.4 2.1 2.1 4.9-4.9 1.4 1.4-6.3 6.3Z"/></svg>`;
+
+const G = { // sample gatherings
+  games: { type: 'games', kind: 'Game night', org: 'Campus Connect', title: 'Game night', when: 'Thu 5 Nov · 19:00–23:00', room: 'I 112', cap: 60, seq: replySeq(27, 8, 5) },
+  talk: { type: 'talk', kind: 'Talk', org: 'Fast Forward', title: 'Founders talk', when: 'Wed 18 Nov · 18:30–20:00', room: 'A 008', cap: 120, seq: replySeq(64, 18, 9) },
+  focus: { type: 'focus', kind: 'Group focus', org: 'THD AI', title: 'Exam prep · Maths 2', when: 'Mon 9 Nov · 13:15–16:45', room: 'E 001', cap: 36, seq: replySeq(19, 5, 2) },
+  meeting: { type: 'meeting', kind: 'Meeting', org: 'Campus Connect', title: 'Quarterly planning', when: 'Tue 10 Nov · 18:00–20:00', room: 'C 105', cap: 40, seq: replySeq(22, 6, 7) },
+  big: { type: 'talk', kind: 'Talk', org: 'Fast Forward', title: 'Startup night', when: 'Thu 26 Nov · 18:00–21:00', room: 'Audimax', cap: 240, seq: replySeq(131, 40, 4) },
+};
+const n = (s, c) => s.split(c).length - 1;
+const countLine = (g) => `${n(g.seq, 'g')} going · ${n(g.seq, 'm')} maybe · ${g.cap} seats${g.cap > 120 ? ' · one dot = two people' : ''}`;
+
+function og(g) {
+  const pic = g.table
+    ? seatRing(g.table.seats, { size: 440, code: g.room.replace(' ', '') })
+    : hall(g.type, g.cap, g.seq, { width: 520, maxDots: 48, cols: 3 });
+  const going = g.table ? g.table.seats.filter(s => s !== 'empty').length : n(g.seq, 'g');
+  const of = g.table ? g.table.seats.length : g.cap;
+  return `<div class="og"><div class="pic">${pic}</div><div class="txt">
+    <div class="kind">${g.table ? 'Study table' : g.kind + ' · ' + g.org}</div>
+    <div class="ttl">${g.title}</div>
+    <div class="when">${g.when}<br>${g.room}</div>
+    <div class="big"><b>${going}</b><span>/ ${of}<br>${g.table ? 'seats taken' : 'going'}</span></div>
+    <div class="brand"><span>THD Room Finder</span><span>${g.table ? 'An invite, not a booking' : 'Room approved by THD'}</span></div>
+  </div></div>`;
+}
+const T = { table: { seats: ['taken', 'taken', 'taken', 'empty', 'empty', 'empty'] }, title: 'Algorithms', when: 'Wed 21 Oct · 13:15–14:45', room: 'C 001' };
+const bubble = (g, link, line, desc, dark) => `<div class="chat ${dark ? 'dark' : ''}"><div class="bubble"><div class="prev">
+  <div class="scaled">${og(g)}</div>
+  <div class="p"><b>${line}</b><span>${desc}</span></div></div>
+  <div class="link">thd-room-finder.vercel.app/${link}</div></div></div>`;
+const shot = (label, x) => `<div class="shot"><div class="label">${label}</div>${x}</div>`;
+
+document.getElementById('chats').innerHTML =
+  shot('<b>Study table in WhatsApp.</b> The ring, 3 of 6.', bubble(T, 't/mossy-lagoon-42', 'Algorithms · Wed 21 Oct, 13:15 · C001', '3 of 6 seats taken. Take a seat or say maybe.', false)) +
+  shot('<b>Game night.</b> Long tables, 27 / 60 going.', bubble(G.games, 'g/amber-otter-17', 'Game night · Thu 5 Nov, 19:00 · I 112', '27 going, 8 maybe. Reply Going, Maybe or Can\'t.', false)) +
+  shot('<b>Talk, 240 seats, dark chat.</b> At most 48 dots: one dot = five people here.', bubble(G.big, 'g/brisk-heron-63', 'Startup night · Thu 26 Nov, 18:00 · Audimax', '131 going, 40 maybe. Reply Going, Maybe or Can\'t.', true));
+document.getElementById('ogfull').innerHTML = `<p class="label" style="margin:0 0 10px"><b>The banner at full size</b> (1200 × 630), Talk with 120 seats.</p><div style="box-shadow:var(--md-shadow-2);display:inline-block;border-radius:12px;overflow:hidden">${og(G.talk)}</div>`;
+
+const setup = (g) => `<div class="setup"><h3>${g.kind} <span class="fine">${g.org} · ${g.title}</span></h3>${hall(g.type, g.cap, g.seq, { width: 600 })}<p class="line"><b>${countLine(g)}</b> · ${g.room}</p><div class="count">${legend}</div></div>`;
+document.getElementById('setups').innerHTML = setup(G.focus) + setup(G.games) + setup(G.talk) + setup(G.meeting);
 
 const items = ['Campus', 'Rooms', 'Profile'];
-const nav = (on) => `<div class="nav">${items.map(n => `<span class="${n === on ? 'on' : ''}"><i></i>${n}</span>`).join('')}</div>`;
-const drawer = (on) => `<div class="drawer"><div class="logo">THD Room Finder</div>${items.map(n => `<span class="${n === on ? 'on' : ''}">${n}</span>`).join('')}</div>`;
-const shot = (label, phone) => `<div class="shot"><div class="label">${label}</div>${phone}</div>`;
-const check = `<svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Zm-1.2 14.2-3.5-3.5 1.4-1.4 2.1 2.1 4.9-4.9 1.4 1.4-6.3 6.3Z"/></svg>`;
-const head = (org, title) => `<div style="display:flex;justify-content:space-between;align-items:center"><span class="line"><b style="color:var(--md-on-surface);font-weight:500">${org}</b></span><span class="verified">${check} Verified</span></div><p class="title">${title}</p>`;
-const byProgramme = `<div class="bars">${[['AIN', 22], ['ME', 14], ['SE', 11], ['BW', 9], ['Other', 8]].map(([p, n]) => `<div><span>${p}</span><span class="b" style="width:${n * 4}%"></span><span>${n}</span></div>`).join('')}</div>`;
-const peopleRows = [['Lena M.', 'AIN 7', '2 h ago'], ['Max K.', 'SE 3', '3 h ago'], ['Aylin D.', 'ME 5', 'yesterday'], ['Jonas R.', 'AIN 3', 'yesterday'], ['Mia S.', 'BW 1', 'Mon'], ['Tom H.', 'SE 5', 'Mon']]
+const nav = (on) => `<div class="nav">${items.map(x => `<span class="${x === on ? 'on' : ''}"><i></i>${x}</span>`).join('')}</div>`;
+const drawer = (on) => `<div class="drawer"><div class="logo">THD Room Finder</div>${items.map(x => `<span class="${x === on ? 'on' : ''}">${x}</span>`).join('')}</div>`;
+const head = (g) => `<div style="display:flex;justify-content:space-between;align-items:center"><span class="typechip">${g.kind}</span><span class="verified">${check} ${g.org}</span></div><p class="title">${g.title}</p>`;
+const byProgramme = `<div class="bars">${[['AIN', 22], ['ME', 14], ['SE', 11], ['BW', 9], ['Other', 8]].map(([p, c]) => `<div><span>${p}</span><span class="b" style="width:${c * 4}%"></span><span>${c}</span></div>`).join('')}</div>`;
+const peopleRows = [['Lena M.', 'AIN 7', 'Going'], ['Max K.', 'SE 3', 'Maybe'], ['Aylin D.', 'ME 5', 'Going'], ['Jonas R.', 'AIN 3', 'Going'], ['Mia S.', 'BW 1', 'Maybe'], ['Tom H.', 'SE 5', 'Going']]
   .map(r => `<tr><td><b style="font-weight:500">${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('');
 
-const guest = `<div class="phone">
+const guest = (g) => `<div class="phone">
   <div class="bar"><span class="back">‹</span>Gathering</div>
   <div class="page">
-    <div class="card">
-      ${head('Campus Connect', 'Game night')}
-      ${hall('tables', 60, 27, 8, { width: 296, maxCols: 3, mine: 26 })}
-      <p class="meta"><b>Thu 5 Nov · 19:00–23:00</b><br>I 112 · Room approved by THD<br>27 going · 8 maybe · 60 seats</p>
+    <div class="card">${head(g)}${hall(g.type, g.cap, g.seq, { width: 296 })}
+      <p class="line"><b>${countLine(g)}</b></p>
+      <p class="meta"><b>${g.when}</b><br>${g.room} · Room approved by THD</p>
+    </div>
+    <button class="btn focus wide">Going</button>
+    <div class="actions" style="justify-content:center"><button class="btn text">Maybe</button><button class="btn text">Can't make it</button></div>
+    <p class="fine">${g.org} sees your name, programme and batch when you reply.</p>
+  </div>${nav('Campus')}</div>`;
+const going = (g) => `<div class="phone">
+  <div class="bar"><span class="back">‹</span>Gathering</div>
+  <div class="page">
+    <div class="card">${head(g)}${hall(g.type, g.cap, g.seq + 'g', { width: 296 })}
+      <p class="line"><b>${n(g.seq, 'g') + 1} going · ${n(g.seq, 'm')} maybe · ${g.cap} seats</b></p>
+      <p class="meta"><b>${g.when}</b><br>${g.room} · Room approved by THD</p>
     </div>
     <div class="actions"><span class="line" style="flex:1">You're going</span><button class="btn text">Maybe</button><button class="btn text">Can't</button></div>
-    <p class="fine">The ring shows where you'd sit as the hall fills; seats aren't numbered. Campus Connect sees your name, programme and batch.</p>
-  </div>${nav('Campus')}</div>`;
-
-const organizer = `<div class="phone">
+    <div class="actions"><button class="btn tonal">Share</button></div>
+  </div>${nav('Profile')}</div>`;
+const organizer = (g) => `<div class="phone">
   <div class="bar"><span class="back">‹</span>Organizing</div>
   <div class="page">
-    <div class="card">
-      <p class="title">Quarterly planning</p>
-      ${hall('rows', 40, 22, 6, { width: 296 })}
-      <p class="meta"><b>Tue 10 Nov · 18:00–20:00</b> · C 105<br>22 going · 6 maybe · 4 can't · 40 seats</p>
-    </div>
+    <div class="card">${head(g)}${hall(g.type, g.cap, g.seq, { width: 296 })}
+      <p class="line"><b>${countLine(g)}</b> · 9 can't</p></div>
     <div class="card" style="gap:8px"><b style="font-weight:500">By programme</b>${byProgramme}</div>
     <div class="actions"><button class="btn tonal">People</button><button class="btn text">Export</button><button class="btn text">Share</button><button class="btn text">Poster</button></div>
   </div>${nav('Profile')}</div>`;
 
-const big = `<div class="phone">
-  <div class="bar"><span class="back">‹</span>Gathering</div>
-  <div class="page">
-    <div class="card">
-      ${head('Fast Forward', 'Founders talk')}
-      ${hall('rows', 200, 118, 30, { width: 296 })}
-      <div class="actions"><span class="line" style="flex:1">One dot = two seats</span><button class="btn text">Full view</button></div>
-      <p class="meta"><b>Wed 18 Nov · 18:30–20:00</b><br>A 008 · Room approved by THD<br>118 going · 30 maybe · 200 seats</p>
-    </div>
-    <button class="btn focus wide">Going</button>
-    <div class="actions" style="justify-content:center"><button class="btn text">Maybe</button><button class="btn text">Can't make it</button></div>
-  </div>${nav('Campus')}</div>`;
-
-const fullView = `<div class="phone">
-  <div class="full">
-    <div class="top"><span style="font-size:22px">✕</span><span><b>118 going</b> · 30 maybe · 200 seats</span></div>
-    <div style="flex:1;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:12px">
-      <div style="transform:scale(1.15);transform-origin:center">${hall('rows', 200, 118, 30, { width: 300 })}</div>
-    </div>
-    <div class="zoom"><span>+</span><span>−</span></div>
-  </div></div>`;
-
-const people = `<div class="phone">
-  <div class="bar"><span class="back">‹</span>People · 22 going</div>
-  <div class="page">
-    <div class="chips"><span class="chip on">Going 22</span><span class="chip">Maybe 6</span><span class="chip">Can't 4</span><span class="chip">Waiting 0</span></div>
-    <div class="card" style="padding:8px 16px"><table class="people">${peopleRows}</table></div>
-    <p class="fine">Only organizers see this list. Exports have no email addresses. Deleted 30 days after the gathering.</p>
-  </div>${nav('Profile')}</div>`;
-
 document.getElementById('phones').innerHTML =
-  shot('<b>Guest, going.</b> Long tables of 8, three to a row on a phone. Their place in the fill order is ringed.', guest) +
-  shot('<b>Organizer.</b> Rows for a planning meeting; counts by programme help plan.', organizer) +
-  shot('<b>Big hall.</b> 200 seats: one dot per two, and Full view.', big) +
-  shot('<b>Full view.</b> Full screen, pinch or buttons to zoom, counts pinned on top.', fullView) +
-  shot('<b>People.</b> Organizers only, filtered by reply.', people);
+  shot('<b>Guest · Game night.</b> Dots in reply order; outlines are the room left.', guest(G.games)) +
+  shot('<b>After replying Going.</b> One more dot at the end of the line. Your own dot is not marked: it is not a seat.', going(G.games)) +
+  shot('<b>Organizer · Talk.</b> Same hall, plus counts by programme.', organizer(G.talk)) +
+  shot('<b>Guest · Group focus.</b> Round tables of 6, like study tables.', guest(G.focus));
 
-const deskGuest = `<div class="device" style="width:1280px;height:600px">${drawer('Campus')}
+const deskGuest = `<div class="device" style="width:1280px;height:560px">${drawer('Campus')}
   <div class="main"><div class="bar"><span class="back">‹</span>Gathering</div>
   <div class="content"><div class="card" style="display:grid;grid-template-columns:560px 1fr;gap:32px;padding:28px;max-width:980px;align-items:start">
-    ${hall('tables', 60, 27, 8, { width: 560, maxCols: 4 })}
-    <div style="display:flex;flex-direction:column;gap:12px">
-      ${head('Campus Connect', 'Game night')}
-      <p class="meta"><b>Thu 5 Nov · 19:00–23:00</b><br>I 112 · Room approved by THD<br>27 going · 8 maybe · 60 seats</p>
+    <div style="display:flex;flex-direction:column;gap:10px">${hall('talk', G.talk.cap, G.talk.seq, { width: 560 })}<div class="count">${legend}</div></div>
+    <div style="display:flex;flex-direction:column;gap:12px">${head(G.talk)}
+      <p class="line"><b>${countLine(G.talk)}</b></p>
+      <p class="meta"><b>${G.talk.when}</b><br>${G.talk.room} · Room approved by THD</p>
       <div class="actions"><button class="btn focus">Going</button><button class="btn text">Maybe</button><button class="btn text">Can't</button></div>
-      <p class="fine">Replying shares your name, programme and batch with Campus Connect.</p>
-      ${key}
+      <p class="fine">Replying shares your name, programme and batch with Fast Forward.</p>
     </div></div></div></div></div>`;
-
-const deskOrg = `<div class="device" style="width:1280px;height:640px">${drawer('Profile')}
+const deskOrg = `<div class="device" style="width:1280px;height:600px">${drawer('Profile')}
   <div class="main"><div class="bar"><span class="back">‹</span>Organizing · Quarterly planning</div>
   <div class="content" style="display:grid;grid-template-columns:560px 1fr;gap:24px;align-items:start">
-    <div class="card" style="gap:12px">${hall('rows', 40, 22, 6, { width: 528 })}
-      <p class="meta"><b>Tue 10 Nov · 18:00–20:00</b> · C 105 · 22 going · 6 maybe · 4 can't · 40 seats</p>
+    <div class="card" style="gap:12px">${hall('meeting', G.meeting.cap, G.meeting.seq, { width: 528 })}
+      <p class="line"><b>${countLine(G.meeting)}</b> · 4 can't</p>
       <div class="actions"><button class="btn text">Export</button><button class="btn text">Share</button><button class="btn text">Poster</button><button class="btn text">Change</button></div></div>
     <div style="display:flex;flex-direction:column;gap:16px">
       <div class="card" style="gap:8px"><b style="font-weight:500">By programme</b>${byProgramme}</div>
-      <div class="card" style="padding:8px 16px;gap:4px"><div class="chips" style="padding:8px 0"><span class="chip on">Going 22</span><span class="chip">Maybe 6</span><span class="chip">Can't 4</span></div><table class="people">${peopleRows}</table></div>
+      <div class="card" style="padding:8px 16px;gap:4px"><div class="chips" style="padding:8px 0"><span class="chip on">All 28</span><span class="chip">Going 22</span><span class="chip">Maybe 6</span></div><table class="people">${peopleRows}</table></div>
     </div></div></div></div>`;
-
 document.getElementById('desk').innerHTML = `<div style="display:flex;flex-direction:column;gap:32px">${deskGuest}${deskOrg}</div>`;
-document.getElementById('dark').innerHTML = shot('<b>Dark · guest.</b>', guest) + shot('<b>Dark · big hall.</b>', big) + shot('<b>Dark · organizer.</b>', organizer);
+document.getElementById('dark').innerHTML = shot('<b>Dark · Game night.</b>', guest(G.games)) + shot('<b>Dark · Talk organizer.</b>', organizer(G.talk)) + shot('<b>Dark · Meeting.</b>', guest(G.meeting));
 </script>
 </body>
 </html>
