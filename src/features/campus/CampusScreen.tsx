@@ -31,6 +31,7 @@ import {
   isCafeteria,
 } from '../../domain/openingHours';
 import { BrandHeader } from '../shared/BrandHeader';
+import { freeRoomsLabel } from '../shared/roomStatusLabel';
 import { ClosedNotice } from '../shared/ClosedNotice';
 import { FilterMenu } from '../shared/FilterMenu';
 import { Spinner } from '../shared/ui';
@@ -97,7 +98,7 @@ export function CampusScreen() {
   const { showGlyphs } = useMapPrefs();
   const cls = useWindowClass();
   const wide = useWideLayout();
-  const { rooms, freeRooms, teachingIdents, queryTime, planningTime, preview, campusHours, loading } =
+  const { rooms, freeRooms, teachingIdents, queryTime, planningTime, preview, isCustomTime, campusHours, loading } =
     useRoomData();
   const { filters } = useRoomFilters();
   const { isFavorite } = useFavorites();
@@ -177,12 +178,12 @@ export function CampusScreen() {
   );
   const mapAvailability = useMemo<Availability>(() => {
     const hoursTints: Record<string, boolean | undefined> = {
-      G: libraryHours.open,
+      G: libraryHours.access === 'unconfirmed' ? undefined : libraryHours.open,
       ...Object.fromEntries(Object.entries(cafeteriaHours).map(([k, h]) => [k, h?.open])),
     };
     const overrides = Object.fromEntries(
       Object.entries(hoursTints)
-        .filter(([key]) => (availability[key]?.total ?? 0) === 0)
+        .filter(([key, open]) => open !== undefined && (availability[key]?.total ?? 0) === 0)
         .map(([key, open]) => [key, { free: open ? 1 : 0, total: 1 }]),
     );
     return { ...availability, ...overrides };
@@ -301,7 +302,7 @@ export function CampusScreen() {
   // The panel below / beside the map: a "campus closed" banner when the
   // buildings are shut (and not previewing), else the selected building's rooms,
   // else the free-now hero + longest-free list.
-  const panel = !(campusHours.open || preview) ? (
+  const panel = !(campusHours.open || preview) && !selectedMeta ? (
     <ClosedNotice hours={campusHours} />
   ) : selectedKey ? (
     <>
@@ -333,7 +334,7 @@ export function CampusScreen() {
           {selectedHasRooms && (
             <div style={{ fontSize: 'var(--body-small-size)', color: 'var(--md-on-surface-variant)', marginTop: 2 }}>
               <b style={{ color: 'var(--md-on-surface)', fontVariantNumeric: 'tabular-nums' }}>{selectedRooms.length}</b>{' '}
-              {t('rooms free right now', 'Räume jetzt frei')}
+              {freeRoomsLabel(t, { preview, customTime: isCustomTime })}
             </div>
           )}
         </div>
@@ -371,7 +372,7 @@ export function CampusScreen() {
           {loading && filteredFree.length === 0 ? '—' : filteredFree.length}
         </div>
         <div style={{ fontSize: 'var(--title-medium-size)', color: 'var(--md-on-surface)', marginTop: 'var(--space-2)' }}>
-          {preview ? t('rooms free when it opens', 'Räume frei bei Öffnung') : t('rooms free right now', 'Räume jetzt frei')}
+          {freeRoomsLabel(t, { preview, customTime: isCustomTime, onMap: true })}
         </div>
         <div style={{ fontSize: 'var(--body-small-size)', color: 'var(--md-on-surface-variant)', marginTop: 'var(--space-3)' }}>
           {t('Tap a building on the map to see its free rooms.', 'Tippe ein Gebäude auf der Karte für freie Räume.')}

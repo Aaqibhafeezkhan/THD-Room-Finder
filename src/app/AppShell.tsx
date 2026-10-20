@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo } from 'react';
+import { lazy, Suspense, useLayoutEffect, useMemo, useRef } from 'react';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AdaptiveNav, CheckInSheet } from '../components';
 import { useFocusSession } from '../features/focus/FocusSessionContext';
@@ -8,7 +8,7 @@ import { AppUpdates } from '../features/update/AppUpdates';
 import type { NavItem } from '../components';
 import { IconList, IconMap } from '../components/icons';
 import { IconPerson } from '../components/focus/focusIcons';
-import { useWindowClass, useWideLayout } from '../lib/useWindowClass';
+import { useNavigationVariant } from '../lib/useWindowClass';
 import { useI18n } from '../i18n';
 import { HomeScreen } from '../features/home/HomeScreen';
 import { CampusScreen } from '../features/campus/CampusScreen';
@@ -17,6 +17,7 @@ import { SettingsScreen } from '../features/profile/SettingsScreen';
 import { RoomDetailScreen } from '../features/detail/RoomDetailScreen';
 import { TableScreen } from '../features/tables/TableScreen';
 import { TableReminder } from '../features/tables/TableReminder';
+import { activeId } from './activeTab';
 
 // Component specimen for `npm run dev` and Vercel previews; the import is
 // dropped from production builds because the condition is a build-time
@@ -25,19 +26,19 @@ const FocusGallery = import.meta.env.DEV || __DEV_GALLERY__
   ? lazy(() => import('../features/dev/FocusGallery').then((m) => ({ default: m.FocusGallery })))
   : null;
 
-/** Maps the current path to the active nav destination. */
-function activeId(pathname: string): string {
-  if (pathname.startsWith('/rooms')) return 'rooms';
-  if (pathname.startsWith('/profile') || pathname.startsWith('/saved')) return 'profile';
-  return 'campus';
-}
-
 export function AppShell() {
-  const cls = useWindowClass();
-  const wide = useWideLayout();
+  const variant = useNavigationVariant();
+  const wide = variant !== 'bar';
   const { t } = useI18n();
   const navigate = useNavigate();
   const location = useLocation();
+  const page = useRef<HTMLElement>(null);
+  const tab = useRef('campus');
+  tab.current = activeId(location.pathname, tab.current);
+  useLayoutEffect(() => {
+    // Profile and Settings open at their heading; rotations keep the current position.
+    if (location.pathname.startsWith('/profile') && page.current) page.current.scrollTop = 0;
+  }, [location.pathname]);
   const focus = useFocusSession();
   const checkIn =
     focus.active && focus.plan && focus.status ? sessionView(focus.active, focus.plan, focus.status, focus.now, t) : null;
@@ -56,16 +57,16 @@ export function AppShell() {
   };
 
   const nav = (
-    <AdaptiveNav
+    <AdaptiveNav key="navigation"
       items={items}
-      active={activeId(location.pathname)}
+      active={tab.current}
       onSelect={onSelect}
-      variant={!wide ? 'bar' : cls === 'expanded' ? 'drawer' : 'rail'}
+      variant={variant}
     />
   );
 
   const content = (
-    <main style={{ flex: 1, minWidth: 0, minHeight: 0, overflowY: 'auto' }}>
+    <main ref={page} key="page-content" style={{ flex: 1, minWidth: 0, minHeight: 0, overflowY: 'auto' }}>
       <Routes>
         <Route path="/" element={<CampusScreen />} />
         <Route path="/rooms" element={<HomeScreen />} />

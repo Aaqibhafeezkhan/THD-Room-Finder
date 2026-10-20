@@ -52,3 +52,23 @@ export function useWideLayout(): boolean {
   }, []);
   return wide;
 }
+
+export type NavigationVariant = 'bar' | 'rail' | 'drawer';
+
+/** Short landscape phones need a rail, not a desktop drawer taking a third of the screen. */
+export function navigationVariantFor(width: number, height: number): NavigationVariant {
+  if (!isWideLayout(width, height)) return 'bar';
+  return width >= 840 && height >= 600 ? 'drawer' : 'rail';
+}
+
+export function useNavigationVariant(): NavigationVariant {
+  const [variant, setVariant] = useState<NavigationVariant>(() => typeof window === 'undefined' ? 'bar' : navigationVariantFor(window.innerWidth, window.innerHeight));
+  useEffect(() => {
+    const on = () => setVariant(navigationVariantFor(window.innerWidth, window.innerHeight));
+    on();
+    window.addEventListener('resize', on);
+    window.addEventListener('orientationchange', on);
+    return () => { window.removeEventListener('resize', on); window.removeEventListener('orientationchange', on); };
+  }, []);
+  return variant;
+}

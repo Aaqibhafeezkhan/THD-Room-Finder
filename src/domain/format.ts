@@ -17,6 +17,9 @@ export function formatTime(date: Date): string {
 export function formatDayTime(date: Date, locale: 'en' | 'de'): string {
   return new Intl.DateTimeFormat(locale === 'de' ? 'de-DE' : 'en-GB', {
     weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
   }).format(date);
