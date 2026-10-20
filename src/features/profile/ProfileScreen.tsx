@@ -13,6 +13,7 @@ import { inviteLink, PUBLIC_ORIGIN } from '../focus/shareSnapshot';
 import { useFocusStats } from '../focus/useFocusStats';
 import { SavedRooms } from './SavedRooms';
 import { YourTables } from '../tables/YourTables';
+import { YourGroups } from '../gatherings/YourGroups';
 import { SetupSheet } from './SetupSheet';
 import { useStudyProfile } from './StudyProfileContext';
 
@@ -86,6 +87,7 @@ export function ProfileScreen() {
         />
         <YourTables grid={cls === 'expanded'} when="none" />
         <SavedRooms grid={cls === 'expanded'} />
+        <YourGroups />
         <Button variant="text" onClick={invite} style={{ alignSelf: 'center', minHeight: 48 }}>
           {t('Invite a Friend', 'Freunde einladen')}
         </Button>

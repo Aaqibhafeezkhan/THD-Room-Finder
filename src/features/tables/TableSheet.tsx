@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { CSSProperties } from 'react';
 import { Button, SeatRing, Sheet, SlotChips, choiceChip } from '../../components';
 import type { SlotDay, SlotOption } from '../../components';
@@ -29,6 +30,7 @@ import { useRhythmPreference } from '../focus/rhythmPreference';
 import { rhythmName } from '../focus/sessionView';
 import { useStudyProfile } from '../profile/StudyProfileContext';
 import { useTables } from './TablesContext';
+import { useGatherings } from '../gatherings/GatheringsContext';
 import { tableErrorText } from './copy';
 
 /**
@@ -70,7 +72,9 @@ const hoursOn = (day: Date) => {
 export function TableSheet({ open, room, onClose, onSaved, table }: TableSheetProps) {
   const { t, locale } = useI18n();
   const wide = useWideLayout();
+  const navigate = useNavigate();
   const { api, remember } = useTables();
+  const gatherings = useGatherings();
   const profile = useStudyProfile();
   const [preferred] = useRhythmPreference();
 
@@ -112,9 +116,18 @@ export function TableSheet({ open, room, onClose, onSaved, table }: TableSheetPr
     if (!open || !picked) return;
     let stale = false;
     const id = picked.id;
-    getEventsForDate(picked.date)
-      .then((e) => !stale && setLoaded({ day: id, events: e.filter((x) => x.roomIdent === room.ident) }))
-      .catch(() => !stale && setLoaded({ day: id, events: [] }));
+    // Lectures and gatherings in the room both make it taken.
+    const from = fromCampusWallClock(picked.date);
+    const to = new Date(from.getTime() + 24 * 60 * MIN);
+    Promise.all([
+      getEventsForDate(picked.date).catch(() => [] as ScheduledEvent[]),
+      gatherings.api ? gatherings.api.inRoom(roomKey(room.ident), from, to).catch(() => []) : Promise.resolve([]),
+    ]).then(([events, others]) => {
+      if (stale) return;
+      const taken = others.map((o) => ({ id: -1, roomIdent: room.ident, roomName: null, eventType: 'gathering', durationMinutes: 0,
+        startDateTime: toCampusWallClock(o.startsAt), endDateTime: toCampusWallClock(o.endsAt) }) as ScheduledEvent);
+      setLoaded({ day: id, events: [...events.filter((x) => x.roomIdent === room.ident), ...taken] });
+    });
     return () => {
       stale = true;
     };
@@ -225,7 +238,16 @@ export function TableSheet({ open, room, onClose, onSaved, table }: TableSheetPr
                   </button>
                 ))}
               </div>
-              {seats === 1 && <p style={fine}>{t('A planned solo session. No link to share.', 'Eine geplante Solo-Session. Kein Link zum Teilen.')}</p>}
+              {seats === 1 ? (
+                <p style={fine}>{t('A planned solo session. No link to share.', 'Eine geplante Solo-Session. Kein Link zum Teilen.')}</p>
+              ) : gatherings.api && (
+                <p style={fine}>
+                  {t('More people? ', 'Mehr Leute? ')}
+                  <button type="button" onClick={() => { onClose(); navigate('/profile?register'); }} style={{ border: 'none', background: 'none', padding: 0, color: 'var(--md-primary)', font: 'inherit', cursor: 'pointer' }}>
+                    {t('Register your group', 'Gruppe registrieren')}
+                  </button>
+                </p>
+              )}
             </div>
             {wide && <SeatRing seats={seats} taken={1} mine={0} label={room.code} size={120} title={t(`${seats} seats`, `${seats} Plätze`)} />}
           </div>

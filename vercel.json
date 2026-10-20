@@ -19,6 +19,11 @@
       "missing": [{ "type": "query", "key": "app" }],
       "destination": "/api/share?t=:link"
     },
+    {
+      "source": "/g/:link",
+      "missing": [{ "type": "query", "key": "app" }],
+      "destination": "/api/share?g=:link"
+    },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "headers": [

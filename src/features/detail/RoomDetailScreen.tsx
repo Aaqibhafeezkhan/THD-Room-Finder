@@ -11,6 +11,7 @@ import { formatDayTime, formatTime, statusBannerText } from '../../domain/format
 import { Page, Spinner, EmptyState } from '../shared/ui';
 import { RoomFocusPanel } from '../focus/RoomFocusPanel';
 import { useTableFlow } from '../tables/useTableFlow';
+import { RoomGatherings } from '../gatherings/RoomGatherings';
 import { useTables } from '../tables/TablesContext';
 import { tableChip } from '../tables/YourTables';
 import { seatsTitle, topicOf } from '../tables/copy';
@@ -127,6 +128,7 @@ export function RoomDetailScreen() {
               onClick={() => navigate(`/t/${x.link}`)}
             />
           ))}
+        <RoomGatherings room={room} />
 
         {/* Identity + facilities. */}
         <div

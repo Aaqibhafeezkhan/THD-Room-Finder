@@ -81,16 +81,17 @@ export interface FreeSlot {
 /**
  * The room's free slots on one day, cut to the lecture grid: a grid start
  * inside opening hours, not in the past, free for at least 25 minutes. The
- * slot runs until the next event in the room, closing, or 3 hours.
+ * slot runs until the next event in the room, closing, or 3 hours
+ * (`maxMinutes`; gatherings pass 6 hours).
  */
-export function freeSlots(day: TableDay, roomEvents: ScheduledEvent[], now: Date): FreeSlot[] {
+export function freeSlots(day: TableDay, roomEvents: ScheduledEvent[], now: Date, maxMinutes: number = TABLE_MAX_MINUTES): FreeSlot[] {
   if (!day.open || !day.close) return [];
   const out: FreeSlot[] = [];
   for (const hhmm of LECTURE_GRID) {
     const start = at(day.date, hhmm);
     if (start < day.open || start.getTime() < now.getTime() - 5 * MIN) continue;
     if (roomEvents.some((e) => e.startDateTime <= start && e.endDateTime > start)) continue;
-    let end = new Date(Math.min(day.close.getTime(), start.getTime() + TABLE_MAX_MINUTES * MIN));
+    let end = new Date(Math.min(day.close.getTime(), start.getTime() + maxMinutes * MIN));
     for (const e of roomEvents) if (e.startDateTime > start && e.startDateTime < end) end = e.startDateTime;
     const minutes = Math.round((end.getTime() - start.getTime()) / MIN);
     if (minutes >= TABLE_MIN_MINUTES) out.push({ id: hhmm, start, end, minutes });
