@@ -134,7 +134,7 @@ Errors carry a stable `hint` for the app to branch on; `message` is for logs.
 | `invalid_duration`, `invalid_rhythm`, `invalid_visibility`, `invalid_request`, `unknown_room` | 22023 | Bad input |
 | `invalid_programme`, `public_needs_batch`, `needs_profile` | 22023 | Unknown programme or intake; Public without a listed programme; a claim without a study profile |
 | `already_active` | 23505 | A session is running and `replace` was not set |
-| `stale_version` | 40001 | The record changed elsewhere; reload and retry |
+| `stale_version` | PT409 (HTTP 409) | The record changed elsewhere; reload and retry. Not 40001: PostgREST retries that until the gateway times out |
 | `not_active` | P0002 | Renew or update on a session that has ended or expired |
 | `rate_limited` | 53400 | More than 20 starts in an hour |
 | `invalid_history`, `too_many_entries` | 22023 | History upload that is not an array, or over 500 entries |
