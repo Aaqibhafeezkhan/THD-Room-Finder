@@ -61,12 +61,12 @@ export interface PersonLike {
 export const personBatch = (p: PersonLike, now: Date) =>
   p.programme && p.intakeYear && p.intakeTerm ? batchLabel(p.programme, { year: p.intakeYear, term: p.intakeTerm }, now) : p.programme ?? '';
 
-/** Going and maybe counted per programme, most first, then the rest. */
+/** Going and maybe counted per programme, most first, then the rest; '' is no programme given. */
 export function programmeCounts(people: PersonLike[], top = 3): { shown: [string, number][]; others: number; otherProgrammes: number } {
   const counts = new Map<string, number>();
   for (const p of people) {
     if (p.answer !== 'going' && p.answer !== 'maybe') continue;
-    const key = p.programme ?? '—';
+    const key = p.programme ?? '';
     counts.set(key, (counts.get(key) ?? 0) + 1);
   }
   const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));

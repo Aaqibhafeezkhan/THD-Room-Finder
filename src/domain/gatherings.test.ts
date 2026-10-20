@@ -37,6 +37,10 @@ describe('gatherings', () => {
     expect(c.others).toBe(1);
   });
 
+  it('counts people without a programme under an empty key', () => {
+    expect(programmeCounts([person(null, 'going'), person(null, 'maybe')]).shown).toEqual([['', 2]]);
+  });
+
   it('exports people without email addresses', () => {
     const csv = peopleCsv([person('AIN', 'going', 'Max, Jr.')], new Date('2026-10-20T10:00:00Z'));
     expect(csv.split('\n')[0]).toBe('Name,Batch,Reply,Replied at');
