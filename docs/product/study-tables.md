@@ -74,7 +74,7 @@ flowchart LR
 |---|---|---|---|
 | T1 | set a table from a room I am looking at | the room is one I know is free | **Set a table** sits under Start focus on room detail. The sheet opens with that room fixed |
 | T2 | pick a time from the room's free slots | I can't pick a time when a lecture is on | Day chips (Today, Tomorrow, then weekdays to 2 weeks). For the day, slot chips from the room's free windows, cut to the lecture grid (08:00, 09:45, 11:30, 13:15, 15:00, 16:45, 18:30) and opening hours. A closed day shows "Closed" |
-| T3 | choose how many seats | it feels like a real table | Seat chips 2 · 4 · 6 · 8, default 4. **Just me** makes it a planned solo session with no link |
+| T3 | choose how many seats | it feels like a real table | Seat chips 2 · 4 · 6 · 8 · 12, default 4. **Just me** makes it a planned solo session with no link. Under the chips: "More people? Register your group", which leads to [organizations](organizations.md) |
 | T4 | say what we study, optionally | people know what the table is for | One line, up to 40 characters, placeholder "What are you studying?" |
 | T5 | keep the length simple | there is no form to fill | Length = the slot, capped at 3 h; rhythm = my focus rhythm, shown as one line I can change |
 
@@ -125,6 +125,20 @@ flowchart LR
 
 There is no new tab, no table list for strangers and no search.
 
+## Phones, tablets and desktops
+
+The table follows the app's layouts; nothing about it is phone-only.
+
+| Window | Navigation | Set a table | Table page | Your tables |
+|---|---|---|---|---|
+| Phone, portrait | Bottom bar | Bottom sheet | One column: ring on top, details, actions in thumb reach | Profile section |
+| Phone, landscape | Rail | Dialog, slots and seats side by side | Ring left, details and actions right | Profile, two columns |
+| Tablet, portrait | Bottom bar | Bottom sheet, wider chips | One column, ring at 168 | Profile section |
+| Tablet, landscape, desktop | Rail (tablet) or drawer (≥ 840 px) | Centred dialog, 560 px | Ring left at 240, details and actions right, max 960 px | Profile: tables in a grid of cards |
+
+On wide windows the reminder banner sits at the bottom of the content area,
+not under the rail or drawer.
+
 ## Screens and states
 
 ### Set a table (sheet)
@@ -134,7 +148,7 @@ There is no new tab, no table list for strangers and no search.
 │ Set a table in C001            │
 │ Today  Tomorrow  Thu  Fri  …   │  day chips
 │ 13:15  15:00  16:45            │  free slots that day
-│ Seats  2  [4]  6  8  Just me   │
+│ Seats  2 [4] 6 8 12  Just me   │
 │ What are you studying?  ____   │
 │ Pomodoro · 25/5 · Change       │
 │ [ Set table ]                  │
@@ -208,7 +222,7 @@ nothing new in the palette. Ochre stays reserved for the city layer.
 |---|---|
 | When | Today up to 14 days ahead, only inside opening hours |
 | Length | The chosen slot, 25 minutes to 3 hours |
-| Seats | 2, 4, 6 or 8; Just me = 1 |
+| Seats | 2, 4, 6, 8 or 12; Just me = 1. Larger groups register as an organization |
 | Tables you host | Up to 5 upcoming |
 | Topic | Optional, up to 40 characters |
 | Link | Two words and two digits, e.g. `mossy-lagoon-42`, from a list of 1,024 short plain English words |
@@ -226,4 +240,5 @@ nothing new in the palette. Ochre stays reserved for the city layer.
 ## Out of scope
 
 Friends and follows, chat, recurring tables, calendar export, tables visible
-to a whole batch, organizations (M3, [organizations](organizations.md)).
+to a whole batch, tables over 12 seats. Gatherings for 20, 60 or 120 people
+are an organization feature (M3, [organizations](organizations.md)).

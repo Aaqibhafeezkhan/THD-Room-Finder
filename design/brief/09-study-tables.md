@@ -30,7 +30,7 @@ hasn't started. Teal marks free slots. No new colours.
 
 | Component | Notes |
 |---|---|
-| `SeatRing` | SVG. 1–8 seats evenly around a circle; states taken / mine / empty / host; size 96 (rows) and 168 (page). Cancelled: everything at 38 % with a dashed table edge |
+| `SeatRing` | SVG. 1–12 seats evenly around a circle (12 sit closer and smaller); states taken / mine / empty / host; size 96 (rows) and 168 (page). Cancelled: everything at 38 % with a dashed table edge |
 | `StudyTableCard` | Ring left on wide cards, on top on phones. Topic as title, then when, where and who as three short lines |
 | `SlotChips` | Two rows of `Chip`: days, then slots. Slot chips show the start and, small, how long the room stays free |
 | `ReplyBar` | `Take a seat` filled violet; Maybe and Can't as text buttons. Seated: "You're at this table" with the two others |
@@ -39,7 +39,10 @@ hasn't started. Teal marks free slots. No new colours.
 
 ## Layout
 
-Phones: everything in one column, primary action in thumb reach. From medium
-width, the table page puts the ring beside the details. Landscape phones use
-the rail, like the rest of the app. Text up to 200 % wraps; the ring scales
-with the card.
+Phones: everything in one column, primary action in thumb reach. Wide
+windows (landscape, tablets on their side, desktops) put the ring at 240
+beside the details, cap the page at 960 px and show Set a table as a
+centred dialog. Your tables becomes a grid of `StudyTableCard`s. Landscape
+phones use the rail, like the rest of the app. Text up to 200 % wraps; the
+ring scales with the card. Specimens: phone, tablet portrait, tablet
+landscape and desktop.

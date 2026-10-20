@@ -1,0 +1,138 @@
+<!-- @dsCard group="Study tables (M2)" viewport="1400x3300" name="Study tables — tablet and desktop" subtitle="The same table on wide windows: desktop table page with the drawer, Your tables as a grid with the reminder, Set a table as a dialog on a tablet in landscape, the table page on a tablet held upright, and a phone in landscape with the rail." -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study tables — wide windows</title>
+<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+  .device { position: relative; overflow: hidden; border-radius: 18px; background: var(--md-bg); color: var(--md-on-surface);
+    box-shadow: 0 10px 40px rgba(30,20,60,.18); display: flex; font-size: var(--body-medium-size); }
+  .drawer { width: 260px; flex: none; background: var(--md-surface); padding: 20px 12px; display: flex; flex-direction: column; gap: 4px; }
+  .drawer .logo { font-size: var(--title-medium-size); font-weight: 600; padding: 4px 16px 18px; }
+  .drawer span { height: 52px; border-radius: 26px; display: flex; align-items: center; padding: 0 16px; color: var(--md-on-surface-variant); font-weight: 500; }
+  .drawer span.on { background: var(--md-secondary-container); color: var(--md-on-secondary-container); }
+  .rail { width: 80px; flex: none; background: var(--md-surface); display: flex; flex-direction: column; align-items: center; gap: 18px; padding-top: 24px; font-size: 12px; color: var(--md-on-surface-variant); }
+  .rail span { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .rail i { width: 56px; height: 32px; border-radius: 16px; display: block; }
+  .rail .on i { background: var(--md-secondary-container); }
+  .rail .on { color: var(--md-on-surface); font-weight: 600; }
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; position: relative; }
+  .main .bar { padding: 0 32px; }
+  .content { flex: 1; overflow: hidden; padding: 8px 32px 32px; }
+  .wide-card { max-width: 960px; display: grid; grid-template-columns: 280px 1fr; gap: 32px; align-items: center; }
+  .wide-card .ring { padding: 0; }
+  .detail { display: flex; flex-direction: column; gap: 14px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; max-width: 960px; }
+  .tcard { background: var(--md-surface); border-radius: var(--radius-l); box-shadow: var(--md-shadow-1); padding: 16px; display: flex; gap: 14px; align-items: center; }
+  .tcard .t b { display: block; font-weight: 500; font-size: var(--body-large-size); margin-bottom: 2px; }
+  .tcard .t span { font-size: var(--body-small-size); color: var(--md-on-surface-variant); display: block; line-height: 1.45; }
+  .main .banner { bottom: 24px; left: 32px; right: auto; width: 420px; }
+  .dialog { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 560px; background: var(--md-surface); border-radius: 28px;
+    padding: 24px; display: flex; flex-direction: column; gap: 14px; box-shadow: var(--md-shadow-3, 0 12px 40px rgba(0,0,0,.25)); }
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  h2 { font-size: 18px; font-weight: 500; margin: 0 0 4px; }
+</style>
+</head>
+<body>
+<h1>Study tables on wide windows</h1>
+<p class="lede">Nothing about a table is phone-only. Wide windows put the ring at 240 beside the details and cap the page at 960 px; Set a table becomes a centred dialog; Your tables becomes a grid of cards. A tablet held upright stays in one column with the bottom bar. Spec: docs/product/study-tables.md → Phones, tablets and desktops.</p>
+<div id="out"></div>
+
+<script src="seats.js"></script>
+<script>
+const items = ['Campus', 'Rooms', 'Profile'];
+const drawer = (on) => `<div class="drawer"><div class="logo">THD Room Finder</div>${items.map(n => `<span class="${n === on ? 'on' : ''}">${n}</span>`).join('')}</div>`;
+const rail = (on) => `<div class="rail">${items.map(n => `<span class="${n === on ? 'on' : ''}"><i></i>${n}</span>`).join('')}</div>`;
+const navBar = (on) => `<div class="nav">${items.map(n => `<span class="${n === on ? 'on' : ''}"><i></i>${n}</span>`).join('')}</div>`;
+const block = (title, note, html) => `<section style="margin-bottom:48px"><h2>${title}</h2><p class="label" style="max-width:900px;margin:0 0 14px">${note}</p>${html}</section>`;
+
+const desktopTable = `<div class="device" style="width:1280px;height:520px">${drawer('Profile')}
+  <div class="main"><div class="bar"><span class="back">‹</span>Study table</div>
+  <div class="content"><div class="card wide-card" style="padding:32px">
+    <div class="ring">${seatRing(['taken', 'mine', 'taken', 'taken', 'empty', 'empty'], { size: 240 })}</div>
+    <div class="detail">
+      <span class="tag violet">Starts in 10 min</span>
+      <p class="title" style="font-size:28px">Algorithms</p>
+      <p class="meta"><b>Today · 13:15–14:45</b><br>C001 · <span class="free">free now</span> · Pomodoro 25/5<br>You, Max, Lena and 1 more · 1 maybe</p>
+      <div class="actions"><button class="btn focus">Start focus in C001</button><span class="fine" style="margin-left:8px">You're at this table</span><button class="btn text">Maybe</button><button class="btn text">Can't</button></div>
+      <div class="actions"><button class="btn tonal">Share link</button><button class="btn text">Email</button></div>
+      <p class="fine">Anyone with this link can see the table. An invite, not a room booking.</p>
+    </div></div></div></div></div>`;
+
+const desktopProfile = `<div class="device" style="width:1280px;height:640px">${drawer('Profile')}
+  <div class="main"><div class="bar">Profile</div>
+  <div class="content" style="display:flex;flex-direction:column;gap:14px">
+    <div class="card" style="padding:12px 16px;max-width:960px"><p class="meta"><b>Lena</b> · AIN 7</p></div>
+    <b style="font-size:var(--title-medium-size);font-weight:500">Your tables</b>
+    <div class="grid">
+      <div class="tcard">${seatRing(['taken', 'mine', 'taken', 'taken', 'empty', 'empty'], { size: 72, code: '' })}<div class="t"><b>Algorithms</b><span>Today 13:15 · C001</span><span>4 of 6 seats</span></div><span class="tag violet">Soon</span></div>
+      <div class="tcard">${seatRing(['mine', 'taken', 'taken', 'taken'], { size: 72, code: '' })}<div class="t"><b>Exam prep · Maths 3</b><span>Fri 09:45 · E 212</span><span>Full · 4 of 4</span></div><span class="tag blue">Changed</span></div>
+      <div class="tcard">${seatRing(['mine'], { size: 72, code: '' })}<div class="t"><b>Just me</b><span>Mon 08:00 · I 112</span><span>Planned solo session</span></div></div>
+      <div class="tcard">${seatRing(['mine', 'taken', 'taken', 'taken', 'taken', 'taken', 'taken', 'empty', 'empty', 'empty', 'empty', 'empty'], { size: 72, code: '' })}<div class="t"><b>Study group SE</b><span>Wed 15:00 · A 008</span><span>7 of 12 seats</span></div></div>
+    </div>
+    <b style="font-size:var(--title-medium-size);font-weight:500">Saved rooms</b>
+  </div>
+  <div class="banner"><span><b>Algorithms</b> starts at 13:15 · C001</span><button class="btn text">Open</button><button class="btn text">✕</button></div>
+  </div></div>`;
+
+const tabletDialog = `<div class="device" style="width:1024px;height:720px">${rail('Rooms')}
+  <div class="main"><div class="bar"><span class="back">‹</span>C001</div>
+  <div class="content" style="display:flex;flex-direction:column;gap:12px;max-width:640px">
+    <div class="room"><span>Free now<br><small>until 20:00</small></span><big>3h 40m</big></div>
+    <button class="btn primary wide">Start focus</button><button class="btn tonal wide">Set a table</button>
+  </div>
+  <div class="scrim"></div>
+  <div class="dialog">
+    <div class="title">Set a table in C001</div>
+    <div class="chips"><span class="chip">Today</span><span class="chip on">Tomorrow</span><span class="chip">Thu</span><span class="chip">Fri</span><span class="chip">Mon</span><span class="chip off">Sat · Closed</span></div>
+    <div class="chips"><span class="chip slot">09:45 <small>1h 30</small></span><span class="chip slot on">13:15 <small>3 h</small></span><span class="chip slot">16:45 <small>1h 45</small></span></div>
+    <div class="split">
+      <div><div class="lab" style="margin-bottom:6px">Seats</div><div class="chips"><span class="chip">2</span><span class="chip on">4</span><span class="chip">6</span><span class="chip">8</span><span class="chip">12</span><span class="chip">Just me</span></div>
+      <p class="fine" style="margin-top:6px">More people? <span style="color:var(--md-primary)">Register your group</span></p></div>
+      <div style="display:flex;justify-content:center">${seatRing(['mine', 'empty', 'empty', 'empty'], { size: 120 })}</div>
+    </div>
+    <div class="field">What are you studying?</div>
+    <p class="fine">Pomodoro · 25 min focus, 5 min break · <span style="color:var(--md-primary)">Change</span></p>
+    <div class="actions" style="justify-content:flex-end"><button class="btn text">Cancel</button><button class="btn focus">Set table</button></div>
+    <p class="fine" style="text-align:right">An invite, not a room booking.</p>
+  </div></div></div>`;
+
+const tabletPortrait = `<div class="device" style="width:768px;height:1024px;flex-direction:column">
+  <div class="bar"><span class="back">‹</span>Study table</div>
+  <div class="page" style="padding:8px 48px 24px;gap:16px">
+    <div class="card" style="padding:24px">
+      <div class="ring">${seatRing(['taken', 'taken', 'taken', 'empty', 'empty', 'empty', 'empty', 'empty'], { size: 200 })}</div>
+      <p class="title" style="font-size:26px">Linear algebra, chapter 4</p>
+      <p class="meta"><b>Thu 22 Oct · 11:30–13:00</b><br>J 101 · <span class="free">free then</span> · 50/10<br>Max, Lena and 1 more · 2 maybe</p>
+    </div>
+    <button class="btn focus wide">Take a seat</button>
+    <div class="actions" style="justify-content:center"><button class="btn text">Maybe</button><button class="btn text">Can't make it</button></div>
+    <p class="fine">Taking a seat signs you in with a code by email. No password.</p>
+    <p class="fine">Anyone with this link can see the table. An invite, not a room booking.</p>
+  </div>${navBar('Campus')}</div>`;
+
+const phoneLandscape = `<div class="device" style="width:800px;height:360px">${rail('Campus')}
+  <div class="main"><div class="bar" style="height:48px"><span class="back">‹</span>Study table</div>
+  <div class="content" style="display:grid;grid-template-columns:180px 1fr;gap:20px;padding:0 24px 16px;align-items:start">
+    ${seatRing(['taken', 'taken', 'taken', 'empty', 'empty', 'empty'], { size: 168 })}
+    <div class="detail" style="gap:8px">
+      <p class="title">Algorithms</p>
+      <p class="meta"><b>Wed 21 Oct · 13:15–14:45</b><br>C001 · <span class="free">free then</span> · Pomodoro<br>Max, Lena and 1 more · 1 maybe</p>
+      <div class="actions"><button class="btn focus">Take a seat</button><button class="btn text">Maybe</button><button class="btn text">Can't</button></div>
+      <p class="fine">An invite, not a room booking.</p>
+    </div></div></div></div>`;
+
+document.getElementById('out').innerHTML =
+  block('Desktop · table page, seated, starting soon', 'Drawer from 840 px. The ring sits at 240 on the left of one card; topic, time, room and people on the right; Start focus is the one filled button.', desktopTable) +
+  block('Desktop · Your tables with the reminder', 'Profile on wide windows shows tables as a grid of cards with a 72 px ring. The reminder banner sits in the content area, bottom left, not under the drawer. The 12-seat table shows smaller seats.', desktopProfile) +
+  block('Tablet landscape · Set a table as a dialog', 'Rail from 600 px in landscape. The sheet becomes a centred 560 px dialog; seats and a live preview ring sit side by side.', tabletDialog) +
+  `<div class="row">` +
+  block('Tablet portrait · guest', 'A tablet held upright keeps the phone layout with more room: bottom bar, one column, ring at 200.', tabletPortrait) +
+  block('Phone landscape · guest', 'Rail, ring left, details and actions right, all above the fold.', phoneLandscape) +
+  `</div>`;
+</script>
+</body>
+</html>

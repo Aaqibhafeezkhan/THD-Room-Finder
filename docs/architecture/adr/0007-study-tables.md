@@ -20,7 +20,7 @@ way.
 ### 1. One object: the study table
 
 A table has a host, a room, a start and end inside one of the room's free
-windows, a seat count (1 to 8), an optional topic and a focus rhythm. One
+windows, a seat count (1, 2, 4, 6, 8 or 12), an optional topic and a focus rhythm. One
 seat ("Just me") is a planned solo session and has no link to share. There is
 no group, friend or follower entity.
 
@@ -41,7 +41,9 @@ breaking old links.
 ### 3. Seats and replies
 
 Take a seat holds one of the seats; Maybe holds none; Can't removes the
-reply. The host holds a seat. A full table refuses new seats.
+reply. The host holds a seat. A full table refuses new seats. Twelve is the
+ceiling for a table: past that it is a gathering, which belongs to an
+organization (ADR 0008) and uses the room's real capacity.
 
 ### 4. Same boundary as the focus service
 

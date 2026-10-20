@@ -11,8 +11,8 @@
       ["Study tables", "planned"], ["Table links and seats", "planned"], ["Your tables and reminders", "planned"],
       ["Start together, in step", "planned"], ["Handles and display names", "planned"], ["Group focus graph", "planned"]]},
     {"name": "Student groups", "chip": "Later", "stories": [
-      ["Public registry with THD AI", "planned"], ["Verified tag", "planned"], ["Member links", "planned"],
-      ["Org pages and open tables", "planned"], ["Moderation", "planned"]]},
+      ["Groups register themselves", "planned"], ["Verified tag", "planned"], ["Organizer links", "planned"],
+      ["Gatherings in approved rooms", "planned"], ["Halls and replies", "planned"], ["Group pages", "planned"]]},
     {"name": "Around Deggendorf", "chip": "Later", "stories": [
       ["City map", "planned"], ["Events in town", "planned"], ["Museums and venues", "planned"],
       ["Automatic updates", "planned"]]}

@@ -6,91 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Study tables — screens</title>
 <link rel="stylesheet" href="../../styles.css">
-<style>
-  * { box-sizing: border-box; }
-  body { margin: 0; font-family: var(--font-sans); background: #e9e7ef; color: #1c1b1f; padding: 40px; }
-  h1 { font-size: 28px; font-weight: 500; margin: 0 0 6px; }
-  .lede { margin: 0 0 32px; color: #4e4a57; max-width: 760px; line-height: 1.5; }
-  .row { display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start; margin-bottom: 48px; }
-  .shot { display: flex; flex-direction: column; gap: 10px; }
-  .label { font-size: 13px; color: #4e4a57; max-width: 360px; }
-  .label b { color: #1c1b1f; font-weight: 600; }
-
-  .phone { width: 360px; height: 740px; border-radius: 28px; overflow: hidden; position: relative;
-    background: var(--md-bg); color: var(--md-on-surface); box-shadow: 0 10px 40px rgba(30,20,60,.18);
-    display: flex; flex-direction: column; font-size: var(--body-medium-size); }
-  .bar { height: 56px; display: flex; align-items: center; gap: 12px; padding: 0 16px; font-size: var(--title-large-size); }
-  .bar .back { font-size: 22px; color: var(--md-on-surface-variant); }
-  .page { flex: 1; overflow: hidden; padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 12px; }
-  .nav { height: 72px; display: flex; justify-content: space-around; align-items: center; background: var(--md-surface);
-    font-size: 12px; color: var(--md-on-surface-variant); }
-  .nav span { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .nav i { width: 56px; height: 28px; border-radius: 14px; display: block; background: transparent; }
-  .nav .on i { background: var(--md-secondary-container); }
-  .nav .on { color: var(--md-on-surface); font-weight: 600; }
-
-  .card { background: var(--md-surface); border-radius: var(--radius-l); box-shadow: var(--md-shadow-1); padding: 16px; display: flex; flex-direction: column; gap: 10px; }
-  .title { font-size: var(--title-large-size); font-weight: 500; margin: 0; }
-  .meta { color: var(--md-on-surface-variant); margin: 0; line-height: 1.45; }
-  .meta b { color: var(--md-on-surface); font-weight: 500; }
-  .free { color: var(--md-tertiary); }
-  .warn { color: var(--md-error); }
-  .ring { display: flex; justify-content: center; padding: 4px 0; }
-
-  .btn { min-height: 48px; border: none; border-radius: var(--radius-full); font: inherit; font-weight: 500; padding: 0 20px; }
-  .btn.focus { background: var(--md-focus); color: var(--md-on-focus); }
-  .btn.primary { background: var(--md-primary); color: var(--md-on-primary); }
-  .btn.tonal { background: var(--md-secondary-container); color: var(--md-on-secondary-container); }
-  .btn.text { background: none; color: var(--md-primary); padding: 0 12px; }
-  .btn.wide { width: 100%; }
-  .btn[disabled] { opacity: .38; }
-  .actions { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
-  .fine { font-size: var(--body-small-size); color: var(--md-on-surface-variant); margin: 0; }
-
-  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
-  .chip { height: 36px; padding: 0 14px; border-radius: var(--radius-s); border: 1px solid var(--md-outline-variant);
-    display: inline-flex; align-items: center; gap: 6px; background: var(--md-surface); color: var(--md-on-surface); font-weight: 500; }
-  .chip small { font-weight: 400; color: var(--md-on-surface-variant); }
-  .chip.on { background: var(--md-focus-container); color: var(--md-on-focus-container); border-color: transparent; }
-  .chip.slot.on { background: var(--md-tertiary-container); color: var(--md-on-tertiary-container); }
-  .chip.off { color: var(--md-on-surface-variant); opacity: .5; }
-  .field { min-height: 48px; border: 1px solid var(--md-outline); border-radius: var(--radius-s); display: flex; align-items: center; padding: 0 14px; color: var(--md-on-surface-variant); }
-  .tag { align-self: flex-start; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
-  .tag.violet { background: var(--md-focus-container); color: var(--md-on-focus-container); }
-  .tag.red { background: var(--md-error-container); color: var(--md-on-error-container); }
-  .tag.blue { background: var(--md-secondary-container); color: var(--md-on-secondary-container); }
-  .lab { font-size: var(--label-large-size); color: var(--md-on-surface-variant); }
-
-  .scrim { position: absolute; inset: 0; background: rgba(0,0,0,.32); }
-  .sheet { position: absolute; left: 0; right: 0; bottom: 0; background: var(--md-surface); border-radius: 28px 28px 0 0; padding: 20px 20px 24px; display: flex; flex-direction: column; gap: 14px; }
-  .handle { width: 32px; height: 4px; border-radius: 2px; background: var(--md-outline-variant); align-self: center; margin-top: -8px; }
-
-  .list { background: var(--md-surface); border-radius: var(--radius-l); box-shadow: var(--md-shadow-1); overflow: hidden; }
-  .trow { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--md-outline-variant); }
-  .trow:first-child { border-top: none; }
-  .trow .t { flex: 1; min-width: 0; }
-  .trow .t b { display: block; font-weight: 500; font-size: var(--body-large-size); }
-  .trow .t span { font-size: var(--body-small-size); color: var(--md-on-surface-variant); }
-  .banner { position: absolute; left: 12px; right: 12px; bottom: 84px; background: var(--md-focus-container); color: var(--md-on-focus-container);
-    border-radius: var(--radius-l); box-shadow: var(--md-shadow-2); padding: 12px 8px 12px 16px; display: flex; align-items: center; gap: 8px; }
-  .banner span { flex: 1; }
-  .banner b { color: var(--md-focus); }
-  .room { background: var(--status-free-bg, var(--md-tertiary-container)); color: var(--md-on-tertiary-container); border-radius: var(--radius-l); padding: 16px; display: flex; justify-content: space-between; align-items: baseline; }
-  .room big { font-family: var(--font-mono); font-size: 28px; }
-
-  .chat { width: 360px; border-radius: 28px; padding: 18px; background: #e5ddd5; display: flex; flex-direction: column; gap: 10px; }
-  .chat.dark { background: #0b141a; }
-  .bubble { align-self: flex-end; width: 290px; background: #d9fdd3; border-radius: 12px; padding: 6px; font-size: 14px; color: #111; }
-  .chat.dark .bubble { background: #005c4b; color: #e9edef; }
-  .bubble .prev { background: rgba(0,0,0,.05); border-radius: 8px; overflow: hidden; }
-  .chat.dark .bubble .prev { background: rgba(0,0,0,.25); }
-  .bubble .img { height: 150px; background: linear-gradient(135deg, #6a4ba8, #1565c0); display: flex; align-items: center; justify-content: center; }
-  .bubble .p { padding: 8px 10px; }
-  .bubble .p b { display: block; }
-  .bubble .p span { font-size: 12px; opacity: .7; }
-  .bubble .link { padding: 6px 4px 2px; color: #027eb5; }
-  .chat.dark .bubble .link { color: #53bdeb; }
-</style>
+<link rel="stylesheet" href="kit.css">
 </head>
 <body>
 <h1>Study tables</h1>
@@ -100,23 +16,8 @@
 <div class="row" id="light2"></div>
 <div class="row" data-theme="dark" id="dark" style="background:none"></div>
 
+<script src="seats.js"></script>
 <script>
-// SeatRing: N seats around a round table; states: mine, taken, empty.
-function seatRing(seats, { size = 168, code = 'C001', cancelled = false } = {}) {
-  const r = size / 2, table = size * 0.30, orbit = size * 0.40, seat = size * 0.085;
-  const parts = [`<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img" aria-label="${seats.filter(s => s !== 'empty').length} of ${seats.length} seats taken" style="opacity:${cancelled ? .38 : 1}">`];
-  parts.push(`<circle cx="${r}" cy="${r}" r="${table}" fill="var(--md-surface-variant)" stroke="var(--md-outline-variant)" stroke-width="1.5" ${cancelled ? 'stroke-dasharray="6 5"' : ''}/>`);
-  if (code) parts.push(`<text x="${r}" y="${r + size * 0.035}" text-anchor="middle" font-family="var(--font-mono)" font-size="${size * 0.1}" fill="var(--md-on-surface)">${code}</text>`);
-  seats.forEach((s, i) => {
-    const a = -Math.PI / 2 + (i * 2 * Math.PI) / seats.length;
-    const x = r + orbit * Math.cos(a), y = r + orbit * Math.sin(a);
-    if (s === 'empty') parts.push(`<circle cx="${x}" cy="${y}" r="${seat}" fill="none" stroke="var(--md-outline)" stroke-width="2"/>`);
-    else parts.push(`<circle cx="${x}" cy="${y}" r="${seat}" fill="var(--md-focus)"/>`);
-    if (s === 'mine') parts.push(`<circle cx="${x}" cy="${y}" r="${seat + 4}" fill="none" stroke="var(--md-focus)" stroke-width="2"/>`);
-  });
-  parts.push('</svg>');
-  return parts.join('');
-}
 const nav = (on) => `<div class="nav">${['Campus', 'Rooms', 'Profile'].map(n => `<span class="${n === on ? 'on' : ''}"><i></i>${n}</span>`).join('')}</div>`;
 const shot = (label, phone) => `<div class="shot"><div class="label">${label}</div>${phone}</div>`;
 
@@ -132,7 +33,7 @@ const s1 = `<div class="phone">
     <div class="title">Set a table in C001</div>
     <div class="chips"><span class="chip">Today</span><span class="chip on">Tomorrow</span><span class="chip">Thu</span><span class="chip off">Sat</span></div>
     <div class="chips"><span class="chip slot">09:45 <small>1h 30</small></span><span class="chip slot on">13:15 <small>3 h</small></span><span class="chip slot">16:45 <small>1h 45</small></span></div>
-    <div><div class="lab" style="margin-bottom:6px">Seats</div><div class="chips"><span class="chip">2</span><span class="chip on">4</span><span class="chip">6</span><span class="chip">8</span><span class="chip">Just me</span></div></div>
+    <div><div class="lab" style="margin-bottom:6px">Seats</div><div class="chips"><span class="chip">2</span><span class="chip on">4</span><span class="chip">6</span><span class="chip">8</span><span class="chip">12</span><span class="chip">Just me</span></div><p class="fine" style="margin-top:6px">More people? <span style="color:var(--md-primary)">Register your group</span></p></div>
     <div class="field">What are you studying?</div>
     <p class="fine">Pomodoro · 25 min focus, 5 min break · <span style="color:var(--md-primary)">Change</span></p>
     <button class="btn focus wide">Set table</button>
