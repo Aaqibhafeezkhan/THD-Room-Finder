@@ -86,7 +86,7 @@ export { TableTag } from './tables/TableTag';
 export type { TableTagProps, TableTagTone } from './tables/TableTag';
 export { StudyTableCard } from './tables/StudyTableCard';
 export type { StudyTableCardProps } from './tables/StudyTableCard';
-export { SlotChips } from './tables/SlotChips';
+export { SlotChips, choiceChip } from './tables/SlotChips';
 export type { SlotChipsProps, SlotDay, SlotOption } from './tables/SlotChips';
 export { ReplyBar } from './tables/ReplyBar';
 export type { ReplyBarProps, ReplyBarText, ReplyAnswer } from './tables/ReplyBar';

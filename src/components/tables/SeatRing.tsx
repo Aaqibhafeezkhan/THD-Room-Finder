@@ -25,8 +25,9 @@ export interface SeatRingProps {
 export function SeatRing({ seats, taken, mine = null, label, size = 168, cancelled = false, title, style = {} }: SeatRingProps) {
   const n = Math.max(1, Math.min(12, Math.round(seats)));
   const r = size / 2;
-  const table = size * (n > 8 ? 0.32 : 0.3);
-  const orbit = size * 0.4;
+  const table = size * (n > 8 ? 0.3 : 0.28);
+  // Leaves room for the ring around the viewer's seat inside the box.
+  const orbit = size * 0.37;
   const seat = size * (n > 8 ? 0.062 : 0.085);
   const ringGap = Math.max(2, size * 0.024);
   return (

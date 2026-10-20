@@ -73,8 +73,8 @@ flowchart LR
 | # | As a student I want to… | So that… | Acceptance |
 |---|---|---|---|
 | T1 | set a table from a room I am looking at | the room is one I know is free | **Set a table** sits under Start focus on room detail. The sheet opens with that room fixed |
-| T2 | pick a time from the room's free slots | I can't pick a time when a lecture is on | Day chips (Today, Tomorrow, then weekdays to 2 weeks). For the day, slot chips from the room's free windows, cut to the lecture grid (08:00, 09:45, 11:30, 13:15, 15:00, 16:45, 18:30) and opening hours. A closed day shows "Closed" |
-| T3 | choose how many seats | it feels like a real table | Seat chips 2 · 4 · 6 · 8 · 12, default 4. **Just me** makes it a planned solo session with no link. Under the chips: "More people? Register your group", which leads to [organizations](organizations.md) |
+| T2 | pick a time from the room's free slots | I can't pick a time when a lecture is on | Day chips (Today, Tomorrow, then weekday and date to 2 weeks; closed days are left out). For the day, slot chips from the room's free windows, cut to the lecture grid (08:00, 09:45, 11:30, 13:15, 15:00, 16:45, 18:30) and opening hours. When the first day has no slot left, the sheet opens on the next day that has one |
+| T3 | choose how many seats | it feels like a real table | Seat chips 2 · 4 · 6 · 8 · 12, default 4. **Just me** makes it a planned solo session with no link. Under the chips: "More than 12? Gatherings for student groups are coming", until [organizations](organizations.md) exist |
 | T4 | say what we study, optionally | people know what the table is for | One line, up to 40 characters, placeholder "What are you studying?" |
 | T5 | keep the length simple | there is no form to fill | Length = the slot, capped at 3 h; rhythm = my focus rhythm, shown as one line I can change |
 
@@ -160,7 +160,7 @@ not under the rail or drawer.
 |---|---|
 | Loading the day | Slot chips as skeletons |
 | No free slot that day | "No free slot on Thursday" and the next day with one |
-| Closed day | "Closed" on the chip, not selectable |
+| Closed day | Left out of the day chips |
 | Signed out | **Set table** asks for the email code first, then sets the table |
 | Error | Inline line above the button; nothing lost |
 

@@ -15,6 +15,7 @@ import { CampusScreen } from '../features/campus/CampusScreen';
 import { ProfileScreen } from '../features/profile/ProfileScreen';
 import { SettingsScreen } from '../features/profile/SettingsScreen';
 import { RoomDetailScreen } from '../features/detail/RoomDetailScreen';
+import { TableScreen } from '../features/tables/TableScreen';
 
 // Component specimen for `npm run dev` and Vercel previews; the import is
 // dropped from production builds because the condition is a build-time
@@ -75,6 +76,7 @@ export function AppShell() {
         <Route path="/f/*" element={<Navigate to="/" replace />} />
         <Route path="/i/*" element={<Navigate to="/" replace />} />
         <Route path="/room/:ident" element={<RoomDetailScreen />} />
+        <Route path="/t/:link" element={<TableScreen />} />
         {FocusGallery && (
           <Route
             path="/dev/focus"

@@ -32,6 +32,8 @@ export interface SlotChipsProps {
     slotsLabel: string;
     style?: CSSProperties;
 }
+/** The chip look, for other choices in the same sheet (seats). */
+export declare const choiceChip: (on: boolean, tone: "focus" | "free", disabled?: boolean) => CSSProperties;
 /**
  * @startingPoint section="Study tables" subtitle="Days, then the free slots of one room" viewport="700x160"
  */

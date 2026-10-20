@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { AppBar, IconButton, StatusCard } from '../../components';
+import { AppBar, Button, IconButton, StatusCard } from '../../components';
 import { IconMail, IconStar, IconStarFilled, IconUsers } from '../../components/icons';
 import { useRoomData } from '../rooms/RoomDataContext';
 import { useFavorites } from '../favorites/favorites';
@@ -10,6 +10,7 @@ import { mayBeLocked } from '../../domain/roomFilters';
 import { formatDayTime, formatTime, statusBannerText } from '../../domain/format';
 import { Page, Spinner, EmptyState } from '../shared/ui';
 import { RoomFocusPanel } from '../focus/RoomFocusPanel';
+import { useTableFlow } from '../tables/useTableFlow';
 
 const stickyBar = { position: 'sticky' as const, top: 0, zIndex: 10 };
 
@@ -22,6 +23,7 @@ export function RoomDetailScreen() {
 
   const ident = decodeURIComponent(params.ident ?? '');
   const room = rooms.find((r) => r.ident === ident);
+  const tableFlow = useTableFlow(room);
 
   const back = () => navigate(-1);
 
@@ -100,6 +102,11 @@ export function RoomDetailScreen() {
           closing={campusHours.todayClose}
           scheduleOnly={closed || isCustomTime}
         />
+        {tableFlow.available && (
+          <Button variant="tonal" size="large" onClick={tableFlow.start} style={{ alignSelf: 'stretch' }}>
+            {t('Set a table', 'Lerntisch anlegen')}
+          </Button>
+        )}
 
         {/* Identity + facilities. */}
         <div
@@ -221,6 +228,7 @@ export function RoomDetailScreen() {
           </div>
         </div>
       </Page>
+      {tableFlow.element}
     </>
   );
 }

@@ -36,7 +36,8 @@ export interface SlotChipsProps {
   style?: CSSProperties;
 }
 
-const chip = (on: boolean, tone: 'focus' | 'free', disabled = false): CSSProperties => ({
+/** The chip look, for other choices in the same sheet (seats). */
+export const choiceChip = (on: boolean, tone: 'focus' | 'free', disabled = false): CSSProperties => ({
   display: 'inline-flex',
   alignItems: 'center',
   gap: 6,
@@ -77,7 +78,7 @@ export function SlotChips({ days, day, onDay, slots, slot, onSlot, empty, daysLa
             aria-checked={d.id === day}
             aria-disabled={d.disabled || undefined}
             onClick={() => !d.disabled && onDay(d.id)}
-            style={chip(d.id === day, 'focus', d.disabled)}
+            style={choiceChip(d.id === day, 'focus', d.disabled)}
           >
             {d.label}
             {d.note && <small style={{ fontWeight: 400 }}>· {d.note}</small>}
@@ -102,7 +103,7 @@ export function SlotChips({ days, day, onDay, slots, slot, onSlot, empty, daysLa
                   role="radio"
                   aria-checked={s.id === slot}
                   onClick={() => onSlot(s.id)}
-                  style={chip(s.id === slot, 'free')}
+                  style={choiceChip(s.id === slot, 'free')}
                 >
                   <span style={{ fontVariantNumeric: 'tabular-nums' }}>{s.start}</span>
                   <small style={{ fontWeight: 400, color: s.id === slot ? undefined : 'var(--md-on-surface-variant)' }}>{s.free}</small>
