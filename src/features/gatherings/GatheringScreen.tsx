@@ -278,7 +278,13 @@ export function GatheringScreen() {
           <div style={{ ...line, borderTop: '1px solid var(--md-outline-variant)' }}>
             <span style={{ flex: 1 }}>
               <b style={{ display: 'block', fontWeight: 500 }}>{counts.shown.length ? counts.shown.map(([p, n]) => `${p || t('No programme given', 'Ohne Studiengang')} ${n}`).join(' · ') : t('No replies yet', 'Noch keine Antworten')}</b>
-              {counts.others > 0 && <span style={fine}>{t(`and ${counts.others} from ${counts.otherProgrammes} other programmes`, `und ${counts.others} aus ${counts.otherProgrammes} weiteren Studiengängen`)}</span>}
+              {counts.others > 0 && (
+                <span style={fine}>
+                  {counts.otherProgrammes === 1
+                    ? t(`and ${counts.others} from another programme`, `und ${counts.others} aus einem weiteren Studiengang`)
+                    : t(`and ${counts.others} from ${counts.otherProgrammes} other programmes`, `und ${counts.others} aus ${counts.otherProgrammes} weiteren Studiengängen`)}
+                </span>
+              )}
             </span>
             <Button variant="text" onClick={() => setShowPeople(true)}>{t('People', 'Personen')}</Button>
           </div>
