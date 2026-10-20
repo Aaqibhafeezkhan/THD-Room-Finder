@@ -89,7 +89,8 @@ export function TableScreen() {
     };
   }, [table?.link, table?.version, ident, rooms, teachingIdents]);
 
-  const reply = async (answer: Answer | 'no', showName = table?.myAnswer ? table.myShowName : (profile.identity?.showName ?? false)) => {
+  // People at a table see each other's first names (T12); no name, no name shown.
+  const reply = async (answer: Answer | 'no', showName = true) => {
     if (!api || !table) return;
     if (!profile.identity) {
       setPending(answer);
@@ -164,7 +165,7 @@ export function TableScreen() {
         minutes: Math.round((table.endsAt.getTime() - table.startsAt.getTime()) / 60_000),
         seats: table.seats,
         rhythm: table.rhythm,
-        showName: table.hostShowName,
+        showName: true,
       });
       setTable(saved);
       remember(saved);

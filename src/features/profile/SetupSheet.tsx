@@ -298,10 +298,10 @@ export function SetupSheet({ open, onClose, onDone, quick = false }: SetupSheetP
       <>
         <p style={sub}>
           {quick
-            ? t('Shown at a table only when you turn on "Show my name".', 'An einem Tisch nur sichtbar, wenn du „Meinen Namen zeigen" einschaltest.')
+            ? t('People at your tables see it.', 'Die Leute an deinen Tischen sehen ihn.')
             : t(
-                'Optional. Only shown in a Public session when you turn on "Show my name".',
-                'Optional. Nur in einer öffentlichen Session sichtbar, wenn du „Meinen Namen zeigen" einschaltest.',
+                'Optional. Shown at your study tables, and in a Public session when you turn on "Show my name".',
+                'Optional. An deinen Lerntischen sichtbar und in einer öffentlichen Session, wenn du „Meinen Namen zeigen" einschaltest.',
               )}
         </p>
         <input
