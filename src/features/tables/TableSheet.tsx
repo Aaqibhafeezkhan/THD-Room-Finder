@@ -28,7 +28,6 @@ import { useWideLayout } from '../../lib/useWindowClass';
 import { RhythmSheet } from '../focus/RhythmSheet';
 import { useRhythmPreference } from '../focus/rhythmPreference';
 import { rhythmName } from '../focus/sessionView';
-import { useStudyProfile } from '../profile/StudyProfileContext';
 import { useTables } from './TablesContext';
 import { useGatherings } from '../gatherings/GatheringsContext';
 import { tableErrorText } from './copy';
@@ -75,7 +74,6 @@ export function TableSheet({ open, room, onClose, onSaved, table }: TableSheetPr
   const navigate = useNavigate();
   const { api, remember } = useTables();
   const gatherings = useGatherings();
-  const profile = useStudyProfile();
   const [preferred] = useRhythmPreference();
 
   const [now, setNow] = useState(campusNow);
@@ -86,7 +84,6 @@ export function TableSheet({ open, room, onClose, onSaved, table }: TableSheetPr
   const [topic, setTopic] = useState('');
   const [rhythm, setRhythm] = useState(preferred);
   const [pickRhythm, setPickRhythm] = useState(false);
-  const [showName, setShowName] = useState(false);
   // The room's events, tagged with the day they belong to.
   const [loaded, setLoaded] = useState<{ day: string; events: ScheduledEvent[] } | null>(null);
   const [busy, setBusy] = useState(false);
@@ -104,7 +101,6 @@ export function TableSheet({ open, room, onClose, onSaved, table }: TableSheetPr
     setSeats(table?.seats ?? DEFAULT_SEATS);
     setTopic(table?.topic ?? '');
     setRhythm(table?.rhythm ?? preferred);
-    setShowName(table ? table.hostShowName : (profile.identity?.showName ?? false));
     setError('');
     // Only on open.
   }, [open]);
@@ -196,7 +192,8 @@ export function TableSheet({ open, room, onClose, onSaved, table }: TableSheetPr
       minutes: Math.min(TABLE_MAX_MINUTES, chosen.minutes),
       seats,
       rhythm,
-      showName,
+      // People at a table see each other's first names (T12); no name, no name shown.
+      showName: true,
     };
     try {
       const saved = table ? await api.change(table.link, table.version, input) : await api.set(input);
