@@ -13,8 +13,14 @@ export type Database = {
             [_ in never]: never
           }
           Functions: {
-            "cancel_table":
+            "cancel_gathering":
 { Args: { "p_link": string }; Returns: Json
+                           },
+"cancel_table":
+{ Args: { "p_link": string }; Returns: Json
+                           },
+"change_gathering":
+{ Args: { "p_approval_ref": string,"p_capacity": number,"p_description": string,"p_expected_version": number,"p_kind": string,"p_link": string,"p_minutes": number,"p_room_key": string,"p_starts_at": string,"p_title": string }; Returns: Json
                            },
 "change_table":
 { Args: { "p_break_minutes": number,"p_expected_version": number,"p_focus_minutes": number,"p_link": string,"p_long_break_minutes"?: number,"p_long_every"?: number,"p_minutes": number,"p_room_key": string,"p_seats": number,"p_show_name"?: boolean,"p_starts_at": string,"p_topic": string }; Returns: Json
@@ -22,11 +28,20 @@ export type Database = {
 "clear_focus_history":
 { Args: Record<PropertyKey, never>; Returns: number
                            },
+"create_organizer_invite":
+{ Args: { "p_slug": string }; Returns: Json
+                           },
 "delete_identity":
 { Args: Record<PropertyKey, never>; Returns: undefined
                            },
 "end_focus":
 { Args: { "p_session_id": string }; Returns: Json
+                           },
+"gathering_people":
+{ Args: { "p_link": string }; Returns: Json
+                           },
+"gathering_preview":
+{ Args: { "p_link": string }; Returns: Json
                            },
 "get_focus":
 { Args: Record<PropertyKey, never>; Returns: Json
@@ -34,16 +49,31 @@ export type Database = {
 "get_focus_history":
 { Args: { "p_since"?: string }; Returns: Json
                            },
+"get_gathering":
+{ Args: { "p_link": string }; Returns: Json
+                           },
 "get_identity":
 { Args: Record<PropertyKey, never>; Returns: Json
                            },
+"get_organization":
+{ Args: { "p_slug": string }; Returns: Json
+                           },
 "get_table":
 { Args: { "p_link": string }; Returns: Json
+                           },
+"join_organization":
+{ Args: { "p_token": string }; Returns: Json
                            },
 "list_programmes":
 { Args: Record<PropertyKey, never>; Returns: {
               "code": string,"id": string,"intake_terms": (string)[],"name_de": string,"name_en": string
             }[]
+                           },
+"my_gatherings":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"my_organizations":
+{ Args: Record<PropertyKey, never>; Returns: Json
                            },
 "my_tables":
 { Args: Record<PropertyKey, never>; Returns: Json
@@ -51,11 +81,23 @@ export type Database = {
 "put_focus_history":
 { Args: { "p_entries": Json }; Returns: number
                            },
+"registry_set_status":
+{ Args: { "p_issue"?: number,"p_no": number,"p_status": string }; Returns: Json
+                           },
 "renew_focus":
 { Args: { "p_expected_version": number,"p_session_id": string }; Returns: Json
                            },
+"reply_gathering":
+{ Args: { "p_answer": string,"p_consent"?: boolean,"p_link": string }; Returns: Json
+                           },
 "reply_table":
 { Args: { "p_answer": string,"p_link": string,"p_show_name"?: boolean }; Returns: Json
+                           },
+"request_organization":
+{ Args: { "p_description"?: string,"p_name": string,"p_slug": string,"p_support_url"?: string,"p_website"?: string }; Returns: Json
+                           },
+"room_gatherings":
+{ Args: { "p_from": string,"p_room_key": string,"p_to": string }; Returns: Json
                            },
 "room_summaries":
 { Args: { "p_campus": string }; Returns: {
@@ -64,6 +106,9 @@ export type Database = {
                            },
 "save_identity":
 { Args: { "p_default_visibility": string,"p_display_name": string,"p_expected_version"?: number,"p_intake_term": string,"p_intake_year": number,"p_programme_id": string,"p_show_name": boolean }; Returns: Json
+                           },
+"set_gathering":
+{ Args: { "p_approval_ref": string,"p_capacity": number,"p_description": string,"p_kind": string,"p_minutes": number,"p_room_key": string,"p_slug": string,"p_starts_at": string,"p_title": string }; Returns: Json
                            },
 "set_table":
 { Args: { "p_break_minutes": number,"p_focus_minutes": number,"p_long_break_minutes"?: number,"p_long_every"?: number,"p_minutes": number,"p_room_key": string,"p_seats": number,"p_show_name"?: boolean,"p_starts_at": string,"p_topic": string }; Returns: Json

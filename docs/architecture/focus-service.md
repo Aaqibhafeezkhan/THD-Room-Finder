@@ -84,6 +84,26 @@ identity results are JSON objects; times are server time.
 | `my_tables()` | signed in | Upcoming tables the caller hosts, sits at or said maybe to, next first |
 
 Tables and replies are deleted 24 hours after the table ends (`focus.cleanup`).
+
+### Organizations and gatherings ([ADR 0008](adr/0008-organization-registry.md))
+
+| Function | Who | Does |
+|---|---|---|
+| `request_organization(name, slug, description, website, support_url)` | study profile | Starts a registry request; returns its number for the issue form. Slug taken: `slug_taken`; 2 open requests: `request_limit` |
+| `registry_set_status(no, status, issue)` | service role | The registry workflow's labels: `waiting_proof`, `in_review`, `needs_info`, `approved` (creates the verified group, applicant as lead), `declined`, `revoked` |
+| `my_organizations()` | signed in | The caller's requests and the groups they organize for |
+| `get_organization(slug)` | anyone | Public fields, verified, upcoming gatherings |
+| `create_organizer_invite(slug)` / `join_organization(token)` | lead / study profile | A 7-day organizer link, and joining with it |
+| `set_gathering(slug, kind, title, description, room_key, starts_at, minutes, capacity, approval_ref)` | organizer of a verified group | A gathering up to 90 days ahead, 25 min–6 h, 13–300 people, with THD's room approval reference; kinds `focus`, `games`, `talk`, `meeting`. Another gathering in the room then: `room_taken` |
+| `change_gathering(link, expected_version, …)` / `cancel_gathering(link)` | organizer | Capacity can't drop below those going: `capacity_taken` |
+| `get_gathering(link)` | anyone | The gathering, `replies` (going `g` and maybe `m` in reply order), counts, the viewer's answer and waiting place |
+| `gathering_preview(link)` | anyone | For link cards: title, kind, group, room, time, capacity, `replies`. No names |
+| `reply_gathering(link, answer, consent)` | study profile | `going`, `maybe` or `no`; needs `consent` to share name, programme and batch (`needs_consent`). Full: Going joins the waiting list; when someone leaves, the first in line moves up |
+| `gathering_people(link)` | organizer | Name, programme, intake and answer in reply order. No email |
+| `my_gatherings()` | signed in | Gatherings replied to or hosted by the caller's groups |
+| `room_gatherings(room_key, from, to)` | anyone | Gatherings in a room, so it shows as taken |
+
+Gatherings go 30 days after they end; organizer links when they expire.
 Migrations reach the hosted project on merge to `main` (the Database
 workflow's deploy job).
 
@@ -122,6 +142,9 @@ Errors carry a stable `hint` for the app to branch on; `message` is for logs.
 | `invalid_time`, `invalid_length`, `invalid_seats`, `invalid_topic`, `invalid_answer`, `host_reply`, `solo_table`, `table_closed`, `seats_taken` | 22023 | Study tables: bad input, the host replying, or a cancelled/ended table |
 | `table_full`, `table_limit` | 22023 | No seat left; 5 upcoming hosted tables |
 | `not_found` | P0002 | Unknown table link, or not the host |
+| `invalid_kind`, `invalid_capacity`, `needs_approval`, `room_taken`, `capacity_taken`, `needs_consent`, `gathering_closed`, `not_verified`, `invalid_slug`, `request_limit` | 22023 | Gatherings and the registry |
+| `slug_taken` | 23505 | The group's short name is taken |
+| `not_organizer`, `not_lead` | 42501 | Only organizers host; only leads invite |
 
 ## Not in this contract yet
 
