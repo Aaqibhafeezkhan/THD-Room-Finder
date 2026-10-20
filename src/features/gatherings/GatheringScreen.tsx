@@ -47,7 +47,7 @@ export function GatheringScreen() {
   const wide = useWideLayout();
   const { rooms, events, campusHours } = useRoomData();
   const focus = useFocusSession();
-  const { api, remember } = useGatherings();
+  const { api, remember, mine } = useGatherings();
   const profile = useStudyProfile();
   const [g, setG] = useState<Gathering | null | undefined>(undefined);
   const [failed, setFailed] = useState(false);
@@ -80,6 +80,21 @@ export function GatheringScreen() {
   useEffect(() => {
     void load();
   }, [load]);
+  // Offline or the service is down: one of your own gatherings can still be
+  // shown, from the list this device saw last (it may arrive after the load).
+  const saved = failed && !g ? mine.find((x) => x.link === link) : undefined;
+  useEffect(() => {
+    if (!saved) return;
+    setG(saved);
+    setSnack(t("Couldn't refresh. Showing what this device saw last.", 'Aktualisieren ging nicht. Du siehst den letzten Stand auf diesem Gerät.'));
+  }, [saved]);
+  // Back online after a failed load: read again.
+  useEffect(() => {
+    if (!failed) return;
+    const again = () => void load();
+    window.addEventListener('online', again);
+    return () => window.removeEventListener('online', again);
+  }, [failed, load]);
 
   const reply = async (answer: 'going' | 'maybe' | 'no') => {
     if (!api || !g) return;
@@ -170,7 +185,8 @@ export function GatheringScreen() {
       onBack={() => (history.length > 1 ? navigate(-1) : navigate('/'))} style={{ position: 'sticky', top: 0, zIndex: 10 }} />
   );
 
-  if (!api || !link || g === null || failed) {
+  // A refresh that fails keeps the gathering on screen; only a first load shows the error.
+  if (!api || !link || g === null || (failed && !g)) {
     return (
       <>
         {bar}
@@ -178,6 +194,10 @@ export function GatheringScreen() {
           title={!api ? t('Gatherings need the online service', 'Treffen brauchen den Online-Dienst') : failed ? t("Couldn't load this gathering", 'Treffen konnte nicht geladen werden') : t("This gathering isn't here any more", 'Dieses Treffen gibt es nicht mehr')}
           hint={failed ? t('Check your connection and try again.', 'Prüfe deine Verbindung und versuche es erneut.') : t('It may have ended, or the link is incomplete.', 'Es ist vielleicht vorbei, oder der Link ist unvollständig.')}
         />
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 8 }}>
+          {failed && <Button variant="filled" onClick={() => void load()}>{t('Try again', 'Erneut versuchen')}</Button>}
+          <Button variant="tonal" onClick={() => navigate('/')}>{t('Find a free room', 'Freien Raum finden')}</Button>
+        </div>
       </>
     );
   }

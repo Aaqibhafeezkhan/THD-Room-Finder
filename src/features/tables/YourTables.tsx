@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { KindIcon, SeatRing, TableRow, TableTag } from '../../components';
+import { Button, KindIcon, SeatRing, TableRow, TableTag } from '../../components';
 import type { Gathering } from '../../data/gatheringsApi';
 import type { StudyTable } from '../../data/tablesApi';
 import { tableShortWhen, tableState } from '../../domain/tables';
@@ -16,7 +16,9 @@ import { seatsTitle, topicOf } from './copy';
  * each with a small ring (or the gathering's kind) and at most one chip. A
  * list on phones, a grid of cards on wide windows. They drop off when over.
  * Profile shows the list at the top while there are tables (`when="some"`)
- * and the empty state above Saved rooms otherwise (`when="none"`).
+ * and the empty state above Saved rooms otherwise (`when="none"`). When the
+ * service can't be reached it shows the last list from this device with a
+ * line saying so, or says it couldn't load them, never "No tables yet".
  */
 export function tableChip(table: StudyTable, now: Date, t: Translate) {
   const state = tableState(table, now);
@@ -53,8 +55,10 @@ export function gatheringChip(g: Gathering, now: Date, t: Translate) {
 export function YourTables({ grid = false, when }: { grid?: boolean; when?: 'some' | 'none' }) {
   const navigate = useNavigate();
   const { t, locale } = useI18n();
-  const { api, mine } = useTables();
+  const { api, mine, failed: tablesFailed, refresh } = useTables();
   const gatherings = useGatherings();
+  const failed = tablesFailed || gatherings.failed;
+  const retry = () => void Promise.all([refresh(), gatherings.refresh()]);
   const now = new Date();
   if (!api) return null;
   const heading = t('Your tables', 'Deine Tische');
@@ -69,7 +73,18 @@ export function YourTables({ grid = false, when }: { grid?: boolean; when?: 'som
   return (
     <section aria-label={heading} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
       <h2 style={{ margin: 0, fontSize: 'var(--title-small-size)', fontWeight: 500, color: 'var(--md-on-surface)' }}>{heading}</h2>
-      {list.length === 0 ? (
+      {failed && list.length > 0 && (
+        <p style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8, color: 'var(--md-on-surface-variant)', fontSize: 'var(--body-small-size)' }}>
+          <span style={{ flex: 1 }}>{t("Couldn't refresh. Showing what this device saw last.", 'Aktualisieren ging nicht. Du siehst den letzten Stand auf diesem Gerät.')}</span>
+          <Button variant="text" onClick={retry}>{t('Try again', 'Erneut versuchen')}</Button>
+        </p>
+      )}
+      {list.length === 0 && failed ? (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: 'var(--space-2) var(--space-2) var(--space-2) var(--space-4)', borderRadius: 'var(--radius-l)', background: 'var(--md-surface)', boxShadow: 'var(--md-shadow-1)', color: 'var(--md-on-surface-variant)', fontSize: 'var(--body-medium-size)' }}>
+          <span style={{ flex: 1 }}>{t("Couldn't load your tables.", 'Deine Tische konnten nicht geladen werden.')}</span>
+          <Button variant="text" onClick={retry}>{t('Try again', 'Erneut versuchen')}</Button>
+        </div>
+      ) : list.length === 0 ? (
         <p style={{ margin: 0, padding: 'var(--space-4)', borderRadius: 'var(--radius-l)', background: 'var(--md-surface)', boxShadow: 'var(--md-shadow-1)', color: 'var(--md-on-surface-variant)', fontSize: 'var(--body-medium-size)' }}>
           {t('No tables yet. Open a free room and tap Set a table.', 'Noch keine Tische. Öffne einen freien Raum und tippe auf Lerntisch anlegen.')}
         </p>

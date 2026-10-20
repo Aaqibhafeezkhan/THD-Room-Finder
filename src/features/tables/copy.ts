@@ -1,5 +1,6 @@
 import type { StudyTable } from '../../data/tablesApi';
 import type { Translate } from '../../i18n';
+import { connectionText } from '../shared/connectionCopy';
 
 /** Words for study tables (docs/product/study-tables.md → Words). */
 export function tableErrorText(code: string, t: Translate): string {
@@ -18,10 +19,8 @@ export function tableErrorText(code: string, t: Translate): string {
       return t('The table changed in the meantime. Close this and try again.', 'Der Tisch wurde inzwischen geändert. Schließe das hier und versuche es erneut.');
     case 'unknown_room':
       return t("That room can't take a table. Pick another.", 'Dieser Raum geht nicht. Wähle einen anderen.');
-    case 'network':
-      return t("You're offline. Try again when you're back online.", 'Du bist offline. Versuche es wieder, wenn du online bist.');
     default:
-      return t('Something went wrong. Try again.', 'Etwas ist schiefgelaufen. Versuche es erneut.');
+      return connectionText(code, t) ?? t('Something went wrong. Try again.', 'Etwas ist schiefgelaufen. Versuche es erneut.');
   }
 }
 

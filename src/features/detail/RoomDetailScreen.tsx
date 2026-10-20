@@ -8,7 +8,7 @@ import { useI18n } from '../../i18n';
 import { computeRoomAvailability, getRoomSchedule } from '../../domain/availability';
 import { mayBeLocked } from '../../domain/roomFilters';
 import { formatTime, statusBannerText } from '../../domain/format';
-import { Page, Spinner, EmptyState } from '../shared/ui';
+import { Page, Spinner, EmptyState, ErrorState } from '../shared/ui';
 import { ClosedNotice } from '../shared/ClosedNotice';
 import { RoomFocusPanel } from '../focus/RoomFocusPanel';
 import { useTableFlow } from '../tables/useTableFlow';
@@ -24,7 +24,7 @@ export function RoomDetailScreen() {
   const params = useParams();
   const navigate = useNavigate();
   const { t, locale } = useI18n();
-  const { rooms, events, queryTime, campusHours, loading, isCustomTime } = useRoomData();
+  const { rooms, events, queryTime, campusHours, loading, error, refresh, isCustomTime } = useRoomData();
   const { isFavorite, toggle } = useFavorites();
 
   const ident = decodeURIComponent(params.ident ?? '');
@@ -40,6 +40,8 @@ export function RoomDetailScreen() {
         <AppBar mode="back" title="" onBack={back} style={stickyBar} />
         {loading ? (
           <Spinner />
+        ) : error ? (
+          <ErrorState message={t("Can't reach the THD timetable right now. Check your connection and try again.", 'Der THD-Stundenplan ist gerade nicht erreichbar. Prüfe deine Verbindung und versuche es erneut.')} onRetry={refresh} retryLabel={t('Try again', 'Erneut versuchen')} />
         ) : (
           <EmptyState
             title={t('Room not found', 'Raum nicht gefunden')}

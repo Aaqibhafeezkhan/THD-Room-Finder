@@ -1,6 +1,7 @@
 import type { HallKind } from '../../../shared/hall.js';
 import type { Gathering, RequestStatus } from '../../data/gatheringsApi';
 import type { Translate } from '../../i18n';
+import { connectionText } from '../shared/connectionCopy';
 
 /** Words for gatherings (docs/product/organizations.md → Words). */
 export const kindLabels = (t: Translate): Record<HallKind, string> => ({
@@ -62,9 +63,7 @@ export function gatheringErrorText(code: string, t: Translate): string {
       return t('Pick a time from now up to 90 days ahead.', 'Wähle eine Zeit ab jetzt bis in 90 Tagen.');
     case 'stale_version':
       return t('It changed in the meantime. Close this and try again.', 'Es wurde inzwischen geändert. Schließe das hier und versuche es erneut.');
-    case 'network':
-      return t("You're offline. Try again when you're back online.", 'Du bist offline. Versuche es wieder, wenn du online bist.');
     default:
-      return t('Something went wrong. Try again.', 'Etwas ist schiefgelaufen. Versuche es erneut.');
+      return connectionText(code, t) ?? t('Something went wrong. Try again.', 'Etwas ist schiefgelaufen. Versuche es erneut.');
   }
 }

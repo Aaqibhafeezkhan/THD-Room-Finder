@@ -34,7 +34,7 @@ import { BrandHeader } from '../shared/BrandHeader';
 import { freeRoomsLabel } from '../shared/roomStatusLabel';
 import { ClosedNotice } from '../shared/ClosedNotice';
 import { FilterMenu } from '../shared/FilterMenu';
-import { Spinner } from '../shared/ui';
+import { ErrorState, Spinner } from '../shared/ui';
 import { PLACE_GLYPHS, PLACE_META } from './placeMeta';
 import { PlaceCard } from './PlaceCard';
 
@@ -98,7 +98,7 @@ export function CampusScreen() {
   const { showGlyphs } = useMapPrefs();
   const cls = useWindowClass();
   const wide = useWideLayout();
-  const { rooms, freeRooms, teachingIdents, queryTime, planningTime, preview, isCustomTime, campusHours, loading } =
+  const { rooms, freeRooms, teachingIdents, queryTime, planningTime, preview, isCustomTime, campusHours, loading, error, refresh } =
     useRoomData();
   const { filters } = useRoomFilters();
   const { isFavorite } = useFavorites();
@@ -425,6 +425,15 @@ export function CampusScreen() {
       <>
         <BrandHeader title={t('Campus', 'Campus')} />
         <Spinner label={t('Checking THabella…', 'THabella wird abgefragt…')} />
+      </>
+    );
+  }
+  // No timetable and nothing cached: say so rather than "0 rooms free".
+  if (error && rooms.length === 0) {
+    return (
+      <>
+        <BrandHeader title={t('Campus', 'Campus')} />
+        <ErrorState message={t("Can't reach the THD timetable right now. Check your connection and try again.", 'Der THD-Stundenplan ist gerade nicht erreichbar. Prüfe deine Verbindung und versuche es erneut.')} onRetry={refresh} retryLabel={t('Try again', 'Erneut versuchen')} />
       </>
     );
   }

@@ -46,7 +46,7 @@ export function TableScreen() {
   const { rooms, teachingIdents, events, campusHours } = useRoomData();
   const focus = useFocusSession();
   const [firstSeat, setFirstSeat] = useState(false);
-  const { api, remember } = useTables();
+  const { api, remember, mine: myTables } = useTables();
   const profile = useStudyProfile();
   const [table, setTable] = useState<StudyTable | null | undefined>(undefined);
   const [failed, setFailed] = useState(false);
@@ -80,6 +80,21 @@ export function TableScreen() {
   useEffect(() => {
     void load();
   }, [load]);
+  // Offline or the service is down: one of your own tables can still be
+  // shown, from the list this device saw last (it may arrive after the load).
+  const saved = failed && !table ? myTables.find((x) => x.link === link) : undefined;
+  useEffect(() => {
+    if (!saved) return;
+    setTable(saved);
+    setSnack(t("Couldn't refresh. Showing what this device saw last.", 'Aktualisieren ging nicht. Du siehst den letzten Stand auf diesem Gerät.'));
+  }, [saved]);
+  // Back online after a failed load: read again.
+  useEffect(() => {
+    if (!failed) return;
+    const again = () => void load();
+    window.addEventListener('online', again);
+    return () => window.removeEventListener('online', again);
+  }, [failed, load]);
 
   // A lecture that appeared in the room after the table was set (T17).
   const ident = table?.roomKey.replace(/^thd:/, '') ?? null;
@@ -224,7 +239,8 @@ export function TableScreen() {
     />
   );
 
-  if (!api || !link || table === null || failed) {
+  // A refresh that fails keeps the table on screen; only a first load shows the error.
+  if (!api || !link || table === null || (failed && !table)) {
     return (
       <>
         {bar}
@@ -232,7 +248,8 @@ export function TableScreen() {
           title={!api ? t('Tables need the online service', 'Tische brauchen den Online-Dienst') : failed ? t("Couldn't load this table", 'Tisch konnte nicht geladen werden') : t("This table isn't here any more", 'Diesen Tisch gibt es nicht mehr')}
           hint={failed ? t('Check your connection and try again.', 'Prüfe deine Verbindung und versuche es erneut.') : t('It may have ended, or the link is incomplete.', 'Er ist vielleicht vorbei, oder der Link ist unvollständig.')}
         />
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 8 }}>
+          {failed && <Button variant="filled" onClick={() => void load()}>{t('Try again', 'Erneut versuchen')}</Button>}
           <Button variant="tonal" onClick={() => navigate('/')}>{t('Find a free room', 'Freien Raum finden')}</Button>
         </div>
       </>

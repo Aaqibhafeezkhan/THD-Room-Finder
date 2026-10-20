@@ -101,7 +101,7 @@ export function HomeScreen() {
                   fontVariantNumeric: 'tabular-nums',
                 }}
               >
-                {loading && freeRooms.length === 0 ? '—' : searching ? searchResults.length : shown.length}
+                {(loading || error) && freeRooms.length === 0 ? '—' : searching ? searchResults.length : shown.length}
               </div>
               <div style={{ fontSize: 'var(--title-medium-size)', color: 'var(--md-on-surface-variant)' }}>
                 {searching ? t('rooms match', 'Treffer') : freeRoomsLabel(t, { preview, customTime: isCustomTime, building })}
@@ -121,7 +121,7 @@ export function HomeScreen() {
 
             {/* The answer: search hits (any status) when searching, else free rooms. */}
             {error && freeRooms.length === 0 ? (
-              <ErrorState message={error} onRetry={refresh} retryLabel={t('Try again', 'Erneut versuchen')} />
+              <ErrorState message={t("Can't reach the THD timetable right now. Check your connection and try again.", 'Der THD-Stundenplan ist gerade nicht erreichbar. Prüfe deine Verbindung und versuche es erneut.')} onRetry={refresh} retryLabel={t('Try again', 'Erneut versuchen')} />
             ) : loading && freeRooms.length === 0 ? (
               <Spinner label={t('Checking THabella…', 'THabella wird abgefragt…')} />
             ) : searching ? (

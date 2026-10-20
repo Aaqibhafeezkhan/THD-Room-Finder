@@ -39,12 +39,15 @@ export function OrganizationScreen() {
   const slug = (params.slug ?? '').toLowerCase();
   const token = new URLSearchParams(search).get('join');
 
+  // Not found and couldn't load are different answers.
+  const [failed, setFailed] = useState(false);
   const load = async () => {
     if (!api || !isSlug(slug)) return setOrg(null);
     try {
+      setFailed(false);
       setOrg(await api.organization(slug));
     } catch {
-      setOrg(null);
+      setFailed(true);
     }
   };
   useEffect(() => {
@@ -87,6 +90,18 @@ export function OrganizationScreen() {
   };
 
   const bar = <AppBar mode="back" title={org?.name ?? t('Group', 'Gruppe')} onBack={() => (history.length > 1 ? navigate(-1) : navigate('/'))} style={{ position: 'sticky', top: 0, zIndex: 10 }} />;
+  if (failed && !org) {
+    return (
+      <>
+        {bar}
+        <EmptyState title={t("Couldn't load this group", 'Gruppe konnte nicht geladen werden')} hint={t('Check your connection and try again.', 'Prüfe deine Verbindung und versuche es erneut.')} />
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 8 }}>
+          <Button variant="filled" onClick={() => { setOrg(undefined); void load(); }}>{t('Try again', 'Erneut versuchen')}</Button>
+          <Button variant="tonal" onClick={() => navigate('/')}>{t('Find a free room', 'Freien Raum finden')}</Button>
+        </div>
+      </>
+    );
+  }
   if (org === undefined) return <>{bar}<Spinner /></>;
   if (!org) return <>{bar}<EmptyState title={t("This group isn't here", 'Diese Gruppe gibt es nicht')} hint={t('Check the link.', 'Prüfe den Link.')} /></>;
 

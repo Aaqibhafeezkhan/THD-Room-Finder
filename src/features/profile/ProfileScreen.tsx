@@ -78,10 +78,16 @@ export function ProfileScreen() {
           name={profile.displayName ?? undefined}
           batch={profile.batch ?? undefined}
           batchLabel={profile.batch ? t(`Batch ${profile.batch}`, `Jahrgang ${profile.batch}`) : undefined}
-          notSignedIn={profile.email ? t('No study profile yet', 'Noch kein Studienprofil') : t('Not signed in', 'Nicht angemeldet')}
-          setupLabel={t('Set up study profile', 'Studienprofil einrichten')}
+          notSignedIn={
+            profile.unreachable
+              ? t("Can't reach your profile right now", 'Dein Profil ist gerade nicht erreichbar')
+              : profile.email
+                ? t('No study profile yet', 'Noch kein Studienprofil')
+                : t('Not signed in', 'Nicht angemeldet')
+          }
+          setupLabel={profile.unreachable ? t('Try again', 'Erneut versuchen') : t('Set up study profile', 'Studienprofil einrichten')}
           settingsLabel={t('Settings', 'Einstellungen')}
-          onSetup={profile.available ? () => setSetup(true) : undefined}
+          onSetup={!profile.available ? undefined : profile.unreachable ? () => void profile.refresh() : () => setSetup(true)}
           onSettings={() => navigate('/profile/settings')}
         />
         {/* Tables are time-bound, so they come first when there are any (S3). */}

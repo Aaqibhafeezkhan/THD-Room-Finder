@@ -20,6 +20,7 @@ import { TableReminder } from '../features/tables/TableReminder';
 import { GatheringScreen } from '../features/gatherings/GatheringScreen';
 import { OrganizationScreen } from '../features/gatherings/OrganizationScreen';
 import { activeId } from './activeTab';
+import { ErrorBoundary } from './ErrorBoundary';
 
 // Component specimen for `npm run dev` and Vercel previews; the import is
 // dropped from production builds because the condition is a build-time
@@ -69,6 +70,7 @@ export function AppShell() {
 
   const content = (
     <main ref={page} key="page-content" style={{ flex: 1, minWidth: 0, minHeight: 0, overflowY: 'auto' }}>
+      <ErrorBoundary inShell resetKey={location.pathname}>
       <Routes>
         <Route path="/" element={<CampusScreen />} />
         <Route path="/rooms" element={<HomeScreen />} />
@@ -95,6 +97,7 @@ export function AppShell() {
         )}
         <Route path="*" element={<CampusScreen />} />
       </Routes>
+      </ErrorBoundary>
       <FocusNotifications />
       <AppUpdates />
       <TableReminder />

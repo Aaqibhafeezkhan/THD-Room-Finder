@@ -5,6 +5,7 @@ import { Capacitor } from '@capacitor/core';
 import { Analytics } from '@vercel/analytics/react';
 import { registerSW } from 'virtual:pwa-register';
 import App from './App';
+import { ErrorBoundary } from './app/ErrorBoundary';
 import './styles/index.css';
 
 const shouldEnableVercelAnalytics = !Capacitor.isNativePlatform();
@@ -23,9 +24,11 @@ if (!Capacitor.isNativePlatform()) {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
-      <App />
-      {shouldEnableVercelAnalytics ? <Analytics /> : null}
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <App />
+        {shouldEnableVercelAnalytics ? <Analytics /> : null}
+      </BrowserRouter>
+    </ErrorBoundary>
   </StrictMode>,
 );

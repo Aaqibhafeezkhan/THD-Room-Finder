@@ -1,5 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from './supabase.types';
+import { timedFetch } from './net';
 
 /**
  * The browser's Supabase client, built from the publishable URL and key
@@ -8,7 +9,9 @@ import type { Database } from './supabase.types';
  * schedule, saved rooms and the local-only timer. Never a service-role key.
  *
  * supabase-js is loaded on first use, so the room finder's first paint
- * doesn't carry it.
+ * doesn't carry it. A failed load (offline before the chunk was cached, or
+ * a deploy that replaced it) is forgotten so the next call tries again.
+ * Every request gives up after 15 s (`timedFetch`).
  */
 export type FocusClient = SupabaseClient<Database>;
 
@@ -23,8 +26,16 @@ let client: Promise<FocusClient> | null = null;
 
 export function loadSupabase(): Promise<FocusClient> {
   if (!focusServiceConfigured) return Promise.reject(new Error('focus service not configured'));
-  client ??= import('@supabase/supabase-js').then(({ createClient }) =>
-    createClient<Database>(URL_!, KEY!, { auth: { persistSession: true, autoRefreshToken: true } }),
-  );
+  client ??= import('@supabase/supabase-js')
+    .then(({ createClient }) =>
+      createClient<Database>(URL_!, KEY!, {
+        auth: { persistSession: true, autoRefreshToken: true },
+        global: { fetch: timedFetch() },
+      }),
+    )
+    .catch((err) => {
+      client = null;
+      throw err;
+    });
   return client;
 }

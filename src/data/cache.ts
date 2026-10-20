@@ -49,3 +49,29 @@ export function write<T>(key: string, data: T): void {
     // Quota exceeded — ignore; the network value was already returned.
   }
 }
+
+/**
+ * The signed-in student's last answers (profile, tables, gatherings), kept so
+ * Profile still shows them when the service can't be reached. Tied to the
+ * email they belong to and wiped on sign-out.
+ */
+const ACCOUNT = 'thd_account_';
+
+export function readAccount<T>(name: string, email: string): T | null {
+  const cached = readStale<{ email: string; value: T }>(ACCOUNT + name);
+  return cached && cached.email === email ? cached.value : null;
+}
+
+export function writeAccount<T>(name: string, email: string, value: T): void {
+  write(ACCOUNT + name, { email, value });
+}
+
+export function forgetAccount(): void {
+  const s = store();
+  if (!s) return;
+  try {
+    for (const key of Object.keys(s)) if (key.startsWith(ACCOUNT)) s.removeItem(key);
+  } catch {
+    // Storage blocked; nothing was kept either.
+  }
+}

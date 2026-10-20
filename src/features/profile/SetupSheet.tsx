@@ -61,6 +61,8 @@ function errorText(code: string, t: Translate): string {
       );
     case 'stale_version':
       return t('Your profile changed on another device. Close this and try again.', 'Dein Profil wurde auf einem anderen Gerät geändert. Schließe das hier und versuche es erneut.');
+    case 'unavailable':
+      return t("The sign-in server isn't answering right now. Try again in a moment.", 'Der Anmeldeserver antwortet gerade nicht. Versuche es gleich noch einmal.');
     case 'invalid_programme':
       return t("That programme can't start in this term. Pick another intake.", 'Dieser Studiengang beginnt nicht in diesem Semester. Wähle einen anderen Studienbeginn.');
     default:
