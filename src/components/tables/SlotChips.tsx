@@ -5,7 +5,8 @@ import type { CSSProperties, ReactNode } from 'react';
  * slots in one room, cut to the lecture grid. Day chips use the focus
  * container when picked; slot chips use teal (free). A slot shows its start
  * and, small, how long the room stays free. Closed days are shown, not
- * selectable. `slots = null` shows skeleton chips while the day loads.
+ * selectable. Days sit in one row that scrolls sideways; slots wrap.
+ * `slots = null` shows skeleton chips while the day loads.
  */
 export interface SlotDay {
   id: string;
@@ -69,7 +70,7 @@ const row: CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 8 };
 export function SlotChips({ days, day, onDay, slots, slot, onSlot, empty, daysLabel, slotsLabel, style = {} }: SlotChipsProps) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10, ...style }}>
-      <div role="radiogroup" aria-label={daysLabel} style={row}>
+      <div role="radiogroup" aria-label={daysLabel} style={{ display: 'flex', gap: 8, overflowX: 'auto', scrollbarWidth: 'none', margin: '0 -4px', padding: '0 4px' }}>
         {days.map((d) => (
           <button
             key={d.id}

@@ -4,7 +4,8 @@ import type { CSSProperties, ReactNode } from 'react';
  * slots in one room, cut to the lecture grid. Day chips use the focus
  * container when picked; slot chips use teal (free). A slot shows its start
  * and, small, how long the room stays free. Closed days are shown, not
- * selectable. `slots = null` shows skeleton chips while the day loads.
+ * selectable. Days sit in one row that scrolls sideways; slots wrap.
+ * `slots = null` shows skeleton chips while the day loads.
  */
 export interface SlotDay {
     id: string;
