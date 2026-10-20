@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Capacitor } from '@capacitor/core';
 import { AppBar, Button, ConfirmDialog, ReplyBar, SeatRing, Sheet, Snackbar, StudyTableCard, Switch, TableTag } from '../../components';
 import { IconMail } from '../../components/icons';
@@ -18,6 +18,10 @@ import { useWideLayout } from '../../lib/useWindowClass';
 import { PUBLIC_ORIGIN } from '../focus/shareSnapshot';
 import { rhythmName } from '../focus/sessionView';
 import { useRoomData } from '../rooms/RoomDataContext';
+import { useFocusSession } from '../focus/FocusSessionContext';
+import { computeRoomAvailability, getRoomSchedule } from '../../domain/availability';
+import { planEnd } from '../../domain/focusSession';
+import { InstallHint } from './InstallHint';
 import { useStudyProfile } from '../profile/StudyProfileContext';
 import { SetupSheet } from '../profile/SetupSheet';
 import { Page, Spinner, EmptyState } from '../shared/ui';
@@ -39,7 +43,9 @@ export function TableScreen() {
   const navigate = useNavigate();
   const { t, locale } = useI18n();
   const wide = useWideLayout();
-  const { rooms, teachingIdents } = useRoomData();
+  const { rooms, teachingIdents, events, campusHours } = useRoomData();
+  const focus = useFocusSession();
+  const [firstSeat, setFirstSeat] = useState(false);
   const { api, remember } = useTables();
   const profile = useStudyProfile();
   const [table, setTable] = useState<StudyTable | null | undefined>(undefined);
@@ -56,6 +62,11 @@ export function TableScreen() {
   const finished = useRef(false);
 
   const link = normalizeTableLink(params.link);
+  // The link-preview page sends people here with ?app; keep the shared URL clean.
+  const { search } = useLocation();
+  useEffect(() => {
+    if (link && new URLSearchParams(search).has('app')) navigate(`/t/${link}`, { replace: true });
+  }, [search]);
   const load = useCallback(async () => {
     if (!api || !link) return;
     try {
@@ -98,9 +109,11 @@ export function TableScreen() {
     }
     setBusy(true);
     try {
+      const had = table.myAnswer;
       const saved = await api.reply(table.link, answer, showName);
       setTable(saved);
       remember(saved);
+      if (answer === 'seat' && had !== 'seat') setFirstSeat(true);
     } catch (e) {
       setSnack(tableErrorText(e instanceof ServiceError ? e.code : 'unknown', t));
       void load();
@@ -174,6 +187,33 @@ export function TableScreen() {
     }
   };
 
+  // Start together (T16): an ordinary session in the table's room with its
+  // rhythm, anchored at the table's start once it has begun, so everyone's
+  // breaks line up. It ends at the table's end, the next lecture or closing.
+  const startFocus = async () => {
+    const at = table ? rooms.find((r) => r.ident === table.roomKey.replace(/^thd:/, '')) : undefined;
+    if (!table || !at) return;
+    const now = new Date();
+    const availability = computeRoomAvailability(getRoomSchedule(events, at.ident), now, campusHours.todayClose);
+    if (availability.status === 'occupied') {
+      setSnack(t(`${at.code} is in use right now.`, `${at.code} ist gerade belegt.`));
+      return;
+    }
+    const endsAt = toCampusWallClock(table.endsAt);
+    const limit = availability.freeUntil && availability.freeUntil < endsAt ? availability.freeUntil : endsAt;
+    const planned = planEnd(now, limit, campusHours.todayClose);
+    if (!planned) {
+      setSnack(t('This table is almost over.', 'Dieser Tisch ist fast vorbei.'));
+      return;
+    }
+    const begun = table.startsAt.getTime() <= now.getTime();
+    await focus.start({ ident: at.ident, code: at.code }, planned, {
+      rhythm: table.rhythm,
+      ...(begun && { join: { rhythm: table.rhythm, anchorAt: table.startsAt } }),
+    });
+    navigate(`/room/${encodeURIComponent(at.ident)}`);
+  };
+
   const bar = (
     <AppBar
       mode="back"
@@ -243,6 +283,17 @@ export function TableScreen() {
 
   const actions = (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {(state === 'soon' || state === 'live') && room && (table.isHost || table.myAnswer === 'seat') && !conflict && (
+        focus.active?.roomIdent === room.ident ? (
+          <Button variant="tonal" size="large" onClick={() => navigate(`/room/${encodeURIComponent(room.ident)}`)} style={{ width: wide ? undefined : '100%', alignSelf: wide ? 'flex-start' : undefined }}>
+            {t('Open your session', 'Zu deiner Session')}
+          </Button>
+        ) : (
+          <Button variant="filled" size="large" onClick={() => void startFocus()} style={{ background: 'var(--md-focus)', color: 'var(--md-on-focus)', width: wide ? undefined : '100%', alignSelf: wide ? 'flex-start' : undefined }}>
+            {t(`Start focus in ${room.code}`, `Fokus in ${room.code} starten`)}
+          </Button>
+        )
+      )}
       {open && table.isHost && conflict && (
         <Button variant="filled" size="large" onClick={() => setMoving(true)} style={{ background: 'var(--md-focus)', color: 'var(--md-on-focus)', width: wide ? undefined : '100%', alignSelf: wide ? 'flex-start' : undefined }}>
           {t('Move to a free room', 'In einen freien Raum verlegen')}
@@ -302,6 +353,7 @@ export function TableScreen() {
           {actions}
         </StudyTableCard>
         {!wide && actions}
+        {firstSeat && <InstallHint />}
       </Page>
 
       <SetupSheet quick open={signIn}

@@ -16,6 +16,7 @@ import { ProfileScreen } from '../features/profile/ProfileScreen';
 import { SettingsScreen } from '../features/profile/SettingsScreen';
 import { RoomDetailScreen } from '../features/detail/RoomDetailScreen';
 import { TableScreen } from '../features/tables/TableScreen';
+import { TableReminder } from '../features/tables/TableReminder';
 
 // Component specimen for `npm run dev` and Vercel previews; the import is
 // dropped from production builds because the condition is a build-time
@@ -91,6 +92,7 @@ export function AppShell() {
       </Routes>
       <FocusNotifications />
       <AppUpdates />
+      <TableReminder />
       {focus.active && checkIn && (
         <CheckInSheet
           // On the session's own room the focus surface asks instead.

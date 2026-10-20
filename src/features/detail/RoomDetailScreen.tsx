@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { AppBar, Button, IconButton, StatusCard } from '../../components';
+import { AppBar, Button, IconButton, SeatRing, StatusCard, TableRow } from '../../components';
 import { IconMail, IconStar, IconStarFilled, IconUsers } from '../../components/icons';
 import { useRoomData } from '../rooms/RoomDataContext';
 import { useFavorites } from '../favorites/favorites';
@@ -11,6 +11,10 @@ import { formatDayTime, formatTime, statusBannerText } from '../../domain/format
 import { Page, Spinner, EmptyState } from '../shared/ui';
 import { RoomFocusPanel } from '../focus/RoomFocusPanel';
 import { useTableFlow } from '../tables/useTableFlow';
+import { useTables } from '../tables/TablesContext';
+import { tableChip } from '../tables/YourTables';
+import { seatsTitle, topicOf } from '../tables/copy';
+import { tableShortWhen, tableState } from '../../domain/tables';
 
 const stickyBar = { position: 'sticky' as const, top: 0, zIndex: 10 };
 
@@ -24,6 +28,7 @@ export function RoomDetailScreen() {
   const ident = decodeURIComponent(params.ident ?? '');
   const room = rooms.find((r) => r.ident === ident);
   const tableFlow = useTableFlow(room);
+  const { mine } = useTables();
 
   const back = () => navigate(-1);
 
@@ -107,6 +112,21 @@ export function RoomDetailScreen() {
             {t('Set a table', 'Lerntisch anlegen')}
           </Button>
         )}
+        {/* My tables in this room, next first (where things live: room detail). */}
+        {mine
+          .filter((x) => x.roomKey === `thd:${room.ident}` && tableState(x, new Date()) !== 'ended')
+          .slice(0, 2)
+          .map((x) => (
+            <TableRow
+              key={x.link}
+              card
+              ring={<SeatRing seats={x.seats} taken={x.taken} mine={x.isHost ? 0 : x.taken - 1} size={44} cancelled={x.cancelled} title={seatsTitle(x, t)} />}
+              title={x.isHost ? t(`Your table · ${topicOf(x, t)}`, `Dein Tisch · ${topicOf(x, t)}`) : topicOf(x, t)}
+              meta={tableShortWhen(x.startsAt, locale, new Date())}
+              tag={tableChip(x, new Date(), t)}
+              onClick={() => navigate(`/t/${x.link}`)}
+            />
+          ))}
 
         {/* Identity + facilities. */}
         <div

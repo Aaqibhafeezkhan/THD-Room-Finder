@@ -12,6 +12,7 @@ import { ShareSheet } from '../focus/ShareSheet';
 import { inviteLink, PUBLIC_ORIGIN } from '../focus/shareSnapshot';
 import { useFocusStats } from '../focus/useFocusStats';
 import { SavedRooms } from './SavedRooms';
+import { YourTables } from '../tables/YourTables';
 import { SetupSheet } from './SetupSheet';
 import { useStudyProfile } from './StudyProfileContext';
 
@@ -81,6 +82,7 @@ export function ProfileScreen() {
           text={graphText(t, locale)}
           onShare={focus.hasHistory ? () => setSharing(true) : undefined}
         />
+        <YourTables grid={cls === 'expanded'} />
         <SavedRooms grid={cls === 'expanded'} />
         <Button variant="text" onClick={invite} style={{ alignSelf: 'center', minHeight: 48 }}>
           {t('Invite a Friend', 'Freunde einladen')}
