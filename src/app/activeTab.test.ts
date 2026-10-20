@@ -14,8 +14,10 @@ describe('active navigation tab', () => {
     expect(activeId('/room/r1')).toBe('campus');
   });
 
-  it('keeps the tab that opened a table page highlighted', () => {
+  it('keeps the tab that opened a table, gathering or group page highlighted', () => {
     expect(activeId('/t/mossy-lagoon-42', 'profile')).toBe('profile');
+    expect(activeId('/g/verdant-squid-51', 'profile')).toBe('profile');
+    expect(activeId('/o/campus-connect', 'profile')).toBe('profile');
     expect(activeId('/t/mossy-lagoon-42')).toBe('campus');
   });
 });
