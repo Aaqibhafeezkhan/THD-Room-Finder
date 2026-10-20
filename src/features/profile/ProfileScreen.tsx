@@ -7,7 +7,7 @@ import { useTheme } from '../../lib/theme';
 import { useWindowClass } from '../../lib/useWindowClass';
 import { BrandHeader } from '../shared/BrandHeader';
 import { Page } from '../shared/ui';
-import { formatMinutes, graphText, statsLine } from '../focus/copy';
+import { formatMinutes, graphText, statsLine, streakLine } from '../focus/copy';
 import { ShareSheet } from '../focus/ShareSheet';
 import { inviteLink, PUBLIC_ORIGIN } from '../focus/shareSnapshot';
 import { useFocusStats } from '../focus/useFocusStats';
@@ -90,7 +90,7 @@ export function ProfileScreen() {
           compact={compact}
           stats={<>{focus.semesterMinutes ? formatMinutes(focus.semesterMinutes, locale) : t('0 h', '0 Std.')} <span className="thd-focus-period">{t('this semester', 'dieses Semester')}</span></>}
           secondaryStats={focus.hasHistory
-            ? t(`${focus.streak} study days in a row`, `${focus.streak} Lerntage in Folge`)
+            ? streakLine(t, focus.streak)
             : <a href="/rooms" onClick={event => { event.preventDefault(); navigate('/rooms'); }}>
                 {t('Find a room for your first session', 'Finde einen Raum für deine erste Session')}
               </a>}

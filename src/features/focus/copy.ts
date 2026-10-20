@@ -68,6 +68,13 @@ export function formatHours(minutes: number, locale: Locale): string {
 }
 
 /** "21 h this semester · 12-day streak" (D2), or the new-user line. */
+/** The streak under the semester total; no "1 days", no bare zero. */
+export function streakLine(t: Translate, days: number): string {
+  if (days <= 0) return t('No streak yet · one session starts it', 'Noch keine Serie · eine Session startet sie');
+  if (days === 1) return t('1 study day in a row', '1 Lerntag in Folge');
+  return t(`${days} study days in a row`, `${days} Lerntage in Folge`);
+}
+
 export function statsLine(t: Translate, locale: Locale, semesterMinutes: number, streakDays: number): string {
   if (semesterMinutes <= 0 && streakDays <= 0) {
     return t('No focus yet. Start a session in any free room.', 'Noch kein Fokus. Starte eine Session in einem freien Raum.');
