@@ -135,7 +135,7 @@ export function HomeScreen() {
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
                   {searchResults.map(({ room, availability }) => {
-                    const b = statusBannerText(availability, planningTime);
+                    const b = statusBannerText(availability, planningTime, locale);
                     // A lecture always wins: focus signals only on free rooms.
                     const signal =
                       availability.status === 'occupied'
@@ -145,7 +145,7 @@ export function HomeScreen() {
                       <RoomCard
                         key={room.ident}
                         name={room.code}
-                        meta={roomMeta(room)}
+                        meta={roomMeta(room, locale)}
                         hint={lockHint(room)}
                         status={signal.status}
                         statusLabel={opensAt && signal.status === 'free' ? opensLabel(t, opensAt) : roomStatusLabel(signal.status, t)}
@@ -175,12 +175,12 @@ export function HomeScreen() {
                     <RoomCard
                       key={ident}
                       name={f.room.code}
-                      meta={roomMeta(f.room)}
+                      meta={roomMeta(f.room, locale)}
                       hint={lockHint(f.room)}
                       status={signal.status}
                       statusLabel={opensAt && signal.status === 'free' ? opensLabel(t, opensAt) : roomStatusLabel(signal.status, t)}
                       focus={signal.focus}
-                      duration={freeRoomDuration(f, planningTime)}
+                      duration={freeRoomDuration(f, planningTime, locale)}
                       href={`/room/${encodeURIComponent(ident)}`}
                       onClick={(e) => {
                         e.preventDefault();

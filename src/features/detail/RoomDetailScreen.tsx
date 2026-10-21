@@ -37,7 +37,7 @@ export function RoomDetailScreen() {
   if (!room) {
     return (
       <>
-        <AppBar mode="back" title="" onBack={back} style={stickyBar} />
+        <AppBar mode="back" backLabel={t('Back', 'Zurück')} title="" onBack={back} style={stickyBar} />
         {loading ? (
           <Spinner />
         ) : error ? (
@@ -54,7 +54,7 @@ export function RoomDetailScreen() {
 
   const schedule = getRoomSchedule(events, ident);
   const availability = computeRoomAvailability(schedule, queryTime, campusHours.todayClose);
-  const banner = statusBannerText(availability, queryTime);
+  const banner = statusBannerText(availability, queryTime, locale);
   const occupied = availability.status === 'occupied';
   const titles = {
     occupied: isCustomTime ? t('Occupied at this time', 'Zu dieser Zeit belegt') : t('Occupied now', 'Jetzt belegt'),
@@ -84,7 +84,7 @@ export function RoomDetailScreen() {
   return (
     <>
       <AppBar
-        mode="back"
+        mode="back" backLabel={t('Back', 'Zurück')}
         title={room.code}
         onBack={back}
         style={stickyBar}
@@ -119,7 +119,7 @@ export function RoomDetailScreen() {
         />
         {tableFlow.available && (
           <Button variant="tonal" size="large" onClick={tableFlow.start} style={{ alignSelf: 'stretch' }}>
-            {t('Set a table', 'Lerntisch anlegen')}
+            {t('Study together', 'Zusammen lernen')}
           </Button>
         )}
         {/* My tables in this room, next first (where things live: room detail). */}
@@ -131,7 +131,7 @@ export function RoomDetailScreen() {
               key={x.link}
               card
               ring={<SeatRing seats={x.seats} taken={x.taken} mine={x.isHost ? 0 : x.taken - 1} size={44} cancelled={x.cancelled} title={seatsTitle(x, t)} />}
-              title={x.isHost ? t(`Your table · ${topicOf(x, t)}`, `Dein Tisch · ${topicOf(x, t)}`) : topicOf(x, t)}
+              title={x.isHost ? t(`Your study table · ${topicOf(x, t)}`, `Dein Lerntisch · ${topicOf(x, t)}`) : topicOf(x, t)}
               meta={tableShortWhen(x.startsAt, locale, new Date())}
               tag={tableChip(x, new Date(), t)}
               onClick={() => navigate(`/t/${x.link}`)}

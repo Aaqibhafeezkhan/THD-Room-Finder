@@ -146,7 +146,7 @@ flowchart LR
 |---|---|---|
 | Room detail | "Taken · Game night · Campus Connect" for the time of a gathering | Everyone |
 | Map and room list | The room counts as taken during a gathering | Everyone |
-| Profile | Gatherings sit in **Your tables** with your reply; organizers also see them there with counts | Me |
+| Profile | Gatherings sit in **Your study tables** with your reply; organizers also see them there with counts | Me |
 | `/g/<link>` | Gathering page with the picture | Anyone with the link |
 | `/o/<slug>` | Group page | Everyone |
 | Profile → Register your group | The registry form | Signed-in students |

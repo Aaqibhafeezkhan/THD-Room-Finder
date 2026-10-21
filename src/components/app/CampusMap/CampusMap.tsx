@@ -605,6 +605,7 @@ export function CampusMap({
   showTrees = true,
   glyphs,
   focus,
+  label = 'THD campus map',
   style = {},
 }: CampusMapProps) {
   const svgRef = React.useRef<SVGSVGElement>(null);
@@ -806,7 +807,7 @@ export function CampusMap({
           userSelect: 'none',
           WebkitUserSelect: 'none',
         }}
-        aria-label="THD campus 2.5D map"
+        aria-label={label}
       />
     </div>
   );

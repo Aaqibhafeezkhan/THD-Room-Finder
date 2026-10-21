@@ -219,7 +219,7 @@ export function TableScreen() {
     const limit = availability.freeUntil && availability.freeUntil < endsAt ? availability.freeUntil : endsAt;
     const planned = planEnd(now, limit, campusHours.todayClose);
     if (!planned) {
-      setSnack(t('This table is almost over.', 'Dieser Tisch ist fast vorbei.'));
+      setSnack(t('This study table is almost over.', 'Dieser Lerntisch ist fast vorbei.'));
       return;
     }
     const begun = table.startsAt.getTime() <= now.getTime();
@@ -232,8 +232,8 @@ export function TableScreen() {
 
   const bar = (
     <AppBar
-      mode="back"
-      title={table?.isHost ? t('Your table', 'Dein Tisch') : t('Study table', 'Lerntisch')}
+      mode="back" backLabel={t('Back', 'Zurück')}
+      title={table?.isHost ? t('Your study table', 'Dein Lerntisch') : t('Study table', 'Lerntisch')}
       onBack={() => (history.length > 1 ? navigate(-1) : navigate('/'))}
       style={{ position: 'sticky', top: 0, zIndex: 10 }}
     />
@@ -245,7 +245,7 @@ export function TableScreen() {
       <>
         {bar}
         <EmptyState
-          title={!api ? t('Tables need the online service', 'Tische brauchen den Online-Dienst') : failed ? t("Couldn't load this table", 'Tisch konnte nicht geladen werden') : t("This table isn't here any more", 'Diesen Tisch gibt es nicht mehr')}
+          title={!api ? t('Study tables need the online service', 'Lerntische brauchen den Online-Dienst') : failed ? t("Couldn't load this study table", 'Lerntisch konnte nicht geladen werden') : t("This study table isn't here any more", 'Diesen Lerntisch gibt es nicht mehr')}
           hint={failed ? t('Check your connection and try again.', 'Prüfe deine Verbindung und versuche es erneut.') : t('It may have ended, or the link is incomplete.', 'Er ist vielleicht vorbei, oder der Link ist unvollständig.')}
         />
         <div style={{ display: 'flex', justifyContent: 'center', gap: 8 }}>
@@ -266,7 +266,7 @@ export function TableScreen() {
 
   const tag: ReactNode =
     state === 'cancelled' ? <TableTag tone="alert">{t('Cancelled by the host', 'Vom Gastgeber abgesagt')}</TableTag>
-    : state === 'ended' ? <TableTag tone="info">{t('This table has ended', 'Dieser Tisch ist vorbei')}</TableTag>
+    : state === 'ended' ? <TableTag tone="info">{t('This study table has ended', 'Dieser Lerntisch ist vorbei')}</TableTag>
     : state === 'live' ? <TableTag tone="focus">{t('Now', 'Jetzt')}</TableTag>
     : state === 'soon' ? <TableTag tone="focus">{t(`Starts in ${minutesTo} min`, `Beginnt in ${minutesTo} Min.`)}</TableTag>
     : full && table.seats > 1 ? <TableTag tone="info">{t(`Full · ${table.taken} of ${table.seats}`, `Voll · ${table.taken} von ${table.seats}`)}</TableTag>
@@ -295,7 +295,7 @@ export function TableScreen() {
     maybe: t('Maybe', 'Vielleicht'),
     cant: t("Can't", 'Kann nicht'),
     cantLong: t("Can't make it", 'Kann nicht'),
-    seated: t("You're at this table", 'Du sitzt an diesem Tisch'),
+    seated: t("You're at this study table", 'Du sitzt an diesem Lerntisch'),
     maybeStatus: t('You said maybe', 'Du hast vielleicht gesagt'),
     full: t(`Full · ${table.taken} of ${table.seats}`, `Voll · ${table.taken} von ${table.seats}`),
   };
@@ -326,7 +326,7 @@ export function TableScreen() {
           <Button variant="tonal" icon={<IconShare size={18} />} onClick={share}>{t('Share link', 'Link teilen')}</Button>
           <Button variant="text" icon={<IconMail size={18} />} href={mail}>{t('Email', 'E-Mail')}</Button>
           {table.isHost && <Button variant="text" onClick={() => setEditing(true)}>{t('Change', 'Ändern')}</Button>}
-          {table.isHost && <Button variant="text" onClick={() => setCancelling(true)}>{t('Cancel table', 'Tisch absagen')}</Button>}
+          {table.isHost && <Button variant="text" onClick={() => setCancelling(true)}>{t('Cancel study table', 'Lerntisch absagen')}</Button>}
         </div>
       )}
       {open && table.seats === 1 && table.isHost && (
@@ -345,7 +345,7 @@ export function TableScreen() {
         <p style={fine}>{url.replace(/^https?:\/\//, '').replace(table.link, '')}<b style={{ color: 'var(--md-on-surface)' }}>{table.link}</b></p>
       )}
       {open && !table.isHost && !table.myAnswer && table.seats > 1 && (
-        <p style={fine}>{t('Anyone with this link can see the table. An invite, not a room booking.', 'Alle mit diesem Link sehen den Tisch. Eine Einladung, keine Raumbuchung.')}</p>
+        <p style={fine}>{t('Anyone with this link can see the study table. An invite, not a room booking.', 'Alle mit diesem Link sehen den Lerntisch. Eine Einladung, keine Raumbuchung.')}</p>
       )}
     </div>
   );
@@ -381,7 +381,7 @@ export function TableScreen() {
         }} />
       {room && (
         <TableSheet open={editing} room={room} table={table} onClose={() => setEditing(false)}
-          onSaved={(saved) => { setTable(saved); setEditing(false); setSnack(t('Table changed', 'Tisch geändert')); }} />
+          onSaved={(saved) => { setTable(saved); setEditing(false); setSnack(t('Study table changed', 'Lerntisch geändert')); }} />
       )}
       <Sheet open={moving} onClose={() => setMoving(false)} label={t('Move to a free room', 'In einen freien Raum verlegen')} variant={wide ? 'dialog' : 'sheet'} width={480}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -396,9 +396,9 @@ export function TableScreen() {
       </Sheet>
       <ConfirmDialog
         open={cancelling}
-        title={t('Cancel this table?', 'Diesen Tisch absagen?')}
+        title={t('Cancel this study table?', 'Diesen Lerntisch absagen?')}
         body={t('Everyone with the link sees it as cancelled.', 'Alle mit dem Link sehen ihn als abgesagt.')}
-        confirmLabel={t('Cancel table', 'Tisch absagen')}
+        confirmLabel={t('Cancel study table', 'Lerntisch absagen')}
         cancelLabel={t('Keep it', 'Behalten')}
         onConfirm={cancel}
         onCancel={() => setCancelling(false)}

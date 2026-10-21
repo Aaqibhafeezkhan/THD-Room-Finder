@@ -73,8 +73,8 @@ export function InstallHint() {
       <b style={{ fontWeight: 500 }}>{t('Add THD Room Finder to your home screen', 'THD Room Finder zum Home-Bildschirm hinzufügen')}</b>
       <p style={{ margin: 0, fontSize: 'var(--body-medium-size)', color: 'var(--md-on-surface-variant)' }}>
         {ios
-          ? t('Tap Share, then "Add to Home Screen". Your tables and the reminder are one tap away.', 'Tippe auf Teilen, dann „Zum Home-Bildschirm". Deine Tische und die Erinnerung sind dann einen Tipp entfernt.')
-          : t('Your tables and the reminder are then one tap away.', 'Deine Tische und die Erinnerung sind dann einen Tipp entfernt.')}
+          ? t('Tap Share, then "Add to Home Screen". Your study tables and the reminder are one tap away.', 'Tippe auf Teilen, dann „Zum Home-Bildschirm". Deine Lerntische und die Erinnerung sind dann einen Tipp entfernt.')
+          : t('Your study tables and the reminder are then one tap away.', 'Deine Lerntische und die Erinnerung sind dann einen Tipp entfernt.')}
       </p>
       <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
         {!ios && deferred && <Button variant="tonal" onClick={() => void install()}>{t('Install', 'Installieren')}</Button>}

@@ -105,7 +105,7 @@ export function SavedRooms({ grid = false }: { grid?: boolean }) {
                   <RoomCard
                     key={room.ident}
                     name={room.code}
-                    meta={roomMeta(room)}
+                    meta={roomMeta(room, locale)}
                     status="unavailable"
                     statusLabel={campusHours.access === 'unconfirmed' ? t('access unconfirmed', 'Zugang unbestätigt') : t('closed', 'zu')}
                     duration="—"
@@ -119,12 +119,12 @@ export function SavedRooms({ grid = false }: { grid?: boolean }) {
                 planningTime,
                 campusHours.todayClose,
               );
-              const banner = statusBannerText(availability, planningTime);
+              const banner = statusBannerText(availability, planningTime, locale);
               return (
                 <RoomCard
                   key={room.ident}
                   name={room.code}
-                  meta={roomMeta(room)}
+                  meta={roomMeta(room, locale)}
                   hint={mayBeLocked(room) ? t('may be locked', 'evtl. abgeschlossen') : undefined}
                   status={availability.status}
                   statusLabel={roomStatusLabel(availability.status, t)}

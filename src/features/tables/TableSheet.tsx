@@ -206,7 +206,7 @@ export function TableSheet({ open, room, onClose, onSaved, table }: TableSheetPr
     }
   };
 
-  const title = table ? t(`Change the table in ${room.code}`, `Tisch in ${room.code} ändern`) : t(`Set a table in ${room.code}`, `Lerntisch in ${room.code} anlegen`);
+  const title = table ? t(`Change the study table in ${room.code}`, `Lerntisch in ${room.code} ändern`) : t(`Study together in ${room.code}`, `Zusammen lernen in ${room.code}`);
   const seatChoices = [...TABLE_SEATS, 1];
 
   return (
@@ -272,7 +272,7 @@ export function TableSheet({ open, room, onClose, onSaved, table }: TableSheetPr
               onClick={save}
               style={{ background: 'var(--md-focus)', color: 'var(--md-on-focus)', width: wide ? undefined : '100%' }}
             >
-              {table ? t('Save changes', 'Änderungen speichern') : t('Set table', 'Tisch anlegen')}
+              {table ? t('Save changes', 'Änderungen speichern') : t('Invite people', 'Leute einladen')}
             </Button>
           </div>
           <p style={{ ...fine, textAlign: wide ? 'right' : 'center' }}>{t('An invite, not a room booking.', 'Eine Einladung, keine Raumbuchung.')}</p>
@@ -280,7 +280,7 @@ export function TableSheet({ open, room, onClose, onSaved, table }: TableSheetPr
       </Sheet>
       <RhythmSheet
         open={open && pickRhythm}
-        title={t('Rhythm for this table', 'Rhythmus für diesen Tisch')}
+        title={t('Rhythm for this study table', 'Rhythmus für diesen Lerntisch')}
         value={rhythm}
         onClose={() => setPickRhythm(false)}
         onPick={(r) => {

@@ -13,7 +13,7 @@ const fmt = (iso, opts) => new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/
 /** Title, description and the card's query for one preview (or null). */
 export function tablePreview(preview) {
   if (!preview) {
-    return { title: 'A study table on THD Room Finder', description: 'Open the link to see the table and take a seat.', card: null };
+    return { title: 'A study table on THD Room Finder', description: 'Open the link to see the study table and take a seat.', card: null };
   }
   const seats = Math.max(1, Math.min(12, Number(preview.seats) || 4));
   const taken = Math.max(1, Math.min(seats, Number(preview.taken) || 1));
@@ -24,7 +24,7 @@ export function tablePreview(preview) {
   const when = `${day}, ${time(preview.starts_at)}`;
   const title = `${preview.cancelled ? 'Cancelled: ' : ''}${topic} · ${when}${room ? ` · ${room}` : ''}`;
   const description = preview.cancelled
-    ? 'The host cancelled this table.'
+    ? 'The host cancelled this study table.'
     : taken >= seats
       ? `Full · ${taken} of ${seats} seats. You can still say maybe. An invite, not a room booking.`
       : `${taken} of ${seats} seats taken. Take a seat or say maybe. An invite, not a room booking.`;
@@ -61,7 +61,7 @@ export function tablePage(preview, link, origin) {
 <script>location.replace(${JSON.stringify(`/t/${safe}?app`)});</script>
 </head>
 <body style="font-family: system-ui, sans-serif; padding: 24px;">
-<p><a href="/t/${esc(safe)}?app">Open the table in THD Room Finder</a></p>
+<p><a href="/t/${esc(safe)}?app">Open the study table in THD Room Finder</a></p>
 </body>
 </html>`;
 }

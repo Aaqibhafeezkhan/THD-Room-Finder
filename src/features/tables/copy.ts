@@ -8,17 +8,17 @@ export function tableErrorText(code: string, t: Translate): string {
     case 'invalid_time':
       return t('Pick a time from now up to 14 days ahead.', 'Wähle eine Zeit ab jetzt bis in 14 Tagen.');
     case 'table_limit':
-      return t('You already host 5 upcoming tables. Cancel one first.', 'Du hast schon 5 kommende Tische. Sage zuerst einen ab.');
+      return t('You already host 5 upcoming study tables. Cancel one first.', 'Du hast schon 5 kommende Lerntische. Sage zuerst einen ab.');
     case 'table_full':
       return t('The last seat just went. You can still say maybe.', 'Der letzte Platz ist gerade weg. Vielleicht geht noch.');
     case 'table_closed':
-      return t('This table is over or cancelled.', 'Dieser Tisch ist vorbei oder abgesagt.');
+      return t('This study table is over or cancelled.', 'Dieser Lerntisch ist vorbei oder abgesagt.');
     case 'seats_taken':
       return t('More seats are taken than that.', 'Es sind schon mehr Plätze belegt.');
     case 'stale_version':
-      return t('The table changed in the meantime. Close this and try again.', 'Der Tisch wurde inzwischen geändert. Schließe das hier und versuche es erneut.');
+      return t('The study table changed in the meantime. Close this and try again.', 'Der Lerntisch wurde inzwischen geändert. Schließe das hier und versuche es erneut.');
     case 'unknown_room':
-      return t("That room can't take a table. Pick another.", 'Dieser Raum geht nicht. Wähle einen anderen.');
+      return t("That room can't take a study table. Pick another.", 'In diesem Raum geht kein Lerntisch. Wähle einen anderen.');
     default:
       return connectionText(code, t) ?? t('Something went wrong. Try again.', 'Etwas ist schiefgelaufen. Versuche es erneut.');
   }

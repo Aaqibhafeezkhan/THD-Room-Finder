@@ -61,7 +61,7 @@ export function YourTables({ grid = false, when }: { grid?: boolean; when?: 'som
   const retry = () => void Promise.all([refresh(), gatherings.refresh()]);
   const now = new Date();
   if (!api) return null;
-  const heading = t('Your tables', 'Deine Tische');
+  const heading = t('Your study tables', 'Deine Lerntische');
   type Item = { kind: 'table'; at: number; table: StudyTable } | { kind: 'gathering'; at: number; g: Gathering };
   const list: Item[] = [
     ...mine.filter((x) => tableState(x, now) !== 'ended').map((x) => ({ kind: 'table' as const, at: x.startsAt.getTime(), table: x })),
@@ -81,12 +81,12 @@ export function YourTables({ grid = false, when }: { grid?: boolean; when?: 'som
       )}
       {list.length === 0 && failed ? (
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: 'var(--space-2) var(--space-2) var(--space-2) var(--space-4)', borderRadius: 'var(--radius-l)', background: 'var(--md-surface)', boxShadow: 'var(--md-shadow-1)', color: 'var(--md-on-surface-variant)', fontSize: 'var(--body-medium-size)' }}>
-          <span style={{ flex: 1 }}>{t("Couldn't load your tables.", 'Deine Tische konnten nicht geladen werden.')}</span>
+          <span style={{ flex: 1 }}>{t("Couldn't load your study tables.", 'Deine Lerntische konnten nicht geladen werden.')}</span>
           <Button variant="text" onClick={retry}>{t('Try again', 'Erneut versuchen')}</Button>
         </div>
       ) : list.length === 0 ? (
         <p style={{ margin: 0, padding: 'var(--space-4)', borderRadius: 'var(--radius-l)', background: 'var(--md-surface)', boxShadow: 'var(--md-shadow-1)', color: 'var(--md-on-surface-variant)', fontSize: 'var(--body-medium-size)' }}>
-          {t('No tables yet. Open a free room and tap Set a table.', 'Noch keine Tische. Öffne einen freien Raum und tippe auf Lerntisch anlegen.')}
+          {t('No study tables yet. Open a free room and tap Study together.', 'Noch keine Lerntische. Öffne einen freien Raum und tippe auf Zusammen lernen.')}
         </p>
       ) : (
         <div

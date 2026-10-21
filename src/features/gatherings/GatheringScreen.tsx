@@ -181,7 +181,7 @@ export function GatheringScreen() {
   };
 
   const bar = (
-    <AppBar mode="back" title={g?.isOrganizer ? t('Organizing', 'Organisieren') : t('Gathering', 'Treffen')}
+    <AppBar mode="back" backLabel={t('Back', 'Zurück')} title={g?.isOrganizer ? t('Organizing', 'Organisieren') : t('Gathering', 'Treffen')}
       onBack={() => (history.length > 1 ? navigate(-1) : navigate('/'))} style={{ position: 'sticky', top: 0, zIndex: 10 }} />
   );
 

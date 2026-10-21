@@ -20,9 +20,9 @@ hasn't started. Teal marks free slots. No new colours.
 
 | # | Screen | Key states |
 |---|---|---|
-| S1 | Set a table (sheet from room detail) | Slots loading, slot picked, no slot that day, Just me |
+| S1 | Study together (sheet from room detail) | Slots loading, slot picked, no slot that day, Just me |
 | S2 | Table page | Guest, seated, host, full, starting soon, lecture appeared, cancelled, ended |
-| S3 | Your tables (Profile section) | Empty, one table, several with chips |
+| S3 | Your study tables (Profile section) | Empty, one table, several with chips |
 | S4 | Reminder banner | Starts in 15 min, started |
 | S5 | Chat preview | The link card in a messenger, light and dark |
 
@@ -41,8 +41,8 @@ hasn't started. Teal marks free slots. No new colours.
 
 Phones: everything in one column, primary action in thumb reach. Wide
 windows (landscape, tablets on their side, desktops) put the ring at 240
-beside the details, cap the page at 960 px and show Set a table as a
-centred dialog. Your tables becomes a grid of `StudyTableCard`s. Landscape
+beside the details, cap the page at 960 px and show Study together as a
+centred dialog. Your study tables becomes a grid of `StudyTableCard`s. Landscape
 phones use the rail, like the rest of the app. Text up to 200 % wraps; the
 ring scales with the card. Specimens: phone, tablet portrait, tablet
 landscape and desktop.

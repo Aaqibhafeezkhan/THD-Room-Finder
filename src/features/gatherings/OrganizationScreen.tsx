@@ -89,7 +89,7 @@ export function OrganizationScreen() {
     }
   };
 
-  const bar = <AppBar mode="back" title={org?.name ?? t('Group', 'Gruppe')} onBack={() => (history.length > 1 ? navigate(-1) : navigate('/'))} style={{ position: 'sticky', top: 0, zIndex: 10 }} />;
+  const bar = <AppBar mode="back" backLabel={t('Back', 'Zurück')} title={org?.name ?? t('Group', 'Gruppe')} onBack={() => (history.length > 1 ? navigate(-1) : navigate('/'))} style={{ position: 'sticky', top: 0, zIndex: 10 }} />;
   if (failed && !org) {
     return (
       <>

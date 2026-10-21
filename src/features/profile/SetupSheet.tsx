@@ -300,7 +300,7 @@ export function SetupSheet({ open, onClose, onDone, quick = false }: SetupSheetP
       <>
         <p style={sub}>
           {quick
-            ? t('People at your tables see it.', 'Die Leute an deinen Tischen sehen ihn.')
+            ? t('People at your study tables see it.', 'Die Leute an deinen Lerntischen sehen ihn.')
             : t(
                 'Optional. Shown at your study tables, and in a Public session when you turn on "Show my name".',
                 'Optional. An deinen Lerntischen sichtbar und in einer öffentlichen Session, wenn du „Meinen Namen zeigen" einschaltest.',

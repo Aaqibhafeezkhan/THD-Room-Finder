@@ -230,12 +230,12 @@ export function CampusScreen() {
             <RoomCard
               key={f.room.ident}
               name={f.room.code}
-              meta={roomMeta(f.room)}
+              meta={roomMeta(f.room, locale)}
               hint={mayBeLocked(f.room) ? t('may be locked', 'evtl. abgeschlossen') : undefined}
               status={signal.status}
               statusLabel={opensAt && signal.status === 'free' ? opensLabel(t, opensAt) : roomStatusLabel(signal.status, t)}
               focus={signal.focus}
-              duration={freeRoomDuration(f, planningTime)}
+              duration={freeRoomDuration(f, planningTime, locale)}
               href={`/room/${encodeURIComponent(f.room.ident)}`}
               onClick={(e) => {
                 e.preventDefault();
@@ -401,6 +401,7 @@ export function CampusScreen() {
   const map = (
     <>
       <CampusMap
+        label={t('THD campus map', 'THD-Campuskarte')}
         theme={waiting ? (dark ? WAITING_DARK : WAITING_LIGHT) : undefined}
         campus={CAMPUS_GEOJSON}
         context={CAMPUS_CONTEXT}

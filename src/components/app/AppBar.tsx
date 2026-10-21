@@ -11,11 +11,13 @@ export interface AppBarProps {
   mode?: 'brand' | 'back';
   title?: string;
   onBack?: () => void;
+  /** Accessible name of the back button. */
+  backLabel?: string;
   actions?: ReactNode;
   style?: CSSProperties;
 }
 
-export function AppBar({ mode = 'brand', title, onBack, actions = null, style = {} }: AppBarProps) {
+export function AppBar({ mode = 'brand', title, onBack, backLabel = 'Back', actions = null, style = {} }: AppBarProps) {
   const bar: CSSProperties = {
     display: 'flex',
     alignItems: 'center',
@@ -29,7 +31,7 @@ export function AppBar({ mode = 'brand', title, onBack, actions = null, style = 
   if (mode === 'back') {
     return (
       <header style={bar}>
-        <IconButton label="Back" onClick={onBack}>
+        <IconButton label={backLabel} onClick={onBack}>
           <svg
             width="24"
             height="24"

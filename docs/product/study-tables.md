@@ -1,6 +1,6 @@
 # Study tables
 
-Phase 2 · M2. Set a table in a free room for later, share one link, and
+Phase 2 · M2. Plan a study table in a free room for later, share one link, and
 whoever opens it takes a seat. Decisions: [ADR 0007](../architecture/adr/0007-study-tables.md).
 Design brief: [`design/brief/09-study-tables.md`](../../design/brief/09-study-tables.md).
 
@@ -33,23 +33,24 @@ the room and says so.
 
 | Word | Means | Never say |
 |---|---|---|
-| Study table, table | The planned group session | Event, meeting, booking, reservation |
-| Set a table | Create one | Book, reserve, schedule |
+| Study table | The planned group session. Always "study table" in the app, never just "table", so it can't read as a restaurant | Event, meeting, booking, reservation |
+| Study together | The action that starts one, on room detail | Study together, book, reserve, schedule |
+| Invite people | The button that creates it in the sheet | Set table, create |
 | Take a seat | Reply yes | RSVP, accept |
 | Maybe · Can't make it | The other two replies | Decline |
 | Host | Who set the table | Owner, admin |
 | Table link | `thd-room-finder.vercel.app/t/mossy-lagoon-42` | Code, token |
 | Just me | A table with one seat: a planned solo session, no link | Private event |
 
-German: Lerntisch, Tisch decken → **Lerntisch anlegen**, Platz nehmen,
-Vielleicht, Kann nicht, Gastgeber·in, Tisch-Link, Nur ich.
+German: **Lerntisch** (never just Tisch), **Zusammen lernen**, **Leute einladen**,
+Platz nehmen, Vielleicht, Kann nicht, Gastgeber·in, Lerntisch-Link, Nur ich.
 
 ## Who does what
 
 ```mermaid
 flowchart LR
   subgraph Host
-    H1[Room detail<br/>Set a table] --> H2[Pick a free slot,<br/>seats, topic]
+    H1[Room detail<br/>Study together] --> H2[Pick a free slot,<br/>seats, topic]
     H2 --> H3[Table page<br/>Share link]
   end
   subgraph Guest
@@ -60,7 +61,7 @@ flowchart LR
     G3 -->|signed in| G5
   end
   H3 -- link --> G1
-  H3 --> D[Profile · Your tables]
+  H3 --> D[Profile · Your study tables]
   G5 --> D
   D --> R[15 min before: banner]
   R --> S[Start focus · same rhythm]
@@ -72,7 +73,7 @@ flowchart LR
 
 | # | As a student I want to… | So that… | Acceptance |
 |---|---|---|---|
-| T1 | set a table from a room I am looking at | the room is one I know is free | **Set a table** sits under Start focus on room detail. The sheet opens with that room fixed |
+| T1 | set a table from a room I am looking at | the room is one I know is free | **Study together** sits under Start focus on room detail. The sheet opens with that room fixed |
 | T2 | pick a time from the room's free slots | I can't pick a time when a lecture is on | Day chips (Today, Tomorrow, then weekday and date to 2 weeks; closed days are left out). For the day, slot chips from the room's free windows, cut to the lecture grid (08:00, 09:45, 11:30, 13:15, 15:00, 16:45, 18:30) and opening hours. When the first day has no slot left, the sheet opens on the next day that has one |
 | T3 | choose how many seats | it feels like a real table | Seat chips 2 · 4 · 6 · 8 · 12, default 4. **Just me** makes it a planned solo session with no link. Under the chips: "More people? Register your group", which opens the [registry](organizations.md) request in Profile |
 | T4 | say what we study, optionally | people know what the table is for | One line, up to 40 characters, placeholder "What are you studying?" |
@@ -100,11 +101,11 @@ flowchart LR
 
 | # | As someone at a table I want to… | So that… | Acceptance |
 |---|---|---|---|
-| T14 | find my tables again | I don't lose the link | Profile → **Your tables**, next first; tables drop off when they end |
+| T14 | find my tables again | I don't lose the link | Profile → **Your study tables**, next first; tables drop off when they end |
 | T15 | a reminder | I leave on time | 15 minutes before: a banner in the app on any tab; Android notification in a later step |
 | T16 | start focus at the table | we study in step | From 15 minutes before: **Start focus in C001**, anchored at the table's start, so breaks line up |
 | T17 | know if the room stops being free | we don't walk into a lecture | The table page shows "A lecture is now scheduled here" and offers to move to a free room at the same time |
-| T18 | (host) change or cancel | people aren't misled | Change room or time, or **Cancel table**. Guests see **Changed** or **Cancelled** in Your tables and on the page |
+| T18 | (host) change or cancel | people aren't misled | Change room or time, or **Cancel study table**. Guests see **Changed** or **Cancelled** in Your study tables and on the page |
 
 ### Accounts and install
 
@@ -117,9 +118,9 @@ flowchart LR
 
 | Place | What appears | Who sees it |
 |---|---|---|
-| Room detail | **Set a table** under Start focus. If I have a table in this room today: a table row "Your table · 13:15" | Everyone; the row only for me |
+| Room detail | **Study together** under Start focus. If I have a table in this room today: a table row "Your study table · 13:15" | Everyone; the row only for me |
 | Room list and map | A small seat marker on rooms where I have a table today | Only me |
-| Profile | **Your tables** above Saved rooms; empty state invites to set one from a room | Me |
+| Profile | **Your study tables** above Saved rooms; empty state invites to set one from a room | Me |
 | Any tab | Reminder banner 15 minutes before | Me |
 | `/t/<link>` | Table page | Anyone with the link |
 
@@ -129,7 +130,7 @@ There is no new tab, no table list for strangers and no search.
 
 The table follows the app's layouts; nothing about it is phone-only.
 
-| Window | Navigation | Set a table | Table page | Your tables |
+| Window | Navigation | Study together | Table page | Your study tables |
 |---|---|---|---|---|
 | Phone, portrait | Bottom bar | Bottom sheet | One column: ring on top, details, actions in thumb reach | Profile section |
 | Phone, landscape | Rail | Dialog, slots and seats side by side | Ring left, details and actions right | Profile, two columns |
@@ -141,17 +142,17 @@ not under the rail or drawer.
 
 ## Screens and states
 
-### Set a table (sheet)
+### Study together (sheet)
 
 ```
 ┌────────────────────────────────┐
-│ Set a table in C001            │
+│ Study together in C001         │
 │ Today  Tomorrow  Thu  Fri  …   │  day chips
 │ 13:15  15:00  16:45            │  free slots that day
 │ Seats  2 [4] 6 8 12  Just me   │
 │ What are you studying?  ____   │
 │ Pomodoro · 25/5 · Change       │
-│ [ Set table ]                  │
+│ [ Invite people ]              │
 │ An invite, not a room booking. │
 └────────────────────────────────┘
 ```
@@ -161,7 +162,7 @@ not under the rail or drawer.
 | Loading the day | Slot chips as skeletons |
 | No free slot that day | "No free slot on Thursday" and the next day with one |
 | Closed day | Left out of the day chips |
-| Signed out | **Set table** asks for the email code first, then sets the table |
+| Signed out | **Invite people** asks for the email code first, then sets the table |
 | Error | Inline line above the button; nothing lost |
 
 ### Table page
@@ -196,7 +197,7 @@ not under the rail or drawer.
 | Over | "This table has ended" |
 | Unknown link | "This table isn't here any more" and a link to the map |
 
-### Your tables (Profile)
+### Your study tables (Profile)
 
 One row per table: topic or "Study table", day and time, room, seat
 count and a chip (Now, Soon, Changed, Maybe, Cancelled). Tap opens the page.
@@ -209,7 +210,7 @@ count and a chip (Now, Soon, Changed, Maybe, Cancelled). Tap opens the page.
 | `StudyTableCard` | New | The table page's main card: ring, topic, when, where, who |
 | `SlotChips` | New | Day chips and free-slot chips for one room |
 | `ReplyBar` | New | Take a seat · Maybe · Can't, with the full and seated states |
-| `TableRow` | New | One table in Your tables, with its chip |
+| `TableRow` | New | One table in Your study tables, with its chip |
 | `TableBanner` | New | The 15-minute reminder |
 | `Chip`, `SegmentedControl`, `Sheet`, `Switch`, `Button` | Reused | — |
 
