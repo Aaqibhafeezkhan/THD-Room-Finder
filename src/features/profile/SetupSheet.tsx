@@ -17,14 +17,20 @@ import { useStudyProfile } from './StudyProfileContext';
  * optional name → what others see. A returning student whose profile already
  * exists is done after the code. Signed-in students editing their profile
  * start at the programme. "Not listed" keeps the student Private-only.
+ * `quick` is the study table path (ADR 0007): email → code → first name,
+ * saved as a Private profile without a programme; programme and batch can
+ * be added later in Profile.
  */
 type Step = 'email' | 'code' | 'programme' | 'intake' | 'name' | 'visibility';
 const ORDER: Step[] = ['email', 'code', 'programme', 'intake', 'name', 'visibility'];
+const QUICK_ORDER: Step[] = ['email', 'code', 'name'];
 
 export interface SetupSheetProps {
   open: boolean;
   onClose: () => void;
   onDone?: (message: string) => void;
+  /** Email, code and a first name only; for taking a seat at a table. */
+  quick?: boolean;
 }
 
 const field: CSSProperties = {
@@ -55,6 +61,8 @@ function errorText(code: string, t: Translate): string {
       );
     case 'stale_version':
       return t('Your profile changed on another device. Close this and try again.', 'Dein Profil wurde auf einem anderen Gerät geändert. Schließe das hier und versuche es erneut.');
+    case 'unavailable':
+      return t("The sign-in server isn't answering right now. Try again in a moment.", 'Der Anmeldeserver antwortet gerade nicht. Versuche es gleich noch einmal.');
     case 'invalid_programme':
       return t("That programme can't start in this term. Pick another intake.", 'Dieser Studiengang beginnt nicht in diesem Semester. Wähle einen anderen Studienbeginn.');
     default:
@@ -62,7 +70,7 @@ function errorText(code: string, t: Translate): string {
   }
 }
 
-export function SetupSheet({ open, onClose, onDone }: SetupSheetProps) {
+export function SetupSheet({ open, onClose, onDone, quick = false }: SetupSheetProps) {
   const { t, locale } = useI18n();
   const cls = useWindowClass();
   const profile = useStudyProfile();
@@ -84,7 +92,7 @@ export function SetupSheet({ open, onClose, onDone }: SetupSheetProps) {
   useEffect(() => {
     if (!open) return;
     const id = profile.identity;
-    setStep(signedIn ? 'programme' : 'email');
+    setStep(signedIn ? (quick ? 'name' : 'programme') : 'email');
     setCode('');
     setQuery('');
     setError('');
@@ -143,7 +151,7 @@ export function SetupSheet({ open, onClose, onDone }: SetupSheetProps) {
         onDone?.(t('Signed in · profile synced', 'Angemeldet · Profil synchronisiert'));
         return;
       }
-      go('programme');
+      go(quick ? 'name' : 'programme');
     });
   const save = () =>
     run(async () => {
@@ -163,13 +171,14 @@ export function SetupSheet({ open, onClose, onDone }: SetupSheetProps) {
   const termName = (i: Intake) =>
     i.term === 'winter' ? t(`Winter ${i.year}/${String(i.year + 1).slice(2)}`, `Winter ${i.year}/${String(i.year + 1).slice(2)}`) : t(`Summer ${i.year}`, `Sommer ${i.year}`);
 
-  const index = ORDER.indexOf(step) + 1;
+  const order = quick ? QUICK_ORDER : ORDER;
+  const index = order.indexOf(step) + 1;
   const title = {
     email: t("What's your THD email?", 'Wie lautet deine THD-E-Mail?'),
     code: t('Enter the code', 'Code eingeben'),
     programme: t('What do you study?', 'Was studierst du?'),
     intake: t('When did you start?', 'Wann hast du angefangen?'),
-    name: t('What should your batch call you?', 'Wie soll dein Jahrgang dich nennen?'),
+    name: quick ? t("What's your first name?", 'Wie ist dein Vorname?') : t('What should your batch call you?', 'Wie soll dein Jahrgang dich nennen?'),
     visibility: t('This is what others see', 'Das sehen andere'),
   }[step];
 
@@ -177,7 +186,7 @@ export function SetupSheet({ open, onClose, onDone }: SetupSheetProps) {
     const prev: Partial<Record<Step, Step>> = {
       code: 'email',
       intake: 'programme',
-      name: listed ? 'intake' : 'programme',
+      name: quick ? undefined : listed ? 'intake' : 'programme',
       visibility: 'name',
     };
     const p = prev[step];
@@ -290,10 +299,12 @@ export function SetupSheet({ open, onClose, onDone }: SetupSheetProps) {
     body = (
       <>
         <p style={sub}>
-          {t(
-            'Optional. Only shown in a Public session when you turn on "Show my name".',
-            'Optional. Nur in einer öffentlichen Session sichtbar, wenn du „Meinen Namen zeigen" einschaltest.',
-          )}
+          {quick
+            ? t('People at your study tables see it.', 'Die Leute an deinen Lerntischen sehen ihn.')
+            : t(
+                'Optional. Shown at your study tables, and in a Public session when you turn on "Show my name".',
+                'Optional. An deinen Lerntischen sichtbar und in einer öffentlichen Session, wenn du „Meinen Namen zeigen" einschaltest.',
+              )}
         </p>
         <input
           aria-label={t('Display name', 'Anzeigename')}
@@ -303,10 +314,14 @@ export function SetupSheet({ open, onClose, onDone }: SetupSheetProps) {
           onChange={(e) => setName(e.target.value)}
           style={field}
         />
-        {primary(t('Next', 'Weiter'), () => go('visibility'))}
-        <Button variant="text" onClick={() => { setName(''); go('visibility'); }} style={{ width: '100%' }}>
-          {t('Skip', 'Überspringen')}
-        </Button>
+        {quick
+          ? primary(t('Save', 'Speichern'), save, !name.trim())
+          : primary(t('Next', 'Weiter'), () => go('visibility'))}
+        {!quick && (
+          <Button variant="text" onClick={() => { setName(''); go('visibility'); }} style={{ width: '100%' }}>
+            {t('Skip', 'Überspringen')}
+          </Button>
+        )}
       </>
     );
   } else {
@@ -337,10 +352,10 @@ export function SetupSheet({ open, onClose, onDone }: SetupSheetProps) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '8px 0' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
           <span style={{ fontSize: 'var(--label-large-size)', color: 'var(--md-on-surface-variant)' }}>
-            {t(`Step ${index} of 6`, `Schritt ${index} von 6`)}
+            {t(`Step ${index} of ${order.length}`, `Schritt ${index} von ${order.length}`)}
           </span>
           <Button variant="text" size="small" onClick={back}>
-            {step === 'email' || (signedIn && step === 'programme') ? t('Close', 'Schließen') : t('Back', 'Zurück')}
+            {step === 'email' || (signedIn && step === (quick ? 'name' : 'programme')) ? t('Close', 'Schließen') : t('Back', 'Zurück')}
           </Button>
         </div>
         <h2 ref={heading} data-autofocus tabIndex={-1} style={{ margin: 0, fontSize: 'var(--title-large-size)', fontWeight: 400, outline: 'none' }}>

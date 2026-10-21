@@ -70,7 +70,9 @@ export function RoomFocusPanel({ room, availability, closing, scheduleOnly }: Ro
               "Couldn't reach the server. An ad blocker or Brave Shields may be stopping it.",
               'Server nicht erreichbar. Vielleicht blockiert ihn ein Werbeblocker oder Brave Shields.',
             )
-          : t("Couldn't update the session. Try again.", 'Session konnte nicht aktualisiert werden. Versuche es erneut.'),
+          : code === 'unavailable'
+            ? t("The server isn't answering. Try again in a moment.", 'Der Server antwortet nicht. Versuche es gleich noch einmal.')
+            : t("Couldn't update the session. Try again.", 'Session konnte nicht aktualisiert werden. Versuche es erneut.'),
     );
   };
 

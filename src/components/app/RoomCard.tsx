@@ -14,7 +14,7 @@ import type { FocusBadgeKind } from '../focus/FocusBadge';
  * line under the meta. A claimed room that is also closing soon passes
  * status "soon" with a claimed badge, so the duration stays amber.
  */
-export type RoomCardStatus = RoomStatus | 'claimed';
+export type RoomCardStatus = RoomStatus | 'claimed' | 'unavailable';
 
 export interface RoomCardFocus {
   kind: FocusBadgeKind;
@@ -68,6 +68,7 @@ export function RoomCard({
     soon: { fg: 'var(--status-soon)', label: 'closing' },
     claimed: { fg: 'var(--status-claimed)', label: 'claimed' },
     occupied: { fg: 'var(--status-occupied)', label: 'busy' },
+    unavailable: { fg: 'var(--md-on-surface-variant)', label: 'unavailable' },
   }[status];
 
   const card: CSSProperties = {
@@ -135,6 +136,7 @@ export function RoomCard({
       <div
         style={{
           flexShrink: 0,
+          maxWidth: '55%',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'flex-end',
@@ -149,6 +151,7 @@ export function RoomCard({
             letterSpacing: '0.06em',
             textTransform: 'uppercase',
             color: TONE.fg,
+            overflowWrap: 'anywhere',
           }}
         >
           {statusLabel ?? TONE.label}

@@ -71,6 +71,42 @@ identity results are JSON objects; times are server time.
 | `get_focus_history(since = null)` | signed in | `{server_now, entries}`: own entries stored after `since`, oldest first |
 | `clear_focus_history()` | signed in | Deletes own synced history; returns how many entries went |
 
+### Study tables ([ADR 0007](adr/0007-study-tables.md))
+
+| Function | Who | Does |
+|---|---|---|
+| `set_table(topic, room_key, starts_at, minutes, seats, focus_minutes, break_minutes, long_break_minutes = 0, long_every = 0, show_name = false)` | study profile | A table in a room, up to 14 days ahead, 25–180 minutes, 1/2/4/6/8/12 seats, topic up to 40 characters. Returns a word link such as `mossy-lagoon-42`. Up to 5 upcoming per host: `table_limit` |
+| `change_table(link, expected_version, …same fields)` | host | Moves or edits it; guests see `changed`. Seats can't drop below those taken: `seats_taken` |
+| `cancel_table(link)` | host | Marks it cancelled; the page stays until it ends |
+| `get_table(link)` | anyone | The table, seats taken, maybes, names of people who show them, the viewer's own answer; `null` when unknown or ended over 24 h ago. Links match case-insensitively |
+| `table_preview(link)` | anyone | Topic, room code, time, seats and seats taken, cancelled. No names, for link cards |
+| `reply_table(link, answer, show_name = false)` | study profile | `seat`, `maybe` or `no`; `no` removes the reply. Full: `table_full`. The host can't reply; a one-seat table has no guests: `solo_table` |
+| `my_tables()` | signed in | Upcoming tables the caller hosts, sits at or said maybe to, next first |
+
+Tables and replies are deleted 24 hours after the table ends (`focus.cleanup`).
+
+### Organizations and gatherings ([ADR 0008](adr/0008-organization-registry.md))
+
+| Function | Who | Does |
+|---|---|---|
+| `request_organization(name, slug, description, website, support_url)` | study profile | Starts a registry request; returns its number for the issue form. Slug taken: `slug_taken`; 2 open requests: `request_limit` |
+| `registry_set_status(no, status, issue)` | service role | The registry workflow's labels: `waiting_proof`, `in_review`, `needs_info`, `approved` (creates the verified group, applicant as lead), `declined`, `revoked` |
+| `my_organizations()` | signed in | The caller's requests and the groups they organize for |
+| `get_organization(slug)` | anyone | Public fields, verified, upcoming gatherings |
+| `create_organizer_invite(slug)` / `join_organization(token)` | lead / study profile | A 7-day organizer link, and joining with it |
+| `set_gathering(slug, kind, title, description, room_key, starts_at, minutes, capacity, approval_ref)` | organizer of a verified group | A gathering up to 90 days ahead, 25 min–6 h, 13–300 people, with THD's room approval reference; kinds `focus`, `games`, `talk`, `meeting`. Another gathering in the room then: `room_taken` |
+| `change_gathering(link, expected_version, …)` / `cancel_gathering(link)` | organizer | Capacity can't drop below those going: `capacity_taken` |
+| `get_gathering(link)` | anyone | The gathering, `replies` (going `g` and maybe `m` in reply order), counts, the viewer's answer and waiting place |
+| `gathering_preview(link)` | anyone | For link cards: title, kind, group, room, time, capacity, `replies`. No names |
+| `reply_gathering(link, answer, consent)` | study profile | `going`, `maybe` or `no`; needs `consent` to share name, programme and batch (`needs_consent`). Full: Going joins the waiting list; when someone leaves, the first in line moves up |
+| `gathering_people(link)` | organizer | Name, programme, intake and answer in reply order. No email |
+| `my_gatherings()` | signed in | Gatherings replied to or hosted by the caller's groups |
+| `room_gatherings(room_key, from, to)` | anyone | Gatherings in a room, so it shows as taken |
+
+Gatherings go 30 days after they end; organizer links when they expire.
+Migrations reach the hosted project on merge to `main` (the Database
+workflow's deploy job).
+
 ### What a viewer sees
 
 `room_summaries` returns `room_key`, `claims`, `claim_since`, `batch_count`,
@@ -98,11 +134,17 @@ Errors carry a stable `hint` for the app to branch on; `message` is for logs.
 | `invalid_duration`, `invalid_rhythm`, `invalid_visibility`, `invalid_request`, `unknown_room` | 22023 | Bad input |
 | `invalid_programme`, `public_needs_batch`, `needs_profile` | 22023 | Unknown programme or intake; Public without a listed programme; a claim without a study profile |
 | `already_active` | 23505 | A session is running and `replace` was not set |
-| `stale_version` | 40001 | The record changed elsewhere; reload and retry |
+| `stale_version` | PT409 (HTTP 409) | The record changed elsewhere; reload and retry. Not 40001: PostgREST retries that until the gateway times out |
 | `not_active` | P0002 | Renew or update on a session that has ended or expired |
 | `rate_limited` | 53400 | More than 20 starts in an hour |
 | `invalid_history`, `too_many_entries` | 22023 | History upload that is not an array, or over 500 entries |
 | `history_full` | 53400 | 5,000 synced entries already stored |
+| `invalid_time`, `invalid_length`, `invalid_seats`, `invalid_topic`, `invalid_answer`, `host_reply`, `solo_table`, `table_closed`, `seats_taken` | 22023 | Study tables: bad input, the host replying, or a cancelled/ended table |
+| `table_full`, `table_limit` | 22023 | No seat left; 5 upcoming hosted tables |
+| `not_found` | P0002 | Unknown table link, or not the host |
+| `invalid_kind`, `invalid_capacity`, `needs_approval`, `room_taken`, `capacity_taken`, `needs_consent`, `gathering_closed`, `not_verified`, `invalid_slug`, `request_limit` | 22023 | Gatherings and the registry |
+| `slug_taken` | 23505 | The group's short name is taken |
+| `not_organizer`, `not_lead` | 42501 | Only organizers host; only leads invite |
 
 ## Not in this contract yet
 

@@ -72,7 +72,7 @@ export function OverflowMenu() {
         </div>
         <div>
           <PopoverLabel>{t('Language', 'Sprache')}</PopoverLabel>
-          <LanguageToggle value={locale} onChange={setLocale} />
+          <LanguageToggle value={locale} onChange={setLocale} label={t('Language', 'Sprache')} />
         </div>
         <div>
           <PopoverLabel>{t('Map amenities', 'Karten-Symbole')}</PopoverLabel>

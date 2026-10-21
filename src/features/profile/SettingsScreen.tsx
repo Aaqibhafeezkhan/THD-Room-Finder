@@ -428,7 +428,7 @@ export function SettingsScreen({ children }: { children?: ReactNode }) {
   return (
     <>
       <AppBar
-        mode="back"
+        mode="back" backLabel={t('Back', 'Zurück')}
         title={t('Settings', 'Einstellungen')}
         onBack={() => navigate('/profile')}
         style={{ position: 'sticky', top: 0, zIndex: 10 }}

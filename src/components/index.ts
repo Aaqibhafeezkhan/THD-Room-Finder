@@ -66,7 +66,8 @@ export { CheckInSheet } from './focus/CheckInSheet';
 export type { CheckInSheetProps } from './focus/CheckInSheet';
 export { FocusBadge } from './focus/FocusBadge';
 export type { FocusBadgeProps, FocusBadgeKind } from './focus/FocusBadge';
-export { FocusGraph, focusLevel } from './focus/FocusGraph';
+export { FocusGraph } from './focus/FocusGraph';
+export { focusLevel } from '../domain/focusGraph';
 export type { FocusGraphProps, FocusGraphText, FocusDay } from './focus/FocusGraph';
 export { ShareCard, renderShareCard, semesterWeeks } from './focus/ShareCard';
 export type { ShareCardProps, ShareCardOptions, ShareCardFigure, ShareCardFormat } from './focus/ShareCard';
@@ -78,3 +79,29 @@ export { MapLegend } from './focus/MapLegend';
 export type { MapLegendProps } from './focus/MapLegend';
 export { BuildingRow } from './focus/BuildingRow';
 export type { BuildingRowProps } from './focus/BuildingRow';
+
+// Study tables (M2, docs/product/study-tables.md).
+export { SeatRing } from './tables/SeatRing';
+export type { SeatRingProps } from './tables/SeatRing';
+export { TableTag } from './tables/TableTag';
+export type { TableTagProps, TableTagTone } from './tables/TableTag';
+export { StudyTableCard } from './tables/StudyTableCard';
+export type { StudyTableCardProps } from './tables/StudyTableCard';
+export { SlotChips, choiceChip } from './tables/SlotChips';
+export type { SlotChipsProps, SlotDay, SlotOption } from './tables/SlotChips';
+export { ReplyBar } from './tables/ReplyBar';
+export type { ReplyBarProps, ReplyBarText, ReplyAnswer } from './tables/ReplyBar';
+export { TableRow } from './tables/TableRow';
+export type { TableRowProps } from './tables/TableRow';
+export { TableBanner } from './tables/TableBanner';
+export type { TableBannerProps } from './tables/TableBanner';
+
+// Gatherings (M3, docs/product/organizations.md).
+export { Hall } from './gatherings/Hall';
+export type { HallProps } from './gatherings/Hall';
+export { KindIcon } from './gatherings/KindIcon';
+export type { KindIconProps } from './gatherings/KindIcon';
+export { KindPicker } from './gatherings/KindPicker';
+export type { KindPickerProps } from './gatherings/KindPicker';
+export { VerifiedTag } from './gatherings/VerifiedTag';
+export type { VerifiedTagProps } from './gatherings/VerifiedTag';

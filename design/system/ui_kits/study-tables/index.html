@@ -1,0 +1,131 @@
+<!-- @dsCard group="Study tables (M2)" viewport="1600x1900" name="Study tables — screens" subtitle="Set a table from a free room, share a word link, take a seat. S1 set-a-table sheet, S2 table page (guest, seated + starting soon, host + full, cancelled), S3 Your tables, S4 reminder, S5 chat preview. Light and dark." -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study tables — screens</title>
+<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="kit.css">
+</head>
+<body>
+<h1>Study tables</h1>
+<p class="lede">A round table in a lab session, seen from above: the room in the middle, seats around it. Set one in a free room, send the word link to the group chat, people take a seat. Violet is the table colour (a focus session that hasn't started); teal marks free slots. Spec: docs/product/study-tables.md.</p>
+
+<div class="row" id="light"></div>
+<div class="row" id="light2"></div>
+<div class="row" data-theme="dark" id="dark" style="background:none"></div>
+
+<script src="seats.js"></script>
+<script>
+const nav = (on) => `<div class="nav">${['Campus', 'Rooms', 'Profile'].map(n => `<span class="${n === on ? 'on' : ''}"><i></i>${n}</span>`).join('')}</div>`;
+const shot = (label, phone) => `<div class="shot"><div class="label">${label}</div>${phone}</div>`;
+
+const s1 = `<div class="phone">
+  <div class="bar"><span class="back">‹</span>C001</div>
+  <div class="page">
+    <div class="room"><span>Free now<br><small>until 20:00</small></span><big>3h 40m</big></div>
+    <button class="btn primary wide">Start focus</button>
+    <button class="btn tonal wide">Set a table</button>
+  </div>${nav('Rooms')}
+  <div class="scrim"></div>
+  <div class="sheet"><div class="handle"></div>
+    <div class="title">Set a table in C001</div>
+    <div class="chips"><span class="chip">Today</span><span class="chip on">Tomorrow</span><span class="chip">Thu</span><span class="chip off">Sat</span></div>
+    <div class="chips"><span class="chip slot">09:45 <small>1h 30</small></span><span class="chip slot on">13:15 <small>3 h</small></span><span class="chip slot">16:45 <small>1h 45</small></span></div>
+    <div><div class="lab" style="margin-bottom:6px">Seats</div><div class="chips"><span class="chip">2</span><span class="chip on">4</span><span class="chip">6</span><span class="chip">8</span><span class="chip">12</span><span class="chip">Just me</span></div><p class="fine" style="margin-top:6px">More people? <span style="color:var(--md-primary)">Register your group</span></p></div>
+    <div class="field">What are you studying?</div>
+    <p class="fine">Pomodoro · 25 min focus, 5 min break · <span style="color:var(--md-primary)">Change</span></p>
+    <button class="btn focus wide">Set table</button>
+    <p class="fine" style="text-align:center">An invite, not a room booking.</p>
+  </div></div>`;
+
+const guest = `<div class="phone">
+  <div class="bar"><span class="back">‹</span>Study table</div>
+  <div class="page">
+    <div class="card">
+      <div class="ring">${seatRing(['taken', 'taken', 'taken', 'empty', 'empty', 'empty'])}</div>
+      <p class="title">Algorithms</p>
+      <p class="meta"><b>Wed 21 Oct · 13:15–14:45</b><br>C001 · <span class="free">free then</span> · Pomodoro<br>Max, Lena and 1 more · 1 maybe</p>
+    </div>
+    <button class="btn focus wide">Take a seat</button>
+    <div class="actions" style="justify-content:center"><button class="btn text">Maybe</button><button class="btn text">Can't make it</button></div>
+    <p class="fine">Taking a seat signs you in with a code by email. No password.</p>
+    <p class="fine">Anyone with this link can see the table. An invite, not a room booking.</p>
+  </div>${nav('Campus')}</div>`;
+
+const seated = `<div class="phone">
+  <div class="bar"><span class="back">‹</span>Study table</div>
+  <div class="page">
+    <div class="card">
+      <span class="tag violet">Starts in 10 min</span>
+      <div class="ring">${seatRing(['taken', 'mine', 'taken', 'taken', 'empty', 'empty'])}</div>
+      <p class="title">Algorithms</p>
+      <p class="meta"><b>Today · 13:15–14:45</b><br>C001 · <span class="free">free now</span> · Pomodoro<br>You, Max, Lena and 1 more</p>
+    </div>
+    <button class="btn focus wide">Start focus in C001</button>
+    <div class="actions"><span class="fine" style="flex:1">You're at this table</span><button class="btn text">Maybe</button><button class="btn text">Can't</button></div>
+    <div class="actions"><button class="btn tonal">Share link</button><button class="btn text">Email</button></div>
+  </div>${nav('Profile')}</div>`;
+
+const host = `<div class="phone">
+  <div class="bar"><span class="back">‹</span>Your table</div>
+  <div class="page">
+    <div class="card">
+      <span class="tag blue">Full · 4 of 4</span>
+      <div class="ring">${seatRing(['mine', 'taken', 'taken', 'taken'])}</div>
+      <p class="title">Exam prep · Maths 3</p>
+      <p class="meta"><b>Fri 23 Oct · 09:45–11:15</b><br>E 212 · <span class="warn">a lecture is now scheduled here</span><br>Mia, Jonas and 1 more · 2 maybe</p>
+    </div>
+    <button class="btn focus wide">Move to a free room</button>
+    <div class="actions"><button class="btn tonal">Share link</button><button class="btn text">Email</button><button class="btn text">Change</button><button class="btn text">Cancel table</button></div>
+    <p class="fine">thd-room-finder.vercel.app/t/<b>mossy-lagoon-42</b></p>
+  </div>${nav('Profile')}</div>`;
+
+const profile = `<div class="phone">
+  <div class="bar">Profile</div>
+  <div class="page">
+    <div class="card" style="padding:12px 16px"><p class="meta"><b>Lena</b> · AIN 7</p></div>
+    <div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:var(--title-medium-size);font-weight:500">Your tables</b></div>
+    <div class="list">
+      <div class="trow">${seatRing(['taken', 'mine', 'taken', 'taken', 'empty', 'empty'], { size: 44, code: '' })}<div class="t"><b>Algorithms</b><span>Today 13:15 · C001 · 4 of 6</span></div><span class="tag violet">Soon</span></div>
+      <div class="trow">${seatRing(['mine', 'taken', 'taken', 'taken'], { size: 44, code: '' })}<div class="t"><b>Exam prep · Maths 3</b><span>Fri 09:45 · E 212 · 4 of 4</span></div><span class="tag blue">Changed</span></div>
+      <div class="trow">${seatRing(['mine'], { size: 44, code: '' })}<div class="t"><b>Just me</b><span>Mon 08:00 · I 112</span></div></div>
+      <div class="trow">${seatRing(['taken', 'empty', 'empty', 'empty'], { size: 44, code: '', cancelled: true })}<div class="t"><b style="text-decoration:line-through">Physics lab notes</b><span>Tue 15:00 · J 004</span></div><span class="tag red">Cancelled</span></div>
+    </div>
+    <b style="font-size:var(--title-medium-size);font-weight:500">Saved rooms</b>
+    <div class="card"><p class="meta">No saved rooms yet</p></div>
+  </div>
+  <div class="banner"><span><b>Algorithms</b> starts at 13:15 · C001</span><button class="btn text">Open</button><button class="btn text">✕</button></div>
+  ${nav('Profile')}</div>`;
+
+const cancelled = `<div class="phone">
+  <div class="bar"><span class="back">‹</span>Study table</div>
+  <div class="page">
+    <div class="card">
+      <span class="tag red">Cancelled by the host</span>
+      <div class="ring">${seatRing(['taken', 'taken', 'empty', 'empty'], { cancelled: true, code: 'J004' })}</div>
+      <p class="title" style="color:var(--md-on-surface-variant)">Physics lab notes</p>
+      <p class="meta">Tue 27 Oct · 15:00–16:30 · J 004</p>
+    </div>
+    <button class="btn tonal wide">Find a free room</button>
+  </div>${nav('Campus')}</div>`;
+
+const chat = (dark) => `<div class="chat ${dark ? 'dark' : ''}"><div class="bubble"><div class="prev">
+  <div class="img">${seatRing(['taken', 'taken', 'taken', 'empty', 'empty', 'empty'], { size: 120 }).replace(/var\(--md-surface-variant\)/g, '#ffffff22').replace(/var\(--md-on-surface\)/g, '#fff').replace(/var\(--md-focus\)/g, '#fff').replace(/var\(--md-outline\)/g, '#ffffffaa').replace(/var\(--md-outline-variant\)/g, '#ffffff55')}</div>
+  <div class="p"><b>Algorithms · Wed 21 Oct, 13:15 · C001</b><span>3 of 6 seats taken. Take a seat or say maybe. An invite, not a room booking.</span></div></div>
+  <div class="link">thd-room-finder.vercel.app/t/mossy-lagoon-42</div></div></div>`;
+
+document.getElementById('light').innerHTML =
+  shot('<b>S1 · Set a table.</b> From room detail. Days, then the room\'s free slots for that day (cut to the lecture grid), seats, an optional topic. Length = the slot; rhythm = yours.', s1) +
+  shot('<b>S2 · Table page, guest.</b> Opened from a link, no account. The ring shows 3 of 6 seats taken; names only for people who share them.', guest) +
+  shot('<b>S2 · Seated, starting soon.</b> My seat has a ring. From 15 min before: Start focus in C001, in the table\'s rhythm.', seated);
+document.getElementById('light2').innerHTML =
+  shot('<b>S2 · Host, full, lecture appeared.</b> Host actions first. A lecture now scheduled in the room offers Move to a free room. The link is two words and two digits.', host) +
+  shot('<b>S3 + S4 · Your tables and the reminder.</b> Profile section, next first, small rings. The banner shows 15 min before on any tab.', profile) +
+  shot('<b>S5 · Chat preview.</b> What WhatsApp or Signal shows for a table link. No names.', `<div style="display:flex;flex-direction:column;gap:16px">${chat(false)}${chat(true)}</div>`);
+document.getElementById('dark').innerHTML =
+  shot('<b>Dark · table page.</b>', guest) + shot('<b>Dark · Your tables.</b>', profile) + shot('<b>Dark · cancelled.</b>', cancelled);
+</script>
+</body>
+</html>

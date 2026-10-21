@@ -31,9 +31,10 @@ import {
   isCafeteria,
 } from '../../domain/openingHours';
 import { BrandHeader } from '../shared/BrandHeader';
+import { freeRoomsLabel, opensLabel } from '../shared/roomStatusLabel';
 import { ClosedNotice } from '../shared/ClosedNotice';
 import { FilterMenu } from '../shared/FilterMenu';
-import { Spinner } from '../shared/ui';
+import { ErrorState, Spinner } from '../shared/ui';
 import { PLACE_GLYPHS, PLACE_META } from './placeMeta';
 import { PlaceCard } from './PlaceCard';
 
@@ -90,6 +91,10 @@ function BuildingBadge({ label, color, size = 44 }: { label: string; color: stri
  * Layout adapts to the window size class: a stacked map-over-list on compact
  * (phone), a map + side-panel split on medium/expanded (tablet / desktop).
  */
+/** Buildings before opening: the free-room ramp faded into the map, so it hints and doesn't glow. */
+const WAITING_LIGHT = { ramp: ['#C4C6D0', '#C2CACB', '#BDCDC9', '#B6CFC9', '#AED1C9'] };
+const WAITING_DARK = { ramp: ['#3A3F49', '#39464A', '#384F4D', '#365851', '#346155'] };
+
 export function CampusScreen() {
   const navigate = useNavigate();
   const { t, locale } = useI18n();
@@ -97,8 +102,11 @@ export function CampusScreen() {
   const { showGlyphs } = useMapPrefs();
   const cls = useWindowClass();
   const wide = useWideLayout();
-  const { rooms, freeRooms, teachingIdents, queryTime, planningTime, preview, campusHours, loading } =
+  const { rooms, freeRooms, teachingIdents, queryTime, planningTime, preview, isCustomTime, campusHours, loading, error, refresh } =
     useRoomData();
+  // Planning ahead while the buildings are shut: nothing is free *now*.
+  const waiting = preview && !campusHours.open;
+  const opensAt = waiting && campusHours.todayOpen ? formatTime(campusHours.todayOpen) : null;
   const { filters } = useRoomFilters();
   const { isFavorite } = useFavorites();
   const { signalOf, notice, live } = useFocusSignals();
@@ -177,12 +185,12 @@ export function CampusScreen() {
   );
   const mapAvailability = useMemo<Availability>(() => {
     const hoursTints: Record<string, boolean | undefined> = {
-      G: libraryHours.open,
+      G: libraryHours.access === 'unconfirmed' ? undefined : libraryHours.open,
       ...Object.fromEntries(Object.entries(cafeteriaHours).map(([k, h]) => [k, h?.open])),
     };
     const overrides = Object.fromEntries(
       Object.entries(hoursTints)
-        .filter(([key]) => (availability[key]?.total ?? 0) === 0)
+        .filter(([key, open]) => open !== undefined && (availability[key]?.total ?? 0) === 0)
         .map(([key, open]) => [key, { free: open ? 1 : 0, total: 1 }]),
     );
     return { ...availability, ...overrides };
@@ -222,12 +230,12 @@ export function CampusScreen() {
             <RoomCard
               key={f.room.ident}
               name={f.room.code}
-              meta={roomMeta(f.room)}
+              meta={roomMeta(f.room, locale)}
               hint={mayBeLocked(f.room) ? t('may be locked', 'evtl. abgeschlossen') : undefined}
               status={signal.status}
-              statusLabel={roomStatusLabel(signal.status, t)}
+              statusLabel={opensAt && signal.status === 'free' ? opensLabel(t, opensAt) : roomStatusLabel(signal.status, t)}
               focus={signal.focus}
-              duration={freeRoomDuration(f, planningTime)}
+              duration={freeRoomDuration(f, planningTime, locale)}
               href={`/room/${encodeURIComponent(f.room.ident)}`}
               onClick={(e) => {
                 e.preventDefault();
@@ -301,7 +309,7 @@ export function CampusScreen() {
   // The panel below / beside the map: a "campus closed" banner when the
   // buildings are shut (and not previewing), else the selected building's rooms,
   // else the free-now hero + longest-free list.
-  const panel = !(campusHours.open || preview) ? (
+  const panel = !(campusHours.open || preview) && !selectedMeta ? (
     <ClosedNotice hours={campusHours} />
   ) : selectedKey ? (
     <>
@@ -333,7 +341,7 @@ export function CampusScreen() {
           {selectedHasRooms && (
             <div style={{ fontSize: 'var(--body-small-size)', color: 'var(--md-on-surface-variant)', marginTop: 2 }}>
               <b style={{ color: 'var(--md-on-surface)', fontVariantNumeric: 'tabular-nums' }}>{selectedRooms.length}</b>{' '}
-              {t('rooms free right now', 'Räume jetzt frei')}
+              {freeRoomsLabel(t, { preview, customTime: isCustomTime })}
             </div>
           )}
         </div>
@@ -371,7 +379,7 @@ export function CampusScreen() {
           {loading && filteredFree.length === 0 ? '—' : filteredFree.length}
         </div>
         <div style={{ fontSize: 'var(--title-medium-size)', color: 'var(--md-on-surface)', marginTop: 'var(--space-2)' }}>
-          {preview ? t('rooms free when it opens', 'Räume frei bei Öffnung') : t('rooms free right now', 'Räume jetzt frei')}
+          {freeRoomsLabel(t, { preview, customTime: isCustomTime, onMap: true })}
         </div>
         <div style={{ fontSize: 'var(--body-small-size)', color: 'var(--md-on-surface-variant)', marginTop: 'var(--space-3)' }}>
           {t('Tap a building on the map to see its free rooms.', 'Tippe ein Gebäude auf der Karte für freie Räume.')}
@@ -388,9 +396,13 @@ export function CampusScreen() {
     </>
   );
 
+  // The map stays pale, not lit up as if the rooms were free now.
+  const dark = theme === 'dark' || (theme === 'system' && typeof matchMedia === 'function' && matchMedia('(prefers-color-scheme: dark)').matches);
   const map = (
     <>
       <CampusMap
+        label={t('THD campus map', 'THD-Campuskarte')}
+        theme={waiting ? (dark ? WAITING_DARK : WAITING_LIGHT) : undefined}
         campus={CAMPUS_GEOJSON}
         context={CAMPUS_CONTEXT}
         availability={mapAvailability}
@@ -401,13 +413,15 @@ export function CampusScreen() {
         onSelect={(k) => setSelectedKey(k)}
         style={{ width: '100%', height: '100%' }}
       />
-      {notice !== null || live ? (
+      {notice !== null || live || waiting ? (
         <MapLegend
-          free={t('Free rooms', 'Freie Räume')}
+          free={waiting ? t('Free when it opens', 'Frei ab Öffnung') : t('Free rooms', 'Freie Räume')}
           batch={live ? t(`${batch ?? 'Your batch'} studying`, `${batch ?? 'Dein Jahrgang'} lernt`) : undefined}
           claim={live ? t('Focus session', 'Fokus-Session') : undefined}
           note={
-            notice === 'time'
+            opensAt
+              ? t(`Closed · opens ${opensAt}`, `Geschlossen · öffnet ${opensAt}`)
+              : notice === 'time'
               ? t('Schedule only', 'Nur Stundenplan')
               : notice === 'unknown'
                 ? t('Focus activity unknown', 'Fokus-Aktivität unbekannt')
@@ -424,6 +438,15 @@ export function CampusScreen() {
       <>
         <BrandHeader title={t('Campus', 'Campus')} />
         <Spinner label={t('Checking THabella…', 'THabella wird abgefragt…')} />
+      </>
+    );
+  }
+  // No timetable and nothing cached: say so rather than "0 rooms free".
+  if (error && rooms.length === 0) {
+    return (
+      <>
+        <BrandHeader title={t('Campus', 'Campus')} />
+        <ErrorState message={t("Can't reach the THD timetable right now. Check your connection and try again.", 'Der THD-Stundenplan ist gerade nicht erreichbar. Prüfe deine Verbindung und versuche es erneut.')} onRetry={refresh} retryLabel={t('Try again', 'Erneut versuchen')} />
       </>
     );
   }

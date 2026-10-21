@@ -1,0 +1,44 @@
+import type { CSSProperties, ReactNode } from 'react';
+
+/**
+ * The one short state on a study table: Soon, Now, Changed, Full, Maybe,
+ * Cancelled. focus = violet (soon, now, your table), info = blue (changed,
+ * full, maybe), alert = red (cancelled, a lecture appeared).
+ */
+export type TableTagTone = 'focus' | 'info' | 'alert';
+
+export interface TableTagProps {
+  tone: TableTagTone;
+  children: ReactNode;
+  style?: CSSProperties;
+}
+
+const TONE = {
+  focus: { background: 'var(--md-focus-container)', color: 'var(--md-on-focus-container)' },
+  info: { background: 'var(--md-secondary-container)', color: 'var(--md-on-secondary-container)' },
+  alert: { background: 'var(--md-error-container)', color: 'var(--md-on-error-container)' },
+} as const;
+
+export function TableTag({ tone, children, style = {} }: TableTagProps) {
+  return (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        alignSelf: 'flex-start',
+        minHeight: 24,
+        padding: '2px 10px',
+        borderRadius: 'var(--radius-full)',
+        fontSize: 12,
+        fontWeight: 500,
+        lineHeight: 1.3,
+        fontFamily: 'var(--font-sans)',
+        whiteSpace: 'nowrap',
+        ...TONE[tone],
+        ...style,
+      }}
+    >
+      {children}
+    </span>
+  );
+}

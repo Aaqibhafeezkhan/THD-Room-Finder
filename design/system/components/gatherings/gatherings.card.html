@@ -1,0 +1,73 @@
+<!-- @dsCard group="Components" viewport="760x900" name="Gatherings — Components" subtitle="M3: Hall in the four kinds (people in reply order, room code at the front), kind icons and picker, verified tag" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: var(--font-sans); background: var(--md-bg); color: var(--md-on-surface); padding: 20px 24px; }
+  .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: start; }
+  .group { display: flex; flex-direction: column; gap: 10px; }
+  .lbl { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .04em; color: var(--md-on-surface-variant); }
+  .row { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+  .panel { background: var(--md-surface); border-radius: var(--radius-l); box-shadow: var(--md-shadow-1); padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel">
+  const { Hall, KindIcon, KindPicker, VerifiedTag } = window.THDRoomFinderDesignSystem_de229b;
+
+  const seq = (going, maybe, seed) => {
+    const out = []; let g = going, m = maybe, s = seed;
+    while (g || m) { s = (s * 9301 + 49297) % 233280; if (m && (!g || s / 233280 < maybe / (going + maybe))) { out.push('m'); m--; } else { out.push('g'); g--; } }
+    return out.join('');
+  };
+  const samples = [
+    ['focus', 'Group focus', 36, seq(19, 5, 2), 'E001'],
+    ['games', 'Game night', 48, seq(21, 7, 5), 'I112'],
+    ['talk', 'Talk', 120, seq(52, 16, 9), 'A008'],
+    ['meeting', 'Meeting', 40, seq(22, 6, 7), 'C105'],
+  ];
+  const labels = { focus: 'Group focus', games: 'Game night', talk: 'Talk', meeting: 'Meeting' };
+
+  function Demo() {
+    const [kind, setKind] = React.useState('games');
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <div className="cols">
+          {samples.map(([k, name, cap, replies, code]) => (
+            <div className="panel" key={k}>
+              <div className="lbl">Hall · {name} · {cap} seats</div>
+              <Hall kind={k} capacity={cap} replies={replies} code={code} title={`${code}: ${name}`} />
+            </div>
+          ))}
+        </div>
+        <div className="panel">
+          <div className="lbl">Hall · early days · 6 replies to 120 seats</div>
+          <div style={{ maxWidth: 320 }}><Hall kind="talk" capacity={120} replies="gmgggm" code="A008" title="A 008: 4 going, 2 maybe" /></div>
+        </div>
+        <div className="group">
+          <div className="lbl">KindIcon · KindPicker · VerifiedTag</div>
+          <div className="row" style={{ color: 'var(--md-focus)' }}>
+            {['focus', 'games', 'talk', 'meeting'].map((k) => <KindIcon key={k} kind={k} size={32} />)}
+          </div>
+          <div style={{ maxWidth: 360 }}><KindPicker value={kind} onChange={setKind} labels={labels} label="Kind" /></div>
+          <div className="row">
+            <VerifiedTag name="Campus Connect" verifiedLabel="Verified" onClick={() => {}} />
+            <VerifiedTag name="Old Club" verified={false} verifiedLabel="Verified" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+</script>
+</body>
+</html>

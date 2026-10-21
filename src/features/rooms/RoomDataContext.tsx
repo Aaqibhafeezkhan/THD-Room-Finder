@@ -81,6 +81,14 @@ export function RoomDataProvider({ children }: { children: ReactNode }) {
     void load(queryTime);
   }, [queryTime, load]);
 
+  // Back online after a failed load: try again without waiting for a tap.
+  useEffect(() => {
+    if (!error) return;
+    const again = () => void load(queryTime);
+    window.addEventListener('online', again);
+    return () => window.removeEventListener('online', again);
+  }, [error, load, queryTime]);
+
   // 5-minute silent auto-refresh — only while pinned to "now".
   useEffect(() => {
     const id = setInterval(() => {
