@@ -20,6 +20,11 @@ export function roomStatusLabel(status: RoomCardStatus, t: Translate): string {
   }
 }
 
+/** Before the buildings open: "from 06:30" instead of "free". */
+export function opensLabel(t: Translate, time: string): string {
+  return t(`from ${time}`, `ab ${time}`);
+}
+
 /** A planned opening is not a live availability claim. */
 export function freeRoomsLabel(t: Translate, { preview, customTime, building, onMap }: {
   preview: boolean; customTime: boolean; building?: string | null;
