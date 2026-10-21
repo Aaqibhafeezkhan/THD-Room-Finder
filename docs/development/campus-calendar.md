@@ -35,13 +35,15 @@ confirmed with THD before travelling.
 
 ## Study history and maintenance
 
-Weekend streak pauses are a **product rest-day rule**, not evidence that every
-building is locked. Weekends and confirmed shutdown dates pause the streak;
-unverified lecture-free weekdays do not silently forgive a missing study day.
-All recorded minutes remain in history and totals, including rest-day study.
+Rest days are a **product rule**, not evidence that every building is
+locked: a day without lectures pauses the streak. That is weekends, public
+holidays (Bavaria, plus Assumption for Deggendorf), the Easter, Pentecost and
+Christmas breaks and the dated lecture-free days. Building access on those
+days stays *unconfirmed* for the room finder. All recorded minutes remain in
+history and totals, including rest-day study. The day line names the reason
+("Easter break", "Public holiday", "No lectures").
 
-The graph marks empty streak rest days (weekends and confirmed shutdowns)
-with a quiet slash; recorded study stays on the violet/accent ramp. Its legend
+The graph marks empty rest days with a quiet slash; recorded study stays on the violet/accent ramp. Its legend
 says **Rest day**, not that physical access is confirmed closed. Future cells
 remain empty. The profile follows the compact closed-days preview, with a short
 status, exact totals, a small legend and persistent selected-day detail. The
