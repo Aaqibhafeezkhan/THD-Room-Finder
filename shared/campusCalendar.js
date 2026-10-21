@@ -64,7 +64,11 @@ export function isClassroomClosedDate(iso) {
   return classroomDay(iso).access === 'closed';
 }
 
-/** App streak policy: weekends are rest days even when a special opening exists. */
+/**
+ * App streak policy: a day without lectures is a rest day. Weekends, public
+ * holidays, the Easter, Pentecost and Christmas breaks and the dated
+ * lecture-free days, whether or not the buildings happen to be open.
+ */
 export function isStudyRestDate(iso) {
-  return [0, 6].includes(dateParts(iso).date.getUTCDay()) || isClassroomClosedDate(iso);
+  return [0, 6].includes(dateParts(iso).date.getUTCDay()) || academicBreak(iso) !== null;
 }
