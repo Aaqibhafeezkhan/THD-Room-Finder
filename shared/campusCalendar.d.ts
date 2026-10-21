@@ -9,4 +9,6 @@ export function easterSunday(year: number): Date;
 export function academicBreak(iso: string): AcademicBreak | null;
 export function classroomDay(iso: string): ClassroomDay;
 export function isClassroomClosedDate(iso: string): boolean;
+export function isPublicHoliday(iso: string): boolean;
+export function restDayReason(iso: string): 'christmas' | 'holiday' | null;
 export function isStudyRestDate(iso: string): boolean;
