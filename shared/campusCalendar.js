@@ -39,10 +39,19 @@ export function academicBreak(iso) {
   if (distance >= 47 && distance <= 51) return 'pentecost';
   // Published presidential lecture-free days; do not extrapolate annually.
   if (['2026-06-05', '2026-11-02', '2027-05-28', '2027-11-02', '2028-01-07'].includes(iso)) return 'lecture-free';
-  // Statewide holidays plus Assumption, confirmed locally by the city of
-  // Deggendorf (see source notes). Neither proves physical classroom closure.
-  if ([101, 106, 501, 815, 1003, 1101, 1225, 1226].includes(md) || [-2, 1, 39, 50, 60].includes(distance)) return 'holiday';
+  if (isPublicHoliday(iso)) return 'holiday';
   return null;
+}
+
+/**
+ * Statewide holidays plus Assumption, confirmed locally by the city of
+ * Deggendorf (see source notes). Good Friday, Easter Monday and Whit Monday
+ * fall inside the Easter and Pentecost breaks.
+ */
+export function isPublicHoliday(iso) {
+  const { year, month, day, date } = dateParts(iso);
+  const distance = Math.round((date.getTime() - easterSunday(year).getTime()) / 86400000);
+  return [101, 106, 501, 815, 1003, 1101, 1225, 1226].includes(month * 100 + day) || [-2, 1, 39, 50, 60].includes(distance);
 }
 
 /**
@@ -64,11 +73,18 @@ export function isClassroomClosedDate(iso) {
   return classroomDay(iso).access === 'closed';
 }
 
+/** Why the campus is shut for study that day: the Christmas shutdown or a public holiday. */
+export function restDayReason(iso) {
+  if (academicBreak(iso) === 'christmas') return 'christmas';
+  return isPublicHoliday(iso) ? 'holiday' : null;
+}
+
 /**
- * App streak policy: a day without lectures is a rest day. Weekends, public
- * holidays, the Easter, Pentecost and Christmas breaks and the dated
- * lecture-free days, whether or not the buildings happen to be open.
+ * App streak policy: a rest day is a day the campus is shut for study.
+ * Weekends, public holidays and the Christmas shutdown. Lecture-free days
+ * when the buildings stay open (the rest of the Easter and Pentecost breaks,
+ * the dated lecture-free days) are ordinary study days.
  */
 export function isStudyRestDate(iso) {
-  return [0, 6].includes(dateParts(iso).date.getUTCDay()) || academicBreak(iso) !== null;
+  return [0, 6].includes(dateParts(iso).date.getUTCDay()) || restDayReason(iso) !== null;
 }
