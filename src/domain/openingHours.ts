@@ -15,8 +15,8 @@
  * Framework-free (domain layer). Source: THD published library/building hours.
  */
 
-import { academicBreak, classroomDay, isClassroomClosedDate, isStudyRestDate } from '../../shared/campusCalendar.js';
-import type { AcademicBreak, ClassroomDay } from '../../shared/campusCalendar.js';
+import { academicBreak, classroomDay, isClassroomClosedDate, isStudyRestDate, restDayReason } from '../../shared/campusCalendar.js';
+import type { ClassroomDay } from '../../shared/campusCalendar.js';
 
 function calendarDate(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
@@ -193,9 +193,9 @@ export function isFocusRestDay(date: Date): boolean {
   return isStudyRestDate(calendarDate(date));
 }
 
-/** Why a weekday has no lectures (holiday, Easter break, …), or null. */
-export function noLecturesReason(date: Date): AcademicBreak | null {
-  return academicBreak(calendarDate(date));
+/** Why the campus is shut for study that day (Christmas or a public holiday), or null. */
+export function restReason(date: Date): 'christmas' | 'holiday' | null {
+  return restDayReason(calendarDate(date));
 }
 
 /** Opening state of the Library (building G) at `now` — its own schedule. */
