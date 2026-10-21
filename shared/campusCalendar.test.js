@@ -29,6 +29,15 @@ describe('source-backed classroom calendar', () => {
     expect(classroomDay('2026-07-04')).toEqual({ access: 'unconfirmed', reason: 'weekend' });
     expect(isStudyRestDate('2026-07-04')).toBe(true);
     expect(isStudyRestDate('2026-12-29')).toBe(true);
-    expect(isStudyRestDate('2026-04-02')).toBe(false);
+    expect(classroomDay('2026-04-02').access).toBe('unconfirmed');
+  });
+
+  it('rests on every day without lectures, not only weekends and Christmas', () => {
+    expect(isStudyRestDate('2026-04-02')).toBe(true); // Maundy Thursday, Easter break
+    expect(isStudyRestDate('2026-05-01')).toBe(true); // Labour Day
+    expect(isStudyRestDate('2026-06-04')).toBe(true); // Corpus Christi
+    expect(isStudyRestDate('2026-06-05')).toBe(true); // dated lecture-free day
+    expect(isStudyRestDate('2026-08-17')).toBe(false); // an ordinary Monday
+    expect(isStudyRestDate('2026-10-21')).toBe(false);
   });
 });
