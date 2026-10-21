@@ -16,7 +16,7 @@
  */
 
 import { academicBreak, classroomDay, isClassroomClosedDate, isStudyRestDate } from '../../shared/campusCalendar.js';
-import type { ClassroomDay } from '../../shared/campusCalendar.js';
+import type { AcademicBreak, ClassroomDay } from '../../shared/campusCalendar.js';
 
 function calendarDate(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
@@ -188,9 +188,14 @@ export function isCampusClosedDay(date: Date): boolean {
   return isClassroomClosedDate(calendarDate(date));
 }
 
-/** Weekend streak pauses are a product rule, distinct from building access. */
+/** Rest days pause the streak; a product rule, distinct from building access. */
 export function isFocusRestDay(date: Date): boolean {
   return isStudyRestDate(calendarDate(date));
+}
+
+/** Why a weekday has no lectures (holiday, Easter break, …), or null. */
+export function noLecturesReason(date: Date): AcademicBreak | null {
+  return academicBreak(calendarDate(date));
 }
 
 /** Opening state of the Library (building G) at `now` — its own schedule. */
