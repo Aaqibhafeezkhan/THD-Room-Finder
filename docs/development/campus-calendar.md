@@ -35,13 +35,16 @@ confirmed with THD before travelling.
 
 ## Study history and maintenance
 
-Rest days are a **product rule**, not evidence that every building is
-locked: a day without lectures pauses the streak. That is weekends, public
-holidays (Bavaria, plus Assumption for Deggendorf), the Easter, Pentecost and
-Christmas breaks and the dated lecture-free days. Building access on those
-days stays *unconfirmed* for the room finder. All recorded minutes remain in
-history and totals, including rest-day study. The day line names the reason
-("Easter break", "Public holiday", "No lectures").
+Rest days are a **product rule**: a day the campus is shut for study pauses
+the streak. That is weekends, public holidays (Bavaria, plus Assumption for
+Deggendorf, including Good Friday, Easter Monday and Whit Monday inside the
+breaks) and the 24 December–6 January shutdown. Lecture-free days when the
+buildings stay open are ordinary study days: the rest of the Easter and
+Pentecost breaks, the days around the Christmas shutdown and the dated
+lecture-free days. Building access on holidays stays *unconfirmed* for the
+room finder. All recorded minutes remain in history and totals, including
+rest-day study. The day line names the reason ("Christmas break", "Public
+holiday").
 
 The graph marks empty rest days with a quiet slash; recorded study stays on the violet/accent ramp. Its legend
 says **Rest day**, not that physical access is confirmed closed. Future cells
