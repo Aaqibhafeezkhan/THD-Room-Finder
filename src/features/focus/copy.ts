@@ -1,6 +1,7 @@
 import type { FocusGraphText } from '../../components';
 import type { Locale } from '../../components/core/LanguageToggle';
 import type { Translate } from '../../i18n';
+import { noLecturesReason } from '../../domain/openingHours';
 
 /**
  * Shared EN/DE copy for the focus layer (D1–D4 handbacks). Components take
@@ -39,13 +40,31 @@ export function shortDate(d: Date, locale: Locale): string {
   return `${day} ${d.getDate()}${locale === 'de' ? '.' : ''} ${monthNames(locale)[d.getMonth()]}`;
 }
 
+/** Why there are no lectures that day, in the day line under the graph. */
+function breakName(why: NonNullable<ReturnType<typeof noLecturesReason>>, t: Translate): string {
+  switch (why) {
+    case 'christmas':
+      return t('Christmas break', 'Weihnachtspause');
+    case 'easter':
+      return t('Easter break', 'Osterpause');
+    case 'pentecost':
+      return t('Pentecost break', 'Pfingstpause');
+    case 'holiday':
+      return t('Public holiday', 'Feiertag');
+    default:
+      return t('No lectures', 'Vorlesungsfrei');
+  }
+}
+
 export function graphText(t: Translate, locale: Locale): FocusGraphText {
   const months = monthNames(locale);
   return {
     days: [...dayNames(locale).slice(1), dayNames(locale)[0]],
     months,
-    cellLabel: (d, m) =>
-      `${shortDate(d, locale)} ${d.getFullYear()} · ${m ? formatMinutes(m, locale) : t('No focus', 'Kein Fokus')}`,
+    cellLabel: (d, m) => {
+      const why = noLecturesReason(d);
+      return `${shortDate(d, locale)} ${d.getFullYear()} · ${m ? formatMinutes(m, locale) : t('No focus', 'Kein Fokus')}${why ? ` · ${breakName(why, t)}` : ''}`;
+    },
     less: t('Less', 'Weniger'),
     more: t('More', 'Mehr'),
     closed: t('Campus closed', 'Campus geschlossen'),
