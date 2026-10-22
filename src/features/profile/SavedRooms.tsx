@@ -6,7 +6,7 @@ import { useFavorites } from '../favorites/favorites';
 import { useI18n } from '../../i18n';
 import { computeRoomAvailability, getRoomSchedule } from '../../domain/availability';
 import { mayBeLocked } from '../../domain/roomFilters';
-import { formatTime, roomMeta, statusBannerText } from '../../domain/format';
+import { formatDayTime, formatTime, roomMeta, statusBannerText } from '../../domain/format';
 import { ClosedNotice } from '../shared/ClosedNotice';
 import { roomStatusLabel } from '../shared/roomStatusLabel';
 
@@ -18,8 +18,8 @@ import { roomStatusLabel } from '../shared/roomStatusLabel';
  */
 export function SavedRooms({ grid = false }: { grid?: boolean }) {
   const navigate = useNavigate();
-  const { t } = useI18n();
-  const { rooms, events, planningTime, preview, campusHours } = useRoomData();
+  const { t, locale } = useI18n();
+  const { rooms, events, planningTime, queryTime, preview, isCustomTime, campusHours } = useRoomData();
   const { favorites } = useFavorites();
 
   const saved = favorites
@@ -34,6 +34,11 @@ export function SavedRooms({ grid = false }: { grid?: boolean }) {
       <h2 style={{ margin: 0, fontSize: 'var(--title-small-size)', fontWeight: 500, color: 'var(--md-on-surface)' }}>
         {heading}
       </h2>
+      {isCustomTime && favorites.length > 0 && (
+        <p style={{ margin: 0, fontSize: 'var(--body-small-size)', color: 'var(--md-on-surface-variant)' }}>
+          {t('Availability at the selected time', 'Verfügbarkeit zur gewählten Zeit')}: {formatDayTime(queryTime, locale)}
+        </p>
+      )}
       {favorites.length === 0 ? (
         <div
           style={{
@@ -100,9 +105,9 @@ export function SavedRooms({ grid = false }: { grid?: boolean }) {
                   <RoomCard
                     key={room.ident}
                     name={room.code}
-                    meta={roomMeta(room)}
-                    status="occupied"
-                    statusLabel={t('closed', 'zu')}
+                    meta={roomMeta(room, locale)}
+                    status="unavailable"
+                    statusLabel={campusHours.access === 'unconfirmed' ? t('access unconfirmed', 'Zugang unbestätigt') : t('closed', 'zu')}
                     duration="—"
                     href={href}
                     onClick={open}
@@ -114,12 +119,12 @@ export function SavedRooms({ grid = false }: { grid?: boolean }) {
                 planningTime,
                 campusHours.todayClose,
               );
-              const banner = statusBannerText(availability, planningTime);
+              const banner = statusBannerText(availability, planningTime, locale);
               return (
                 <RoomCard
                   key={room.ident}
                   name={room.code}
-                  meta={roomMeta(room)}
+                  meta={roomMeta(room, locale)}
                   hint={mayBeLocked(room) ? t('may be locked', 'evtl. abgeschlossen') : undefined}
                   status={availability.status}
                   statusLabel={roomStatusLabel(availability.status, t)}

@@ -19,6 +19,8 @@ export interface LanguageToggleProps {
   onChange?: (id: Locale) => void;
   size?: 'small' | 'medium';
   locales?: LocaleOption[];
+  /** Accessible name of the group. */
+  label?: string;
   style?: CSSProperties;
 }
 
@@ -32,6 +34,7 @@ export function LanguageToggle({
   onChange,
   size = 'medium',
   locales = DEFAULT_LOCALES,
+  label = 'Language',
   style = {},
 }: LanguageToggleProps) {
   const small = size === 'small';
@@ -45,7 +48,7 @@ export function LanguageToggle({
     ...style,
   };
   return (
-    <div role="group" aria-label="Language" style={wrap}>
+    <div role="group" aria-label={label} style={wrap}>
       {locales.map((loc) => {
         const on = loc.id === value;
         return (

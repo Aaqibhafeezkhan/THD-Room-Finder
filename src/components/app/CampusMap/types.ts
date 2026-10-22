@@ -97,5 +97,7 @@ export interface CampusMapProps {
   glyphs?: BuildingGlyphs;
   /** Focus signals per building key (ring, claim dot, selected label). */
   focus?: BuildingFocusMarks;
+  /** Accessible name of the map. */
+  label?: string;
   style?: CSSProperties;
 }

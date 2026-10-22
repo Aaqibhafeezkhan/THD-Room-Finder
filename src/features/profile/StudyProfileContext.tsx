@@ -4,16 +4,21 @@ import { focusServiceConfigured, loadSupabase } from '../../data/supabaseClient'
 import { supabaseIdentityApi } from '../../data/identityApi';
 import type { Identity, IdentityApi, IdentityInput, Programme } from '../../data/identityApi';
 import { batchLabel } from '../../domain/batch';
+import { forgetAccount, readAccount, readStale, write, writeAccount } from '../../data/cache';
 
 /**
  * The signed-in student and their study profile (#18). Browsing, saved rooms
  * and the local timer never need it. `available` is false when the build has
  * no focus service configured; Set Up is then hidden rather than broken.
+ * When the service can't be reached the last profile read on this device
+ * stays, and `unreachable` says so, instead of looking signed out.
  */
 interface StudyProfileValue {
   available: boolean;
   /** True until the stored session and profile have been read. */
   loading: boolean;
+  /** Signed in, but the last read of the profile failed (offline, server down). */
+  unreachable: boolean;
   email: string | null;
   identity: Identity | null;
   programmes: Programme[];
@@ -41,18 +46,32 @@ export function StudyProfileProvider({ children, api: injected }: { children: Re
   const [email, setEmail] = useState<string | null>(null);
   const [identity, setIdentity] = useState<Identity | null>(null);
   const [programmes, setProgrammes] = useState<Programme[]>([]);
+  const [unreachable, setUnreachable] = useState(false);
 
   const refresh = useCallback(async () => {
     if (!api) return null;
+    let mail: string | null = null;
     try {
-      const mail = await api.currentEmail();
-      const stored = mail ? await api.getIdentity() : null;
+      // Read from the stored session; no request.
+      mail = await api.currentEmail();
       setEmail(mail);
+      if (!mail) {
+        setIdentity(null);
+        setUnreachable(false);
+        forgetAccount();
+        return null;
+      }
+      const stored = await api.getIdentity();
       setIdentity(stored);
+      setUnreachable(false);
+      writeAccount('identity', mail, stored);
       return stored;
     } catch {
-      /* offline: keep what we have */
-      return null;
+      // Offline or the service is down: keep the last profile seen here.
+      const cached = mail ? readAccount<Identity | null>('identity', mail) : null;
+      setIdentity((current) => current ?? cached);
+      setUnreachable(Boolean(mail));
+      return cached;
     } finally {
       setLoading(false);
     }
@@ -61,11 +80,27 @@ export function StudyProfileProvider({ children, api: injected }: { children: Re
   useEffect(() => {
     if (!api) return;
     void refresh();
-    api.programmes().then(setProgrammes).catch(() => undefined);
-    return api.onAuthChange((mail) => {
+    // The programme list names the batch; the last one read stands in offline.
+    api
+      .programmes()
+      .then((list) => {
+        setProgrammes(list);
+        write('thd_programmes', list);
+      })
+      .catch(() => setProgrammes((current) => (current.length ? current : (readStale<Programme[]>('thd_programmes') ?? []))));
+    const again = () => void refresh();
+    window.addEventListener('online', again);
+    const stop = api.onAuthChange((mail) => {
       setEmail(mail);
-      if (!mail) setIdentity(null);
+      if (!mail) {
+        setIdentity(null);
+        setUnreachable(false);
+      }
     });
+    return () => {
+      stop();
+      window.removeEventListener('online', again);
+    };
   }, [api, refresh]);
 
   const save = useCallback(
@@ -73,15 +108,18 @@ export function StudyProfileProvider({ children, api: injected }: { children: Re
       if (!api) throw new Error('unavailable');
       const saved = await api.saveIdentity(input, identity?.version ?? null);
       setIdentity(saved);
+      setUnreachable(false);
+      if (email) writeAccount('identity', email, saved);
       return saved;
     },
-    [api, identity?.version],
+    [api, identity?.version, email],
   );
 
   const remove = useCallback(async () => {
     if (!api) return;
     await api.deleteIdentity();
     await api.signOut();
+    forgetAccount();
     setIdentity(null);
     setEmail(null);
   }, [api]);
@@ -89,6 +127,7 @@ export function StudyProfileProvider({ children, api: injected }: { children: Re
   const signOut = useCallback(async () => {
     if (!api) return;
     await api.signOut();
+    forgetAccount();
     setIdentity(null);
     setEmail(null);
   }, [api]);
@@ -102,6 +141,7 @@ export function StudyProfileProvider({ children, api: injected }: { children: Re
     return {
       available: Boolean(api),
       loading,
+      unreachable,
       email,
       identity,
       programmes,
@@ -114,7 +154,7 @@ export function StudyProfileProvider({ children, api: injected }: { children: Re
       remove,
       signOut,
     };
-  }, [api, loading, email, identity, programmes, refresh, save, remove, signOut]);
+  }, [api, loading, unreachable, email, identity, programmes, refresh, save, remove, signOut]);
 
   return <StudyProfileContext.Provider value={value}>{children}</StudyProfileContext.Provider>;
 }

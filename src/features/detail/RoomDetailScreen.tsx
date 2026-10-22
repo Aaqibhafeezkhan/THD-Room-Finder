@@ -1,15 +1,22 @@
 import type { ReactNode } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { AppBar, IconButton, StatusCard } from '../../components';
+import { AppBar, Button, IconButton, SeatRing, StatusCard, TableRow } from '../../components';
 import { IconMail, IconStar, IconStarFilled, IconUsers } from '../../components/icons';
 import { useRoomData } from '../rooms/RoomDataContext';
 import { useFavorites } from '../favorites/favorites';
 import { useI18n } from '../../i18n';
 import { computeRoomAvailability, getRoomSchedule } from '../../domain/availability';
 import { mayBeLocked } from '../../domain/roomFilters';
-import { formatDayTime, formatTime, statusBannerText } from '../../domain/format';
-import { Page, Spinner, EmptyState } from '../shared/ui';
+import { formatTime, statusBannerText } from '../../domain/format';
+import { Page, Spinner, EmptyState, ErrorState } from '../shared/ui';
+import { ClosedNotice } from '../shared/ClosedNotice';
 import { RoomFocusPanel } from '../focus/RoomFocusPanel';
+import { useTableFlow } from '../tables/useTableFlow';
+import { RoomGatherings } from '../gatherings/RoomGatherings';
+import { useTables } from '../tables/TablesContext';
+import { tableChip } from '../tables/YourTables';
+import { seatsTitle, topicOf } from '../tables/copy';
+import { tableShortWhen, tableState } from '../../domain/tables';
 
 const stickyBar = { position: 'sticky' as const, top: 0, zIndex: 10 };
 
@@ -17,20 +24,24 @@ export function RoomDetailScreen() {
   const params = useParams();
   const navigate = useNavigate();
   const { t, locale } = useI18n();
-  const { rooms, events, queryTime, campusHours, loading, isCustomTime } = useRoomData();
+  const { rooms, events, queryTime, campusHours, loading, error, refresh, isCustomTime } = useRoomData();
   const { isFavorite, toggle } = useFavorites();
 
   const ident = decodeURIComponent(params.ident ?? '');
   const room = rooms.find((r) => r.ident === ident);
+  const tableFlow = useTableFlow(room);
+  const { mine } = useTables();
 
   const back = () => navigate(-1);
 
   if (!room) {
     return (
       <>
-        <AppBar mode="back" title="" onBack={back} style={stickyBar} />
+        <AppBar mode="back" backLabel={t('Back', 'Zurück')} title="" onBack={back} style={stickyBar} />
         {loading ? (
           <Spinner />
+        ) : error ? (
+          <ErrorState message={t("Can't reach the THD timetable right now. Check your connection and try again.", 'Der THD-Stundenplan ist gerade nicht erreichbar. Prüfe deine Verbindung und versuche es erneut.')} onRetry={refresh} retryLabel={t('Try again', 'Erneut versuchen')} />
         ) : (
           <EmptyState
             title={t('Room not found', 'Raum nicht gefunden')}
@@ -43,9 +54,25 @@ export function RoomDetailScreen() {
 
   const schedule = getRoomSchedule(events, ident);
   const availability = computeRoomAvailability(schedule, queryTime, campusHours.todayClose);
-  const banner = statusBannerText(availability, queryTime);
+  const banner = statusBannerText(availability, queryTime, locale);
+  const occupied = availability.status === 'occupied';
+  const titles = {
+    occupied: isCustomTime ? t('Occupied at this time', 'Zu dieser Zeit belegt') : t('Occupied now', 'Jetzt belegt'),
+    soon: t('Closing soon', 'Bald belegt'),
+    free: isCustomTime ? t('Free at this time', 'Zu dieser Zeit frei') : t('Free now', 'Jetzt frei'),
+  };
+  let subtitle: string | undefined;
+  if (occupied && availability.occupiedUntil) {
+    subtitle = t(`Free again at ${formatTime(availability.occupiedUntil)}`, `Wieder frei ab ${formatTime(availability.occupiedUntil)}`);
+  } else if (!occupied && availability.freeUntil) {
+    subtitle = t(`Free until ${formatTime(availability.freeUntil)}`, `Frei bis ${formatTime(availability.freeUntil)}`);
+  } else if (!occupied) {
+    subtitle = t('Free for the rest of the day', 'Für den Rest des Tages frei');
+  }
+  const duration = occupied && availability.occupiedUntil
+    ? t(`until ${formatTime(availability.occupiedUntil)}`, `bis ${formatTime(availability.occupiedUntil)}`)
+    : banner.duration;
   const closed = !campusHours.open;
-  const opensLabel = campusHours.nextOpen ? formatDayTime(campusHours.nextOpen, locale) : null;
   const fav = isFavorite(ident);
 
   const dayLabel = new Intl.DateTimeFormat(locale === 'de' ? 'de-DE' : 'en-GB', {
@@ -57,7 +84,7 @@ export function RoomDetailScreen() {
   return (
     <>
       <AppBar
-        mode="back"
+        mode="back" backLabel={t('Back', 'Zurück')}
         title={room.code}
         onBack={back}
         style={stickyBar}
@@ -74,23 +101,13 @@ export function RoomDetailScreen() {
       />
       <Page>
         {closed ? (
-          <StatusCard
-            status="occupied"
-            title={t('Campus closed', 'Campus geschlossen')}
-            sub={opensLabel ? `${t('Opens', 'Öffnet')} ${opensLabel}` : undefined}
-          />
+          <ClosedNotice hours={campusHours} compact />
         ) : (
           <StatusCard
             status={banner.status}
-            title={
-              banner.status === 'occupied'
-                ? t('Occupied now', 'Jetzt belegt')
-                : banner.status === 'soon'
-                  ? t('Closing soon', 'Bald belegt')
-                  : t('Free now', 'Jetzt frei')
-            }
-            sub={banner.sub}
-            duration={banner.duration}
+            title={titles[banner.status]}
+            sub={subtitle}
+            duration={duration}
           />
         )}
 
@@ -100,6 +117,27 @@ export function RoomDetailScreen() {
           closing={campusHours.todayClose}
           scheduleOnly={closed || isCustomTime}
         />
+        {tableFlow.available && (
+          <Button variant="tonal" size="large" onClick={tableFlow.start} style={{ alignSelf: 'stretch' }}>
+            {t('Study together', 'Zusammen lernen')}
+          </Button>
+        )}
+        {/* My tables in this room, next first (where things live: room detail). */}
+        {mine
+          .filter((x) => x.roomKey === `thd:${room.ident}` && tableState(x, new Date()) !== 'ended')
+          .slice(0, 2)
+          .map((x) => (
+            <TableRow
+              key={x.link}
+              card
+              ring={<SeatRing seats={x.seats} taken={x.taken} mine={x.isHost ? 0 : x.taken - 1} size={44} cancelled={x.cancelled} title={seatsTitle(x, t)} />}
+              title={x.isHost ? t(`Your study table · ${topicOf(x, t)}`, `Dein Lerntisch · ${topicOf(x, t)}`) : topicOf(x, t)}
+              meta={tableShortWhen(x.startsAt, locale, new Date())}
+              tag={tableChip(x, new Date(), t)}
+              onClick={() => navigate(`/t/${x.link}`)}
+            />
+          ))}
+        <RoomGatherings room={room} />
 
         {/* Identity + facilities. */}
         <div
@@ -221,6 +259,7 @@ export function RoomDetailScreen() {
           </div>
         </div>
       </Page>
+      {tableFlow.element}
     </>
   );
 }

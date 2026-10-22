@@ -17,14 +17,16 @@ import { ClosedNotice } from '../shared/ClosedNotice';
 import { TimeControl } from '../shared/TimeControl';
 import { FilterMenu } from '../shared/FilterMenu';
 import { SearchControl } from '../shared/SearchControl';
-import { roomStatusLabel } from '../shared/roomStatusLabel';
+import { freeRoomsLabel, opensLabel, roomStatusLabel } from '../shared/roomStatusLabel';
 import { Page, Spinner, EmptyState, ErrorState } from '../shared/ui';
 
 export function HomeScreen() {
   const { t, locale } = useI18n();
   const navigate = useNavigate();
-  const { rooms, events, teachingIdents, freeRooms, planningTime, preview, campusHours, loading, error, refresh, setQueryTime } =
+  const { rooms, events, teachingIdents, freeRooms, planningTime, preview, isCustomTime, campusHours, loading, error, refresh, setQueryTime } =
     useRoomData();
+  // Before the buildings open, rooms read "from 06:30", not "free".
+  const opensAt = preview && !campusHours.open && campusHours.todayOpen ? formatTime(campusHours.todayOpen) : null;
 
   const { filters } = useRoomFilters();
   const { isFavorite } = useFavorites();
@@ -101,18 +103,10 @@ export function HomeScreen() {
                   fontVariantNumeric: 'tabular-nums',
                 }}
               >
-                {loading && freeRooms.length === 0 ? '—' : searching ? searchResults.length : shown.length}
+                {(loading || error) && freeRooms.length === 0 ? '—' : searching ? searchResults.length : shown.length}
               </div>
               <div style={{ fontSize: 'var(--title-medium-size)', color: 'var(--md-on-surface-variant)' }}>
-                {searching
-                  ? t('rooms match', 'Treffer')
-                  : preview
-                    ? building
-                      ? t(`rooms free in ${building} when it opens`, `Räume frei in ${building} bei Öffnung`)
-                      : t('rooms free when it opens', 'Räume frei bei Öffnung')
-                    : building
-                      ? t(`rooms free in ${building}`, `Räume frei in ${building}`)
-                      : t('rooms free right now', 'Räume jetzt frei')}
+                {searching ? t('rooms match', 'Treffer') : freeRoomsLabel(t, { preview, customTime: isCustomTime, building })}
               </div>
             </div>
 
@@ -129,7 +123,7 @@ export function HomeScreen() {
 
             {/* The answer: search hits (any status) when searching, else free rooms. */}
             {error && freeRooms.length === 0 ? (
-              <ErrorState message={error} onRetry={refresh} retryLabel={t('Try again', 'Erneut versuchen')} />
+              <ErrorState message={t("Can't reach the THD timetable right now. Check your connection and try again.", 'Der THD-Stundenplan ist gerade nicht erreichbar. Prüfe deine Verbindung und versuche es erneut.')} onRetry={refresh} retryLabel={t('Try again', 'Erneut versuchen')} />
             ) : loading && freeRooms.length === 0 ? (
               <Spinner label={t('Checking THabella…', 'THabella wird abgefragt…')} />
             ) : searching ? (
@@ -141,7 +135,7 @@ export function HomeScreen() {
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
                   {searchResults.map(({ room, availability }) => {
-                    const b = statusBannerText(availability, planningTime);
+                    const b = statusBannerText(availability, planningTime, locale);
                     // A lecture always wins: focus signals only on free rooms.
                     const signal =
                       availability.status === 'occupied'
@@ -151,10 +145,10 @@ export function HomeScreen() {
                       <RoomCard
                         key={room.ident}
                         name={room.code}
-                        meta={roomMeta(room)}
+                        meta={roomMeta(room, locale)}
                         hint={lockHint(room)}
                         status={signal.status}
-                        statusLabel={roomStatusLabel(signal.status, t)}
+                        statusLabel={opensAt && signal.status === 'free' ? opensLabel(t, opensAt) : roomStatusLabel(signal.status, t)}
                         focus={'focus' in signal ? signal.focus : undefined}
                         duration={b.duration}
                         href={`/room/${encodeURIComponent(room.ident)}`}
@@ -181,12 +175,12 @@ export function HomeScreen() {
                     <RoomCard
                       key={ident}
                       name={f.room.code}
-                      meta={roomMeta(f.room)}
+                      meta={roomMeta(f.room, locale)}
                       hint={lockHint(f.room)}
                       status={signal.status}
-                      statusLabel={roomStatusLabel(signal.status, t)}
+                      statusLabel={opensAt && signal.status === 'free' ? opensLabel(t, opensAt) : roomStatusLabel(signal.status, t)}
                       focus={signal.focus}
-                      duration={freeRoomDuration(f, planningTime)}
+                      duration={freeRoomDuration(f, planningTime, locale)}
                       href={`/room/${encodeURIComponent(ident)}`}
                       onClick={(e) => {
                         e.preventDefault();
@@ -207,6 +201,7 @@ export function HomeScreen() {
                 onClick={() => setQueryTime(campusHours.nextOpen as Date)}
                 style={{
                   alignSelf: 'center',
+                  minHeight: 'var(--tap-target)',
                   border: 'none',
                   cursor: 'pointer',
                   background: 'var(--md-secondary-container)',

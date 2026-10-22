@@ -14,6 +14,7 @@ import type { Room, ScheduledEvent } from '../domain/models';
 import { toEvents, toRooms } from './mappers';
 import { mondayOf, teachingRoomIdents, weekDates } from '../domain/teachingRooms';
 import { readFresh, readStale, write } from './cache';
+import { REQUEST_TIMEOUT_MS, timedFetch } from './net';
 
 const THABELLA = 'https://thabella.th-deg.de/thabella/opn';
 /** Same-origin on web; empty base yields relative `/api/...`. */
@@ -39,17 +40,22 @@ function dateKey(date: Date): string {
 
 // ── Raw network (platform-specific) ─────────────────────────────
 
+// Gives up after 15 s, so a hanging timetable falls back to the cache.
+const request = timedFetch();
+
 async function rawRooms(): Promise<RoomDto[]> {
   if (Capacitor.isNativePlatform()) {
     const res = await CapacitorHttp.post({
       url: `${THABELLA}/room/findRooms`,
       headers: { 'Content-Type': 'application/json' },
       data: {},
+      connectTimeout: REQUEST_TIMEOUT_MS,
+      readTimeout: REQUEST_TIMEOUT_MS,
     });
     if (res.status < 200 || res.status >= 300) throw new Error(`rooms HTTP ${res.status}`);
     return res.data as RoomDto[];
   }
-  const res = await fetch(`${API_BASE}/api/rooms`);
+  const res = await request(`${API_BASE}/api/rooms`);
   if (!res.ok) throw new Error(`rooms HTTP ${res.status}`);
   return (await res.json()) as RoomDto[];
 }
@@ -60,11 +66,13 @@ async function rawPeriods(sqlDate: string): Promise<PeriodDto[]> {
       url: `${THABELLA}/period/findByDate/${encodeURIComponent(sqlDate)}`,
       headers: { 'Content-Type': 'application/json' },
       data: { sqlDate },
+      connectTimeout: REQUEST_TIMEOUT_MS,
+      readTimeout: REQUEST_TIMEOUT_MS,
     });
     if (res.status < 200 || res.status >= 300) throw new Error(`periods HTTP ${res.status}`);
     return res.data as PeriodDto[];
   }
-  const res = await fetch(`${API_BASE}/api/periods?date=${encodeURIComponent(sqlDate)}`);
+  const res = await request(`${API_BASE}/api/periods?date=${encodeURIComponent(sqlDate)}`);
   if (!res.ok) throw new Error(`periods HTTP ${res.status}`);
   return (await res.json()) as PeriodDto[];
 }

@@ -62,7 +62,9 @@ function toIdentity(j: Record<string, unknown> | null): Identity | null {
  * Maps a PostgREST or Auth error to a short code the UI can word. A request
  * that never reached the server is `network` when the device is offline and
  * `blocked` when it is online: an ad blocker, Brave Shields or a filtering
- * DNS stopping requests to supabase.co.
+ * DNS stopping requests to supabase.co, or the service being down without
+ * its usual headers. `unavailable` is a request that timed out or a 5xx: the
+ * service is there but not answering.
  */
 export function errorCode(
   err: { hint?: string | null; code?: string; status?: number; message?: string } | null,
@@ -73,7 +75,9 @@ export function errorCode(
   if (err.code === 'otp_expired') return 'code_expired';
   if (err.status === 429 || err.code === 'over_email_send_rate_limit') return 'rate_limited';
   if (err.code === '42501') return 'not_signed_in';
-  if (/fetch|network/i.test(err.message ?? '')) return online ? 'blocked' : 'network';
+  if (!online) return 'network';
+  if ((err.status ?? 0) >= 500 || /timed? ?out|TimeoutError|AbortError/i.test(err.message ?? '')) return 'unavailable';
+  if (/fetch|network/i.test(err.message ?? '')) return 'blocked';
   return err.code ?? 'unknown';
 }
 

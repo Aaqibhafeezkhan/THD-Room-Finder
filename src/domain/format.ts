@@ -17,6 +17,9 @@ export function formatTime(date: Date): string {
 export function formatDayTime(date: Date, locale: 'en' | 'de'): string {
   return new Intl.DateTimeFormat(locale === 'de' ? 'de-DE' : 'en-GB', {
     weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
   }).format(date);
@@ -26,8 +29,8 @@ export function formatDayTime(date: Date, locale: 'en' | 'de'): string {
  * A whole-minute duration as the departure-board hero: "all day" for open-ended,
  * "2h 10m" / "3h" / "25m" otherwise.
  */
-export function formatDuration(minutes: number | null): string {
-  if (minutes === null) return 'all day';
+export function formatDuration(minutes: number | null, locale: 'en' | 'de' = 'en'): string {
+  if (minutes === null) return allDay(locale);
   const total = Math.max(0, Math.round(minutes));
   const h = Math.floor(total / 60);
   const m = total % 60;
@@ -36,16 +39,19 @@ export function formatDuration(minutes: number | null): string {
   return `${h}h ${m}m`;
 }
 
+const allDay = (locale: 'en' | 'de') => (locale === 'de' ? 'ganztags' : 'all day');
+
 /** The RoomCard duration hero for a free room at `now`. */
-export function freeRoomDuration(free: FreeRoom, now: Date): string {
-  if (free.freeUntil === null) return 'all day';
-  return formatDuration((free.freeUntil.getTime() - now.getTime()) / MS_PER_MINUTE);
+export function freeRoomDuration(free: FreeRoom, now: Date, locale: 'en' | 'de' = 'en'): string {
+  if (free.freeUntil === null) return allDay(locale);
+  return formatDuration((free.freeUntil.getTime() - now.getTime()) / MS_PER_MINUTE, locale);
 }
 
-/** RoomCard identity meta line, e.g. "Building A · 45 seats". */
-export function roomMeta(room: Room): string {
-  const seats = room.seatsRegular > 0 ? `${room.seatsRegular} seats` : null;
-  return [`Building ${room.building}`, seats].filter(Boolean).join(' · ');
+/** RoomCard identity meta line, e.g. "Building A · 45 seats" / "Gebäude A · 45 Plätze". */
+export function roomMeta(room: Room, locale: 'en' | 'de' = 'en'): string {
+  const de = locale === 'de';
+  const seats = room.seatsRegular > 0 ? `${room.seatsRegular} ${de ? 'Plätze' : 'seats'}` : null;
+  return [`${de ? 'Gebäude' : 'Building'} ${room.building}`, seats].filter(Boolean).join(' · ');
 }
 
 export interface StatusText {
@@ -56,7 +62,7 @@ export interface StatusText {
 }
 
 /** StatusCard copy for a room-detail banner from its computed availability. */
-export function statusBannerText(a: RoomAvailability, now: Date): StatusText {
+export function statusBannerText(a: RoomAvailability, now: Date, locale: 'en' | 'de' = 'en'): StatusText {
   if (a.status === 'occupied') {
     return {
       status: 'occupied',
@@ -66,13 +72,13 @@ export function statusBannerText(a: RoomAvailability, now: Date): StatusText {
     };
   }
   if (a.freeUntil === null) {
-    return { status: 'free', title: 'Free now', sub: 'Free for the rest of the day', duration: 'all day' };
+    return { status: 'free', title: 'Free now', sub: 'Free for the rest of the day', duration: allDay(locale) };
   }
   const minutes = (a.freeUntil.getTime() - now.getTime()) / MS_PER_MINUTE;
   return {
     status: a.status, // free | soon
     title: a.status === 'soon' ? 'Closing soon' : 'Free now',
     sub: `Free until ${formatTime(a.freeUntil)}`,
-    duration: formatDuration(minutes),
+    duration: formatDuration(minutes, locale),
   };
 }
