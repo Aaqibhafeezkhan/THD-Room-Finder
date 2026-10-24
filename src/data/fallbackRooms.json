@@ -1,6 +1,6 @@
 {
  "version": 1,
- "week": "2026-10-12",
+ "week": "2026-10-19",
  "rooms": [
   {
    "id": 1,
@@ -643,51 +643,11 @@
    "untisLongname": null
   },
   {
-   "id": 99,
-   "ident": "r000000099",
-   "name": "Vorplatz Geb. A",
-   "seatsRegular": 0,
-   "seatsExam": 0,
-   "facilities": "",
-   "bookable": false,
-   "untisLongname": null
-  },
-  {
    "id": 100,
    "ident": "r000000100",
    "name": "Vorplatz Geb. B",
    "seatsRegular": 0,
    "seatsExam": 0,
-   "facilities": "",
-   "bookable": false,
-   "untisLongname": null
-  },
-  {
-   "id": 101,
-   "ident": "r000000101",
-   "name": "Vorplatz Geb. C",
-   "seatsRegular": 0,
-   "seatsExam": 0,
-   "facilities": "",
-   "bookable": false,
-   "untisLongname": null
-  },
-  {
-   "id": 112,
-   "ident": "r000000112",
-   "name": "Holzdeck",
-   "seatsRegular": 50,
-   "seatsExam": 50,
-   "facilities": "",
-   "bookable": false,
-   "untisLongname": null
-  },
-  {
-   "id": 113,
-   "ident": "r000000113",
-   "name": "Freifläche",
-   "seatsRegular": 1200,
-   "seatsExam": 1200,
    "facilities": "",
    "bookable": false,
    "untisLongname": null
@@ -793,6 +753,16 @@
    "untisLongname": null
   },
   {
+   "id": 135,
+   "ident": "r000000135",
+   "name": "D212 - Physiklabor",
+   "seatsRegular": 20,
+   "seatsExam": 20,
+   "facilities": "Physiklabor",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
    "id": 138,
    "ident": "r000000138",
    "name": "K105 - Besprechungsraum (ü. Dekanat AI)",
@@ -809,16 +779,6 @@
    "seatsRegular": 100,
    "seatsExam": 100,
    "facilities": "Foyer Erdgeschoß",
-   "bookable": false,
-   "untisLongname": null
-  },
-  {
-   "id": 140,
-   "ident": "r000000140",
-   "name": "B101 - Foyer",
-   "seatsRegular": 100,
-   "seatsExam": 100,
-   "facilities": "Foyer 1. Obergeschoß",
    "bookable": false,
    "untisLongname": null
   },
@@ -1013,6 +973,16 @@
    "untisLongname": null
   },
   {
+   "id": 240,
+   "ident": "r000000240",
+   "name": "E213 - Labor",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "E213 2.Stock",
+   "bookable": false,
+   "untisLongname": "E213 2.Stock"
+  },
+  {
    "id": 680,
    "ident": "r000000680",
    "name": "E110 - Labor",
@@ -1046,16 +1016,6 @@
    "id": 687,
    "ident": "r000000687",
    "name": "L105 - Labor",
-   "seatsRegular": 0,
-   "seatsExam": 0,
-   "facilities": "",
-   "bookable": false,
-   "untisLongname": null
-  },
-  {
-   "id": 688,
-   "ident": "r000000688",
-   "name": "Glühweinhütte",
    "seatsRegular": 0,
    "seatsExam": 0,
    "facilities": "",
@@ -1153,16 +1113,6 @@
    "untisLongname": null
   },
   {
-   "id": 712,
-   "ident": "r000000712",
-   "name": "C011 - Getriebelabor",
-   "seatsRegular": 20,
-   "seatsExam": 10,
-   "facilities": "",
-   "bookable": false,
-   "untisLongname": null
-  },
-  {
    "id": 713,
    "ident": "r000000713",
    "name": "EC 2.11 (Besprechungsraum 2)",
@@ -1186,6 +1136,16 @@
    "id": 716,
    "ident": "r000000716",
    "name": "Vorplatz Geb. I",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 717,
+   "ident": "r000000717",
+   "name": "Vorplatz Geb. J",
    "seatsRegular": 0,
    "seatsExam": 0,
    "facilities": "",
@@ -1219,6 +1179,16 @@
    "seatsRegular": 48,
    "seatsExam": 24,
    "facilities": "Sendehörsaal",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 727,
+   "ident": "r000000727",
+   "name": "EC.B 0.13 (Chemielabor)",
+   "seatsRegular": 24,
+   "seatsExam": 12,
+   "facilities": "Chemielabor",
    "bookable": false,
    "untisLongname": null
   },
@@ -1363,6 +1333,26 @@
    "untisLongname": null
   },
   {
+   "id": 761,
+   "ident": "r000000761",
+   "name": "D010 - Geotechnik-Labor",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 762,
+   "ident": "r000000762",
+   "name": "D210 - Chemie-Labor",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
    "id": 763,
    "ident": "r000000763",
    "name": "LA 27-0.10 Labor: Simulation",
@@ -1463,9 +1453,29 @@
    "untisLongname": null
   },
   {
+   "id": 780,
+   "ident": "r000000780",
+   "name": "D016 - Baustofflabor",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
    "id": 781,
    "ident": "r000000781",
    "name": "C008 - Labor",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 782,
+   "ident": "r000000782",
+   "name": "Feriendorf Finsterau",
    "seatsRegular": 0,
    "seatsExam": 0,
    "facilities": "",
@@ -1789,6 +1799,16 @@
    "seatsRegular": 8,
    "seatsExam": 0,
    "facilities": "8 EDV-Plätze",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 906,
+   "ident": "r000000906",
+   "name": "L104 - Labor",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
    "bookable": false,
    "untisLongname": null
   }

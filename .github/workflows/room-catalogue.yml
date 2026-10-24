@@ -1,0 +1,88 @@
+name: Refresh room catalogue
+
+# Rebuilds src/data/fallbackRooms.json, the rooms a first visit falls back to
+# while THabella is down (ADR 0009, #156), from last week's timetable. When it
+# changed, it pushes chore/room-catalogue and opens one issue with the
+# difference and a link to open the PR. A person opens the PR, so the
+# required checks run and Actions never needs to create or approve PRs.
+
+on:
+  schedule:
+    # 06:17 UTC on the 3rd of each month: last week is usually a full one.
+    - cron: '17 6 3 * *'
+  workflow_dispatch:
+    inputs:
+      day:
+        description: Any day of a lecture week (YYYY-MM-DD); empty = last week
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: room-catalogue
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    name: Rebuild the fallback room catalogue
+    runs-on: ubuntu-latest
+    env:
+      BRANCH: chore/room-catalogue
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build the catalogue
+        id: build
+        env:
+          DAY: ${{ github.event.inputs.day }}
+          CATALOGUE_SUMMARY: ${{ runner.temp }}/summary.md
+        run: |
+          # A break week or THabella being down is not an error: next month
+          # tries again.
+          if ! node scripts/dev/fallback-rooms.mjs $DAY; then
+            echo "::notice::Catalogue not rebuilt (break week or THabella unreachable)"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if git diff --quiet -- src/data/fallbackRooms.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+          cat "$CATALOGUE_SUMMARY" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Push the branch
+        if: steps.build.outputs.changed == 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -C "$BRANCH"
+          git add src/data/fallbackRooms.json
+          git commit -q -m 'chore(data): refresh the fallback room catalogue' -m 'Refs #156'
+          git push --force origin "$BRANCH"
+
+      - name: Open or update the issue
+        if: steps.build.outputs.changed == 'true'
+        env:
+          SUMMARY: ${{ runner.temp }}/summary.md
+        run: |
+          {
+            cat "$SUMMARY"
+            echo "[Open the pull request](https://github.com/${GITHUB_REPOSITORY}/compare/main...${BRANCH}?expand=1) for \`$BRANCH\`. Check the removed rooms against THabella before merging."
+            echo
+            echo "Refs #156"
+          } > "$RUNNER_TEMP/body.md"
+          title='Room catalogue changed'
+          open=$(gh issue list --state open --search "\"$title\" in:title" --json number -q '.[0].number')
+          if [ -n "$open" ]; then
+            gh issue comment "$open" --body-file "$RUNNER_TEMP/body.md"
+          else
+            gh issue create --title "$title" --body-file "$RUNNER_TEMP/body.md" --label type:task --label area:data
+          fi

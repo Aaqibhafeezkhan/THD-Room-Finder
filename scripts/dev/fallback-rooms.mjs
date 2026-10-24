@@ -7,7 +7,9 @@
 //
 // Without a date it uses the week before the current one. A week with too
 // few teaching rooms (a break) is refused, so a holiday never shrinks it.
-import { writeFileSync } from 'node:fs';
+// With CATALOGUE_SUMMARY=<file> it also writes the added and removed rooms
+// as Markdown, for the monthly refresh workflow (#156).
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { thabella } from '../../api/_thabella.js';
 
 const MIN_ROOMS = 80;
@@ -52,5 +54,17 @@ const rooms = (await get('/room/findRooms', {}))
   }))
   .sort((a, b) => a.ident.localeCompare(b.ident));
 if (rooms.length < MIN_ROOMS) throw new Error(`only ${rooms.length} teaching rooms in the week of ${day(start)}; pick a lecture week`);
+const before = existsSync(OUT) ? JSON.parse(readFileSync(OUT, 'utf8')).rooms ?? [] : [];
 writeFileSync(OUT, `${JSON.stringify({ version: 1, week: day(start), rooms }, null, 1)}\n`);
+if (process.env.CATALOGUE_SUMMARY) {
+  const names = (list) => new Map(list.map((r) => [r.ident, r.name]));
+  const [was, now] = [names(before), names(rooms)];
+  const added = [...now].filter(([id]) => !was.has(id)).map(([, n]) => n);
+  const removed = [...was].filter(([id]) => !now.has(id)).map(([, n]) => n);
+  const list = (title, items) => (items.length ? `**${title}** (${items.length}): ${items.join(' · ')}\n\n` : '');
+  writeFileSync(
+    process.env.CATALOGUE_SUMMARY,
+    `${rooms.length} rooms from the week of ${day(start)} (was ${before.length}).\n\n${list('Added', added)}${list('Removed', removed)}`,
+  );
+}
 console.log(`${rooms.length} rooms from the week of ${day(start)} → src/data/fallbackRooms.json`);

@@ -14,6 +14,7 @@
 | Project sync | `project-sync.yml` | Issues, PRs, manual | Draft/ready → board status, start/completion dates. Inactive until `PROJECTS_TOKEN` exists ([#26](https://github.com/arudaev/THD-Room-Finder/issues/26)) | — |
 | Release | `release.yml` | Tag `v*`, manual | Signed APK and GitHub release | — |
 | Pages | `pages.yml` | Push to `main` | Deploys `website/` | — |
+| Refresh room catalogue | `room-catalogue.yml` | 3rd of each month, manual | Rebuilds `src/data/fallbackRooms.json` from last week's timetable ([ADR 0009](../architecture/adr/0009-timetable-outages.md)); when it changed, pushes `chore/room-catalogue` and opens one *Room catalogue changed* issue with the difference. Skips break weeks and outages | — |
 
 Vercel builds previews and production through its GitHub integration, outside
 Actions.
@@ -25,6 +26,9 @@ Actions.
   `persist-credentials: false` and never execute code from a pull request.
   That is what makes `pull_request_target` safe for fork PRs here.
 - Permissions are declared per workflow and kept to the minimum.
+- `room-catalogue` pushes only its own `chore/room-catalogue` branch and opens
+  an issue; a person opens the PR from the link in it. Actions never creates
+  or approves PRs, and the required checks run on a PR a person opened.
 - Fork PRs: the default `GITHUB_TOKEN` is read-only, Actions cannot approve
   PRs, and runs from first-time contributors wait for the maintainer's
   approval (*Approve and run workflows*). Approve only after reading the diff;
