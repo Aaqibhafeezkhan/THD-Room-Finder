@@ -64,6 +64,7 @@ an issue with one of the forms. The maintainer triages it into a milestone.
 | Business rules go in `src/domain/` with a Vitest test | The domain layer is the trusted core |
 | Style with design tokens, never hard-coded colours; strings via `t(en, de)` | One design system, two languages |
 | Never translate room or building codes (`A.011`, `ITC1.07`) | They are identifiers |
+| Unknown is not empty: data that couldn't load is shown as unknown, never as `[]`, `0`, "free" or "not signed in". Changes that read THabella or the focus service pass an [outage drill](docs/development/outage-drills.md) | A failing dependency must never turn into a wrong answer ([ADR 0009](docs/architecture/adr/0009-timetable-outages.md)) |
 | Design changes go through [Claude Design](design/README.md) first | Keeps design and code in sync |
 | No secrets, real student data or production credentials in commits, issues or previews | Privacy |
 

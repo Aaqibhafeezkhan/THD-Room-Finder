@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { AppBar, Button, IconButton, SeatRing, StatusCard, TableRow } from '../../components';
+import { AppBar, IconButton, SeatRing, StatusCard, StudyTogetherButton, TableRow } from '../../components';
 import { IconMail, IconStar, IconStarFilled, IconUsers } from '../../components/icons';
 import { useRoomData } from '../rooms/RoomDataContext';
 import { useFavorites } from '../favorites/favorites';
@@ -17,6 +17,9 @@ import { useTables } from '../tables/TablesContext';
 import { tableChip } from '../tables/YourTables';
 import { seatsTitle, topicOf } from '../tables/copy';
 import { tableShortWhen, tableState } from '../../domain/tables';
+import { toRoom } from '../../data/mappers';
+import { useFocusSession } from '../focus/FocusSessionContext';
+import { sessionTableLink } from '../tables/SessionTableSheet';
 
 const stickyBar = { position: 'sticky' as const, top: 0, zIndex: 10 };
 
@@ -24,13 +27,33 @@ export function RoomDetailScreen() {
   const params = useParams();
   const navigate = useNavigate();
   const { t, locale } = useI18n();
-  const { rooms, events, queryTime, campusHours, loading, error, refresh, isCustomTime } = useRoomData();
+  const { rooms, events, queryTime, campusHours, loading, schedule, scheduleAt, refresh, isCustomTime } = useRoomData();
   const { isFavorite, toggle } = useFavorites();
+  const { active } = useFocusSession();
 
   const ident = decodeURIComponent(params.ident ?? '');
-  const room = rooms.find((r) => r.ident === ident);
+  // A running session's room stays reachable even if no room list has it
+  // (THabella down on a first visit), so End and confirm always work (#154).
+  const room =
+    rooms.find((r) => r.ident === ident) ??
+    (active?.roomIdent === ident ? toRoom({ id: 0, ident, name: active.roomCode }) : undefined);
+  const unknown = schedule === 'unavailable';
   const tableFlow = useTableFlow(room);
   const { mine } = useTables();
+  const ownHere = active?.roomIdent === ident ? active : null;
+  // The table this session already became: noted on this device, or one you
+  // host here that starts at its anchor (made on another device).
+  const ownTable =
+    sessionTableLink(ownHere) ??
+    (ownHere
+      ? mine.find(
+          (x) =>
+            x.isHost &&
+            !x.cancelled &&
+            x.roomKey === `thd:${ownHere.roomIdent}` &&
+            Math.abs(x.startsAt.getTime() - new Date(ownHere.anchorAt).getTime()) < 60_000,
+        )?.link ?? null
+      : null);
 
   const back = () => navigate(-1);
 
@@ -40,8 +63,8 @@ export function RoomDetailScreen() {
         <AppBar mode="back" backLabel={t('Back', 'Zurück')} title="" onBack={back} style={stickyBar} />
         {loading ? (
           <Spinner />
-        ) : error ? (
-          <ErrorState message={t("Can't reach the THD timetable right now. Check your connection and try again.", 'Der THD-Stundenplan ist gerade nicht erreichbar. Prüfe deine Verbindung und versuche es erneut.')} onRetry={refresh} retryLabel={t('Try again', 'Erneut versuchen')} />
+        ) : unknown ? (
+          <ErrorState message={t("This room isn't in the rooms this device knows, and the THD timetable isn't answering.", 'Dieser Raum ist auf diesem Gerät nicht bekannt, und der THD-Stundenplan antwortet nicht.')} onRetry={refresh} retryLabel={t('Try again', 'Erneut versuchen')} />
         ) : (
           <EmptyState
             title={t('Room not found', 'Raum nicht gefunden')}
@@ -52,8 +75,10 @@ export function RoomDetailScreen() {
     );
   }
 
-  const schedule = getRoomSchedule(events, ident);
-  const availability = computeRoomAvailability(schedule, queryTime, campusHours.todayClose);
+  const roomEvents = getRoomSchedule(events, ident);
+  const availability = unknown
+    ? { status: 'free' as const, freeUntil: null, occupiedUntil: null }
+    : computeRoomAvailability(roomEvents, queryTime, campusHours.todayClose);
   const banner = statusBannerText(availability, queryTime, locale);
   const occupied = availability.status === 'occupied';
   const titles = {
@@ -102,6 +127,12 @@ export function RoomDetailScreen() {
       <Page>
         {closed ? (
           <ClosedNotice hours={campusHours} compact />
+        ) : unknown ? (
+          <StatusCard
+            status="unknown"
+            title={t('Availability unknown', 'Verfügbarkeit unbekannt')}
+            sub={t("The THD timetable isn't answering, so a lecture here can't be ruled out. Check the door.", 'Der THD-Stundenplan antwortet nicht, eine Vorlesung hier ist also nicht ausgeschlossen. Prüfe vor Ort.')}
+          />
         ) : (
           <StatusCard
             status={banner.status}
@@ -116,11 +147,25 @@ export function RoomDetailScreen() {
           availability={availability}
           closing={campusHours.todayClose}
           scheduleOnly={closed || isCustomTime}
+          scheduleUnknown={unknown}
         />
         {tableFlow.available && (
-          <Button variant="tonal" size="large" onClick={tableFlow.start} style={{ alignSelf: 'stretch' }}>
-            {t('Study together', 'Zusammen lernen')}
-          </Button>
+          <StudyTogetherButton
+            label={t('Study together', 'Zusammen lernen')}
+            onClick={tableFlow.start}
+            // Your session here can become a table in progress (#153); one
+            // it already became opens again instead of making another.
+            convert={
+              ownHere && !isCustomTime
+                ? {
+                    label: ownTable
+                      ? t('Open the study table for your session', 'Lerntisch deiner Session öffnen')
+                      : t('Invite people to your focus session', 'Leute zu deiner Fokus-Session einladen'),
+                    onClick: ownTable ? () => navigate(`/t/${ownTable}`) : tableFlow.fromSession,
+                  }
+                : undefined
+            }
+          />
         )}
         {/* My tables in this room, next first (where things live: room detail). */}
         {mine
@@ -213,6 +258,11 @@ export function RoomDetailScreen() {
             }}
           >
             {t('Schedule', 'Stundenplan')} — {dayLabel}
+            {schedule === 'stale' && scheduleAt && (
+              <span style={{ fontWeight: 400, fontSize: 'var(--body-small-size)', color: 'var(--md-on-surface-variant)' }}>
+                {' · '}{t(`as of ${formatTime(scheduleAt)}`, `Stand ${formatTime(scheduleAt)}`)}
+              </span>
+            )}
           </div>
           <div
             style={{
@@ -222,12 +272,16 @@ export function RoomDetailScreen() {
               overflow: 'hidden',
             }}
           >
-            {schedule.length === 0 ? (
+            {unknown ? (
+              <div role="status" style={{ padding: 'var(--space-4)', color: 'var(--md-on-surface-variant)' }}>
+                {t("Timetable unavailable right now", 'Stundenplan gerade nicht verfügbar')}
+              </div>
+            ) : roomEvents.length === 0 ? (
               <div style={{ padding: 'var(--space-4)', color: 'var(--md-on-surface-variant)' }}>
                 {t('No events scheduled', 'Keine Termine')}
               </div>
             ) : (
-              schedule.map((e, i) => {
+              roomEvents.map((e, i) => {
                 const active = e.startDateTime <= queryTime && e.endDateTime > queryTime;
                 return (
                   <div

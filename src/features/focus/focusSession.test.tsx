@@ -13,13 +13,18 @@ import { I18nProvider } from '../../i18n';
 import { StudyProfileProvider } from '../profile/StudyProfileContext';
 import { FocusHistoryProvider } from './FocusHistoryContext';
 import { FocusSessionProvider, useFocusSession } from './FocusSessionContext';
+import { useFocusStats } from './useFocusStats';
 
 let container: HTMLDivElement;
 let root: Root;
 let ctx: ReturnType<typeof useFocusSession>;
+let stats: ReturnType<typeof useFocusStats>;
+let saved: ReturnType<typeof useFocusStats>;
 
 function Probe() {
   ctx = useFocusSession();
+  stats = useFocusStats(new Date());
+  saved = useFocusStats(new Date(), { live: false });
   return null;
 }
 
@@ -167,6 +172,47 @@ describe('focus sessions', () => {
     await act(async () => ctx.end());
     expect(ctx.active).toBeNull();
     expect(ctx.lastEnded).toEqual({ roomIdent: E212.ident, minutes: 25, blocks: 1, awayMinutes: 0 });
+    expect(await recorded(store)).toEqual([[25, 'E212']]);
+  });
+
+  it('counts the running session in the graph before it ends, then once', async () => {
+    const store = await mount({ signedIn: false, api: null });
+    await act(async () => ctx.start(E212, plan(), deep));
+    await minutes(30);
+    expect(stats.todayMinutes).toBe(30);
+    expect(stats.live).toEqual({ date: '2026-10-13', minutes: 30 });
+    expect(stats.hasHistory).toBe(true);
+    expect(saved.todayMinutes).toBe(0);
+    expect(await store.all()).toEqual([]);
+    // The break and the unanswered next block add nothing.
+    await minutes(25);
+    expect(ctx.status?.kind).toBe('break');
+    expect(stats.todayMinutes).toBe(50);
+    await minutes(6);
+    expect(ctx.status?.kind).toBe('confirm');
+    expect(stats.todayMinutes).toBe(50);
+    await act(async () => ctx.confirm());
+    await minutes(10);
+    expect(stats.todayMinutes).toBe(61);
+    await act(async () => ctx.end());
+    expect(stats.live).toBeNull();
+    expect(stats.todayMinutes).toBe(61);
+    expect(await recorded(store)).toEqual([[61, 'E212']]);
+  });
+
+  it('makes room for a lecture it learns about later, keeping the focus so far', async () => {
+    const store = await mount({ signedIn: false, api: null });
+    await act(async () => ctx.start(E212, plan(), deep));
+    await minutes(20);
+    await act(async () => ctx.limitTo(new Date(Date.now() + 30 * 60000)));
+    expect(ctx.active?.reason).toBe('lecture');
+    expect(new Date(ctx.active!.plannedEnd).getTime()).toBe(new Date(2026, 9, 13, 10, 50).getTime());
+    // A later answer never extends the plan again.
+    await act(async () => ctx.limitTo(new Date(2026, 9, 13, 15, 0)));
+    expect(new Date(ctx.active!.plannedEnd).getTime()).toBe(new Date(2026, 9, 13, 10, 50).getTime());
+    await minutes(5);
+    await act(async () => ctx.limitTo(new Date()));
+    expect(ctx.active).toBeNull();
     expect(await recorded(store)).toEqual([[25, 'E212']]);
   });
 

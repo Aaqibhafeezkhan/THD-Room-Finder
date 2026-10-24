@@ -6,6 +6,7 @@
 | **Date** | 20 October 2026 |
 | **Decided by** | Maintainer |
 | **Spec** | [Study tables](../../product/study-tables.md) |
+| **Amended by** | [ADR 0010](0010-session-to-table.md): a running session can become a table already in progress |
 
 ## Context
 

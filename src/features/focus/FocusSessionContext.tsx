@@ -89,6 +89,9 @@ interface FocusSessionValue {
   confirm: () => Promise<void>;
   /** Record time spent in other apps (Android). */
   addAway: (spans: AwaySpan[]) => void;
+  /** End the plan by `end` for a lecture it didn't know about (#154): now
+   *  ends the session, later shortens it. Never extends or restarts it. */
+  limitTo: (end: Date) => Promise<void>;
   setVisibility: (v: Visibility) => Promise<void>;
   setShowName: (on: boolean) => Promise<void>;
   dismissSummary: () => void;
@@ -323,6 +326,21 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
     [setActive],
   );
 
+  const limitTo = useCallback(
+    async (end: Date) => {
+      const s = activeRef.current;
+      if (!s || end >= new Date(s.plannedEnd)) return;
+      const t = new Date();
+      const p = end > t ? layout(s.rhythm, new Date(s.anchorAt), new Date(s.startedAt), end) : null;
+      if (!p) {
+        await finish(t);
+        return;
+      }
+      setActive({ ...s, plannedEnd: p.end.toISOString(), reason: 'lecture', limitAt: end.toISOString() });
+    },
+    [finish, setActive],
+  );
+
   /** Picks up a session this student runs on another device (ADR 0005). */
   const adopt = useCallback(async () => {
     if (!signedIn || !api || activeRef.current) return;
@@ -427,13 +445,19 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
       end,
       confirm,
       addAway,
+      limitTo,
       setVisibility,
       setShowName,
       dismissSummary: () => setLastEnded(null),
     }),
-    [active, plan, status, now, lastEnded, summaries, signedIn, start, conflict, resolveConflict, end, confirm, addAway, setVisibility, setShowName],
+    [active, plan, status, now, lastEnded, summaries, signedIn, start, conflict, resolveConflict, end, confirm, addAway, limitTo, setVisibility, setShowName],
   );
   return <FocusSessionContext.Provider value={value}>{children}</FocusSessionContext.Provider>;
+}
+
+/** The session, or null outside the provider (design specimens, tests). */
+export function useOptionalFocusSession(): FocusSessionValue | null {
+  return useContext(FocusSessionContext);
 }
 
 export function useFocusSession(): FocusSessionValue {

@@ -14,6 +14,8 @@ ADR **amends** or **supersedes** them, and the old one gets a pointer.
 | [0006](0006-android-self-update.md) | The Android app keeps itself up to date | Accepted |
 | [0007](0007-study-tables.md) | Study tables are shared by a word link | Proposed |
 | [0008](0008-organization-registry.md) | Organizations are verified in a public registry | Proposed |
+| [0009](0009-timetable-outages.md) | A timetable outage removes availability, not rooms or focus | Accepted |
+| [0010](0010-session-to-table.md) | A running focus session can become a study table | Accepted |
 
 Operating limits and the hosted activation checklist live in
 [pilot verification](../pilot-verification.md).

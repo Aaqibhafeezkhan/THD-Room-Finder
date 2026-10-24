@@ -26,6 +26,14 @@ hasn't started. Teal marks free slots. No new colours.
 | S4 | Reminder banner | Starts in 15 min, started |
 | S5 | Chat preview | The link card in a messenger, light and dark |
 
+## Inviting to a running session (#153)
+
+While the student's own session runs in the room, room detail shows a
+focus-violet circle at the left end of the **Study together** pill, directly
+under the focus card; the label moves right and stays centred in the rest.
+It opens a short sheet (room, now until the planned end, rhythm given; seats,
+topic, **Invite people**). Component: `StudyTogetherButton`.
+
 ## Components
 
 | Component | Notes |

@@ -50,7 +50,8 @@ export function ShareSheet({ open, onClose, onDone, name, batch }: ShareSheetPro
   const { t, locale } = useI18n();
   const { theme, accent } = useTheme();
   const cls = useWindowClass();
-  const stats = useFocusStats();
+  // A shared image shows saved focus only, not a session still running.
+  const stats = useFocusStats(undefined, { live: false });
   const [showName, setShowName] = useState(false);
   const [showBatch, setShowBatch] = useState(false);
   const [busy, setBusy] = useState(false);

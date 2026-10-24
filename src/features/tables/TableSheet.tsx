@@ -85,7 +85,10 @@ export function TableSheet({ open, room, onClose, onSaved, table }: TableSheetPr
   const [rhythm, setRhythm] = useState(preferred);
   const [pickRhythm, setPickRhythm] = useState(false);
   // The room's events, tagged with the day they belong to.
-  const [loaded, setLoaded] = useState<{ day: string; events: ScheduledEvent[] } | null>(null);
+  // `failed`: the timetable or the room's gatherings couldn't be loaded, so
+  // no slot can be offered as free (#154).
+  const [loaded, setLoaded] = useState<{ day: string; events: ScheduledEvent[]; failed?: boolean } | null>(null);
+  const [attempt, setAttempt] = useState(0);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
@@ -115,22 +118,24 @@ export function TableSheet({ open, room, onClose, onSaved, table }: TableSheetPr
     // Lectures and gatherings in the room both make it taken.
     const from = fromCampusWallClock(picked.date);
     const to = new Date(from.getTime() + 24 * 60 * MIN);
+    setLoaded(null);
     Promise.all([
-      getEventsForDate(picked.date).catch(() => [] as ScheduledEvent[]),
-      gatherings.api ? gatherings.api.inRoom(roomKey(room.ident), from, to).catch(() => []) : Promise.resolve([]),
+      getEventsForDate(picked.date),
+      gatherings.api ? gatherings.api.inRoom(roomKey(room.ident), from, to) : Promise.resolve([]),
     ]).then(([events, others]) => {
       if (stale) return;
       const taken = others.map((o) => ({ id: -1, roomIdent: room.ident, roomName: null, eventType: 'gathering', durationMinutes: 0,
         startDateTime: toCampusWallClock(o.startsAt), endDateTime: toCampusWallClock(o.endsAt) }) as ScheduledEvent);
       setLoaded({ day: id, events: [...events.filter((x) => x.roomIdent === room.ident), ...taken] });
-    });
+    }, () => !stale && setLoaded({ day: id, events: [], failed: true }));
     return () => {
       stale = true;
     };
-  }, [open, day, room.ident]);
+  }, [open, day, room.ident, attempt]);
 
   const slots: FreeSlot[] | null = useMemo(() => {
     if (!picked || !loaded || loaded.day !== picked.id) return null;
+    if (loaded.failed) return [];
     const list = freeSlots(picked, loaded.events, now);
     // Changing a table keeps its own time on offer even off the grid.
     if (table) {
@@ -160,7 +165,7 @@ export function TableSheet({ open, room, onClose, onSaved, table }: TableSheetPr
     return days.find((d) => d.offset > picked.offset && d.open) ?? null;
   }, [slots, picked, days]);
   useEffect(() => {
-    if (!advanced.current && slots) {
+    if (!advanced.current && slots && !loaded?.failed) {
       advanced.current = true;
       if (!slots.length && next) setDay(next.id);
     }
@@ -174,6 +179,14 @@ export function TableSheet({ open, room, onClose, onSaved, table }: TableSheetPr
     disabled: !d.open || (d.offset === 0 && Boolean(d.close && d.close <= now)),
   }));
   const slotChips: SlotOption[] | null = slots?.map((s) => ({ id: s.id, start: s.id, free: slotLength(s.minutes) })) ?? null;
+  const unknownLine = (
+    <span role="alert">
+      {t("Can't check this room's free times right now. ", 'Freie Zeiten in diesem Raum gerade nicht prüfbar. ')}
+      <button type="button" onClick={() => setAttempt((n) => n + 1)} style={{ border: 'none', background: 'none', padding: 0, color: 'var(--md-primary)', font: 'inherit', cursor: 'pointer' }}>
+        {t('Try again', 'Erneut versuchen')}
+      </button>
+    </span>
+  );
   const emptyLine = picked
     ? t(
         `No free slot ${picked.offset === 0 ? 'left today' : `on ${dayName(picked.date, 'en')}`}${next ? ` · next: ${dayName(next.date, 'en', now)}` : ''}`,
@@ -221,7 +234,7 @@ export function TableSheet({ open, room, onClose, onSaved, table }: TableSheetPr
             slots={slotChips}
             slot={slot}
             onSlot={setSlot}
-            empty={emptyLine}
+            empty={loaded?.failed ? unknownLine : emptyLine}
             daysLabel={t('Day', 'Tag')}
             slotsLabel={t('Start', 'Beginn')}
           />

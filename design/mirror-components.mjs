@@ -48,6 +48,7 @@ const COMPONENTS = {
   'tables/ReplyBar': { section: 'Study tables', subtitle: "Take a seat, Maybe, Can't; seated and full states", viewport: '700x200' },
   'tables/TableRow': { section: 'Study tables', subtitle: 'One table in Your tables, row or card', viewport: '700x200' },
   'tables/TableBanner': { section: 'Study tables', subtitle: '15-minute reminder above the nav', viewport: '700x90' },
+  'tables/StudyTogetherButton': { section: 'Study tables', subtitle: 'Study together, with the violet shortcut while your session runs', viewport: '700x100' },
   'gatherings/Hall': { section: 'Gatherings', subtitle: 'The room set up for its kind, people in reply order', viewport: '700x320' },
   'gatherings/KindIcon': { section: 'Gatherings', subtitle: 'Group focus, Game night, Talk, Meeting marks', viewport: '700x80' },
   'gatherings/KindPicker': { section: 'Gatherings', subtitle: 'The four kinds as tiles', viewport: '420x100' },

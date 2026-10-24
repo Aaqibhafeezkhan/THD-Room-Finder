@@ -95,6 +95,8 @@ export { TableRow } from './tables/TableRow';
 export type { TableRowProps } from './tables/TableRow';
 export { TableBanner } from './tables/TableBanner';
 export type { TableBannerProps } from './tables/TableBanner';
+export { StudyTogetherButton } from './tables/StudyTogetherButton';
+export type { StudyTogetherButtonProps } from './tables/StudyTogetherButton';
 
 // Gatherings (M3, docs/product/organizations.md).
 export { Hall } from './gatherings/Hall';

@@ -19,7 +19,9 @@ import { roomStatusLabel } from '../shared/roomStatusLabel';
 export function SavedRooms({ grid = false }: { grid?: boolean }) {
   const navigate = useNavigate();
   const { t, locale } = useI18n();
-  const { rooms, events, planningTime, queryTime, preview, isCustomTime, campusHours } = useRoomData();
+  const { rooms, events, schedule, planningTime, queryTime, preview, isCustomTime, campusHours } = useRoomData();
+  // No timetable (or not yet): say so per room, never "free" (#154).
+  const unknown = schedule === 'unavailable' || schedule === 'loading';
   const { favorites } = useFavorites();
 
   const saved = favorites
@@ -109,6 +111,20 @@ export function SavedRooms({ grid = false }: { grid?: boolean }) {
                     status="unavailable"
                     statusLabel={campusHours.access === 'unconfirmed' ? t('access unconfirmed', 'Zugang unbestätigt') : t('closed', 'zu')}
                     duration="—"
+                    href={href}
+                    onClick={open}
+                  />
+                );
+              }
+              if (unknown) {
+                return (
+                  <RoomCard
+                    key={room.ident}
+                    name={room.code}
+                    meta={roomMeta(room, locale)}
+                    hint={mayBeLocked(room) ? t('may be locked', 'evtl. abgeschlossen') : undefined}
+                    status="unavailable"
+                    statusLabel={schedule === 'loading' ? t('checking', 'wird geprüft') : t('unknown', 'unbekannt')}
                     href={href}
                     onClick={open}
                   />

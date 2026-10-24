@@ -7,6 +7,7 @@ import { ReplyBar } from './ReplyBar';
 import type { ReplyBarText } from './ReplyBar';
 import { SeatRing } from './SeatRing';
 import { SlotChips } from './SlotChips';
+import { StudyTogetherButton } from './StudyTogetherButton';
 
 let container: HTMLDivElement;
 let root: Root;
@@ -120,5 +121,29 @@ describe('SlotChips', () => {
       />,
     );
     expect(container.textContent).toContain('No free slot on Thursday');
+  });
+});
+
+describe('StudyTogetherButton', () => {
+  it('is one action without a session here', async () => {
+    await render(<StudyTogetherButton label="Study together" onClick={() => {}} />);
+    expect(buttons().map((b) => b.textContent)).toEqual(['Study together']);
+  });
+
+  it('puts the session shortcut first, as its own named button', async () => {
+    const taps: string[] = [];
+    await render(
+      <StudyTogetherButton
+        label="Study together"
+        onClick={() => taps.push('table')}
+        convert={{ label: 'Invite people to your focus session', onClick: () => taps.push('convert') }}
+      />,
+    );
+    const [shortcut, main] = buttons();
+    expect(shortcut.getAttribute('aria-label')).toBe('Invite people to your focus session');
+    expect(main.textContent).toBe('Study together');
+    await act(async () => shortcut.click());
+    await act(async () => main.click());
+    expect(taps).toEqual(['convert', 'table']);
   });
 });

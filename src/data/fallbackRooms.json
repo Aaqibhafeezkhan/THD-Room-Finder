@@ -1,0 +1,1816 @@
+{
+ "version": 1,
+ "week": "2026-10-19",
+ "rooms": [
+  {
+   "id": 1,
+   "ident": "r000000001",
+   "name": "A008 - Labor",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "Overhead, Beamer, Visualiser, WB, Lautsprecher, HDMI, VGA, 62m²",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 2,
+   "ident": "r000000002",
+   "name": "A009 - Besprechungsraum",
+   "seatsRegular": 16,
+   "seatsExam": 16,
+   "facilities": "16+1 PC, Scanner, schlechter Beamer, WB, HDMI, VGA, 62m²",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 3,
+   "ident": "r000000003",
+   "name": "A012",
+   "seatsRegular": 120,
+   "seatsExam": 28,
+   "facilities": "1 PC, Overhead, Beamer, Visualiser, WB, Lautsprecher, Mikro, HDMI, VGA, Sendehörsaal, 120m²",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 4,
+   "ident": "r000000004",
+   "name": "A110",
+   "seatsRegular": 30,
+   "seatsExam": 0,
+   "facilities": "Beamer, Visualiser, WB, Lautsprecher, HDMI, VGA, Sendehörsaal, 40m²",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 5,
+   "ident": "r000000005",
+   "name": "A111",
+   "seatsRegular": 28,
+   "seatsExam": 14,
+   "facilities": "Overhead, Beamer, Visualiser, WB+T, Lautsprecher, HDMI, VGA, Sendehörsaal, 40m²",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 6,
+   "ident": "r000000006",
+   "name": "A114",
+   "seatsRegular": 74,
+   "seatsExam": 35,
+   "facilities": "Overhead, Beamer, Visualiser, WB, Lautsprecher, HDMI, VGA, Sendehörsaal, 90m²",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 7,
+   "ident": "r000000007",
+   "name": "A115",
+   "seatsRegular": 76,
+   "seatsExam": 40,
+   "facilities": "Beamer, Visualiser, WB, Lautsprecher, HDMI, VGA, Sendehörsaal, 90m²",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 8,
+   "ident": "r000000008",
+   "name": "A210",
+   "seatsRegular": 30,
+   "seatsExam": 0,
+   "facilities": "Beamer, Visualiser, WB, Lautsprecher, HDMI, VGA, Sendehörsaal, 40m²",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 9,
+   "ident": "r000000009",
+   "name": "A213",
+   "seatsRegular": 70,
+   "seatsExam": 35,
+   "facilities": "Beamer, Visualiser, WB, Lautsprecher, HDMI, VGA, Sendehörsaal, 90m²",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 10,
+   "ident": "r000000010",
+   "name": "A214",
+   "seatsRegular": 82,
+   "seatsExam": 41,
+   "facilities": "Beamer, Visualiser, WB, Lautsprecher, HDMI, VGA, Sendehörsaal, 90m²",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 11,
+   "ident": "r000000011",
+   "name": "A215 - Besprechungsraum",
+   "seatsRegular": 10,
+   "seatsExam": 10,
+   "facilities": "Beamer, 15m²",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 12,
+   "ident": "r000000012",
+   "name": "B004",
+   "seatsRegular": 220,
+   "seatsExam": 56,
+   "facilities": "220, Beamer, PC, OV, IN, T, Sendehörsaal, 208qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 16,
+   "ident": "r000000016",
+   "name": "C001",
+   "seatsRegular": 100,
+   "seatsExam": 54,
+   "facilities": "Beamer, OV, T, Sendehörsaal, 120qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 17,
+   "ident": "r000000017",
+   "name": "C101",
+   "seatsRegular": 100,
+   "seatsExam": 54,
+   "facilities": "Beamer, OV, T, Sendehörsaal, 120qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 18,
+   "ident": "r000000018",
+   "name": "C102",
+   "seatsRegular": 32,
+   "seatsExam": 18,
+   "facilities": "Beamer, OV, Sendehörsaal, 52qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 19,
+   "ident": "r000000019",
+   "name": "C103",
+   "seatsRegular": 70,
+   "seatsExam": 46,
+   "facilities": "Beamer, OV, WB, Sendehörsaal,  89qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 20,
+   "ident": "r000000020",
+   "name": "C104",
+   "seatsRegular": 70,
+   "seatsExam": 45,
+   "facilities": "OV, T, Sendehörsaal, 89,42qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 21,
+   "ident": "r000000021",
+   "name": "C106",
+   "seatsRegular": 60,
+   "seatsExam": 30,
+   "facilities": "Beamer, Labor, Sem. Raum, Sendehörsaal, 76qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 22,
+   "ident": "r000000022",
+   "name": "C109",
+   "seatsRegular": 24,
+   "seatsExam": 19,
+   "facilities": "Beamer, WB, Sendehörsaal, 88qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 23,
+   "ident": "r000000023",
+   "name": "C201",
+   "seatsRegular": 48,
+   "seatsExam": 27,
+   "facilities": "Beamer, OV, Sendehörsaal, 69qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 24,
+   "ident": "r000000024",
+   "name": "C211 - EDV",
+   "seatsRegular": 24,
+   "seatsExam": 21,
+   "facilities": "Beamer, IN, WB, 24PC, Sendehörsaal, 98qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 25,
+   "ident": "r000000025",
+   "name": "C212 - EDV",
+   "seatsRegular": 23,
+   "seatsExam": 11,
+   "facilities": "VGA (kein HDMI) Beamer, Whiteboard, 23PC, Sendehörsaal, 86qm, kein Visualizer",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 26,
+   "ident": "r000000026",
+   "name": "C213 - EDV",
+   "seatsRegular": 24,
+   "seatsExam": 12,
+   "facilities": "Beamer, WB, 24PC, Sendehörsaal, 86qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 27,
+   "ident": "r000000027",
+   "name": "C214 - EDV",
+   "seatsRegular": 18,
+   "seatsExam": 12,
+   "facilities": "Beamer, WB, 18PC, Sendehörsaal, 111qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 28,
+   "ident": "r000000028",
+   "name": "C215 - Besprechungsraum",
+   "seatsRegular": 15,
+   "seatsExam": 6,
+   "facilities": "Bespr., 36,39qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 29,
+   "ident": "r000000029",
+   "name": "C232",
+   "seatsRegular": 36,
+   "seatsExam": 20,
+   "facilities": "Beamer, OV, Sendehörsaal, 49qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 31,
+   "ident": "r000000031",
+   "name": "D021",
+   "seatsRegular": 90,
+   "seatsExam": 25,
+   "facilities": "Beamer, DIA, OV, WB, Sendehörsaal, 89qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 32,
+   "ident": "r000000032",
+   "name": "D110 - EDV",
+   "seatsRegular": 22,
+   "seatsExam": 11,
+   "facilities": "11 PC, OV, Sendehörsaal, 98,8qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 33,
+   "ident": "r000000033",
+   "name": "D111 - EDV",
+   "seatsRegular": 22,
+   "seatsExam": 11,
+   "facilities": "11 PC, Beamer, OV, WB, 87,6qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 34,
+   "ident": "r000000034",
+   "name": "D113",
+   "seatsRegular": 60,
+   "seatsExam": 31,
+   "facilities": "Beamer, OV, WB, Kinohörsaal, 86,5qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 35,
+   "ident": "r000000035",
+   "name": "D114",
+   "seatsRegular": 70,
+   "seatsExam": 36,
+   "facilities": "Beamer, OV, Sendehörsaal, 88,8qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 36,
+   "ident": "r000000036",
+   "name": "D115",
+   "seatsRegular": 66,
+   "seatsExam": 35,
+   "facilities": "Beamer, OV, WB, Kinohörsaal, 88,8qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 37,
+   "ident": "r000000037",
+   "name": "D116",
+   "seatsRegular": 66,
+   "seatsExam": 36,
+   "facilities": "Beamer, DIA, OV, Sendehörsaal, 88,8qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 39,
+   "ident": "r000000039",
+   "name": "D120",
+   "seatsRegular": 60,
+   "seatsExam": 32,
+   "facilities": "Beamer, OV, Kinohörsaal, 89qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 42,
+   "ident": "r000000042",
+   "name": "D224 - EDV",
+   "seatsRegular": 50,
+   "seatsExam": 31,
+   "facilities": "EXP-Prüfung 20 Plätze; 31 PC-Arbeitsplätze plus ein Dozentenrechner, Beamer, OV,WB, 89qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 43,
+   "ident": "r000000043",
+   "name": "D225",
+   "seatsRegular": 34,
+   "seatsExam": 17,
+   "facilities": "Beamer, OV, 48,9qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 44,
+   "ident": "r000000044",
+   "name": "E001",
+   "seatsRegular": 90,
+   "seatsExam": 15,
+   "facilities": "Plätze im \"Coronabetrieb\": 25; 1 Beamer, Sendehörsaal, 96,65 m²",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 45,
+   "ident": "r000000045",
+   "name": "E006",
+   "seatsRegular": 72,
+   "seatsExam": 36,
+   "facilities": "Plätze im \"Coronabetrieb\": 25; 2 Beamer, Sendehörsaal, 99,61 m²",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 46,
+   "ident": "r000000046",
+   "name": "E101",
+   "seatsRegular": 84,
+   "seatsExam": 42,
+   "facilities": "Plätze im \"Coronabetrieb\": 32; 2 Beamer, Sendehörsaal, 1 Visualizer, 1 Overhead, 119,66 m²",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 47,
+   "ident": "r000000047",
+   "name": "E102",
+   "seatsRegular": 24,
+   "seatsExam": 12,
+   "facilities": "Plätze im \"Coronabetrieb\": 12;  2 Beamer, Sendehörsaal, 51,87 m²",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 48,
+   "ident": "r000000048",
+   "name": "E103",
+   "seatsRegular": 60,
+   "seatsExam": 30,
+   "facilities": "Plätze im \"Coronabetrieb\": 22 1 Beamer, Sendehörsaal, 1 Visualizer, 1 Overhead, 89,42 m²",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 49,
+   "ident": "r000000049",
+   "name": "E104",
+   "seatsRegular": 60,
+   "seatsExam": 30,
+   "facilities": "Plätze im \"Coronabetrieb\": 22 1 Beamer, Sendehörsaal, 1 Visualizer, 1 Overhead, 89,42 m²",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 50,
+   "ident": "r000000050",
+   "name": "E201",
+   "seatsRegular": 48,
+   "seatsExam": 16,
+   "facilities": "12 Rechnerarbeitsplätze, 28 zusätzlich frei platzierbare Sitze; 2 Beamer, Sendehörsaal, 1 Visualizer, 1 Overhead",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 51,
+   "ident": "r000000051",
+   "name": "E203",
+   "seatsRegular": 16,
+   "seatsExam": 16,
+   "facilities": "1 Beamer, 2 Overhead, Besprechungsraum, Sendehörsaal, 42,72 m²",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 53,
+   "ident": "r000000053",
+   "name": "E212 - EDV",
+   "seatsRegular": 40,
+   "seatsExam": 20,
+   "facilities": "EXP-Prüfung 36 Plätze; 2 Beamer, Kino,  1 Overhead, WB, Sendehörsaal, 97,50 m²",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 54,
+   "ident": "r000000054",
+   "name": "E214 - EDV",
+   "seatsRegular": 36,
+   "seatsExam": 18,
+   "facilities": "EXP-Prüfung 32 Plätze; 1 Beamer, Aufzeichnung, 1 Overhead, WB, Sendehörsaal, 109,03 m²",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 65,
+   "ident": "r000000065",
+   "name": "ITC 2: HS 2",
+   "seatsRegular": 120,
+   "seatsExam": 72,
+   "facilities": "Sendehörsaal",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 77,
+   "ident": "r000000077",
+   "name": "Schwimmbad Elypso",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "Elypso Deggendorf",
+   "bookable": false,
+   "untisLongname": "Elypso Deggendorf"
+  },
+  {
+   "id": 78,
+   "ident": "r000000078",
+   "name": "DEGG's ASW Hörsaal",
+   "seatsRegular": 36,
+   "seatsExam": 16,
+   "facilities": "Sendehörsaal",
+   "bookable": false,
+   "untisLongname": "DEG's"
+  },
+  {
+   "id": 81,
+   "ident": "r000000081",
+   "name": "K210 - EDV",
+   "seatsRegular": 24,
+   "seatsExam": 12,
+   "facilities": " EXP-Prüfung: 20 Plätze; Kinohörsaal; 12 PC-Plätze, PC, Beamer, WB, Lautsprecher, HDMI, VGA",
+   "bookable": false,
+   "untisLongname": "K210 EDV-Raum"
+  },
+  {
+   "id": 82,
+   "ident": "r000000082",
+   "name": "I001",
+   "seatsRegular": 50,
+   "seatsExam": 25,
+   "facilities": "80m²",
+   "bookable": false,
+   "untisLongname": "I001 Hörsaalgebäude"
+  },
+  {
+   "id": 83,
+   "ident": "r000000083",
+   "name": "I002 (Lab)",
+   "seatsRegular": 30,
+   "seatsExam": 0,
+   "facilities": "80m²",
+   "bookable": false,
+   "untisLongname": "I002 Hörsaalgebäude"
+  },
+  {
+   "id": 84,
+   "ident": "r000000084",
+   "name": "I009",
+   "seatsRegular": 50,
+   "seatsExam": 25,
+   "facilities": "80m²",
+   "bookable": false,
+   "untisLongname": "I005 Hörsaalgebäude"
+  },
+  {
+   "id": 85,
+   "ident": "r000000085",
+   "name": "I006",
+   "seatsRegular": 50,
+   "seatsExam": 25,
+   "facilities": "85m², Kinohörsaal",
+   "bookable": false,
+   "untisLongname": "I006 Hörsaalgebäude"
+  },
+  {
+   "id": 86,
+   "ident": "r000000086",
+   "name": "I005",
+   "seatsRegular": 24,
+   "seatsExam": 12,
+   "facilities": "50m²",
+   "bookable": false,
+   "untisLongname": "I005 Hörsaalgebäude"
+  },
+  {
+   "id": 87,
+   "ident": "r000000087",
+   "name": "I008",
+   "seatsRegular": 50,
+   "seatsExam": 25,
+   "facilities": "80m²",
+   "bookable": false,
+   "untisLongname": "I008 Hörsaalgebäude"
+  },
+  {
+   "id": 88,
+   "ident": "r000000088",
+   "name": "K106/107 - EDV",
+   "seatsRegular": 56,
+   "seatsExam": 28,
+   "facilities": "EXP-Prüfung: 52 Plätze; Senderhörsaal, 56 PC-Plätze, PC, Beamer, Visualiser, WB, Lautsprecher, Mikro, HDMI, VGA",
+   "bookable": false,
+   "untisLongname": "K106/107 EDV-Raum"
+  },
+  {
+   "id": 90,
+   "ident": "r000000090",
+   "name": "I105",
+   "seatsRegular": 90,
+   "seatsExam": 25,
+   "facilities": "93m² Stufenhörsaal, Kinohörsaal",
+   "bookable": false,
+   "untisLongname": "I105 Hörsaalgebäude"
+  },
+  {
+   "id": 91,
+   "ident": "r000000091",
+   "name": "I104",
+   "seatsRegular": 20,
+   "seatsExam": 11,
+   "facilities": "55m²",
+   "bookable": false,
+   "untisLongname": "I104 Hörsaalgebäude"
+  },
+  {
+   "id": 92,
+   "ident": "r000000092",
+   "name": "I107",
+   "seatsRegular": 100,
+   "seatsExam": 25,
+   "facilities": "Stufenhörsaal, Sendehörsaal",
+   "bookable": false,
+   "untisLongname": "I107 Hörsaalgebäude"
+  },
+  {
+   "id": 93,
+   "ident": "r000000093",
+   "name": "I106",
+   "seatsRegular": 50,
+   "seatsExam": 30,
+   "facilities": "87m², Kinohörsaal",
+   "bookable": false,
+   "untisLongname": "I106 Hörsaalgebäude"
+  },
+  {
+   "id": 94,
+   "ident": "r000000094",
+   "name": "I108",
+   "seatsRegular": 120,
+   "seatsExam": 30,
+   "facilities": "127m² Stufenhörsaal, Sendehörsaal",
+   "bookable": false,
+   "untisLongname": "I108 Hörsaalgebäude"
+  },
+  {
+   "id": 95,
+   "ident": "r000000095",
+   "name": "I101",
+   "seatsRegular": 100,
+   "seatsExam": 25,
+   "facilities": "99m², Stufenhörsaal, Sendehörsaal",
+   "bookable": false,
+   "untisLongname": "I101 Hörsaalgebäude"
+  },
+  {
+   "id": 96,
+   "ident": "r000000096",
+   "name": "D119 - Sprachenzentrum",
+   "seatsRegular": 18,
+   "seatsExam": 0,
+   "facilities": "Beamer, OV, 47,9qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 100,
+   "ident": "r000000100",
+   "name": "Vorplatz Geb. B",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 119,
+   "ident": "r000000119",
+   "name": "ITC 2: Glashaus",
+   "seatsRegular": 26,
+   "seatsExam": 37,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 121,
+   "ident": "r000000121",
+   "name": "K209 - Wirtschaftsinformatik-Labor",
+   "seatsRegular": 8,
+   "seatsExam": 8,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 122,
+   "ident": "r000000122",
+   "name": "A 0.13 Hörsaal Zollner (Badstraße)",
+   "seatsRegular": 45,
+   "seatsExam": 45,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 124,
+   "ident": "r000000124",
+   "name": "A 0.14 Hörsaal Rädlinger (Badstraße)",
+   "seatsRegular": 45,
+   "seatsExam": 45,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 125,
+   "ident": "r000000125",
+   "name": "A 0.15 Hörsaal Ensinger (Badstraße)",
+   "seatsRegular": 45,
+   "seatsExam": 45,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 127,
+   "ident": "r000000127",
+   "name": "A 0.44 Besprechungsraum (Badstraße)",
+   "seatsRegular": 15,
+   "seatsExam": 10,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 131,
+   "ident": "r000000131",
+   "name": "ITC 2: sem(1)",
+   "seatsRegular": 30,
+   "seatsExam": 13,
+   "facilities": "Poly, Smartboard, Beamer, WB, 61qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 132,
+   "ident": "r000000132",
+   "name": "ITC 2: sem(2)",
+   "seatsRegular": 16,
+   "seatsExam": 10,
+   "facilities": "Poly, Smartboad, Beamer, WB, 54qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 133,
+   "ident": "r000000133",
+   "name": "ITC 2: sem(3)",
+   "seatsRegular": 24,
+   "seatsExam": 12,
+   "facilities": "Beamer, WB, Sendehörsaal, 60qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 134,
+   "ident": "r000000134",
+   "name": "ITC 2: sem(4)",
+   "seatsRegular": 24,
+   "seatsExam": 12,
+   "facilities": "Beamer, WB, Sendehörsaal, 60qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 135,
+   "ident": "r000000135",
+   "name": "D212 - Physiklabor",
+   "seatsRegular": 20,
+   "seatsExam": 20,
+   "facilities": "Physiklabor",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 138,
+   "ident": "r000000138",
+   "name": "K105 - Besprechungsraum (ü. Dekanat AI)",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "Beamer, HDMI, VGA",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 139,
+   "ident": "r000000139",
+   "name": "B004 - Foyer",
+   "seatsRegular": 100,
+   "seatsExam": 100,
+   "facilities": "Foyer Erdgeschoß",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 144,
+   "ident": "r000000144",
+   "name": "J212 - 3D Studio",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "90qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 145,
+   "ident": "r000000145",
+   "name": "J002 - Besprechungsraum",
+   "seatsRegular": 0,
+   "seatsExam": 9,
+   "facilities": "47qm Seminarraum, Videokonferenz",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 147,
+   "ident": "r000000147",
+   "name": "J007 - Fernsehstudio",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 148,
+   "ident": "r000000148",
+   "name": "J009",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "55qm Applikationslabor",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 151,
+   "ident": "r000000151",
+   "name": "J102 - EDV",
+   "seatsRegular": 0,
+   "seatsExam": 8,
+   "facilities": "8 PC-Plätze, 57qm Labor Informatik",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 152,
+   "ident": "r000000152",
+   "name": "J103",
+   "seatsRegular": 0,
+   "seatsExam": 10,
+   "facilities": "8 PC-Plätze, 66qm Labor Medientechnik",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 153,
+   "ident": "r000000153",
+   "name": "J211",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "63qm Grafik Foto 2",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 156,
+   "ident": "r000000156",
+   "name": "L108 - EDV",
+   "seatsRegular": 5,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 168,
+   "ident": "r000000168",
+   "name": "D109",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "D109 Physik Labor 1. Stock D-gebäude",
+   "bookable": false,
+   "untisLongname": "D109 Physik Labor 1. Stock D-gebäude"
+  },
+  {
+   "id": 171,
+   "ident": "r000000171",
+   "name": "C006 - Labor",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "Physik-Labor",
+   "bookable": false,
+   "untisLongname": "Physik-Labor"
+  },
+  {
+   "id": 211,
+   "ident": "r000000211",
+   "name": "EC 1.04 - 1.06 (EDV)",
+   "seatsRegular": 50,
+   "seatsExam": 27,
+   "facilities": "Informatiklabor, Beamer (VGA + HDMI)",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 212,
+   "ident": "r000000212",
+   "name": "EC 1.07 - 1.10",
+   "seatsRegular": 90,
+   "seatsExam": 45,
+   "facilities": "Hörsaal, Beamer (VGA + HDMI), Visualizer, TV (vorne), 4 Decken-TV  für Studierende, VideoConf-Anlage",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 213,
+   "ident": "r000000213",
+   "name": "EC 1.11 - 1.12",
+   "seatsRegular": 40,
+   "seatsExam": 15,
+   "facilities": "Seminarraum, Beamer (VGA + HDMI), Visualizer",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 214,
+   "ident": "r000000214",
+   "name": "EC 1.13 - 1.14",
+   "seatsRegular": 40,
+   "seatsExam": 18,
+   "facilities": "Seminarraum, Beamer (VGA + HDMI), Visualizer, VideoConf-Anlage",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 215,
+   "ident": "r000000215",
+   "name": "EC 1.15 - 1.16",
+   "seatsRegular": 40,
+   "seatsExam": 19,
+   "facilities": "Seminarraum, Beamer (VGA + HDMI)",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 216,
+   "ident": "r000000216",
+   "name": "EC 1.17 - 1.20",
+   "seatsRegular": 90,
+   "seatsExam": 45,
+   "facilities": "Hörsaal, Beamer (VGA + HDMI), Visualizer, 4 Decken-TV für Studierende,  Sendehörsaal",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 217,
+   "ident": "r000000217",
+   "name": "EC 2.10 (Besprechungsraum 1)",
+   "seatsRegular": 12,
+   "seatsExam": 6,
+   "facilities": "Beamer (VGA + HDMI), VideoConf-Anlage",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 227,
+   "ident": "r000000227",
+   "name": "E109 - Labor",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "Schaltungstechniklabor",
+   "bookable": false,
+   "untisLongname": "Schaltungstechniklabor"
+  },
+  {
+   "id": 237,
+   "ident": "r000000237",
+   "name": "EC 0.13 - 0.16",
+   "seatsRegular": 90,
+   "seatsExam": 46,
+   "facilities": "Beamer (VGA + HDMI), Visualizer,  Sendehörsaal",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 240,
+   "ident": "r000000240",
+   "name": "E213 - Labor",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "E213 2.Stock",
+   "bookable": false,
+   "untisLongname": "E213 2.Stock"
+  },
+  {
+   "id": 680,
+   "ident": "r000000680",
+   "name": "E110 - Labor",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 681,
+   "ident": "r000000681",
+   "name": "L106",
+   "seatsRegular": 50,
+   "seatsExam": 32,
+   "facilities": "Sendehörsaal",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 684,
+   "ident": "r000000684",
+   "name": "L103 - Labor",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 687,
+   "ident": "r000000687",
+   "name": "L105 - Labor",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 693,
+   "ident": "r000000693",
+   "name": "LA 27-2.05 Seminarraum",
+   "seatsRegular": 44,
+   "seatsExam": 20,
+   "facilities": "75 qm, Visualizer, Beamer, VGA, HDMI, Lautsprecher,  Sende-/Kinohörsaal",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 694,
+   "ident": "r000000694",
+   "name": "LA 27-2.06 Bewegungsraum",
+   "seatsRegular": 50,
+   "seatsExam": 26,
+   "facilities": "153 qm, Sende-/Kinohörsaal, Zugang nur mit geeigneter Schlüsselkarte, Info bei Frau Masarwa",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 696,
+   "ident": "r000000696",
+   "name": "LA 27-2.12 Seminarraum",
+   "seatsRegular": 25,
+   "seatsExam": 15,
+   "facilities": "Sende-/Kinohörsaal",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 697,
+   "ident": "r000000697",
+   "name": "LA 27-2.13 Seminar-/EDV-Raum",
+   "seatsRegular": 50,
+   "seatsExam": 25,
+   "facilities": "30 EDV-Plätze! 105 qm, Beamer, VGA, HDMI, Lautsprecher,  Sende-/Kinohörsaal",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 698,
+   "ident": "r000000698",
+   "name": "LA 27-2.02 Seminarraum",
+   "seatsRegular": 40,
+   "seatsExam": 20,
+   "facilities": "82 qm, Visualizer,  Sende-/Kinohörsaal",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 699,
+   "ident": "r000000699",
+   "name": "LA 27-2.09 Seminarraum",
+   "seatsRegular": 102,
+   "seatsExam": 51,
+   "facilities": "153 qm, Visualizer, Beamer, VGA, HDMI, Lautsprecher,  Sende-/Kinohörsaal",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 703,
+   "ident": "r000000703",
+   "name": "H003 Senatssaal",
+   "seatsRegular": 14,
+   "seatsExam": 14,
+   "facilities": "Besprechungsraum 87 qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 704,
+   "ident": "r000000704",
+   "name": "H U101 EDV",
+   "seatsRegular": 24,
+   "seatsExam": 24,
+   "facilities": "Rechnerraum 68 qm",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 710,
+   "ident": "r000000710",
+   "name": "Turnhalle Comenius dreifach",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 713,
+   "ident": "r000000713",
+   "name": "EC 2.11 (Besprechungsraum 2)",
+   "seatsRegular": 0,
+   "seatsExam": 6,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 714,
+   "ident": "r000000714",
+   "name": "Kulturraum (nur bis 31.03.25!)",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 716,
+   "ident": "r000000716",
+   "name": "Vorplatz Geb. I",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 717,
+   "ident": "r000000717",
+   "name": "Vorplatz Geb. J",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 724,
+   "ident": "r000000724",
+   "name": "EC.B 0.01",
+   "seatsRegular": 24,
+   "seatsExam": 12,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 725,
+   "ident": "r000000725",
+   "name": "EC.B 0.07",
+   "seatsRegular": 48,
+   "seatsExam": 24,
+   "facilities": "Sendehörsaal",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 726,
+   "ident": "r000000726",
+   "name": "EC.B 0.10",
+   "seatsRegular": 48,
+   "seatsExam": 24,
+   "facilities": "Sendehörsaal",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 727,
+   "ident": "r000000727",
+   "name": "EC.B 0.13 (Chemielabor)",
+   "seatsRegular": 24,
+   "seatsExam": 12,
+   "facilities": "Chemielabor",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 728,
+   "ident": "r000000728",
+   "name": "EC.B 1.01 (EDV)",
+   "seatsRegular": 24,
+   "seatsExam": 12,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 729,
+   "ident": "r000000729",
+   "name": "EC.B 1.06 a (Hörsaal)",
+   "seatsRegular": 24,
+   "seatsExam": 12,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 730,
+   "ident": "r000000730",
+   "name": "EC.B 1.07 (DigiHealth & Smart Tourism Lab)",
+   "seatsRegular": 34,
+   "seatsExam": 17,
+   "facilities": "Tourismus-/e-Health-Labor",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 731,
+   "ident": "r000000731",
+   "name": "EC.B 1.09 (EcoLab)",
+   "seatsRegular": 22,
+   "seatsExam": 11,
+   "facilities": "Innovationslabor für Nachhaltigkeit",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 732,
+   "ident": "r000000732",
+   "name": "EC.B 1.12 (E-Technik-Labor)",
+   "seatsRegular": 30,
+   "seatsExam": 15,
+   "facilities": "E-Technik Labor",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 735,
+   "ident": "r000000735",
+   "name": "Extern",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 740,
+   "ident": "r000000740",
+   "name": "E107 - Labor",
+   "seatsRegular": 20,
+   "seatsExam": 20,
+   "facilities": "Labor",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 750,
+   "ident": "r000000750",
+   "name": "Schwimmbad Hengersberg",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 751,
+   "ident": "r000000751",
+   "name": "LA 27-0.01 Labor: Chirurgie/Anatomie",
+   "seatsRegular": 0,
+   "seatsExam": 2,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 753,
+   "ident": "r000000753",
+   "name": "SP 0.07 - Vorlesungssaal 1",
+   "seatsRegular": 15,
+   "seatsExam": 15,
+   "facilities": " Sendehörsaal",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 755,
+   "ident": "r000000755",
+   "name": "Deggs 1.03 (Seminarraum)",
+   "seatsRegular": 24,
+   "seatsExam": 12,
+   "facilities": "Seminarraum; 1 digitales Whiteboard",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 756,
+   "ident": "r000000756",
+   "name": "Deggs 1.04 (Netzwerklabor)",
+   "seatsRegular": 28,
+   "seatsExam": 14,
+   "facilities": "buchbar in Absprache mit Prof. Fischer; Netzwerklabor; 2 Projektoren, 1 digitales Whiteboard, 28 Sitzplätze, 28 PCs",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 759,
+   "ident": "r000000759",
+   "name": "Deggs 2.06 (HPC Labor)",
+   "seatsRegular": 16,
+   "seatsExam": 8,
+   "facilities": "HPC Lab;  16 PCs, 1 Projektor; buchbar in Absprache mit Prof. Faber",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 760,
+   "ident": "r000000760",
+   "name": "Deggs 2.09 (Computerraum)",
+   "seatsRegular": 30,
+   "seatsExam": 15,
+   "facilities": "30 PCs, 1 Projektor, 1 digitales Whiteboard",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 761,
+   "ident": "r000000761",
+   "name": "D010 - Geotechnik-Labor",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 762,
+   "ident": "r000000762",
+   "name": "D210 - Chemie-Labor",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 763,
+   "ident": "r000000763",
+   "name": "LA 27-0.10 Labor: Simulation",
+   "seatsRegular": 0,
+   "seatsExam": 1,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 764,
+   "ident": "r000000764",
+   "name": "LA 27-0.06 Labor: OSCE",
+   "seatsRegular": 0,
+   "seatsExam": 5,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 768,
+   "ident": "r000000768",
+   "name": "A 0.12 Labor 3 (Embedded / IoT Lab) (Badstraße)",
+   "seatsRegular": 20,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 772,
+   "ident": "r000000772",
+   "name": "ITC 2+ 0.04",
+   "seatsRegular": 24,
+   "seatsExam": 12,
+   "facilities": "FHD Projektor",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 773,
+   "ident": "r000000773",
+   "name": "ITC 2+ 0.06",
+   "seatsRegular": 24,
+   "seatsExam": 12,
+   "facilities": "FHD Projektor",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 774,
+   "ident": "r000000774",
+   "name": "ITC 2+ 0.18",
+   "seatsRegular": 24,
+   "seatsExam": 12,
+   "facilities": "FHD Projektor",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 775,
+   "ident": "r000000775",
+   "name": "ITC 2+ 0.27",
+   "seatsRegular": 50,
+   "seatsExam": 25,
+   "facilities": "FHD Projektor, Visualizer",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 776,
+   "ident": "r000000776",
+   "name": "ITC 2+ 0.29 (EDV)",
+   "seatsRegular": 50,
+   "seatsExam": 25,
+   "facilities": "FHD Projektor, Visualizer und THAV (Sendesystem), 25 Notebooks",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 777,
+   "ident": "r000000777",
+   "name": "ITC 2+ 1.17",
+   "seatsRegular": 24,
+   "seatsExam": 12,
+   "facilities": "FHD Projektor",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 778,
+   "ident": "r000000778",
+   "name": "ITC 2+ 1.19",
+   "seatsRegular": 14,
+   "seatsExam": 7,
+   "facilities": "FHD Projektor",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 780,
+   "ident": "r000000780",
+   "name": "D016 - Baustofflabor",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 781,
+   "ident": "r000000781",
+   "name": "C008 - Labor",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 782,
+   "ident": "r000000782",
+   "name": "Feriendorf Finsterau",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 783,
+   "ident": "r000000783",
+   "name": "C Hörsaal C116 (DMS)",
+   "seatsRegular": 24,
+   "seatsExam": 24,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 784,
+   "ident": "r000000784",
+   "name": "C Hörsaal C117 (DMS)",
+   "seatsRegular": 24,
+   "seatsExam": 24,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 785,
+   "ident": "r000000785",
+   "name": "C Hörsaal C118 (DMS)",
+   "seatsRegular": 24,
+   "seatsExam": 24,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 786,
+   "ident": "r000000786",
+   "name": "C Hörsaal C120 (DMS)",
+   "seatsRegular": 42,
+   "seatsExam": 42,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 787,
+   "ident": "r000000787",
+   "name": "B 1.07 Labor 5 (IT Lab) (Badstraße)",
+   "seatsRegular": 18,
+   "seatsExam": 18,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 789,
+   "ident": "r000000789",
+   "name": "Smart Lab (Veilchengasse)",
+   "seatsRegular": 20,
+   "seatsExam": 10,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 790,
+   "ident": "r000000790",
+   "name": "ITC 2+ 1.31 (Labor Cyber Resilience) ",
+   "seatsRegular": 50,
+   "seatsExam": 25,
+   "facilities": "EDV Ausstattung an allen Sitzplätzen, Beamer, Leinwand",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 791,
+   "ident": "r000000791",
+   "name": "ITC 2+ 1.24 (Autonomous Systems Lab)",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 792,
+   "ident": "r000000792",
+   "name": "ITC 2+ 1.26 (Labor Embedded Systems)",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 793,
+   "ident": "r000000793",
+   "name": "ITC 2+ 0.24 (Geoinformatik Labor)",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 806,
+   "ident": "r000000806",
+   "name": "SP 0.06 - Vorlesungssaal 2",
+   "seatsRegular": 15,
+   "seatsExam": 15,
+   "facilities": "Sendehörsaal",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 813,
+   "ident": "r000000813",
+   "name": "GiB 3.02 (Light Lab and Thermal Insulation Lab)",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 814,
+   "ident": "r000000814",
+   "name": "GiB 3.03 (Co-Workingspace)",
+   "seatsRegular": 15,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 819,
+   "ident": "r000000819",
+   "name": "SP 0.08 - Studio / Werkstatt",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 822,
+   "ident": "r000000822",
+   "name": "ITC 2: sem(5)",
+   "seatsRegular": 24,
+   "seatsExam": 12,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 823,
+   "ident": "r000000823",
+   "name": "Vorlesungssaal Veilchengasse 2",
+   "seatsRegular": 144,
+   "seatsExam": 72,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 824,
+   "ident": "r000000824",
+   "name": "LA 25-2.02 Besprechungsraum",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "Sende-/Kinohörsaal",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 829,
+   "ident": "r000000829",
+   "name": "ITC 2+ 2.14 (Besprechungsraum)",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 831,
+   "ident": "r000000831",
+   "name": "--",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "Platzhalter",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 837,
+   "ident": "r000000837",
+   "name": "Begegnungsstätte (Pavillon Grünes Dach)",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "buchbar über die Poststelle",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 869,
+   "ident": "r000000869",
+   "name": "GREG",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 870,
+   "ident": "r000000870",
+   "name": "B 0.13 Hörsaal 1 (Badstraße)",
+   "seatsRegular": 40,
+   "seatsExam": 50,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 871,
+   "ident": "r000000871",
+   "name": "B 0.14 Hörsaal 2 (Badstraße)",
+   "seatsRegular": 40,
+   "seatsExam": 50,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 872,
+   "ident": "r000000872",
+   "name": "B 1.04 Hörsaal 3 (Badstraße)",
+   "seatsRegular": 43,
+   "seatsExam": 43,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 873,
+   "ident": "r000000873",
+   "name": "B 1.10 Besprechungsraum (Badstraße)",
+   "seatsRegular": 22,
+   "seatsExam": 12,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 883,
+   "ident": "r000000883",
+   "name": "B 1.06",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 884,
+   "ident": "r000000884",
+   "name": "B 1.13",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 897,
+   "ident": "r000000897",
+   "name": "Deggs 00.131 Hörsaal AI",
+   "seatsRegular": 86,
+   "seatsExam": 43,
+   "facilities": "Beamer",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 898,
+   "ident": "r000000898",
+   "name": "Deggs 00.129 Rechnerraum AI (EDV)",
+   "seatsRegular": 62,
+   "seatsExam": 31,
+   "facilities": "Beamer",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 902,
+   "ident": "r000000902",
+   "name": "LA 25-0.01 Kleiner Hörsaal",
+   "seatsRegular": 40,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 903,
+   "ident": "r000000903",
+   "name": "LA 25-0.02 Großer Hörsaal",
+   "seatsRegular": 100,
+   "seatsExam": 50,
+   "facilities": "tba",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 904,
+   "ident": "r000000904",
+   "name": "Deggs 00.114a Game Lab",
+   "seatsRegular": 8,
+   "seatsExam": 0,
+   "facilities": "8 EDV-Plätze",
+   "bookable": false,
+   "untisLongname": null
+  },
+  {
+   "id": 906,
+   "ident": "r000000906",
+   "name": "L104 - Labor",
+   "seatsRegular": 0,
+   "seatsExam": 0,
+   "facilities": "",
+   "bookable": false,
+   "untisLongname": null
+  }
+ ]
+}

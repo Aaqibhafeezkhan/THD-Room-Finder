@@ -5,10 +5,11 @@ import type { RoomStatus } from '../../domain/models';
  * Large status banner at the top of a room detail screen — a Material 3 tonal
  * container. Answer-first: an optional duration reads as the hero on the right
  * (mono, tabular), so "how long" is the first thing the eye lands on.
- *   free → green · soon → amber · occupied → red.
+ *   free → green · soon → amber · occupied → red · unknown → neutral, for
+ *   when the timetable couldn't be loaded and nothing can be promised.
  */
 export interface StatusCardProps {
-  status?: RoomStatus;
+  status?: RoomStatus | 'unknown';
   title: string;
   sub?: string;
   duration?: string;
@@ -20,6 +21,7 @@ export function StatusCard({ status = 'free', title, sub, duration, style = {} }
     free: { background: 'var(--md-tertiary-container)', color: 'var(--md-on-tertiary-container)' },
     soon: { background: 'var(--md-warning-container)', color: 'var(--md-on-warning-container)' },
     occupied: { background: 'var(--md-error-container)', color: 'var(--md-on-error-container)' },
+    unknown: { background: 'var(--md-surface-variant)', color: 'var(--md-on-surface-variant)' },
   }[status];
   return (
     <div
