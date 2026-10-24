@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { ScheduledEvent } from './models';
 import {
+  tableFromSession,
   dayName,
   freeSlots,
   fromCampusWallClock,
@@ -87,5 +88,24 @@ describe('links and words', () => {
   it('turns a campus wall clock back into the instant', () => {
     const wall = new Date(2026, 9, 22, 13, 15);
     expect(toCampusWallClock(fromCampusWallClock(wall)).getTime()).toBe(wall.getTime());
+  });
+});
+
+describe('tableFromSession', () => {
+  const at = (h: number, m = 0) => new Date(2026, 9, 22, h, m);
+  const session = { anchorAt: at(9, 45), plannedEnd: at(11, 25) };
+
+  it('starts at the anchor, already in progress, and ends with the session', () => {
+    expect(tableFromSession(session, at(10, 25))).toEqual({ startsAt: at(9, 45), endsAt: at(11, 25) });
+  });
+
+  it('needs 25 minutes left so others can come', () => {
+    expect(tableFromSession(session, at(11, 0))).toEqual({ startsAt: at(9, 45), endsAt: at(11, 25) });
+    expect(tableFromSession(session, at(11, 1))).toEqual({ problem: 'too_short' });
+    expect(tableFromSession(session, at(11, 25))).toEqual({ problem: 'ended' });
+  });
+
+  it('refuses a batch anchor more than 3 hours before the end', () => {
+    expect(tableFromSession({ anchorAt: at(8), plannedEnd: at(11, 30) }, at(10))).toEqual({ problem: 'too_long' });
   });
 });

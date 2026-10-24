@@ -45,8 +45,23 @@ export interface TableInput {
   showName: boolean;
 }
 
+/** A running session as a table already in progress (#153, ADR 0010). */
+export interface SessionTableInput {
+  /** The same id on a retry returns the same table. */
+  requestId: string;
+  topic: string | null;
+  roomKey: string;
+  startsAt: Date;
+  endsAt: Date;
+  seats: number;
+  rhythm: Rhythm;
+  /** The shared session, when the focus service holds it. */
+  sessionId: string | null;
+}
+
 export interface TablesApi {
   set(input: TableInput): Promise<StudyTable>;
+  fromSession(input: SessionTableInput): Promise<StudyTable>;
   change(link: string, expectedVersion: number, input: TableInput): Promise<StudyTable>;
   cancel(link: string): Promise<StudyTable>;
   /** null when the link is unknown or the table ended over a day ago. */
@@ -120,6 +135,26 @@ export function supabaseTablesApi(load: () => Promise<FocusClient>): TablesApi {
     async set(input) {
       const sb = await load();
       return one(await call(() => sb.rpc('set_table', args(input))));
+    },
+    async fromSession(input) {
+      const sb = await load();
+      return one(
+        await call(() =>
+          sb.rpc('table_from_session', {
+            p_request_id: input.requestId,
+            p_topic: input.topic?.trim() || '',
+            p_room_key: input.roomKey,
+            p_starts_at: input.startsAt.toISOString(),
+            p_ends_at: input.endsAt.toISOString(),
+            p_seats: input.seats,
+            p_focus_minutes: input.rhythm.focus,
+            p_break_minutes: input.rhythm.break,
+            p_long_break_minutes: input.rhythm.longBreak,
+            p_long_every: input.rhythm.longEvery,
+            ...(input.sessionId && { p_session_id: input.sessionId }),
+          }),
+        ),
+      );
     },
     async change(link, expectedVersion, input) {
       const sb = await load();

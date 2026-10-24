@@ -187,3 +187,21 @@ export function normalizeTableLink(raw: string | undefined): string | null {
   const link = (raw ?? '').trim().toLowerCase();
   return /^[a-z]{3,9}-[a-z]{3,9}-[1-9][0-9]$/.test(link) ? link : null;
 }
+
+export type SessionTable = { startsAt: Date; endsAt: Date } | { problem: 'ended' | 'too_short' | 'too_long' };
+
+/**
+ * A running focus session as a study table already in progress (#153,
+ * ADR 0010). It starts at the session's rhythm anchor, so guests who start
+ * together line up with the host's blocks and breaks, and ends at the
+ * session's planned end. Others need time to come: under 25 minutes left is
+ * `too_short` (set a table for later instead). A session anchored to a batch
+ * more than 3 hours before its end is `too_long`. Real instants in and out.
+ */
+export function tableFromSession(session: { anchorAt: Date; plannedEnd: Date }, now: Date): SessionTable {
+  const end = session.plannedEnd.getTime();
+  if (end <= now.getTime()) return { problem: 'ended' };
+  if (end - now.getTime() < TABLE_MIN_MINUTES * MIN) return { problem: 'too_short' };
+  if (end - session.anchorAt.getTime() > TABLE_MAX_MINUTES * MIN) return { problem: 'too_long' };
+  return { startsAt: session.anchorAt, endsAt: session.plannedEnd };
+}

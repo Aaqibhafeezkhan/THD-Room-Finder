@@ -116,6 +116,9 @@ export type Database = {
 "start_focus":
 { Args: { "p_anchor_at"?: string,"p_break_minutes"?: number,"p_focus_minutes"?: number,"p_long_break_minutes"?: number,"p_long_every"?: number,"p_planned_minutes": number,"p_replace"?: boolean,"p_request_id": string,"p_room_key": string,"p_show_name": boolean,"p_visibility": string }; Returns: Json
                            },
+"table_from_session":
+{ Args: { "p_break_minutes": number,"p_ends_at": string,"p_focus_minutes": number,"p_long_break_minutes"?: number,"p_long_every"?: number,"p_request_id": string,"p_room_key": string,"p_seats": number,"p_session_id"?: string,"p_starts_at": string,"p_topic": string }; Returns: Json
+                           },
 "table_preview":
 { Args: { "p_link": string }; Returns: Json
                            },
