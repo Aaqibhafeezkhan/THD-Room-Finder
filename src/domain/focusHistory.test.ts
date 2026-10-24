@@ -3,12 +3,15 @@ import {
   dailyMinutes,
   entryFor,
   exportHistory,
+  liveEntry,
   mergeHistory,
   minutesBetween,
   parseHistoryFile,
   semesterOf,
   streak,
+  withLive,
 } from './focusHistory';
+import { RHYTHMS, layout } from './focusRhythm';
 import type { FocusEntry } from './focusHistory';
 
 const at = (y: number, m: number, d: number, h = 10, min = 0) => new Date(y, m - 1, d, h, min);
@@ -145,5 +148,46 @@ describe('export and import', () => {
     const once = mergeHistory([history[0]], history);
     expect(once.map((e) => e.id)).toEqual(['a', 'b']);
     expect(mergeHistory(once, history)).toEqual(once);
+  });
+});
+
+describe('liveEntry', () => {
+  const start = at(2026, 10, 13, 10);
+  const end = at(2026, 10, 13, 12);
+  const plan = layout(RHYTHMS.deep, start, start, end)!;
+  const session = { id: 's1', startedAt: start, plannedEnd: end, confirmed: 1 };
+
+  it('counts whole minutes of focus so far, without the room', () => {
+    expect(liveEntry(session, plan, at(2026, 10, 13, 10, 25))).toMatchObject({ id: 's1', minutes: 25 });
+    expect(liveEntry(session, plan, at(2026, 10, 13, 10, 25))?.room).toBeUndefined();
+  });
+
+  it('is null under a minute and before the start', () => {
+    expect(liveEntry(session, plan, new Date(start.getTime() + 59_000))).toBeNull();
+    expect(liveEntry(session, plan, at(2026, 10, 13, 9))).toBeNull();
+  });
+
+  it('leaves out breaks, unconfirmed blocks, time away and time past the end', () => {
+    // 10:50–11:00 is a break; 11:00 starts block 2, not yet confirmed.
+    expect(liveEntry(session, plan, at(2026, 10, 13, 11, 5))?.minutes).toBe(50);
+    expect(liveEntry({ ...session, confirmed: 2 }, plan, at(2026, 10, 13, 11, 5))?.minutes).toBe(55);
+    const away: [number, number][] = [[at(2026, 10, 13, 10, 10).getTime(), at(2026, 10, 13, 10, 20).getTime()]];
+    expect(liveEntry({ ...session, away }, plan, at(2026, 10, 13, 10, 30))?.minutes).toBe(20);
+    expect(liveEntry({ ...session, confirmed: 2 }, plan, at(2026, 10, 13, 14))?.minutes).toBe(100);
+  });
+});
+
+describe('withLive', () => {
+  const saved = entry('a', at(2026, 10, 13, 8), 30);
+  const live = entry('s1', at(2026, 10, 13, 10), 20);
+
+  it('adds the running session to the saved days', () => {
+    expect(dailyMinutes(withLive([saved], live))).toEqual([{ date: '2026-10-13', minutes: 50 }]);
+  });
+
+  it('counts a session once when its saved entry already arrived', () => {
+    const synced = { ...live, minutes: 45 };
+    expect(dailyMinutes(withLive([saved, synced], live))).toEqual([{ date: '2026-10-13', minutes: 75 }]);
+    expect(withLive([saved], null)).toEqual([saved]);
   });
 });

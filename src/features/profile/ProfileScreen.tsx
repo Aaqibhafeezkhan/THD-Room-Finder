@@ -117,8 +117,8 @@ export function ProfileScreen() {
             </>
           }
           label={`${t('Focus graph', 'Fokus-Verlauf')}. ${stats}`}
-          text={graphText(t, locale)}
-          onShare={focus.hasHistory ? () => setSharing(true) : undefined}
+          text={graphText(t, locale, focus.live)}
+          onShare={focus.hasSaved ? () => setSharing(true) : undefined}
         />
         <YourTables grid={cls === 'expanded'} when="none" />
         <SavedRooms grid={cls === 'expanded'} />

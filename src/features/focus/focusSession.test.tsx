@@ -13,13 +13,18 @@ import { I18nProvider } from '../../i18n';
 import { StudyProfileProvider } from '../profile/StudyProfileContext';
 import { FocusHistoryProvider } from './FocusHistoryContext';
 import { FocusSessionProvider, useFocusSession } from './FocusSessionContext';
+import { useFocusStats } from './useFocusStats';
 
 let container: HTMLDivElement;
 let root: Root;
 let ctx: ReturnType<typeof useFocusSession>;
+let stats: ReturnType<typeof useFocusStats>;
+let saved: ReturnType<typeof useFocusStats>;
 
 function Probe() {
   ctx = useFocusSession();
+  stats = useFocusStats(new Date());
+  saved = useFocusStats(new Date(), { live: false });
   return null;
 }
 
@@ -168,6 +173,31 @@ describe('focus sessions', () => {
     expect(ctx.active).toBeNull();
     expect(ctx.lastEnded).toEqual({ roomIdent: E212.ident, minutes: 25, blocks: 1, awayMinutes: 0 });
     expect(await recorded(store)).toEqual([[25, 'E212']]);
+  });
+
+  it('counts the running session in the graph before it ends, then once', async () => {
+    const store = await mount({ signedIn: false, api: null });
+    await act(async () => ctx.start(E212, plan(), deep));
+    await minutes(30);
+    expect(stats.todayMinutes).toBe(30);
+    expect(stats.live).toEqual({ date: '2026-10-13', minutes: 30 });
+    expect(stats.hasHistory).toBe(true);
+    expect(saved.todayMinutes).toBe(0);
+    expect(await store.all()).toEqual([]);
+    // The break and the unanswered next block add nothing.
+    await minutes(25);
+    expect(ctx.status?.kind).toBe('break');
+    expect(stats.todayMinutes).toBe(50);
+    await minutes(6);
+    expect(ctx.status?.kind).toBe('confirm');
+    expect(stats.todayMinutes).toBe(50);
+    await act(async () => ctx.confirm());
+    await minutes(10);
+    expect(stats.todayMinutes).toBe(61);
+    await act(async () => ctx.end());
+    expect(stats.live).toBeNull();
+    expect(stats.todayMinutes).toBe(61);
+    expect(await recorded(store)).toEqual([[61, 'E212']]);
   });
 
   it('signed in without a study profile, nothing reaches the service', async () => {

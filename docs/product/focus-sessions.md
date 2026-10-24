@@ -173,6 +173,12 @@ carrier of meaning: every signal also has a label and an icon.
   forgotten session holds a room for at most one block and break more.
 - Only focus time counts for the focus graph. In the Android app, time spent
   in other apps during a block is subtracted.
+- **The graph moves while you focus** (#155). Today's cell, the day detail
+  and the totals include the running session's whole minutes so far, labelled
+  "including current session". It is worked out on the device each minute from
+  the session itself: only confirmed blocks, no breaks or time away. Nothing
+  about it is saved, synced, exported or put on a share card until the
+  session ends; then the saved entry takes its place, counted once.
 - **Without a study profile, focus stays on the device**: no claim, nothing
   sent. Offline works the same way.
 - **Signed in, the focus graph follows you** to every device you sign in on:

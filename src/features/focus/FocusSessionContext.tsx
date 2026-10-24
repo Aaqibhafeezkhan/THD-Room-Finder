@@ -436,6 +436,11 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
   return <FocusSessionContext.Provider value={value}>{children}</FocusSessionContext.Provider>;
 }
 
+/** The session, or null outside the provider (design specimens, tests). */
+export function useOptionalFocusSession(): FocusSessionValue | null {
+  return useContext(FocusSessionContext);
+}
+
 export function useFocusSession(): FocusSessionValue {
   const ctx = useContext(FocusSessionContext);
   if (!ctx) throw new Error('useFocusSession must be used within <FocusSessionProvider>');

@@ -1,6 +1,7 @@
 import type { FocusGraphText } from '../../components';
 import type { Locale } from '../../components/core/LanguageToggle';
 import type { Translate } from '../../i18n';
+import { localDay } from '../../domain/focusHistory';
 import { restReason } from '../../domain/openingHours';
 
 /**
@@ -45,14 +46,16 @@ function breakName(why: NonNullable<ReturnType<typeof restReason>>, t: Translate
   return why === 'christmas' ? t('Christmas break', 'Weihnachtspause') : t('Public holiday', 'Feiertag');
 }
 
-export function graphText(t: Translate, locale: Locale): FocusGraphText {
+/** `live` is the running session's day, labelled as still counting (#155). */
+export function graphText(t: Translate, locale: Locale, live?: { date: string } | null): FocusGraphText {
   const months = monthNames(locale);
   return {
     days: [...dayNames(locale).slice(1), dayNames(locale)[0]],
     months,
     cellLabel: (d, m) => {
       const why = restReason(d);
-      return `${shortDate(d, locale)} ${d.getFullYear()} · ${m ? formatMinutes(m, locale) : t('No focus', 'Kein Fokus')}${why ? ` · ${breakName(why, t)}` : ''}`;
+      const running = live && m && localDay(d) === live.date ? ` ${t('including current session', 'inklusive laufender Session')}` : '';
+      return `${shortDate(d, locale)} ${d.getFullYear()} · ${m ? formatMinutes(m, locale) : t('No focus', 'Kein Fokus')}${running}${why ? ` · ${breakName(why, t)}` : ''}`;
     },
     less: t('Less', 'Weniger'),
     more: t('More', 'Mehr'),
