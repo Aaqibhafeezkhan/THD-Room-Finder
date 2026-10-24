@@ -4,6 +4,7 @@ import { AdaptiveNav, CheckInSheet } from '../components';
 import { useFocusSession } from '../features/focus/FocusSessionContext';
 import { sessionView } from '../features/focus/sessionView';
 import { FocusNotifications } from '../features/focus/FocusNotifications';
+import { LectureGuard } from '../features/focus/LectureGuard';
 import { AppUpdates } from '../features/update/AppUpdates';
 import type { NavItem } from '../components';
 import { IconList, IconMap } from '../components/icons';
@@ -99,6 +100,7 @@ export function AppShell() {
       </Routes>
       </ErrorBoundary>
       <FocusNotifications />
+      <LectureGuard />
       <AppUpdates />
       <TableReminder />
       {focus.active && checkIn && (

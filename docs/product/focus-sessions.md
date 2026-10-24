@@ -168,6 +168,13 @@ carrier of meaning: every signal also has a label and an icon.
   away.
 - The plan ends before the room's next lecture, at closing time or after
   3 hours, whichever comes first, and never on a break.
+- **Focus works while the timetable is down** (#154,
+  [ADR 0009](../architecture/adr/0009-timetable-outages.md)). Rooms the app
+  knows stay listed as "unknown", never "free"; a session started then runs to
+  closing or 3 h and says a lecture can't be ruled out. When the timetable is
+  back, a lecture on now ends the session with the focus so far kept, and a
+  later one shortens the plan. A lecture THabella adds after the start is
+  handled the same way.
 - After each break the app asks to **start the next block**. With no answer
   within 10 minutes the session ends at the end of the last block, so a
   forgotten session holds a room for at most one block and break more.
@@ -226,6 +233,8 @@ Phase 2 ([later phases](later-phases.md)).
 - Locking the phone for a whole block keeps the session.
 - A lecture at 12:00 ends a session that started at 11:30.
 - With presence unavailable, the list falls back to schedule order and says "activity unknown".
+- With THabella down on a first visit, Rooms lists the bundled teaching rooms as "unknown", E212 opens, and Start focus plans to 3 h or closing.
+- A session started that way in E212 at 09:45, with a lecture there at 11:45 once the timetable is back, now ends by 11:45.
 - Time travel to tomorrow 09:00 shows no focus signals.
 
 ## Out of scope for Phase 1

@@ -200,6 +200,22 @@ describe('focus sessions', () => {
     expect(await recorded(store)).toEqual([[61, 'E212']]);
   });
 
+  it('makes room for a lecture it learns about later, keeping the focus so far', async () => {
+    const store = await mount({ signedIn: false, api: null });
+    await act(async () => ctx.start(E212, plan(), deep));
+    await minutes(20);
+    await act(async () => ctx.limitTo(new Date(Date.now() + 30 * 60000)));
+    expect(ctx.active?.reason).toBe('lecture');
+    expect(new Date(ctx.active!.plannedEnd).getTime()).toBe(new Date(2026, 9, 13, 10, 50).getTime());
+    // A later answer never extends the plan again.
+    await act(async () => ctx.limitTo(new Date(2026, 9, 13, 15, 0)));
+    expect(new Date(ctx.active!.plannedEnd).getTime()).toBe(new Date(2026, 9, 13, 10, 50).getTime());
+    await minutes(5);
+    await act(async () => ctx.limitTo(new Date()));
+    expect(ctx.active).toBeNull();
+    expect(await recorded(store)).toEqual([[25, 'E212']]);
+  });
+
   it('signed in without a study profile, nothing reaches the service', async () => {
     const api = fakeFocusApi();
     await mount({ signedIn: true, api, withProfile: false });

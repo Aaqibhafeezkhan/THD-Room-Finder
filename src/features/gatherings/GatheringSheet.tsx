@@ -71,7 +71,10 @@ export function GatheringSheet({ open, room, onClose, onSaved, gathering }: Gath
   const [approval, setApproval] = useState('');
   const [fewer, setFewer] = useState(false);
   const [capacity, setCapacity] = useState('');
-  const [loaded, setLoaded] = useState<{ day: string; events: ScheduledEvent[] } | null>(null);
+  // `failed`: the timetable or the room's gatherings couldn't be loaded, so
+  // no slot can be offered as free (#154).
+  const [loaded, setLoaded] = useState<{ day: string; events: ScheduledEvent[]; failed?: boolean } | null>(null);
+  const [attempt, setAttempt] = useState(0);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const advanced = useRef(false);
@@ -106,21 +109,23 @@ export function GatheringSheet({ open, room, onClose, onSaved, gathering }: Gath
     const id = picked.id;
     const from = fromCampusWallClock(picked.date);
     const to = new Date(from.getTime() + 24 * 60 * MIN);
-    Promise.all([getEventsForDate(picked.date).catch(() => []), api.inRoom(roomKey(room.ident), from, to).catch(() => [])]).then(([events, others]) => {
+    setLoaded(null);
+    Promise.all([getEventsForDate(picked.date), api.inRoom(roomKey(room.ident), from, to)]).then(([events, others]) => {
       if (stale) return;
       const mine = events.filter((e) => e.roomIdent === room.ident);
       const taken = others
         .filter((o) => o.link !== gathering?.link)
         .map((o) => ({ id: -1, roomIdent: room.ident, roomName: null, eventType: 'gathering', durationMinutes: 0, startDateTime: toCampusWallClock(o.startsAt), endDateTime: toCampusWallClock(o.endsAt) }) as ScheduledEvent);
       setLoaded({ day: id, events: [...mine, ...taken] });
-    });
+    }, () => !stale && setLoaded({ day: id, events: [], failed: true }));
     return () => {
       stale = true;
     };
-  }, [open, day, room.ident, api]);
+  }, [open, day, room.ident, api, attempt]);
 
   const slots: FreeSlot[] | null = useMemo(() => {
     if (!picked || !loaded || loaded.day !== picked.id) return null;
+    if (loaded.failed) return [];
     const list = freeSlots(picked, loaded.events, now, GATHERING_MAX_MINUTES);
     if (gathering) {
       const start = toCampusWallClock(gathering.startsAt);
@@ -135,9 +140,17 @@ export function GatheringSheet({ open, room, onClose, onSaved, gathering }: Gath
   useEffect(() => {
     if (slots && !(slot && slots.some((s) => s.id === slot))) setSlot(slots[0]?.id ?? null);
   }, [slots]);
+  const unknownLine = (
+    <span role="alert">
+      {t("Can't check this room's free times right now. ", 'Freie Zeiten in diesem Raum gerade nicht prüfbar. ')}
+      <button type="button" onClick={() => setAttempt((n) => n + 1)} style={{ border: 'none', background: 'none', padding: 0, color: 'var(--md-primary)', font: 'inherit', cursor: 'pointer' }}>
+        {t('Try again', 'Erneut versuchen')}
+      </button>
+    </span>
+  );
   const next = useMemo(() => (slots && !slots.length && picked ? (days.find((d) => d.offset > picked.offset && d.open) ?? null) : null), [slots, picked, days]);
   useEffect(() => {
-    if (!advanced.current && slots) {
+    if (!advanced.current && slots && !loaded?.failed) {
       advanced.current = true;
       if (!slots.length && next) setDay(next.id);
     }
@@ -209,7 +222,7 @@ export function GatheringSheet({ open, room, onClose, onSaved, gathering }: Gath
           slots={slotChips}
           slot={slot}
           onSlot={setSlot}
-          empty={next ? t(`No free slot · next: ${dayName(next.date, 'en', now)}`, `Kein freier Slot · nächster: ${dayName(next.date, 'de', now)}`) : t('No free slot', 'Kein freier Slot')}
+          empty={loaded?.failed ? unknownLine : next ? t(`No free slot · next: ${dayName(next.date, 'en', now)}`, `Kein freier Slot · nächster: ${dayName(next.date, 'de', now)}`) : t('No free slot', 'Kein freier Slot')}
           daysLabel={t('Day', 'Tag')}
           slotsLabel={t('Start', 'Beginn')}
         />

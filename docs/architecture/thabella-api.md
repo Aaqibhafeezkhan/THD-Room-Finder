@@ -24,6 +24,30 @@ The date in the path is URL-encoded (`2026-10-13%2008:00`) and repeated in
 `sqlDate`. The teaching-room set (rooms with at least one event Monday to
 Friday) is derived from a week of `findByDate` calls and cached for 24 h.
 
+## When THabella doesn't answer
+
+[ADR 0009](adr/0009-timetable-outages.md) has the reasoning. In short:
+
+- The proxies (`api/_thabella.js`, shared with the Vite dev proxy) give up
+  after 8 s and answer 504, or 502 for anything that isn't a JSON array.
+  Failures are sent with `Cache-Control: no-store`.
+- Rooms fall back to the last good copy, then to the bundled
+  `src/data/fallbackRooms.json`. A day's events fall back only to an earlier
+  copy of the same day. The teaching set falls back to an earlier week, dated.
+- A day nobody could load is **unknown**, never empty: rooms are listed
+  without a status and focus still starts.
+
+### Refreshing the bundled catalogue
+
+```bash
+node scripts/dev/fallback-rooms.mjs            # the week before this one
+node scripts/dev/fallback-rooms.mjs 2026-10-14  # any day of a lecture week
+```
+
+It refuses a week with fewer than 80 teaching rooms (a break), and keeps only
+what the app shows: no staff names or emails. The *Refresh room catalogue*
+workflow runs it monthly and opens a PR when the list changed.
+
 ## `RoomDto`
 
 | Field | Type | Notes |
@@ -77,4 +101,5 @@ in `room_ident`.
 `scripts/dev/export-thabella-snapshot.py` saves a dated snapshot of both
 endpoints for offline analysis; `scripts/dev/thd_room_normalization.py`
 maintains `shared/thd-room-taxonomy.json`. Treat snapshots as local working
-data; the app never ships hard-coded THabella data.
+data. The only THabella data the app ships is the generated fallback catalogue
+above.

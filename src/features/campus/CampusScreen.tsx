@@ -22,7 +22,7 @@ import {
 } from '../../domain/campusAvailability';
 import type { BuildingCount } from '../../domain/campusAvailability';
 import { favoritesFirst, matchesRoomFilters, mayBeLocked } from '../../domain/roomFilters';
-import type { FreeRoom } from '../../domain/models';
+import type { FreeRoom, Room } from '../../domain/models';
 import {
   getCafeteriaHours,
   getCopyShopHours,
@@ -34,7 +34,8 @@ import { BrandHeader } from '../shared/BrandHeader';
 import { freeRoomsLabel, opensLabel } from '../shared/roomStatusLabel';
 import { ClosedNotice } from '../shared/ClosedNotice';
 import { FilterMenu } from '../shared/FilterMenu';
-import { ErrorState, Spinner } from '../shared/ui';
+import { ScheduleNotice } from '../shared/ScheduleNotice';
+import { Spinner } from '../shared/ui';
 import { PLACE_GLYPHS, PLACE_META } from './placeMeta';
 import { PlaceCard } from './PlaceCard';
 
@@ -102,10 +103,13 @@ export function CampusScreen() {
   const { showGlyphs } = useMapPrefs();
   const cls = useWindowClass();
   const wide = useWideLayout();
-  const { rooms, freeRooms, teachingIdents, queryTime, planningTime, preview, isCustomTime, campusHours, loading, error, refresh } =
+  const { rooms, freeRooms, known, schedule, teachingIdents, queryTime, planningTime, preview, isCustomTime, campusHours, loading } =
     useRoomData();
   // Planning ahead while the buildings are shut: nothing is free *now*.
   const waiting = preview && !campusHours.open;
+  // No timetable: the map stays pale and the list shows known rooms without
+  // a status (#154).
+  const unknown = schedule === 'unavailable';
   const opensAt = waiting && campusHours.todayOpen ? formatTime(campusHours.todayOpen) : null;
   const { filters } = useRoomFilters();
   const { isFavorite } = useFavorites();
@@ -201,9 +205,19 @@ export function CampusScreen() {
     return filteredFree.filter((f) => campusKeyForRoom(f.room) === selectedKey);
   }, [selectedKey, filteredFree]);
 
+  const knownOnMap = useMemo<Room[]>(() => {
+    if (!unknown) return [];
+    const list = known.filter((r) => isOnCampusMap(r) && matchesRoomFilters(r, filters));
+    return [...list.filter((r) => isFavorite(r.ident)), ...list.filter((r) => !isFavorite(r.ident))];
+  }, [unknown, known, filters, isFavorite]);
+  const selectedKnown = useMemo(
+    () => (selectedKey ? knownOnMap.filter((r) => campusKeyForRoom(r) === selectedKey) : []),
+    [selectedKey, knownOnMap],
+  );
+
   const selectedMeta = selectedKey ? PLACE_META[selectedKey] : undefined;
   // A teaching building has real room totals; pure amenity places (F/GH/G) don't.
-  const selectedHasRooms = selectedKey ? (availability[selectedKey]?.total ?? 0) > 0 : false;
+  const selectedHasRooms = selectedKey ? (availability[selectedKey]?.total ?? 0) > 0 || selectedKnown.length > 0 : false;
 
   const mapMode = theme === 'system' ? 'auto' : theme;
   const openRoom = (ident: string) => navigate(`/room/${encodeURIComponent(ident)}`);
@@ -245,6 +259,27 @@ export function CampusScreen() {
           );
         })
       )}
+    </div>
+  );
+
+  const unknownList = (items: Room[]) => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+      {items.map((room) => (
+        <RoomCard
+          key={room.ident}
+          name={room.code}
+          meta={roomMeta(room, locale)}
+          hint={mayBeLocked(room) ? t('may be locked', 'evtl. abgeschlossen') : undefined}
+          status="unavailable"
+          statusLabel={t('unknown', 'unbekannt')}
+          ariaLabel={t(`${room.code}, ${roomMeta(room, 'en')}, availability unknown`, `${room.code}, ${roomMeta(room, 'de')}, Verfügbarkeit unbekannt`)}
+          href={`/room/${encodeURIComponent(room.ident)}`}
+          onClick={(e) => {
+            e.preventDefault();
+            openRoom(room.ident);
+          }}
+        />
+      ))}
     </div>
   );
 
@@ -340,8 +375,14 @@ export function CampusScreen() {
           </div>
           {selectedHasRooms && (
             <div style={{ fontSize: 'var(--body-small-size)', color: 'var(--md-on-surface-variant)', marginTop: 2 }}>
-              <b style={{ color: 'var(--md-on-surface)', fontVariantNumeric: 'tabular-nums' }}>{selectedRooms.length}</b>{' '}
-              {freeRoomsLabel(t, { preview, customTime: isCustomTime })}
+              {unknown ? (
+                t('Free rooms unknown right now', 'Freie Räume gerade unbekannt')
+              ) : (
+                <>
+                  <b style={{ color: 'var(--md-on-surface)', fontVariantNumeric: 'tabular-nums' }}>{selectedRooms.length}</b>{' '}
+                  {freeRoomsLabel(t, { preview, customTime: isCustomTime })}
+                </>
+              )}
             </div>
           )}
         </div>
@@ -361,7 +402,35 @@ export function CampusScreen() {
           secondaryHours={selectedKey === 'F' ? mensaCanteenHours : undefined}
         />
       )}
-      {selectedHasRooms && list(selectedRooms)}
+      {unknown && <ScheduleNotice />}
+      {selectedHasRooms && (unknown ? unknownList(selectedKnown) : list(selectedRooms))}
+    </>
+  ) : loading ? (
+    <Spinner label={t('Checking THabella…', 'THabella wird abgefragt…')} />
+  ) : unknown ? (
+    <>
+      <div style={{ textAlign: 'center' }}>
+        <div
+          style={{
+            fontSize: 'clamp(3.5rem, 14vw, var(--display-small-size))',
+            lineHeight: 1,
+            fontWeight: 'var(--weight-light)',
+            color: 'var(--md-on-surface-variant)',
+          }}
+        >
+          —
+        </div>
+        <div style={{ fontSize: 'var(--title-medium-size)', color: 'var(--md-on-surface)', marginTop: 'var(--space-2)' }}>
+          {t('Free rooms unknown right now', 'Freie Räume gerade unbekannt')}
+        </div>
+      </div>
+      <ScheduleNotice />
+      <div style={{ display: 'flex' }}>
+        <div style={{ marginLeft: 'auto' }}>
+          <FilterMenu />
+        </div>
+      </div>
+      {unknownList(knownOnMap)}
     </>
   ) : (
     <>
@@ -376,7 +445,7 @@ export function CampusScreen() {
             fontVariantNumeric: 'tabular-nums',
           }}
         >
-          {loading && filteredFree.length === 0 ? '—' : filteredFree.length}
+          {filteredFree.length}
         </div>
         <div style={{ fontSize: 'var(--title-medium-size)', color: 'var(--md-on-surface)', marginTop: 'var(--space-2)' }}>
           {freeRoomsLabel(t, { preview, customTime: isCustomTime, onMap: true })}
@@ -391,6 +460,7 @@ export function CampusScreen() {
           <FilterMenu />
         </div>
       </div>
+      <ScheduleNotice />
       <FocusListNotice notice={notice} />
       {list(filteredFree)}
     </>
@@ -402,7 +472,7 @@ export function CampusScreen() {
     <>
       <CampusMap
         label={t('THD campus map', 'THD-Campuskarte')}
-        theme={waiting ? (dark ? WAITING_DARK : WAITING_LIGHT) : undefined}
+        theme={waiting || unknown ? (dark ? WAITING_DARK : WAITING_LIGHT) : undefined}
         campus={CAMPUS_GEOJSON}
         context={CAMPUS_CONTEXT}
         availability={mapAvailability}
@@ -413,13 +483,15 @@ export function CampusScreen() {
         onSelect={(k) => setSelectedKey(k)}
         style={{ width: '100%', height: '100%' }}
       />
-      {notice !== null || live || waiting ? (
+      {notice !== null || live || waiting || unknown ? (
         <MapLegend
-          free={waiting ? t('Free when it opens', 'Frei ab Öffnung') : t('Free rooms', 'Freie Räume')}
+          free={waiting ? t('Free when it opens', 'Frei ab Öffnung') : unknown ? t('Open now', 'Jetzt geöffnet') : t('Free rooms', 'Freie Räume')}
           batch={live ? t(`${batch ?? 'Your batch'} studying`, `${batch ?? 'Dein Jahrgang'} lernt`) : undefined}
           claim={live ? t('Focus session', 'Fokus-Session') : undefined}
           note={
-            opensAt
+            unknown
+              ? t('Availability unknown', 'Verfügbarkeit unbekannt')
+              : opensAt
               ? t(`Closed · opens ${opensAt}`, `Geschlossen · öffnet ${opensAt}`)
               : notice === 'time'
               ? t('Schedule only', 'Nur Stundenplan')
@@ -432,24 +504,6 @@ export function CampusScreen() {
       ) : null}
     </>
   );
-
-  if (loading && freeRooms.length === 0) {
-    return (
-      <>
-        <BrandHeader title={t('Campus', 'Campus')} />
-        <Spinner label={t('Checking THabella…', 'THabella wird abgefragt…')} />
-      </>
-    );
-  }
-  // No timetable and nothing cached: say so rather than "0 rooms free".
-  if (error && rooms.length === 0) {
-    return (
-      <>
-        <BrandHeader title={t('Campus', 'Campus')} />
-        <ErrorState message={t("Can't reach the THD timetable right now. Check your connection and try again.", 'Der THD-Stundenplan ist gerade nicht erreichbar. Prüfe deine Verbindung und versuche es erneut.')} onRetry={refresh} retryLabel={t('Try again', 'Erneut versuchen')} />
-      </>
-    );
-  }
 
   // Split layout: map fills, side panel scrolls (wide landscape tablet / desktop).
   if (wide) {

@@ -7,7 +7,7 @@ import { useFavorites } from '../favorites/favorites';
 import { useI18n } from '../../i18n';
 import { formatDayTime, formatTime, freeRoomDuration, roomMeta, statusBannerText } from '../../domain/format';
 import { freeStatus } from '../../domain/availability';
-import { searchRooms } from '../../domain/roomSearch';
+import { matchRooms, searchRooms } from '../../domain/roomSearch';
 import { favoritesFirst, matchesRoomFilters, mayBeLocked } from '../../domain/roomFilters';
 import { focusBucket, rankByBucket } from '../../domain/focusSignals';
 import { cardFocus, useBatchLabel, useFocusSignals } from '../focus/useFocusSignals';
@@ -18,13 +18,17 @@ import { TimeControl } from '../shared/TimeControl';
 import { FilterMenu } from '../shared/FilterMenu';
 import { SearchControl } from '../shared/SearchControl';
 import { freeRoomsLabel, opensLabel, roomStatusLabel } from '../shared/roomStatusLabel';
-import { Page, Spinner, EmptyState, ErrorState } from '../shared/ui';
+import { ScheduleNotice } from '../shared/ScheduleNotice';
+import { Page, Spinner, EmptyState } from '../shared/ui';
 
 export function HomeScreen() {
   const { t, locale } = useI18n();
   const navigate = useNavigate();
-  const { rooms, events, teachingIdents, freeRooms, planningTime, preview, isCustomTime, campusHours, loading, error, refresh, setQueryTime } =
+  const { rooms, events, teachingIdents, freeRooms, known, schedule, planningTime, preview, isCustomTime, campusHours, loading, setQueryTime } =
     useRoomData();
+  // The timetable couldn't be loaded: list the known rooms without a status
+  // rather than an error or a false "0 free" (#154).
+  const unknown = schedule === 'unavailable';
   // Before the buildings open, rooms read "from 06:30", not "free".
   const opensAt = preview && !campusHours.open && campusHours.todayOpen ? formatTime(campusHours.todayOpen) : null;
 
@@ -40,9 +44,17 @@ export function HomeScreen() {
     mayBeLocked(room) ? t('may be locked', 'evtl. abgeschlossen') : undefined;
 
   const buildings = useMemo(() => {
-    const set = new Set(freeRooms.map((f) => f.room.building));
+    const set = new Set(unknown ? known.map((r) => r.building) : freeRooms.map((f) => f.room.building));
     return [...set].sort();
-  }, [freeRooms]);
+  }, [freeRooms, known, unknown]);
+
+  const unknownShown = useMemo(() => {
+    if (!unknown) return [];
+    const list = (searching ? matchRooms(known, query) : known)
+      .filter((r) => (building ? r.building === building : true))
+      .filter((r) => matchesRoomFilters(r, filters));
+    return [...list.filter((r) => isFavorite(r.ident)), ...list.filter((r) => !isFavorite(r.ident))];
+  }, [unknown, known, searching, query, building, filters, isFavorite]);
 
   const shown = useMemo(() => {
     const inBuilding = building ? freeRooms.filter((f) => f.room.building === building) : freeRooms;
@@ -103,10 +115,14 @@ export function HomeScreen() {
                   fontVariantNumeric: 'tabular-nums',
                 }}
               >
-                {(loading || error) && freeRooms.length === 0 ? '—' : searching ? searchResults.length : shown.length}
+                {unknown ? (searching ? unknownShown.length : '—') : loading && freeRooms.length === 0 ? '—' : searching ? searchResults.length : shown.length}
               </div>
               <div style={{ fontSize: 'var(--title-medium-size)', color: 'var(--md-on-surface-variant)' }}>
-                {searching ? t('rooms match', 'Treffer') : freeRoomsLabel(t, { preview, customTime: isCustomTime, building })}
+                {searching
+                  ? t('rooms match', 'Treffer')
+                  : unknown
+                    ? t('free rooms unknown right now', 'freie Räume gerade unbekannt')
+                    : freeRoomsLabel(t, { preview, customTime: isCustomTime, building })}
               </div>
             </div>
 
@@ -119,11 +135,36 @@ export function HomeScreen() {
               </div>
             </div>
 
-            {!searching && <FocusListNotice notice={notice} />}
+            <ScheduleNotice />
+            {!searching && !unknown && <FocusListNotice notice={notice} />}
 
             {/* The answer: search hits (any status) when searching, else free rooms. */}
-            {error && freeRooms.length === 0 ? (
-              <ErrorState message={t("Can't reach the THD timetable right now. Check your connection and try again.", 'Der THD-Stundenplan ist gerade nicht erreichbar. Prüfe deine Verbindung und versuche es erneut.')} onRetry={refresh} retryLabel={t('Try again', 'Erneut versuchen')} />
+            {unknown ? (
+              unknownShown.length === 0 ? (
+                <EmptyState
+                  title={t('No rooms found', 'Keine Räume gefunden')}
+                  hint={t('Try a room code, name or equipment.', 'Raumnummer, Name oder Ausstattung versuchen.')}
+                />
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                  {unknownShown.map((room) => (
+                    <RoomCard
+                      key={room.ident}
+                      name={room.code}
+                      meta={roomMeta(room, locale)}
+                      hint={lockHint(room)}
+                      status="unavailable"
+                      statusLabel={t('unknown', 'unbekannt')}
+                      ariaLabel={t(`${room.code}, ${roomMeta(room, 'en')}, availability unknown`, `${room.code}, ${roomMeta(room, 'de')}, Verfügbarkeit unbekannt`)}
+                      href={`/room/${encodeURIComponent(room.ident)}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate(`/room/${encodeURIComponent(room.ident)}`);
+                      }}
+                    />
+                  ))}
+                </div>
+              )
             ) : loading && freeRooms.length === 0 ? (
               <Spinner label={t('Checking THabella…', 'THabella wird abgefragt…')} />
             ) : searching ? (

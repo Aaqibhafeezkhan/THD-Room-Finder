@@ -1,23 +1,13 @@
+import { thabella } from './_thabella.js';
+
 // ESM: the root package.json declares "type": "module", so Vercel evaluates
 // this function as ESM — `export default`, not `module.exports`.
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
 
-  try {
-    const upstream = await fetch('https://thabella.th-deg.de/thabella/opn/room/findRooms', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: '{}',
-    });
-
-    if (!upstream.ok) {
-      return res.status(upstream.status).json({ error: 'upstream error', status: upstream.status });
-    }
-
-    const data = await upstream.json();
-    res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=3600');
-    return res.status(200).json(data);
-  } catch (err) {
-    return res.status(502).json({ error: err.message });
-  }
-};
+  const { status, body } = await thabella('/room/findRooms', {});
+  // Only good answers are cached; an outage is never served for a day.
+  if (status === 200) res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=3600');
+  else res.setHeader('Cache-Control', 'no-store');
+  return res.status(status).json(body);
+}

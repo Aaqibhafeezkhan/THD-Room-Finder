@@ -35,9 +35,12 @@ export interface RoomFocusPanelProps {
   closing: Date | null;
   /** Campus closed, or a picked time instead of now. */
   scheduleOnly: boolean;
+  /** The timetable couldn't be loaded (#154): focus still starts, planned
+   *  to closing or 3 h, and says that a lecture can't be ruled out. */
+  scheduleUnknown?: boolean;
 }
 
-export function RoomFocusPanel({ room, availability, closing, scheduleOnly }: RoomFocusPanelProps) {
+export function RoomFocusPanel({ room, availability, closing, scheduleOnly, scheduleUnknown = false }: RoomFocusPanelProps) {
   const { t, locale } = useI18n();
   const navigate = useNavigate();
   const cls = useWindowClass();
@@ -265,6 +268,11 @@ export function RoomFocusPanel({ room, availability, closing, scheduleOnly }: Ro
         <p style={{ margin: 0, fontSize: 'var(--body-small-size)', color: 'var(--md-on-surface-variant)' }}>
           {focus.active
             ? t(`This ends your session in ${focus.active.roomCode}.`, `Damit endet deine Session in ${focus.active.roomCode}.`)
+            : scheduleUnknown
+              ? t(
+                  "Lectures can't be checked right now, so it runs until closing or 3 h. If a class comes in, end it there.",
+                  'Vorlesungen sind gerade nicht prüfbar, daher läuft sie bis Schließung oder 3 Std. Kommt ein Kurs, beende sie dort.',
+                )
             : !signedIn
               ? t("On this device only; the room isn't claimed. Ends before the next lecture.", 'Nur auf diesem Gerät; der Raum wird nicht belegt. Endet vor der nächsten Vorlesung.')
               : profile.identity?.defaultVisibility === 'public'
