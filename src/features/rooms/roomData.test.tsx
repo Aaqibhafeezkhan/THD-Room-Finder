@@ -5,6 +5,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import { toRooms } from '../../data/mappers';
 import type { Loaded, TeachingSet } from '../../data/thabellaClient';
 import type { Room, ScheduledEvent } from '../../domain/models';
+import { campusNow } from '../../domain/time';
 import { RoomDataProvider, useRoomData } from './RoomDataContext';
 import type { RoomDataClient, RoomData } from './RoomDataContext';
 
@@ -21,15 +22,20 @@ const ROOMS = toRooms([
   { id: 1, ident: 'r1', name: 'E212 - Seminarraum', seatsRegular: 40 },
   { id: 2, ident: 'r2', name: 'A008 - Labor', seatsRegular: 20 },
 ]);
-const lecture = (ident: string, h: number): ScheduledEvent => ({
-  id: 1,
-  roomIdent: ident,
-  roomName: null,
-  startDateTime: new Date(2026, 9, 22, h, 0),
-  endDateTime: new Date(2026, 9, 22, h + 1, 30),
-  durationMinutes: 90,
-  eventType: 'Vorlesung',
-});
+/** A lecture in `ident` that is on now, on the campus clock the provider
+ *  plans with (Europe/Berlin), whatever the machine's time zone. */
+const lecture = (ident: string): ScheduledEvent => {
+  const now = campusNow().getTime();
+  return {
+    id: 1,
+    roomIdent: ident,
+    roomName: null,
+    startDateTime: new Date(now - 45 * 60000),
+    endDateTime: new Date(now + 45 * 60000),
+    durationMinutes: 90,
+    eventType: 'Vorlesung',
+  };
+};
 
 /** A THabella that is down until `up()`; rooms come from the bundled list. */
 function fakeClient(cachedDay: Loaded<ScheduledEvent[]> | null = null) {
@@ -45,7 +51,7 @@ function fakeClient(cachedDay: Loaded<ScheduledEvent[]> | null = null) {
     getTeachingRoomIdents: async () => (online ? { ...teaching, source: 'live', week: '2026-10-19', at: new Date() } : teaching),
     loadEvents: async () => {
       calls.events += 1;
-      if (online) return { data: [lecture('r2', 9)], source: 'live', at: new Date() };
+      if (online) return { data: [lecture('r2')], source: 'live', at: new Date() };
       if (cachedDay) return cachedDay;
       throw new Error('THabella HTTP 504');
     },
@@ -98,7 +104,7 @@ describe('room data while THabella is down', () => {
 
   it('shows an earlier copy of today as stale, with its time', async () => {
     const at = new Date(2026, 9, 22, 8, 50);
-    const { client } = fakeClient({ data: [lecture('r2', 9)], source: 'cache', at });
+    const { client } = fakeClient({ data: [lecture('r2')], source: 'cache', at });
     await mount(client);
     expect(data.schedule).toBe('stale');
     expect(data.scheduleAt).toEqual(at);
