@@ -34,8 +34,10 @@ select throws_ok($$select public.table_from_session(gen_random_uuid(), null, 'th
 -- Lena focuses in A008, privately, since 40 minutes ago by the rhythm.
 select pg_temp.act_as('lena@example.test');
 insert into t values ('session', public.start_focus('thd:r000000001', 120, 'private', false, gen_random_uuid(), true, 25, 5, 15, 4));
+reset role;
 update focus.session set anchor_at = now() - interval '40 minutes', started_at = now() - interval '40 minutes'
  where id = (pg_temp.v('session', 'id'))::uuid;
+select pg_temp.act_as('lena@example.test');
 
 select throws_ok(format($$select public.table_from_session(gen_random_uuid(), null, 'thd:r000000002', now() - interval '40 minutes', now() + interval '1 hour', 4, 25, 5, 15, 4, %L)$$, pg_temp.v('session', 'id')),
   '22023', null, 'the table is in the session''s room');
@@ -60,6 +62,7 @@ select is((public.table_from_session((select v #>> '{}' from t where k = 'req'):
 select is((public.table_from_session(gen_random_uuid(), 'Other', 'thd:r000000001',
   now() - interval '40 minutes', now() + interval '1 hour', 6, 25, 5, 15, 4, (pg_temp.v('session', 'id'))::uuid))->>'link',
   pg_temp.v('table', 'link'), 'converting the same session again opens its table');
+reset role;
 select is((select visibility from focus.session where id = (pg_temp.v('session', 'id'))::uuid), 'private',
   'the session keeps its visibility');
 
