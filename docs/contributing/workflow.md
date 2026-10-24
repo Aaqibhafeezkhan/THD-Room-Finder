@@ -75,7 +75,9 @@ automatically after merge.
 - The maintainer reviews every PR. Expect a first response within
   a few days.
 - Reviews look at behaviour against the acceptance criteria, tests on domain
-  rules, tokens and `t(en, de)` use, privacy, and request cost.
+  rules, tokens and `t(en, de)` use, privacy, request cost, and how the change
+  fails when THabella or the focus service is down
+  ([outage drills](../development/outage-drills.md)).
 - Resolve conversations or reply to them; push fixes to the same branch.
 - The maintainer merges with a **merge commit**. Read the history of `main`
   PR by PR with `git log --first-parent`. Agents never merge.

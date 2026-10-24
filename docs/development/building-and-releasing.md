@@ -54,11 +54,13 @@ flowchart LR
   F --> G[GitHub release with<br/>thd-room-finder-X.Y.Z.apk,<br/>web-X.Y.Z.zip, update.json<br/>+ generated notes]
 ```
 
-1. Merge a `chore(release): vX.Y.Z` PR that bumps `package.json` and
+1. Run the [outage drills](outage-drills.md) on `main` (THabella down,
+   focus service down) and fix what fails first.
+2. Merge a `chore(release): vX.Y.Z` PR that bumps `package.json` and
    `versionCode`/`versionName` in `android/app/build.gradle`. The release
    fails when the three disagree.
-2. Tag the merge commit: `git tag vX.Y.Z && git push origin vX.Y.Z`.
-3. `release.yml` builds and publishes. It fails rather than publishing an
+3. Tag the merge commit: `git tag vX.Y.Z && git push origin vX.Y.Z`.
+4. `release.yml` builds and publishes. It fails rather than publishing an
    unsigned APK. A tag can be rebuilt with *Run workflow* and the tag name.
 
 | Secret | Content |

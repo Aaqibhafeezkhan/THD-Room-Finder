@@ -25,6 +25,7 @@ Closes #
 - [ ] `npm run typecheck && npm test && npm run build`
 - [ ] Checked in the Vercel preview (link):
 - [ ] EN and DE · light and dark · phone and desktop (UI changes)
+- [ ] [Outage drill](https://github.com/arudaev/THD-Room-Finder/blob/main/docs/development/outage-drills.md) with THabella and the focus service down (changes that read either)
 
 ## Screenshots
 

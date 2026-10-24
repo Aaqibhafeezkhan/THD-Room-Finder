@@ -39,9 +39,20 @@ ends with its focus kept.
 
 ## Focus service down or hanging
 
-Stop the local stack (`supabase stop`) or block the Supabase host in the
-browser's request blocking. Profile keeps the last known account, sessions
-start on the device, and nothing claims a room or invite was shared.
+Two different failures, both worth a run:
+
+- **Refusing**: stop the local stack (`supabase stop`), or block the
+  Supabase host in the browser's request blocking. Requests fail at once.
+- **Hanging**: the server accepts and never answers (a paused project, a
+  captive portal). In a headless browser, intercept requests to the Supabase
+  host and never call `continue()`; requests give up after 15 s
+  (`timedFetch`).
+
+Expect: Profile keeps the last known account and says it can't reach it
+(never "Not signed in"); sessions start on the device with "Offline: this
+session runs on your device"; tables and gatherings keep what they showed and
+offer *Try again*; nothing says a claim or invite was shared when it wasn't;
+no spinner lasts longer than the timeout.
 
 ## Automated checks
 
