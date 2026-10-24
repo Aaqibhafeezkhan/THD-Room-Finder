@@ -78,6 +78,7 @@ flowchart LR
 | T3 | choose how many seats | it feels like a real table | Seat chips 2 · 4 · 6 · 8 · 12, default 4. **Just me** makes it a planned solo session with no link. Under the chips: "More people? Register your group", which opens the [registry](organizations.md) request in Profile |
 | T4 | say what we study, optionally | people know what the table is for | One line, up to 40 characters, placeholder "What are you studying?" |
 | T5 | keep the length simple | there is no form to fill | Length = the slot, capped at 3 h; rhythm = my focus rhythm, shown as one line I can change |
+| T21 | invite people to the session I'm already running | friends can join without me stopping | While my session runs in this room, a violet circle at the left of **Study together** opens a short sheet: room, "now until 12:45" and my rhythm are given; I pick seats and a topic and tap **Invite people**. The table starts at my session's rhythm anchor, so whoever joins follows my blocks and breaks; my timer, plan and Private/Public stay as they were. Needs 25 minutes left. Once it is a table, the circle opens it ([ADR 0010](../architecture/adr/0010-session-to-table.md)) |
 
 ### Inviting
 
@@ -118,7 +119,7 @@ flowchart LR
 
 | Place | What appears | Who sees it |
 |---|---|---|
-| Room detail | **Study together** under Start focus. If I have a table in this room today: a table row "Your study table · 13:15" | Everyone; the row only for me |
+| Room detail | **Study together** under Start focus, with the violet invite circle at its left while my session runs here. If I have a table in this room today: a table row "Your study table · 13:15" | Everyone; the circle and the row only for me |
 | Room list and map | A small seat marker on rooms where I have a table today | Only me |
 | Profile | **Your study tables** above Saved rooms; empty state invites to set one from a room | Me |
 | Any tab | Reminder banner 15 minutes before | Me |
@@ -164,6 +165,28 @@ not under the rail or drawer.
 | Closed day | Left out of the day chips |
 | Signed out | **Invite people** asks for the email code first, then sets the table |
 | Error | Inline line above the button; nothing lost |
+
+### Invite people to your session (sheet)
+
+```
+┌────────────────────────────────┐
+│ Invite people to your session  │
+│ E203 · now until 12:45 · Deep  │
+│ Your timer keeps running.      │
+│ Seats  2 [4] 6 8 12            │
+│ What are you studying?  ____   │
+│ Anyone with the link sees …    │
+│ [ Invite people ]              │
+└────────────────────────────────┘
+```
+
+| State | Shows |
+|---|---|
+| Under 25 minutes left | The reason, and Invite disabled; Study together stays |
+| Timetable unknown, or a lecture before the end | The reason, Invite disabled; the session runs on |
+| Signed out or no first name | The quick setup first, then this sheet; cancelling leaves the session running |
+| Saving | **Inviting…**, disabled; a retry reuses the request, so no second table |
+| Error | Inline line; seats and topic kept |
 
 ### Table page
 

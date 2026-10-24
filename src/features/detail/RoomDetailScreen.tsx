@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { AppBar, Button, IconButton, SeatRing, StatusCard, TableRow } from '../../components';
+import { AppBar, IconButton, SeatRing, StatusCard, StudyTogetherButton, TableRow } from '../../components';
 import { IconMail, IconStar, IconStarFilled, IconUsers } from '../../components/icons';
 import { useRoomData } from '../rooms/RoomDataContext';
 import { useFavorites } from '../favorites/favorites';
@@ -19,6 +19,7 @@ import { seatsTitle, topicOf } from '../tables/copy';
 import { tableShortWhen, tableState } from '../../domain/tables';
 import { toRoom } from '../../data/mappers';
 import { useFocusSession } from '../focus/FocusSessionContext';
+import { sessionTableLink } from '../tables/SessionTableSheet';
 
 const stickyBar = { position: 'sticky' as const, top: 0, zIndex: 10 };
 
@@ -39,6 +40,20 @@ export function RoomDetailScreen() {
   const unknown = schedule === 'unavailable';
   const tableFlow = useTableFlow(room);
   const { mine } = useTables();
+  const ownHere = active?.roomIdent === ident ? active : null;
+  // The table this session already became: noted on this device, or one you
+  // host here that starts at its anchor (made on another device).
+  const ownTable =
+    sessionTableLink(ownHere) ??
+    (ownHere
+      ? mine.find(
+          (x) =>
+            x.isHost &&
+            !x.cancelled &&
+            x.roomKey === `thd:${ownHere.roomIdent}` &&
+            Math.abs(x.startsAt.getTime() - new Date(ownHere.anchorAt).getTime()) < 60_000,
+        )?.link ?? null
+      : null);
 
   const back = () => navigate(-1);
 
@@ -135,9 +150,22 @@ export function RoomDetailScreen() {
           scheduleUnknown={unknown}
         />
         {tableFlow.available && (
-          <Button variant="tonal" size="large" onClick={tableFlow.start} style={{ alignSelf: 'stretch' }}>
-            {t('Study together', 'Zusammen lernen')}
-          </Button>
+          <StudyTogetherButton
+            label={t('Study together', 'Zusammen lernen')}
+            onClick={tableFlow.start}
+            // Your session here can become a table in progress (#153); one
+            // it already became opens again instead of making another.
+            convert={
+              ownHere && !isCustomTime
+                ? {
+                    label: ownTable
+                      ? t('Open the study table for your session', 'Lerntisch deiner Session öffnen')
+                      : t('Invite people to your focus session', 'Leute zu deiner Fokus-Session einladen'),
+                    onClick: ownTable ? () => navigate(`/t/${ownTable}`) : tableFlow.fromSession,
+                  }
+                : undefined
+            }
+          />
         )}
         {/* My tables in this room, next first (where things live: room detail). */}
         {mine
