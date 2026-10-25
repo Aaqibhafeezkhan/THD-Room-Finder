@@ -7,3 +7,4 @@
 | [Building and releasing](building-and-releasing.md) | Build the Android APK or cut a release |
 | [Installing on a device](installing.md) | Put the app on a phone as a user or tester |
 | [CI and automation](ci-and-automation.md) | Understand every workflow, ruleset and secret |
+| [Outage drills](outage-drills.md) | Check that a change fails well when THabella or the focus service is down |

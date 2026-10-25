@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatElapsed, planEnd } from './focusSession';
+import { formatElapsed, lectureLimit, planEnd } from './focusSession';
 
 const at = (h: number, m = 0) => new Date(2026, 9, 13, h, m);
 
@@ -30,5 +30,21 @@ describe('formatElapsed', () => {
     expect(formatElapsed(0)).toBe('0:00');
     expect(formatElapsed((24 * 60 + 10) * 1000)).toBe('24:10');
     expect(formatElapsed((3600 + 5 * 60 + 40) * 1000)).toBe('1:05:40');
+  });
+});
+
+describe('lectureLimit', () => {
+  const at = (h: number, m = 0) => new Date(2026, 9, 22, h, m);
+  const lecture = (room: string, from: Date, to: Date) => ({ roomIdent: room, startDateTime: from, endDateTime: to });
+  const events = [lecture('r1', at(11, 45), at(13, 15)), lecture('r2', at(10), at(11, 30)), lecture('r1', at(8), at(9, 30))];
+
+  it('finds the next lecture in the room before the planned end', () => {
+    expect(lectureLimit(events, 'r1', at(10), at(13))).toEqual(at(11, 45));
+  });
+
+  it('is now while a lecture is on, and null when none falls in the plan', () => {
+    expect(lectureLimit(events, 'r1', at(12), at(14))).toEqual(at(12));
+    expect(lectureLimit(events, 'r1', at(9, 30), at(11, 45))).toBeNull();
+    expect(lectureLimit([], 'r1', at(10), at(13))).toBeNull();
   });
 });

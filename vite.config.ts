@@ -4,8 +4,9 @@ import { VitePWA } from 'vite-plugin-pwa';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath, URL } from 'node:url';
 import { nativeFingerprint } from './scripts/release/nativeFingerprint.mjs';
+// Same upstream call, deadline and checks as the production functions.
+import { thabella } from './api/_thabella.js';
 
-const THABELLA = 'https://thabella.th-deg.de/thabella/opn';
 const APP_VERSION: string = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')).version;
 
 /**
@@ -21,41 +22,29 @@ function devThabellaApi(): Plugin {
     configureServer(server) {
       server.middlewares.use(async (req, res, next) => {
         const url = new URL(req.url ?? '', 'http://localhost');
-        try {
-          if (url.pathname === '/api/rooms') {
-            const upstream = await fetch(`${THABELLA}/room/findRooms`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: '{}',
-            });
-            res.setHeader('Content-Type', 'application/json');
-            res.statusCode = upstream.status;
-            res.end(await upstream.text());
+        const send = ({ status, body }: { status: number; body: unknown }) => {
+          res.setHeader('Content-Type', 'application/json');
+          res.statusCode = status;
+          res.end(JSON.stringify(body));
+        };
+        // Outage drill (docs/development/outage-drills.md): answer like the
+        // 22 Oct 2026 outage without touching THabella.
+        if (process.env.THABELLA_OFFLINE === '1' && (url.pathname === '/api/rooms' || url.pathname === '/api/periods')) {
+          await new Promise((r) => setTimeout(r, 1500));
+          send({ status: 504, body: { error: 'upstream timeout' } });
+          return;
+        }
+        if (url.pathname === '/api/rooms') {
+          send(await thabella('/room/findRooms', {}));
+          return;
+        }
+        if (url.pathname === '/api/periods') {
+          const date = url.searchParams.get('date');
+          if (!date) {
+            send({ status: 400, body: { error: 'date query parameter required' } });
             return;
           }
-          if (url.pathname === '/api/periods') {
-            const date = url.searchParams.get('date');
-            if (!date) {
-              res.statusCode = 400;
-              res.end(JSON.stringify({ error: 'date query parameter required' }));
-              return;
-            }
-            const upstream = await fetch(
-              `${THABELLA}/period/findByDate/${encodeURIComponent(date)}`,
-              {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ sqlDate: date }),
-              },
-            );
-            res.setHeader('Content-Type', 'application/json');
-            res.statusCode = upstream.status;
-            res.end(await upstream.text());
-            return;
-          }
-        } catch (err) {
-          res.statusCode = 502;
-          res.end(JSON.stringify({ error: (err as Error).message }));
+          send(await thabella(`/period/findByDate/${encodeURIComponent(date)}`, { sqlDate: date }));
           return;
         }
         next();

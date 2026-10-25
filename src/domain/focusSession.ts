@@ -38,6 +38,27 @@ export function planEnd(now: Date, nextLecture: Date | null, closing: Date | nul
   return { end, minutes, reason };
 }
 
+/**
+ * A lecture that the session's plan doesn't know about yet (#154): started
+ * while the timetable was down, or added to THabella later. Returns `now`
+ * when one is on in the room, else the start of the first one before
+ * `plannedEnd`, else null. Only events in that room count.
+ */
+export function lectureLimit(
+  events: { roomIdent: string; startDateTime: Date; endDateTime: Date }[],
+  roomIdent: string,
+  now: Date,
+  plannedEnd: Date,
+): Date | null {
+  let limit: Date | null = null;
+  for (const e of events) {
+    if (e.roomIdent !== roomIdent || e.endDateTime <= now || e.startDateTime >= plannedEnd) continue;
+    if (e.startDateTime <= now) return now;
+    if (!limit || e.startDateTime < limit) limit = e.startDateTime;
+  }
+  return limit;
+}
+
 /** "24:10" under an hour, "1:05:40" from an hour. */
 export function formatElapsed(ms: number): string {
   const total = Math.max(0, Math.floor(ms / 1000));

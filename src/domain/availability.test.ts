@@ -5,6 +5,7 @@ import {
   computeRoomAvailability,
   freeStatus,
   getRoomSchedule,
+  knownRooms,
 } from './availability';
 
 function makeRoom(ident: string, building: string, name: string): Room {
@@ -109,5 +110,21 @@ describe('getRoomSchedule', () => {
     ];
     const schedule = getRoomSchedule(evs, 'a');
     expect(schedule.map((e) => e.startDateTime.getHours())).toEqual([8, 14]);
+  });
+});
+
+describe('knownRooms', () => {
+  const room = (ident: string, name: string) => makeRoom(ident, name[0], name);
+
+  it('lists Deggendorf campus rooms first and leaves out excluded venues', () => {
+    const list = knownRooms(
+      [room('b', 'A 0.13 Hörsaal Zollner (Badstraße)'), room('e', 'E212 - Seminarraum'), room('s', 'S001 - Sportplatz')],
+      new Set(['b', 'e', 's']),
+    );
+    expect(list.map((r) => r.ident)).toEqual(['e', 'b']);
+  });
+
+  it('keeps to the eligible set', () => {
+    expect(knownRooms([room('e', 'E212 - Seminarraum'), room('x', 'E001 - Büro')], new Set(['e'])).map((r) => r.ident)).toEqual(['e']);
   });
 });

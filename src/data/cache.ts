@@ -40,6 +40,23 @@ export function readStale<T>(key: string): T | null {
   return readEnvelope<T>(key)?.data ?? null;
 }
 
+/** A cached value with when it was saved, or null. */
+export function readDated<T>(key: string): { data: T; at: Date } | null {
+  const env = readEnvelope<T>(key);
+  return env && typeof env.timestamp === 'number' ? { data: env.data, at: new Date(env.timestamp) } : null;
+}
+
+/** Keys saved under `prefix`, e.g. every week's teaching set. */
+export function keysWith(prefix: string): string[] {
+  const s = store();
+  if (!s) return [];
+  try {
+    return Object.keys(s).filter((k) => k.startsWith(prefix));
+  } catch {
+    return [];
+  }
+}
+
 export function write<T>(key: string, data: T): void {
   const s = store();
   if (!s) return;

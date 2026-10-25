@@ -11,6 +11,22 @@
       "port": 5173
     },
     {
+      "name": "dev-outage",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5174",
+        "--strictPort"
+      ],
+      "port": 5174,
+      "env": {
+        "THABELLA_OFFLINE": "1"
+      }
+    },
+    {
       "name": "website",
       "runtimeExecutable": "python",
       "runtimeArgs": [

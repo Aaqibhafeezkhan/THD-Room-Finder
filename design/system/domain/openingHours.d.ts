@@ -38,8 +38,10 @@ export declare function periodFor(date: Date): CampusPeriod;
 export declare function getCampusHours(now: Date): CampusHours;
 /** Confirmed whole-day closure; unknown access is not a closed-day fact. */
 export declare function isCampusClosedDay(date: Date): boolean;
-/** Weekend streak pauses are a product rule, distinct from building access. */
+/** Rest days pause the streak; a product rule, distinct from building access. */
 export declare function isFocusRestDay(date: Date): boolean;
+/** Why the campus is shut for study that day (Christmas or a public holiday), or null. */
+export declare function restReason(date: Date): 'christmas' | 'holiday' | null;
 /** Opening state of the Library (building G) at `now` — its own schedule. */
 export declare function getLibraryHours(now: Date): CampusHours;
 /** Opening state of the Mensa canteen (building F, 1st floor lunch service) at `now`. */

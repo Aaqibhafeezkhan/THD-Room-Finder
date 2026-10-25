@@ -17,6 +17,10 @@ export function tableErrorText(code: string, t: Translate): string {
       return t('More seats are taken than that.', 'Es sind schon mehr Plätze belegt.');
     case 'stale_version':
       return t('The study table changed in the meantime. Close this and try again.', 'Der Lerntisch wurde inzwischen geändert. Schließe das hier und versuche es erneut.');
+    case 'too_short':
+      return t('Less than 25 minutes left, too short for others to come.', 'Weniger als 25 Minuten übrig, zu kurz zum Dazukommen.');
+    case 'not_active':
+      return t('Your focus session has ended.', 'Deine Fokus-Session ist vorbei.');
     case 'unknown_room':
       return t("That room can't take a study table. Pick another.", 'In diesem Raum geht kein Lerntisch. Wähle einen anderen.');
     default:

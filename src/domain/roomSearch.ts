@@ -108,3 +108,14 @@ export function searchRooms(
 
   return results;
 }
+
+/**
+ * Rooms matching `query`, with no availability: for when the timetable is
+ * unknown (#154) and a status would be a guess. Keeps the given order.
+ */
+export function matchRooms(rooms: Room[], query: string): Room[] {
+  const q = normalizeForMatching(query).trim();
+  if (!q) return [];
+  const terms = expandQuery(q);
+  return rooms.filter((r) => !isExcludedVenue(r) && terms.some((term) => haystackFor(r).includes(term)));
+}

@@ -15,7 +15,7 @@
  *
  * Framework-free (domain layer). Source: THD published library/building hours.
  */
-import { academicBreak, classroomDay, isClassroomClosedDate, isStudyRestDate } from './campusCalendar.jsx';
+import { academicBreak, classroomDay, isClassroomClosedDate, isStudyRestDate, restDayReason } from './campusCalendar.jsx';
 function calendarDate(date) {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
@@ -148,9 +148,13 @@ export function getCampusHours(now) {
 export function isCampusClosedDay(date) {
     return isClassroomClosedDate(calendarDate(date));
 }
-/** Weekend streak pauses are a product rule, distinct from building access. */
+/** Rest days pause the streak; a product rule, distinct from building access. */
 export function isFocusRestDay(date) {
     return isStudyRestDate(calendarDate(date));
+}
+/** Why the campus is shut for study that day (Christmas or a public holiday), or null. */
+export function restReason(date) {
+    return restDayReason(calendarDate(date));
 }
 /** Opening state of the Library (building G) at `now` — its own schedule. */
 export function getLibraryHours(now) {

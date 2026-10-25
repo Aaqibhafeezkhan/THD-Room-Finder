@@ -5,6 +5,8 @@
  * validate an exported file before it is imported.
  */
 
+import { focusedMs } from './focusRhythm';
+import type { AwaySpan, SessionPlan } from './focusRhythm';
 import { isFocusRestDay } from './openingHours';
 
 export interface FocusEntry {
@@ -173,4 +175,28 @@ export function mergeHistory(current: FocusEntry[], incoming: FocusEntry[]): Foc
   const seen = new Set(current.map((e) => e.id));
   const added = incoming.filter((e) => !seen.has(e.id) && seen.add(e.id));
   return [...current, ...added].sort((a, b) => a.startedAt.localeCompare(b.startedAt));
+}
+
+/**
+ * What a running session has earned so far (#155): the minutes `entryFor`
+ * would record if it ended now, so the graph moves before the session ends.
+ * Only confirmed focus up to now counts, never past the planned end; breaks
+ * and time away don't. It is shown, never saved, exported or synced. Null
+ * under a minute.
+ */
+export function liveEntry(
+  session: { id: string; startedAt: Date; plannedEnd: Date; confirmed: number; away?: AwaySpan[] },
+  plan: SessionPlan,
+  now: Date,
+): FocusEntry | null {
+  const until = new Date(Math.min(now.getTime(), session.plannedEnd.getTime()));
+  if (until <= session.startedAt) return null;
+  return entryFor(session.startedAt, until, undefined, session.id, focusedMs(plan, session.confirmed, until, session.away));
+}
+
+/** Saved history plus the running session, unless its entry already arrived
+ *  (a shared session finished on another device keeps the same id). */
+export function withLive(entries: FocusEntry[], live: FocusEntry | null): FocusEntry[] {
+  if (!live || entries.some((e) => e.id === live.id)) return entries;
+  return [...entries, live];
 }

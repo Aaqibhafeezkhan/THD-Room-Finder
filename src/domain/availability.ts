@@ -7,6 +7,7 @@
  */
 import type { FreeRoom, Room, RoomAvailability, RoomStatus, ScheduledEvent } from './models';
 import { isExcludedVenue, isPriority } from './priority';
+import { isOnCampusMap } from './campusAvailability';
 
 /** A free room whose remaining window is at/under this is "closing soon" (amber). */
 export const SOON_THRESHOLD_MINUTES = 40;
@@ -123,6 +124,28 @@ export function computeFreeRooms(
   });
 
   return free;
+}
+
+/**
+ * Rooms a student can study in when their availability can't be checked
+ * (#154): the eligible teaching rooms without excluded venues, Deggendorf
+ * campus first, then main teaching rooms, then by building and name. No
+ * status and no durations: nothing here claims a room is free.
+ */
+export function knownRooms(rooms: Room[], eligibleIdents?: ReadonlySet<string>): Room[] {
+  return rooms
+    .filter((r) => (eligibleIdents ? eligibleIdents.has(r.ident) : true))
+    .filter((r) => !isExcludedVenue(r))
+    .sort((a, b) => {
+      const ma = isOnCampusMap(a) ? 1 : 0;
+      const mb = isOnCampusMap(b) ? 1 : 0;
+      if (ma !== mb) return mb - ma;
+      const pa = isPriority(a) ? 1 : 0;
+      const pb = isPriority(b) ? 1 : 0;
+      if (pa !== pb) return pb - pa;
+      if (a.building !== b.building) return a.building < b.building ? -1 : 1;
+      return a.name < b.name ? -1 : 1;
+    });
 }
 
 /** All events for a room ident, chronologically — the room's day timeline. */
