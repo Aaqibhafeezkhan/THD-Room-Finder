@@ -8,11 +8,12 @@ import { TableSheet } from './TableSheet';
 import { SessionTableSheet } from './SessionTableSheet';
 
 /**
- * "Set a table" from a room (T1): signs in first when needed (the quick
- * path: email, code, first name), then opens the sheet and goes to the new
+ * "Study together" from a room (T1): opens the sheet and goes to the new
  * table's page. `fromSession` does the same for inviting people to the
- * running session (#153); cancelling the sign-in leaves the session as it
- * was. `available` is false without the focus service.
+ * running session (#153). Hosting needs an account, so `available` is false
+ * when signed out or without the focus service; signed out, the focus card
+ * points to the study profile instead. Guests still take a seat from a link
+ * with the quick path (email, code, first name).
  */
 export function useTableFlow(room: Room | null | undefined) {
   const navigate = useNavigate();
@@ -61,7 +62,7 @@ export function useTableFlow(room: Room | null | undefined) {
     </>
   ) : null;
   return {
-    available: Boolean(api && profile.available),
+    available: Boolean(api && profile.available && profile.identity),
     start: () => begin('slots'),
     fromSession: () => begin('session'),
     element,

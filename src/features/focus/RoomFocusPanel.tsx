@@ -176,8 +176,8 @@ export function RoomFocusPanel({ room, availability, closing, scheduleOnly, sche
       ),
       end: t('End', 'Beenden'),
       signedOut: t(
-        "This session stays on your device; the room doesn't show as claimed. Set up a study profile to claim rooms and focus with your batch.",
-        'Diese Session bleibt auf deinem Gerät; der Raum wird nicht als belegt angezeigt. Richte ein Studienprofil ein, um Räume zu belegen und mit deinem Jahrgang zu lernen.',
+        "This session stays on your device; the room doesn't show as claimed. Set up a study profile to claim rooms, focus with your batch and invite friends to study together.",
+        'Diese Session bleibt auf deinem Gerät; der Raum wird nicht als belegt angezeigt. Richte ein Studienprofil ein, um Räume zu belegen, mit deinem Jahrgang zu lernen und Freunde zum Zusammenlernen einzuladen.',
       ),
       setup: t('Set Up Study Profile', 'Studienprofil einrichten'),
     };
