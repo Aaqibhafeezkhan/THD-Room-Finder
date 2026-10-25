@@ -119,7 +119,7 @@ export function FocusGallery() {
     ),
     end: t('End', 'Beenden'),
     signedOut: t(
-      "This session stays on your device; the room doesn't show as claimed. Set up a study profile to claim rooms and focus with your batch.",
+      "This session stays on your device; the room doesn't show as claimed. Set up a study profile to claim rooms, focus with your batch and invite friends to study together.",
       'Diese Session bleibt auf deinem Gerät; der Raum wird nicht als belegt angezeigt. Richte ein Studienprofil ein, um Räume zu belegen und mit deinem Jahrgang zu lernen.',
     ),
     setup: t('Set Up Study Profile', 'Studienprofil einrichten'),

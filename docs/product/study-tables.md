@@ -23,7 +23,9 @@ the room and says so.
 3. **People, not social graphs.** No friends, follows or search. You see the
    tables you set and the ones you sat down at.
 4. **Accounts only when needed.** Anyone can open a link. Taking a seat needs
-   the email code and a first name, nothing else.
+   the email code and a first name, nothing else. Setting a table needs an
+   account: signed out, rooms don't offer Study together, and the focus card
+   points to the study profile instead.
 5. **Same rhythm as focus.** At the time a table becomes an ordinary focus
    session for everyone at it, in step.
 6. **Design system first.** Every screen uses the components listed below;
