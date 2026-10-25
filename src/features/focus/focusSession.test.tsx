@@ -56,7 +56,7 @@ function identityApi(signedIn: boolean, withProfile = true): IdentityApi {
     sendCode: async () => {},
     verifyCode: async () => {},
     signOut: async () => {},
-    programmes: async () => [{ id: 'ain-b', code: 'AIN', nameEn: 'AI', nameDe: 'AI', intakeTerms: ['winter'] }],
+    programmes: async () => [{ id: 'ain-b', code: 'AIN', nameEn: 'AI', nameDe: 'AI', intakeTerms: ['winter'], level: 'bachelor', campus: ['Deggendorf'] }],
     getIdentity: async () =>
       signedIn && withProfile
         ? { displayName: 'Lena', programmeId: 'ain-b', intakeYear: 2023, intakeTerm: 'winter', defaultVisibility: 'private', showName: false, version: 1 }

@@ -116,7 +116,7 @@ export function SetupSheet({ open, onClose, onDone, quick = false }: SetupSheetP
     const q = query.trim().toLowerCase();
     const all = profile.programmes;
     if (!q) return all;
-    return all.filter((p) => [p.code, p.nameEn, p.nameDe].some((s) => s.toLowerCase().includes(q)));
+    return all.filter((p) => [p.code, p.nameEn, p.nameDe, programmeDetail(p)].some((s) => s.toLowerCase().includes(q)));
   }, [query, profile.programmes]);
 
   const go = (s: Step) => {
@@ -253,7 +253,8 @@ export function SetupSheet({ open, onClose, onDone, quick = false }: SetupSheetP
         <div role="radiogroup" aria-label={title} style={{ maxHeight: 280, overflowY: 'auto' }}>
           {matches.map((p) => (
             <Radio key={p.id} checked={listed?.id === p.id} onSelect={() => setProgramme(p)} trailing={p.code}>
-              {locale === 'de' ? p.nameDe : p.nameEn}
+              <div>{locale === 'de' ? p.nameDe : p.nameEn}</div>
+              <div style={sub}>{programmeDetail(p)}</div>
             </Radio>
           ))}
           <Radio checked={programme === 'other'} onSelect={() => setProgramme('other')}>
@@ -377,3 +378,8 @@ const sub: CSSProperties = {
   fontSize: 'var(--body-medium-size)',
   color: 'var(--md-on-surface-variant)',
 };
+
+/** "Master · Cham": tells apart programmes that share a name or code (#40). */
+export function programmeDetail(p: Pick<Programme, 'level' | 'campus'>): string {
+  return [p.level === 'master' ? 'Master' : 'Bachelor', ...p.campus].join(' · ');
+}

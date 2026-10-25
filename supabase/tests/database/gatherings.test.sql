@@ -36,7 +36,7 @@ select '00000000-0000-0000-0000-000000000000', gen_random_uuid(), 'authenticated
        now(), '{}', '{}', now(), now(), '', '', '', ''
   from generate_series(1, 12) n;
 insert into focus.identity (user_id, display_name, programme_id, intake_year, intake_term)
-select u.id, 'P' || substr(u.email, 2, strpos(u.email, '@') - 2), 'bachelor-ain-deggendorf-ft', 2024, 'winter'
+select u.id, 'P' || substr(u.email, 2, strpos(u.email, '@') - 2), 'ain-b', 2024, 'winter'
   from auth.users u where u.email ~ '^p[0-9]+@example\.test$';
 
 -- ── Registry ──────────────────────────────────────────────────────────

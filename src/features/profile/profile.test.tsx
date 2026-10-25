@@ -66,8 +66,9 @@ function fakeIdentityApi(): IdentityApi & { saved: IdentityInput[]; deleted: boo
     },
     async programmes() {
       return [
-        { id: 'ain-b', code: 'AIN', nameEn: 'Artificial Intelligence', nameDe: 'Artificial Intelligence', intakeTerms: ['winter' as const] },
-        { id: 'ki-b', code: 'KI', nameEn: 'Artificial Intelligence', nameDe: 'Künstliche Intelligenz', intakeTerms: ['winter' as const] },
+        { id: 'ain-b', code: 'AIN', nameEn: 'Artificial Intelligence', nameDe: 'Artificial Intelligence', intakeTerms: ['winter' as const], level: 'bachelor' as const, campus: ['Deggendorf'] },
+        { id: 'ki-b', code: 'KI', nameEn: 'Artificial Intelligence', nameDe: 'Künstliche Intelligenz', intakeTerms: ['winter' as const], level: 'bachelor' as const, campus: ['Deggendorf'] },
+        { id: 'ki-m', code: 'KI', nameEn: 'Artificial Intelligence for Smart Sensors and Actuators', nameDe: 'Artificial Intelligence for Smart Sensors and Actuators', intakeTerms: ['winter' as const], level: 'master' as const, campus: ['Deggendorf'] },
       ];
     },
     async getIdentity() {
@@ -256,8 +257,10 @@ describe('Study profile setup', () => {
     await act(async () => anyButton('Continue').click());
     await settle();
     expect(document.body.textContent).toContain('What do you study?');
+    // KI exists as a bachelor and a master: the level tells them apart.
+    expect(radioStarting('Artificial Intelligence for Smart Sensors and ActuatorsMaster · DeggendorfKI')).toBeTruthy();
 
-    await act(async () => radioStarting('Artificial IntelligenceAIN').click());
+    await act(async () => radioStarting('Artificial IntelligenceBachelor · DeggendorfAIN').click());
     await act(async () => anyButton('Next').click());
     await act(async () => radioStarting('Winter 2023').click());
     await act(async () => anyButton('Next').click());

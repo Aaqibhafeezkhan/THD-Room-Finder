@@ -38,7 +38,7 @@ flowchart LR
 
 | Table | Holds | Notes |
 |---|---|---|
-| `focus.programme` | Programme catalogue: id, code, EN/DE name, intake terms, active | Ids are stable slugs; the real list comes from the taxonomy in [#40](https://github.com/arudaev/THD-Room-Finder/issues/40), not built yet. Only listed, active programmes can share Public |
+| `focus.programme` | Programme catalogue: id, code, EN/DE name, intake terms, active | Plus level (bachelor/master) and campus, since codes repeat (MT, KI, MCS). Ids are programme page slugs (`ain-b`) from [`shared/programmes.json`](../../shared/programmes.json) ([#40](https://github.com/arudaev/THD-Room-Finder/issues/40)). Only listed, active programmes can share Public |
 | `focus.room` | Rooms a session may name: `thd:<THabella ident>`, campus, code, active | Generated from THabella by `scripts/dev/focus-rooms-sql.py` as a migration; students cannot add rooms |
 | `focus.identity` | Display name (1–32), programme, intake year + term, default visibility, show-name consent, version | Self-declared. Batch = programme + intake year + intake term. No email |
 | `focus.history` | Owner, entry id, start, end, focus minutes, synced at | Signed-in students only ([ADR 0005](adr/0005-focus-across-devices.md)). No room, rhythm or batch. Primary key (owner, entry id); at most 5,000 per owner; deleted with the account |
@@ -57,7 +57,7 @@ identity results are JSON objects; times are server time.
 
 | Function | Who | Does |
 |---|---|---|
-| `list_programmes()` | anyone | Active programmes for setup |
+| `list_programmes()` | anyone | Active programmes for setup, with level and campus |
 | `get_identity()` | signed in | Own identity or `null` |
 | `save_identity(display_name, programme_id, intake_year, intake_term, default_visibility, show_name, expected_version)` | signed in | Create (version `null`) or update. A new programme or intake **ends the running session** first |
 | `get_focus()` | signed in | Own open session or `null`; closes it first if its lease ran out. Owner results carry `room_code` and `renewed_at`, so another device of the same student can pick the session up ([ADR 0005](adr/0005-focus-across-devices.md)) |
@@ -152,7 +152,6 @@ Errors carry a stable `hint` for the app to branch on; `message` is for logs.
 |---|---|
 | Per-device lease token (one renewing tab) | ADR 0001 asks for it; the version check covers stale writers for now. Revisit in [#19](https://github.com/arudaev/THD-Room-Finder/issues/19) |
 | Separate admission budget table | A per-user start limit (20 per hour) stands in until [#22](https://github.com/arudaev/THD-Room-Finder/issues/22) measures load |
-| Full programme list | Once the [#40](https://github.com/arudaev/THD-Room-Finder/issues/40) taxonomy exists; a maintainer import fills `focus.programme` |
 | Client wrapper | Identity and sign-in: `src/data/identityApi.ts` ([#18](https://github.com/arudaev/THD-Room-Finder/issues/18)). Sessions: [#19](https://github.com/arudaev/THD-Room-Finder/issues/19) |
 | Manual semester correction (leave semesters) | Needs a stored offset on `focus.identity`; today the number follows the intake only |
 
@@ -171,3 +170,17 @@ npx supabase db reset   # migrations + seed
 npx supabase test db    # contract tests
 npx supabase gen types typescript --local --schema public   # after a migration
 ```
+
+## Updating the programme list
+
+THD adds or drops programmes a few times a year. To follow:
+
+1. Edit [`shared/programmes.json`](../../shared/programmes.json): the code is
+   the programme page address (th-deg.de/**ain**-b), the facts come from that
+   page, and the page goes into `sources`. `npm test` checks the file against
+   its schema.
+2. Run `node scripts/dev/programme-catalogue.mjs` and paste the output into a
+   new migration. Programmes that leave the list are deactivated, never
+   deleted, so existing profiles keep their batch.
+3. The taxonomy test fails until the newest catalogue migration matches the
+   file, so the two cannot drift apart.
