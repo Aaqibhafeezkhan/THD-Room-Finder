@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>THD Room Finder: find a free room, focus in it</title>
-  <meta name="description" content="See which rooms at THD Deggendorf are free right now and for how long, then focus there in Pomodoro blocks, alone or with your batch. Free, open source, no account needed.">
+  <title>THD Room Finder: free rooms at THD, and how long they stay free</title>
+  <meta name="description" content="Every free teaching room at THD Deggendorf right now, and how long it stays free. Focus there, or invite friends with one link. Free, open source, no account needed.">
   <link rel="canonical" href="https://arudaev.github.io/THD-Room-Finder/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="THD Room Finder">
   <meta property="og:url" content="https://arudaev.github.io/THD-Room-Finder/">
-  <meta property="og:title" content="THD Room Finder: find a free room, focus in it">
-  <meta property="og:description" content="Live free study rooms at THD Deggendorf, plus Pomodoro focus sessions with your batch. Free, open source, no account needed.">
+  <meta property="og:title" content="THD Room Finder: free rooms at THD, and how long they stay free">
+  <meta property="og:description" content="Every free teaching room at THD Deggendorf, longest-free first. Focus there, or invite friends with one link. Free, open source, no account needed.">
   <meta property="og:image" content="https://arudaev.github.io/THD-Room-Finder/assets/og.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -170,9 +170,12 @@
     .legend span { display: inline-flex; align-items: center; gap: 8px; }
     .legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
 
-    /* Batch */
-    .batch-art { border-radius: var(--radius-l); overflow: hidden; box-shadow: var(--shadow-2); }
-    .soon { display: inline-flex; margin-left: 8px; vertical-align: middle; padding: 3px 10px; border-radius: var(--radius-s); background: var(--md-secondary-container); color: var(--md-on-secondary-container); font-size: 12px; font-weight: 500; letter-spacing: 0; text-transform: none; }
+    /* Why */
+    .why .card .tile { background: var(--md-tertiary-container); color: var(--md-on-tertiary-container); }
+
+    /* Real components on a soft stage */
+    .art { border-radius: var(--radius-xl); padding: 28px 20px; display: flex; justify-content: center; background: linear-gradient(160deg, var(--md-focus-container), color-mix(in srgb, var(--md-focus-container) 30%, var(--md-bg))); }
+    .art img { width: 100%; max-width: 360px; }
 
     /* Privacy */
     .privacy { background: var(--md-surface); }
@@ -233,8 +236,9 @@
   <div class="wrap">
     <a class="brand" href="#top"><img src="icons/app-icon-192.png" alt="" width="32" height="32"><span>THD Room Finder</span></a>
     <nav aria-label="Sections" data-i18n-attr="aria-label:Abschnitte">
+      <a href="#why" data-de="Warum">Why</a>
       <a href="#how" data-de="So geht's">How it works</a>
-      <a href="#focus" data-de="Fokus">Focus</a>
+      <a href="#together" data-de="Zusammen lernen">Study together</a>
       <a href="#privacy" data-de="Privatsphäre">Privacy</a>
       <a href="#faq">FAQ</a>
     </nav>
@@ -258,11 +262,11 @@
     <div class="wrap">
       <div class="hero-copy">
         <span class="chip">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M10 2h4"/></svg>
-          <span data-de="Neu: Fokus-Sessions">New: focus sessions</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M22 20c0-3-2-5.2-5-5.8"/></svg>
+          <span data-de="Neu: zusammen lernen">New: study together</span>
         </span>
-        <h1 data-de="Finde einen freien Raum. <em>Bleib dort fokussiert.</em>">Find a free room. <em>Focus in it.</em></h1>
-        <p class="lead" data-de="Sieh, welche Räume an der TH Deggendorf gerade frei sind und wie lange noch. Dann lern dort in Pomodoro-Blöcken, allein oder mit deinem Jahrgang.">See which rooms at THD Deggendorf are free right now, and for how long. Then study there in Pomodoro blocks, on your own or with your batch.</p>
+        <h1 data-de="Finde einen freien Raum. <em>Und wie lange er frei bleibt.</em>">Find a free room. <em>See how long it stays free.</em></h1>
+        <p class="lead" data-de="Jeder Lehrraum der TH Deggendorf, direkt aus dem offiziellen Stundenplan, sortiert danach, wie lange er frei bleibt. Dann lern dort, allein oder mit Freunden.">Every teaching room at THD Deggendorf, straight from the official timetable, sorted by how long it stays free. Then study there, alone or with friends.</p>
         <div class="ctas">
           <a class="btn filled" href="https://thd-room-finder.vercel.app/">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
@@ -278,6 +282,24 @@
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span data-de="Kein Konto nötig">No account needed</span></li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><a href="#get" data-de="Auch fürs iPhone">Works on iPhone too</a></li>
         </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="focus" id="why">
+    <div class="wrap">
+      <div class="head center">
+        <p class="eyebrow" data-de="Warum">Why use it</p>
+        <h2 data-de="Schluss mit Türen ausprobieren">Stop trying doors</h2>
+        <p class="sub" data-de="An einem normalen Wochentag stehen rund hundert Lehrräume stundenlang leer. Die App zeigt dir welche, und wie lange, bevor du losgehst.">On a normal weekday, around a hundred teaching rooms stand empty for hours. The app shows you which ones, and for how long, before you walk over.</p>
+      </div>
+      <div class="grid why">
+        <div class="card"><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <h3 data-de="Wissen, bevor du gehst">Know before you walk</h3><p data-de="Frei für 10 Stunden oder bis zur Vorlesung um 14:00. Die Räume, die am längsten frei bleiben, stehen oben.">Free for 10 hours, or until the 14:00 lecture. The rooms that stay free longest come first.</p></div>
+        <div class="card"><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+          <h3 data-de="Vorausplanen">Plan ahead</h3><p data-de="Morgen um 9 oder irgendwann diese Woche. Noch vor Öffnung siehst du, was frei sein wird.">Tomorrow at 9 or any time this week. Before the doors open, see what will be free.</p></div>
+        <div class="card"><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v17M3 21h18"/><circle cx="15" cy="12" r="1"/></svg></span>
+          <h3 data-de="Einfach öffnen">Just open it</h3><p data-de="Kein Konto, keine Werbung, keine Installation nötig. Kostenlos und Open Source.">No account, no ads, nothing to install. Free and open source.</p></div>
       </div>
     </div>
   </section>
@@ -318,7 +340,27 @@
     </div>
   </section>
 
-  <section class="focus" id="focus">
+  <section class="focus" id="map">
+    <div class="wrap">
+      <div class="head center">
+        <p class="eyebrow" data-de="Campus-Karte">Campus map</p>
+        <h2 data-de="Der ganze Campus auf einen Blick">The whole campus at a glance</h2>
+        <p class="sub" data-de="Jedes Gebäude ist danach eingefärbt, wie viele Räume gerade frei sind. Tippe auf ein Gebäude, um seine Räume zu sehen.">Every building is tinted by how many rooms are free right now. Tap one to see its rooms.</p>
+      </div>
+      <div class="browser">
+        <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span>thd-room-finder.vercel.app</span></div>
+        <picture><source srcset="assets/desktop-map-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/desktop-map-light.webp" alt="The campus map on a laptop: buildings tinted by free rooms, 82 rooms free right now, the longest-free rooms listed on the right" loading="lazy" width="1600" height="1000"></picture>
+      </div>
+      <div class="legend" aria-hidden="true">
+        <span><i style="background:var(--md-tertiary)"></i><span data-de="Frei">Free</span></span>
+        <span><i style="background:#E6A100"></i><span data-de="Bald belegt (≤ 40 Min.)">Closing soon (≤ 40 min)</span></span>
+        <span><i style="background:var(--md-focus)"></i><span data-de="Fokus-Session">Focus session</span></span>
+        <span><i style="background:#B3261E"></i><span data-de="Vorlesung">Lecture</span></span>
+      </div>
+    </div>
+  </section>
+
+  <section id="focus">
     <div class="wrap">
       <div class="split">
         <div>
@@ -349,46 +391,49 @@
     </div>
   </section>
 
-  <section id="map">
+  <section class="focus" id="together">
     <div class="wrap">
-      <div class="head center">
-        <p class="eyebrow" data-de="Campus-Karte">Campus map</p>
-        <h2 data-de="Der ganze Campus auf einen Blick">The whole campus at a glance</h2>
-        <p class="sub" data-de="Jedes Gebäude ist danach eingefärbt, wie viele Räume gerade frei sind. Tippe auf ein Gebäude, um seine Räume zu sehen.">Every building is tinted by how many rooms are free right now. Tap one to see its rooms.</p>
-      </div>
-      <div class="browser">
-        <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span>thd-room-finder.vercel.app</span></div>
-        <picture><source srcset="assets/desktop-map-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/desktop-map-light.webp" alt="The campus map on a laptop: buildings tinted by free rooms, 82 rooms free right now, the longest-free rooms listed on the right" loading="lazy" width="1600" height="1000"></picture>
-      </div>
-      <div class="legend" aria-hidden="true">
-        <span><i style="background:var(--md-tertiary)"></i><span data-de="Frei">Free</span></span>
-        <span><i style="background:#E6A100"></i><span data-de="Bald belegt (≤ 40 Min.)">Closing soon (≤ 40 min)</span></span>
-        <span><i style="background:var(--md-focus)"></i><span data-de="Fokus-Session">Focus session</span></span>
-        <span><i style="background:#B3261E"></i><span data-de="Vorlesung">Lecture</span></span>
+      <div class="split">
+        <div>
+          <p class="eyebrow" data-de="Zusammen lernen">Study together</p>
+          <h2 data-de="Ein Link für den Gruppenchat">One link for the group chat</h2>
+          <p class="sub" data-de="Such dir eine Zeit aus, zu der der Raum frei ist, wähl die Plätze und schick den Link. Freunde nehmen mit einem E-Mail-Code Platz, ohne App.">Pick a time the room is free, choose the seats and send the link. Friends take a seat with an email code, no app needed.</p>
+          <ul class="feats" style="margin-top:28px">
+            <li><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5M3 21v-5h5"/></svg></span>
+              <div><h3 data-de="Im selben Takt starten">Start in step</h3><p data-de="Zur Zeit startet ihr Fokus im selben Rhythmus, die Pausen liegen gleich. Schon am Lernen? Lade Leute in deine laufende Session ein.">At the time, everyone starts focus in the same rhythm, so breaks line up. Already focusing? Invite people into the session you're running.</p></div></li>
+            <li><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span>
+              <div><h3 data-de="Privat oder mit deinem Jahrgang">Private, or with your batch</h3><p data-de="Privat sehen andere nur, dass der Raum belegt ist, nie von wem. Öffentlich sieht dein Jahrgang, wo du lernst, und kann dazukommen.">Private, others only see that the room is taken, never by whom. Public, your batch sees where you are and can join.</p></div></li>
+            <li><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg></span>
+              <div><h3 data-de="Nie eine Buchung">Never a booking</h3><p data-de="Die App reserviert keine Räume. Taucht eine Vorlesung auf, warnt der Lerntisch und schlägt einen freien Raum vor.">The app doesn't reserve rooms. If a lecture shows up, the study table warns you and suggests a free room.</p></div></li>
+          </ul>
+        </div>
+        <div class="art"><picture><source srcset="assets/table-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/table-light.webp" alt="A study table for Algorithms in C212: three of four seats taken, a Take a seat button, and the room's free start times today" data-de-alt="Ein Lerntisch für Algorithmen in C212: drei von vier Plätzen belegt, ein Platz-nehmen-Knopf und die freien Startzeiten des Raums heute" loading="lazy" width="400" height="638"></picture></div>
       </div>
     </div>
   </section>
 
-  <section class="focus" id="batch">
+  <section id="groups">
     <div class="wrap">
       <div class="split rev">
-        <div class="batch-art"><img src="assets/batch.webp" alt="Illustration of a THD lecture hall with autumn trees outside and a few students, shown as grey silhouettes, studying quietly in different rows" loading="lazy" width="1280" height="853"></div>
+        <div class="art"><picture><source srcset="assets/gathering-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/gathering-light.webp" alt="A game night in C212 from a checked student group: long tables filling up as people reply, and a Going button" data-de-alt="Ein Spieleabend in C212 von einer geprüften Studierendengruppe: lange Tische füllen sich mit den Antworten, dazu ein Ich-komme-Knopf" loading="lazy" width="400" height="705"></picture></div>
         <div>
-          <p class="eyebrow"><span data-de="Gemeinsam">Together</span><span class="soon" data-de="Mit Studienprofil">With a study profile</span></p>
-          <h2 data-de="Lern dort, wo dein Jahrgang lernt">Study where your batch studies</h2>
-          <p class="sub" data-de="Mit einem Studienprofil siehst du, in welchen Räumen dein Jahrgang gerade lernt, und steigst mit einem Tipp in denselben Rhythmus ein.">With a study profile, you see which rooms your batch is studying in right now, and join their rhythm with one tap.</p>
+          <p class="eyebrow" data-de="Studierendengruppen">Student groups</p>
+          <h2 data-de="Spieleabend, Vortrag, große Lernrunde">Game nights, talks, big study sessions</h2>
+          <p class="sub" data-de="Studierendengruppen registrieren sich offen bei THD AI und bekommen ein geprüftes Abzeichen. Dann kündigen sie Treffen in Räumen an, die die THD genehmigt hat.">Student groups register in the open with THD AI and get a checked tag. Then they announce gatherings in rooms THD approved for them.</p>
           <ul class="feats" style="margin-top:28px">
-            <li><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span>
-              <div><h3 data-de="Öffentlich für deinen Jahrgang">Public to your batch</h3><p data-de="Nur dein Jahrgang sieht die Session, mit deinem Namen nur, wenn du es willst. Gemeinsame Pausen inklusive.">Only your batch sees the session, with your name only if you want it. Shared breaks included.</p></div></li>
-            <li><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
-              <div><h3 data-de="Oder privat">Or private</h3><p data-de="Andere sehen nur, dass der Raum belegt ist, nie von wem. So läuft niemand umsonst hin.">Others only see that the room is taken, never by whom. Nobody walks over for nothing.</p></div></li>
+            <li><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><circle cx="12" cy="3.5" r="1.5"/><circle cx="12" cy="20.5" r="1.5"/><circle cx="3.5" cy="12" r="1.5"/><circle cx="20.5" cy="12" r="1.5"/></svg></span>
+              <div><h3 data-de="Passend zum Raum">Sized to the room</h3><p data-de="Vier Aufbauten, von Reihen bis langen Tischen. Die Plätze füllen sich, wenn Leute zusagen, mit Warteliste, wenn es voll ist.">Four setups, from rows to long tables. Seats fill as people reply, with a waiting list when it's full.</p></div></li>
+            <li><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M22 20c0-3-2-5.2-5-5.8"/></svg></span>
+              <div><h3 data-de="Planen ohne E-Mail-Listen">Plan without email lists</h3><p data-de="Organisatoren sehen, mit wie vielen sie rechnen können und welche Studiengänge kommen. Keine E-Mail-Adressen.">Organizers see how many to plan for and which programmes are coming. Never email addresses.</p></div></li>
+            <li><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+              <div><h3 data-de="Geprüft, nie gekauft">Checked, never bought</h3><p data-de="Jede Gruppe registriert sich selbst im <a href=&quot;https://github.com/THD-AI/organizations&quot;>öffentlichen Register</a>. Das Abzeichen lässt sich nicht kaufen.">Every group registers itself in the <a href="https://github.com/THD-AI/organizations">public registry</a>. The tag can't be bought.</p></div></li>
           </ul>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="privacy">
+  <section class="focus" id="privacy">
     <div class="wrap">
       <div class="head">
         <p class="eyebrow" data-de="Privatsphäre">Privacy</p>
@@ -400,14 +445,14 @@
         <div class="card"><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M12 18h.01"/></svg></span>
           <h3 data-de="Dein Verlauf, auf deinen Geräten">Your graph, on your devices</h3><p data-de="Ohne Konto verlässt dein Fokus-Verlauf nie das Handy. Angemeldet synchronisieren nur Datum und Minuten zwischen deinen Geräten; Räume bleiben auf dem Gerät.">Without an account, your focus history never leaves your phone. Signed in, only dates and minutes sync between your devices; rooms stay on the device.</p></div>
         <div class="card"><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.66 3.58 3 8 3s8-1.34 8-3V5M4 11v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/></svg></span>
-          <h3 data-de="Daten direkt von THabella">Straight from THabella</h3><p data-de="Räume und Stundenpläne kommen aus dem öffentlichen Planungssystem der THD, demselben, das die Hochschule selbst nutzt.">Rooms and timetables come from THD's public scheduling system, the same one the university uses.</p></div>
+          <h3 data-de="Daten direkt von THabella">Straight from THabella</h3><p data-de="Räume und Stundenpläne kommen aus dem öffentlichen Planungssystem der THD. Ist es mal nicht erreichbar, bleiben die Räume gelistet und Fokus startet trotzdem.">Rooms and timetables come from THD's public scheduling system. If it's ever down, rooms stay listed and focus still starts.</p></div>
         <div class="card"><span class="tile"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg></span>
           <h3 data-de="Offen auf GitHub">Open on GitHub</h3><p data-de="Gebaut von einem THD-Studenten. Jeder kann den Code lesen, Fehler melden oder mitbauen.">Built by a THD student. Anyone can read the code, report a bug or help build it.</p></div>
       </div>
     </div>
   </section>
 
-  <section class="focus get" id="get">
+  <section class="get" id="get">
     <div class="wrap">
       <div class="head">
         <p class="eyebrow" data-de="Loslegen">Get it</p>
@@ -418,7 +463,7 @@
           <h3 data-de="Im Browser">In the browser</h3><p data-de="Läuft auf Laptop und Handy, auch offline, sobald es einmal geladen ist.">Runs on laptops and phones, offline too once it has loaded.</p>
           <a class="btn filled small" href="https://thd-room-finder.vercel.app/" data-de="App öffnen">Open app</a></div>
         <div class="card"><span class="tile"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85a.637.637 0 00-.83.22l-1.88 3.24a11.43 11.43 0 00-8.94 0L5.65 5.67a.643.643 0 00-.87-.2c-.28.18-.37.54-.22.83L6.4 9.48A10.78 10.78 0 001 18h22a10.78 10.78 0 00-5.4-8.52zM7 15.25a1.25 1.25 0 110-2.5 1.25 1.25 0 010 2.5zm10 0a1.25 1.25 0 110-2.5 1.25 1.25 0 010 2.5z"/></svg></span>
-          <h3>Android</h3><p data-de="Die App mit Sperrbildschirm-Benachrichtigung. Android 5.1 oder neuer; beim ersten Mal die Installation aus dem Browser erlauben.">The app with the lock-screen notification. Android 5.1 or newer; allow installing from your browser the first time.</p>
+          <h3>Android</h3><p data-de="Die App mit Sperrbildschirm-Benachrichtigung, die sich nach der ersten Installation selbst aktualisiert. Android 5.1 oder neuer; beim ersten Mal die Installation aus dem Browser erlauben.">The app with the lock-screen notification, and it updates itself after the first install. Android 5.1 or newer; allow installing from your browser the first time.</p>
           <a class="btn tonal small apk" href="https://github.com/arudaev/THD-Room-Finder/releases/latest" target="_blank" rel="noopener"><span data-de="APK herunterladen">Download APK</span><span class="ver"></span></a></div>
         <div class="card" id="iphone"><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M12 18h.01"/></svg></span>
           <h3>iPhone</h3>
@@ -436,7 +481,7 @@
     </div>
   </section>
 
-  <section id="faq">
+  <section class="focus" id="faq">
     <div class="wrap">
       <div class="head center"><p class="eyebrow">FAQ</p><h2 data-de="Gute Fragen">Good questions</h2></div>
       <div class="faq">
@@ -444,14 +489,16 @@
           <p data-de="Nein. Es ist ein Studentenprojekt. Es nutzt die öffentlichen Raum- und Stundenplandaten aus THabella, aber die Hochschule betreibt es nicht.">No. It's a student project. It uses the public room and timetable data from THabella, but the university doesn't run it.</p></details>
         <details><summary data-de="Wie genau ist „frei“?">How accurate is "free"?</summary>
           <p data-de="So genau wie der Stundenplan: Ein Raum gilt als frei, wenn dort gerade keine Veranstaltung eingetragen ist. Manche Räume sind trotzdem abgeschlossen; die App markiert sie mit „evtl. abgeschlossen“.">As accurate as the timetable: a room counts as free when nothing is booked in it right now. Some rooms are still locked; the app marks those "may be locked".</p></details>
+        <details><summary data-de="Kann ich einen Raum buchen?">Can I book a room?</summary>
+          <p data-de="Nein. Die App zeigt freie Räume und lädt Leute ein, reserviert aber nie einen Raum. Offizielle Buchungen laufen über die THD.">No. The app shows free rooms and lets you invite people, but it never reserves a room. Official bookings go through THD.</p></details>
         <details><summary data-de="Brauche ich ein Konto?">Do I need an account?</summary>
-          <p data-de="Nein. Ohne Konto läuft alles auf deinem Gerät. Ein Studienprofil (E-Mail-Anmeldung) brauchst du nur, um Räume zu beanspruchen und mit deinem Jahrgang zu lernen.">No. Without one, everything runs on your device. You only need a study profile (email sign-in) to claim rooms and study with your batch.</p></details>
+          <p data-de="Nein. Ohne Konto läuft alles auf deinem Gerät. Ein E-Mail-Code reicht, um an einem Lerntisch Platz zu nehmen; ein Studienprofil brauchst du nur, um Räume zu beanspruchen und mit deinem Jahrgang zu lernen.">No. Without one, everything runs on your device. An email code is enough to take a seat at a study table; you only need a study profile to claim rooms and study with your batch.</p></details>
         <details><summary data-de="Sehen andere, wo ich lerne?">Can others see where I study?</summary>
           <p data-de="Nur wenn du es willst. Ohne Studienprofil sieht niemand etwas. Mit Profil zeigt eine private Session nur „belegt“, eine öffentliche zeigt deinem Jahrgang den Raum, deinen Namen nur, wenn du ihn einschaltest.">Only if you want them to. Without a study profile nobody sees anything. With one, a private session only shows "taken"; a public one shows your batch the room, and your name only if you turn it on.</p></details>
         <details><summary data-de="Läuft es auf Handy und Laptop zugleich?">Can I use it on my phone and laptop?</summary>
           <p data-de="Ja. Angemeldet ist dein Fokus-Verlauf auf beiden gleich, und eine laufende Session auf dem Handy erscheint auch auf dem Laptop. Dort kannst du den nächsten Block starten oder sie beenden.">Yes. Signed in, your focus graph is the same on both, and a session running on your phone shows on your laptop too, where you can start the next block or end it.</p></details>
         <details><summary data-de="Funktioniert es offline?">Does it work offline?</summary>
-          <p data-de="Ja. Räume und der Stundenplan des Tages werden zwischengespeichert, und eine Fokus-Session läuft auch ohne Netz weiter.">Yes. Rooms and the day's timetable are cached, and a focus session keeps running without a connection.</p></details>
+          <p data-de="Ja. Räume und der Stundenplan des Tages werden zwischengespeichert, und eine Fokus-Session läuft auch ohne Netz weiter. Ist der THD-Stundenplan selbst nicht erreichbar, zeigt die App die Räume als „Verfügbarkeit unbekannt“, statt zu raten.">Yes. Rooms and the day's timetable are cached, and a focus session keeps running without a connection. If THD's timetable itself is down, the app lists rooms as "availability unknown" instead of guessing.</p></details>
       </div>
     </div>
   </section>
@@ -479,12 +526,15 @@
   nodes.forEach(n => { n.dataset.en = n.innerHTML; });
   const labels = [...document.querySelectorAll('[data-de-label]')];
   labels.forEach(n => { n.dataset.enLabel = n.getAttribute('aria-label'); });
+  const alts = [...document.querySelectorAll('[data-de-alt]')];
+  alts.forEach(n => { n.dataset.enAlt = n.alt; });
   const btn = document.getElementById('lang');
   const set = (lang) => {
     const de = lang === 'de';
     document.documentElement.lang = lang;
     nodes.forEach(n => { n.innerHTML = de ? n.dataset.de : n.dataset.en; });
     labels.forEach(n => n.setAttribute('aria-label', de ? n.dataset.deLabel : n.dataset.enLabel));
+    alts.forEach(n => { n.alt = de ? n.dataset.deAlt : n.dataset.enAlt; });
     btn.textContent = de ? 'EN' : 'DE';
     btn.setAttribute('aria-label', de ? 'Read in English' : 'Auf Deutsch lesen');
     try { localStorage.setItem('thd_site_lang', lang); } catch {}
