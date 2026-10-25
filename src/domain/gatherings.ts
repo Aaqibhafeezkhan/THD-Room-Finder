@@ -25,7 +25,7 @@ export function registryIssueUrl(req: { no: number; name: string; slug: string; 
 
 export const registryIssueLink = (issue: number) => `https://github.com/${REGISTRY}/issues/${issue}`;
 
-/** "Campus Connect e.V." → "campus-connect-e-v" (the group's short name). */
+/** "THD AI e.V." → "thd-ai-e-v" (the group's short name). */
 export function slugFrom(name: string): string {
   return name
     .normalize('NFKD')
