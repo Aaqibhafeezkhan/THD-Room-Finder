@@ -61,6 +61,11 @@ keeps its project ref outside the repo.
   SMTP login and an SMTP key). Brevo's *Authorized IPs* blocking is off for
   SMTP keys, because Supabase sends from changing addresses (`525 5.7.1
   Unauthorized IP address` otherwise). Email rate limit: 30 an hour.
+- **Sender:** `THD Room Finder <codes@pripev.com>`, an address on a domain
+  that is authenticated in Brevo (SPF and DKIM). Never a webmail address such
+  as `@outlook.com`: Brevo can't sign for it, the DMARC check fails and THD's
+  mail server rejects the code as spam (`554 5.7.0 Reject … spam`, seen
+  25 Oct 2026). Brevo's transactional log shows whether a code was delivered.
 - **Email templates:** the app asks for a code, so both templates that can
   answer a sign-in must show `{{ .Token }}`, not only a link. Paste them in
   Authentication → Emails → Templates:
