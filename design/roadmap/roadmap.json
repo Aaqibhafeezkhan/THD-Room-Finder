@@ -1,16 +1,16 @@
 {
   "title": "Where we’re heading",
   "milestones": [
-    {"name": "Foundation", "chip": "Wrapping up", "stories": [
-      ["Design system", "done"], ["Docs, board and automation", "done"], ["Discussions", "doing"]]},
+    {"name": "Foundation", "chip": "Done", "stories": [
+      ["Design system", "done"], ["Docs, board and automation", "done"], ["Discussions", "done"]]},
     {"name": "Focus sessions", "chip": "Wrapping up", "stories": [
       ["Free rooms, live", "done"], ["Focus sessions and rhythms", "done"], ["Study profile and batch", "done"],
       ["Lock-screen notifications", "done"], ["Focus graph and share links", "done"], ["Sync across devices", "done"],
-      ["App updates itself", "done"], ["Device and privacy testing", "doing"], ["Programme and batch list", "doing"]]},
+      ["App updates itself", "done"], ["Device and privacy testing", "doing"], ["Programme and batch list", "done"], ["Works when THabella is down", "done"]]},
     {"name": "Group focus", "chip": "Now", "stories": [
       ["Study tables", "done"], ["Table links and seats", "done"], ["Your tables and reminders", "done"],
-      ["Start together, in step", "done"], ["Handles and display names", "planned"], ["Group focus graph", "planned"]]},
-    {"name": "Student groups", "chip": "Now", "stories": [
+      ["Start together, in step", "done"], ["Invite to a running session", "done"], ["Handles and display names", "planned"], ["Group focus graph", "planned"]]},
+    {"name": "Student groups", "chip": "Done", "stories": [
       ["Groups register themselves", "done"], ["Verified tag", "done"], ["Organizer links", "done"],
       ["Gatherings in approved rooms", "done"], ["Halls and replies", "done"], ["Group pages", "done"]]},
     {"name": "Around Deggendorf", "chip": "Later", "stories": [
