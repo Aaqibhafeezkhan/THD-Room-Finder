@@ -10,13 +10,7 @@
 --   Sam     sam@example.test     no study profile     signed in, focus stays on the device
 --   (signed out, anon key)                           anonymous claim
 
--- Programmes: synthetic placeholders until the #40 taxonomy exists.
-insert into focus.programme (id, code, name_en, name_de, intake_terms) values
-  ('bachelor-ain-deggendorf-ft', 'AIN', 'Artificial Intelligence', 'Artificial Intelligence', '{winter}'),
-  ('bachelor-ki-deggendorf-ft', 'KI', 'Artificial Intelligence', 'Künstliche Intelligenz', '{winter}'),
-  ('bachelor-aif-b-deggendorf-ft', 'AIF-B', 'Applied Computer Science', 'Angewandte Informatik', '{winter}'),
-  ('bachelor-wi-deggendorf-ft', 'WI', 'Business Informatics', 'Wirtschaftsinformatik', '{winter}'),
-  ('master-mte-m-deggendorf-ft', 'MT', 'Media Technology', 'Medientechnik', '{winter,summer}');
+-- Programmes come from the 20261025120000_programme_catalogue migration (#40).
 
 -- Rooms come from the 20261015090000_focus_rooms migration (THabella keys).
 
@@ -42,10 +36,10 @@ select gen_random_uuid(), u.id, u.id::text, 'email',
  where u.email like '%@example.test';
 
 insert into focus.identity (user_id, display_name, programme_id, intake_year, intake_term, default_visibility, show_name) values
-  ('00000000-0000-4000-a000-000000000001', 'Lena', 'bachelor-ain-deggendorf-ft', 2023, 'winter', 'private', false),
-  ('00000000-0000-4000-a000-000000000002', 'Max', 'bachelor-ain-deggendorf-ft', 2023, 'winter', 'public', true),
-  ('00000000-0000-4000-a000-000000000003', 'Jonas', 'bachelor-ain-deggendorf-ft', 2024, 'winter', 'public', false),
-  ('00000000-0000-4000-a000-000000000004', 'Mia', 'bachelor-ki-deggendorf-ft', 2023, 'winter', 'public', true);
+  ('00000000-0000-4000-a000-000000000001', 'Lena', 'ain-b', 2023, 'winter', 'private', false),
+  ('00000000-0000-4000-a000-000000000002', 'Max', 'ain-b', 2023, 'winter', 'public', true),
+  ('00000000-0000-4000-a000-000000000003', 'Jonas', 'ain-b', 2024, 'winter', 'public', false),
+  ('00000000-0000-4000-a000-000000000004', 'Mia', 'ki-b', 2023, 'winter', 'public', true);
 
 -- A little live activity so the map and list have something to show:
 -- Max studies publicly in A008 (name shown, Deep 50/10), Mia privately in
@@ -55,10 +49,10 @@ insert into focus.session (user_id, room_key, visibility, show_name, programme_i
                            focus_minutes, break_minutes, long_break_minutes, long_every, anchor_at)
 values
   ('00000000-0000-4000-a000-000000000002', 'thd:r000000001', 'public', true,
-   'bachelor-ain-deggendorf-ft', 2023, 'winter', gen_random_uuid(),
+   'ain-b', 2023, 'winter', gen_random_uuid(),
    now() - interval '20 minutes', now() + interval '100 minutes', now() + interval '40 minutes',
    50, 10, 0, 0, now() - interval '20 minutes'),
   ('00000000-0000-4000-a000-000000000004', 'thd:r000000131', 'private', false,
-   'bachelor-ki-deggendorf-ft', 2023, 'winter', gen_random_uuid(),
+   'ki-b', 2023, 'winter', gen_random_uuid(),
    now() - interval '40 minutes', now() + interval '80 minutes', now() + interval '20 minutes',
    25, 5, 15, 4, now() - interval '40 minutes');

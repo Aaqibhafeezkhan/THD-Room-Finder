@@ -2,7 +2,7 @@
 -- Uses the synthetic people from supabase/seed.sql. Each request is made
 -- as that person's JWT, exactly as a direct API call would be.
 begin;
-select plan(47);
+select plan(48);
 
 create function pg_temp.act_as(p_email text) returns void language plpgsql as $$
 declare uid uuid;
@@ -24,7 +24,8 @@ select pg_temp.act_as(null);
 select throws_ok($$select * from focus.session$$, '42501', null, 'signed out: session table is not reachable');
 select throws_ok($$select public.start_focus('thd:r000000053', 60, 'private', false, gen_random_uuid())$$,
   '42501', null, 'signed out: cannot start a shared session');
-select is((select count(*)::int from public.list_programmes()), 5, 'signed out: programme list is readable');
+select ok((select count(*) from public.list_programmes()) > 50, 'signed out: programme list is readable');
+select is((select level from public.list_programmes() where id = 'mt-m'), 'master', 'programmes carry their level');
 
 select pg_temp.act_as('lena@example.test');
 select throws_ok($$select * from focus.identity$$, '42501', null, 'signed in: identity table is not reachable');
@@ -158,7 +159,7 @@ select throws_ok($$select public.start_focus('thd:r000000144', 60, 'private', fa
 
 -- ── Changing batch ends the session; deleting removes the account ─────
 select pg_temp.act_as('mia@example.test');
-select lives_ok($$select public.save_identity('Mia', 'bachelor-ki-deggendorf-ft', 2024, 'winter', 'public', true, 1)$$,
+select lives_ok($$select public.save_identity('Mia', 'ki-b', 2024, 'winter', 'public', true, 1)$$,
   'saving a new intake works');
 select is(public.get_focus(), null, 'changing the batch ended the running session');
 select lives_ok($$select public.delete_identity()$$, 'deleting the profile works');

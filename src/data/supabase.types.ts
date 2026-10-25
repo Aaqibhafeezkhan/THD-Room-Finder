@@ -66,7 +66,7 @@ export type Database = {
                            },
 "list_programmes":
 { Args: Record<PropertyKey, never>; Returns: {
-              "code": string,"id": string,"intake_terms": (string)[],"name_de": string,"name_en": string
+              "campus": (string)[],"code": string,"id": string,"intake_terms": (string)[],"level": string,"name_de": string,"name_en": string
             }[]
                            },
 "my_gatherings":

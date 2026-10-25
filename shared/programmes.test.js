@@ -1,7 +1,8 @@
 // @vitest-environment node
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import Ajv from 'ajv/dist/2020.js';
+import { catalogueSql } from '../scripts/dev/programme-catalogue.mjs';
 
 const read = (name) => JSON.parse(readFileSync(new URL(name, import.meta.url), 'utf8'));
 const taxonomy = read('./programmes.json');
@@ -36,5 +37,16 @@ describe('THD programme taxonomy (#40)', () => {
     const listed = new Set(taxonomy.sourceIndex.map((s) => s.id));
     const cited = [...programmes.flatMap((p) => p.sources), ...taxonomy.edgeCases.flatMap((e) => e.sources ?? [])];
     expect(cited.filter((s) => !listed.has(s))).toEqual([]);
+  });
+
+  it('is what the newest catalogue migration loads', () => {
+    const dir = new URL('../supabase/migrations/', import.meta.url);
+    const newest = readdirSync(dir)
+      .filter((f) => readFileSync(new URL(f, dir), 'utf8').includes('-- programme catalogue:'))
+      .sort()
+      .at(-1);
+    // After changing programmes.json, add a migration with the output of
+    // node scripts/dev/programme-catalogue.mjs.
+    expect(readFileSync(new URL(newest, dir), 'utf8').replace(/\r\n/g, '\n')).toContain(catalogueSql(taxonomy));
   });
 });

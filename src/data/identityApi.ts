@@ -11,6 +11,9 @@ export interface Programme {
   nameEn: string;
   nameDe: string;
   intakeTerms: ('winter' | 'summer')[];
+  /** Codes repeat across levels and campuses (#40); these tell them apart. */
+  level: 'bachelor' | 'master';
+  campus: string[];
 }
 
 export interface Identity {
@@ -125,6 +128,8 @@ export function supabaseIdentityApi(load: () => Promise<FocusClient>): IdentityA
         nameEn: p.name_en,
         nameDe: p.name_de,
         intakeTerms: p.intake_terms.filter((t): t is 'winter' | 'summer' => t === 'winter' || t === 'summer'),
+        level: p.level === 'master' ? 'master' : 'bachelor',
+        campus: p.campus ?? [],
       }));
     },
     async getIdentity() {
