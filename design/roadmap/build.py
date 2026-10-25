@@ -26,7 +26,7 @@ FONTS = 'C:/Windows/Fonts/'
 BOLD, SEMI, REG = 'segoeuib.ttf', 'seguisb.ttf', 'segoeui.ttf'
 NAVY, MUTED = (27, 31, 59), (78, 82, 110)
 TEAL, PURPLE, GREY, BLUE = (0, 121, 107), (94, 63, 184), (154, 160, 168), (21, 101, 192)
-CHIP = {'Wrapping up': TEAL, 'Now': PURPLE, 'Next': BLUE, 'Later': (96, 104, 130)}
+CHIP = {'Done': (46, 125, 50), 'Wrapping up': TEAL, 'Now': PURPLE, 'Next': BLUE, 'Later': (96, 104, 130)}
 ICON = Image.open(os.path.join(REPO, 'public', 'icons', 'app-icon-512.png')).convert('RGBA')
 
 
