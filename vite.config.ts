@@ -1,6 +1,7 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import { configDefaults } from 'vitest/config';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath, URL } from 'node:url';
 import { nativeFingerprint } from './scripts/release/nativeFingerprint.mjs';
@@ -123,5 +124,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
+    // Agent worktrees under .claude/ hold other checkouts of this repo.
+    exclude: [...configDefaults.exclude, '.claude/**', 'android/**'],
   },
 });
