@@ -7,15 +7,15 @@ const person = (programme: string | null, answer: string, name = 'Lena') => ({
 
 describe('registry', () => {
   it('prefills the issue form with the request', () => {
-    const url = new URL(registryIssueUrl({ no: 17, name: 'Campus Connect', slug: 'campus-connect' }));
+    const url = new URL(registryIssueUrl({ no: 17, name: 'THD AI', slug: 'thd-ai' }));
     expect(url.pathname).toBe('/THD-AI/organizations/issues/new');
     expect(url.searchParams.get('template')).toBe('register.yml');
     expect(url.searchParams.get('request')).toBe('17');
-    expect(url.searchParams.get('slug')).toBe('campus-connect');
+    expect(url.searchParams.get('slug')).toBe('thd-ai');
   });
 
   it('turns a group name into a short name', () => {
-    expect(slugFrom('Campus Connect e.V.')).toBe('campus-connect-e-v');
+    expect(slugFrom('THD AI e.V.')).toBe('thd-ai-e-v');
     expect(slugFrom('Fußball AG')).toBe('fussball-ag');
   });
 });

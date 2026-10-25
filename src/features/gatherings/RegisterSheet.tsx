@@ -95,7 +95,7 @@ export function RegisterSheet({ open, onClose }: RegisterSheetProps) {
             <p style={fine}>{t('For student groups that host gatherings: game nights, talks, meetings, big study sessions. Only public details; this goes into a public GitHub issue.', 'Für Studigruppen mit Treffen: Spieleabende, Vorträge, Treffen, große Lernsessions. Nur öffentliche Angaben; sie landen in einem öffentlichen GitHub-Issue.')}</p>
             <input aria-label={t('Group name', 'Name der Gruppe')} placeholder={t('Group name', 'Name der Gruppe')} value={name} maxLength={60}
               onChange={(e) => { setName(e.target.value); if (!slugEdited) setSlug(slugFrom(e.target.value)); }} style={field} />
-            <input aria-label={t('Short name', 'Kurzname')} placeholder="campus-connect" value={slug} maxLength={40}
+            <input aria-label={t('Short name', 'Kurzname')} placeholder="thd-ai" value={slug} maxLength={40}
               onChange={(e) => { setSlugEdited(true); setSlug(e.target.value.toLowerCase()); }} style={{ ...field, fontFamily: 'var(--font-mono)' }} />
             <p style={fine}>{t(`The group's page: /o/${slug || 'short-name'}`, `Die Seite der Gruppe: /o/${slug || 'kurzname'}`)}</p>
             <input aria-label={t('What the group does', 'Was die Gruppe macht')} placeholder={t('What the group does (optional)', 'Was die Gruppe macht (optional)')} value={description} maxLength={280} onChange={(e) => setDescription(e.target.value)} style={field} />
