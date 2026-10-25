@@ -121,7 +121,8 @@ if they pass the same test.
 A **batch** is a programme plus an intake term: *AIN, winter 2023*. The app
 derives the semester number for the current term (winter 2026 → **AIN 7**),
 including extension semesters 8 and 9. Programme codes come from the THD
-taxonomy built in [#40](https://github.com/arudaev/THD-Room-Finder/issues/40):
+programme list, [`shared/programmes.json`](../../shared/programmes.json) ([#40](https://github.com/arudaev/THD-Room-Finder/issues/40)),
+where each code is the one in the programme page address (th-deg.de/ain-b):
 for example **AIN** (Artificial Intelligence, English) and **KI** (Künstliche
 Intelligenz, German) are different programmes and different batches.
 

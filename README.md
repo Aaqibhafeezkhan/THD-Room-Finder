@@ -78,6 +78,16 @@ long as I need?"*:
 - **Campus map** – free rooms on a 2.5D campus map, with amenity badges for
   dining (Mensa, cafés) and study/library spaces
 - **Saved rooms** – star your usual spot; Profile answers "free right now?"
+- **Focus sessions** – start focus in a free room, in rhythms of blocks and
+  breaks; Private claims the room anonymously, Public invites your batch
+- **Study profile** – sign in with an email code and pick your programme from
+  the [THD programme list](shared/programmes.json); you appear as e.g. *AIN 7*
+- **Focus graph** – your semester on Profile, built on the device, shareable as
+  a link
+- **Study tables** – set a table in a free room, share one link, start together
+- **Student groups** – registered groups host gatherings people reply to
+- **Works through outages** – if THabella is down, rooms stay listed as
+  "availability unknown" and focus still starts
 - **Bilingual** – English UI with German preserved; live EN/DE toggle
 - **Adaptive navigation** – bottom bar (phone) → rail (tablet) → drawer (desktop)
 - **Dark theme** – follows the device, with a manual override
@@ -211,19 +221,17 @@ design/         Mirror of the Claude Design system + design brief
 
 GPL-3.0 — see [LICENSE](LICENSE).
 
-## What's next: focus sessions
+## Roadmap
 
-Room Finder is growing from an exam-season utility into a **daily focus tool**.
-In Phase 1 you walk into a free room, press **Start focus**, and study:
-privately (the room shows as claimed, nobody learns who) or open to your batch
-(classmates from, say, *AIN 7* see a violet room on the map and can join you).
-Every session fills in your personal focus graph.
+Room Finder grew from an exam-season utility into a **daily focus tool**: walk
+into a free room, press **Start focus**, and study privately or with your
+batch. Next is a measured pilot with student batches, then the city layer.
 
 | Phase | Milestone | Status |
 |---|---|---|
-| Foundation | Design system, docs, board and automation | In progress |
-| Phase 1 | Focus sessions: private claims, batch sessions, Profile tab, focus graph | Planned, design starting |
-| Phase 2 | Group focus and profiles; organization accounts and gatherings | Later |
+| Foundation | Design system, docs, board and automation | Done |
+| Phase 1 | Focus sessions: private claims, batch sessions, Profile tab, focus graph | Shipped (v2.3); end-to-end verification open |
+| Phase 2 | Study tables; student groups and gatherings | Shipped (v2.5) |
 | Phase 3 | City layer: Deggendorf events, festivals and museums | Later |
 
 Read the [charter](PROJECT-CHARTER.md), the
