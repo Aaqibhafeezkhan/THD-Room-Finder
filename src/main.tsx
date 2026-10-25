@@ -5,6 +5,7 @@ import { Capacitor } from '@capacitor/core';
 import { Analytics } from '@vercel/analytics/react';
 import { registerSW } from 'virtual:pwa-register';
 import App from './App';
+import { beforeSend } from './lib/analytics';
 import { ErrorBoundary } from './app/ErrorBoundary';
 import './styles/index.css';
 
@@ -27,7 +28,7 @@ createRoot(document.getElementById('root')!).render(
     <ErrorBoundary>
       <BrowserRouter>
         <App />
-        {shouldEnableVercelAnalytics ? <Analytics /> : null}
+        {shouldEnableVercelAnalytics ? <Analytics beforeSend={beforeSend} /> : null}
       </BrowserRouter>
     </ErrorBoundary>
   </StrictMode>,
