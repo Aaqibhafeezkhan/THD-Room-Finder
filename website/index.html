@@ -140,6 +140,15 @@
     .step h3 { font-size: 20px; font-weight: 500; margin: 10px 0 6px; }
     .step p { font-size: 15px; color: var(--md-on-surface-variant); max-width: 300px; }
 
+    /* Without / with a study profile */
+    .modes { display: flex; justify-content: center; margin: -16px 0 40px; }
+    .modes div { display: inline-flex; padding: 4px; border-radius: var(--radius-xl); background: var(--md-surface-variant); }
+    .modes button { border: 0; background: none; font: 500 14px var(--font); color: var(--md-on-surface-variant); padding: 10px 18px; border-radius: var(--radius-xl); cursor: pointer; }
+    .modes button[aria-pressed="true"] { background: var(--md-surface); color: var(--md-on-surface); box-shadow: var(--shadow-1); }
+    .steps[hidden] { display: none; }
+    .mode-note { text-align: center; font-size: 14px; color: var(--md-on-surface-variant); margin-top: 32px; }
+    .groups-stack { min-height: 660px; }
+
     /* Focus */
     .focus { background: var(--md-surface); }
     .split { display: grid; grid-template-columns: 1.05fr .95fr; gap: 64px; align-items: center; }
@@ -154,6 +163,7 @@
     .tile { width: 40px; height: 40px; border-radius: var(--radius-m); background: var(--md-focus-container); color: var(--md-on-focus-container); display: flex; align-items: center; justify-content: center; }
     .tile svg { width: 20px; height: 20px; }
     .feats h3 { font-size: 16px; font-weight: 500; }
+    .group-steps .tile { font-weight: 500; font-size: 16px; }
     .feats p { font-size: 15px; color: var(--md-on-surface-variant); margin-top: 2px; }
     .stack { position: relative; display: flex; justify-content: center; min-height: 640px; }
     .stack .phone { position: absolute; width: 58%; max-width: 270px; }
@@ -234,7 +244,7 @@
 
 <header class="bar">
   <div class="wrap">
-    <a class="brand" href="#top"><img src="icons/app-icon-192.png" alt="" width="32" height="32"><span>THD Room Finder</span></a>
+    <a class="brand" href="#top"><img src="assets/desktop-map-light.webp" alt="The campus map on a laptop, signed in: building C outlined in violet because your batch is studying there, your own session in C211, and the longest-free rooms listed on the right"icons/app-icon-192.png" alt="" width="32" height="32"><span>THD Room Finder</span></a>
     <nav aria-label="Sections" data-i18n-attr="aria-label:Abschnitte">
       <a href="#why" data-de="Warum">Why</a>
       <a href="#how" data-de="So geht's">How it works</a>
@@ -311,9 +321,13 @@
         <h2 data-de="Vom Flur an den Schreibtisch in drei Schritten">From the corridor to a desk in three steps</h2>
         <p class="sub" data-de="Kein Herumlaufen mehr, um Türen auszuprobieren. Die App kennt den Stundenplan jedes Raums und sagt dir, wie lange er frei bleibt.">No more walking the corridors trying doors. The app knows every room's timetable and tells you how long it stays free.</p>
       </div>
-      <div class="steps">
+      <div class="modes"><div role="group" aria-label="Show the app" data-de-label="App zeigen">
+        <button type="button" data-mode="guest" aria-pressed="true" data-de="Ohne Profil">Without a profile</button>
+        <button type="button" data-mode="profile" aria-pressed="false" data-de="Mit Studienprofil">With a study profile</button>
+      </div></div>
+      <div class="steps" data-steps="guest">
         <div class="step">
-          <div class="phone"><picture><source srcset="assets/screen-rooms-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/screen-rooms-light.webp" alt="The room list on a phone: 31 rooms free right now, B004 free for 10 hours at the top, then B101, C116 and C011" loading="lazy" width="720" height="1560"></picture></div>
+          <div class="phone"><picture><source srcset="assets/guest-rooms-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/guest-rooms-light.webp" alt="The room list on a phone: 108 rooms free right now, C211 at the top, free for 11 hours 20 minutes" data-de-alt="Die Raumliste auf dem Handy: 108 Räume gerade frei, oben C211, frei für 11 Stunden 20 Minuten" loading="lazy" width="720" height="1560"></picture></div>
           <div>
             <span class="num">1</span>
             <h3 data-de="Finde einen Raum">Find a room</h3>
@@ -321,22 +335,49 @@
           </div>
         </div>
         <div class="step">
-          <div class="phone"><picture><source srcset="assets/screen-focus-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/screen-focus-light.webp" alt="A running Pomodoro session in room C211: block 1 of 6, 11:57 left before the first break" loading="lazy" width="720" height="1560"></picture></div>
+          <div class="phone"><picture><source srcset="assets/guest-focus-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/guest-focus-light.webp" alt="A focus session on this device in C211: 11:58 left in block 1 of 6, and a note that someone else is already studying there" data-de-alt="Eine Fokus-Session auf diesem Gerät in C211: noch 11:58 in Block 1 von 6, dazu der Hinweis, dass dort schon jemand lernt" loading="lazy" width="720" height="1560"></picture></div>
           <div>
             <span class="num">2</span>
             <h3 data-de="Starte den Fokus">Start focus</h3>
-            <p data-de="Ein Tipp startet Pomodoro: 25 Minuten Fokus, 5 Minuten Pause. Die Session endet von selbst vor der nächsten Vorlesung.">One tap starts Pomodoro: 25 minutes of focus, 5 minutes of break. It ends on its own before the next lecture.</p>
+            <p data-de="Ein Tipp startet Pomodoro, 25 Minuten Fokus und 5 Minuten Pause. Die Session bleibt auf deinem Handy und endet vor der nächsten Vorlesung.">One tap starts Pomodoro, 25 minutes of focus and 5 of break. It stays on your phone and ends before the next lecture.</p>
           </div>
         </div>
         <div class="step">
-          <div class="phone"><picture><source srcset="assets/screen-profile-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/screen-profile-light.webp" alt="The focus graph on the profile: 25 hours 25 minutes this semester and 18 study days in a row" loading="lazy" width="720" height="1560"></picture></div>
+          <div class="phone"><picture><source srcset="assets/guest-profile-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/guest-profile-light.webp" alt="The profile without an account: 13 minutes this semester, today in the focus graph" data-de-alt="Das Profil ohne Konto: 13 Minuten in diesem Semester, heute im Fokus-Verlauf" loading="lazy" width="720" height="1560"></picture></div>
           <div>
             <span class="num">3</span>
             <h3 data-de="Sieh dein Semester wachsen">Watch your semester grow</h3>
-            <p data-de="Jeder Block färbt deinen Fokus-Verlauf dunkler. Streak, Semesterstunden und eine Karte zum Teilen.">Every block darkens your focus graph. A streak, your semester hours and a card to share.</p>
+            <p data-de="Jeder Block färbt deinen Fokus-Verlauf dunkler, gespeichert auf diesem Gerät. Kein Konto nötig.">Every block darkens your focus graph, kept on this device. No account needed.</p>
           </div>
         </div>
       </div>
+      <div class="steps" data-steps="profile" hidden>
+        <div class="step">
+          <div class="phone"><picture><source srcset="assets/profile-rooms-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/profile-rooms-light.webp" alt="The room list signed in: C211 at the top shows AIN 7, 1 studying, Max" data-de-alt="Die Raumliste angemeldet: oben C211 mit AIN 7, 1 lernt, Max" loading="lazy" width="720" height="1560"></picture></div>
+          <div>
+            <span class="num">1</span>
+            <h3 data-de="Sieh, wo dein Jahrgang lernt">See where your batch is</h3>
+            <p data-de="Räume zeigen, wer aus deinem Jahrgang dort lernt, etwa „AIN 7 · 1 lernt“. Geh hin und lern mit.">Rooms show who from your batch is studying there, like "AIN 7 · 1 studying". Walk over and join them.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="phone"><picture><source srcset="assets/profile-focus-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/profile-focus-light.webp" alt="Focusing in C211 with the batch: Public to AIN 7 selected, Max already studying here" data-de-alt="Fokus in C211 mit dem Jahrgang: Öffentlich für AIN 7 gewählt, Max lernt schon hier" loading="lazy" width="720" height="1560"></picture></div>
+          <div>
+            <span class="num">2</span>
+            <h3 data-de="Lern mit deinem Jahrgang">Focus with your batch</h3>
+            <p data-de="Öffentlich sieht dein Jahrgang, wo du bist; privat sehen andere nur, dass der Raum belegt ist. Zusammen lernen lädt Freunde mit einem Link ein.">Public shows your batch where you are; Private only shows the room as taken. Study together invites friends with one link.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="phone"><picture><source srcset="assets/profile-profile-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/profile-profile-light.webp" alt="Lena's profile, AIN 7: a study table tomorrow, 25 hours this semester and 18 study days in a row" data-de-alt="Lenas Profil, AIN 7: ein Lerntisch morgen, 25 Stunden in diesem Semester und 18 Lerntage in Folge" loading="lazy" width="720" height="1560"></picture></div>
+          <div>
+            <span class="num">3</span>
+            <h3 data-de="Dein Semester, überall">Your semester, everywhere</h3>
+            <p data-de="Dein Fokus-Verlauf, gespeicherte Räume und Lerntische, gleich auf Handy und Laptop.">Your focus graph, saved rooms and study tables, the same on your phone and your laptop.</p>
+          </div>
+        </div>
+      </div>
+      <p class="mode-note" data-de="Ein Studienprofil ist kostenlos: ein E-Mail-Code, dein Studiengang und dein Jahrgang.">A study profile is free: an email code, your programme and your batch.</p>
     </div>
   </section>
 
@@ -354,6 +395,7 @@
       <div class="legend" aria-hidden="true">
         <span><i style="background:var(--md-tertiary)"></i><span data-de="Frei">Free</span></span>
         <span><i style="background:#E6A100"></i><span data-de="Bald belegt (≤ 40 Min.)">Closing soon (≤ 40 min)</span></span>
+        <span><i style="background:transparent;box-shadow:inset 0 0 0 2px var(--md-focus)"></i><span data-de="Dein Jahrgang">Your batch</span></span>
         <span><i style="background:var(--md-focus)"></i><span data-de="Fokus-Session">Focus session</span></span>
         <span><i style="background:#B3261E"></i><span data-de="Vorlesung">Lecture</span></span>
       </div>
@@ -384,8 +426,8 @@
           </ul>
         </div>
         <div class="stack">
-          <div class="phone"><picture><source srcset="assets/screen-focus-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/screen-focus-light.webp" alt="" loading="lazy" width="720" height="1560"></picture></div>
-          <div class="phone"><picture><source srcset="assets/screen-break-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/screen-break-light.webp" alt="The same session in C211 on a break: 2:58 left, block 2 of 6 next" loading="lazy" width="720" height="1560"></picture></div>
+          <div class="phone"><picture><source srcset="assets/profile-focus-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/profile-focus-light.webp" alt="" loading="lazy" width="720" height="1560"></picture></div>
+          <div class="phone"><picture><source srcset="assets/profile-break-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/profile-break-light.webp" alt="The same session in C211 on a break: 2:58 left, block 2 of 6 next, still public to AIN 7" data-de-alt="Dieselbe Session in C211 in der Pause: noch 2:58, als Nächstes Block 2 von 6, weiter öffentlich für AIN 7" loading="lazy" width="720" height="1560"></picture></div>
         </div>
       </div>
     </div>
@@ -415,19 +457,19 @@
   <section id="groups">
     <div class="wrap">
       <div class="split rev">
-        <div class="art"><picture><source srcset="assets/gathering-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/gathering-light.webp" alt="A game night in C212 from a checked student group: long tables filling up as people reply, and a Going button" data-de-alt="Ein Spieleabend in C212 von einer geprüften Studierendengruppe: lange Tische füllen sich mit den Antworten, dazu ein Ich-komme-Knopf" loading="lazy" width="400" height="705"></picture></div>
+        <div class="stack groups-stack"><div class="phone"><picture><source srcset="assets/group-page-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/group-page-light.webp" alt="The THD AI group page: verified, a short description, its website and a talk coming up on Thursday" data-de-alt="Die Gruppenseite von THD AI: geprüft, eine kurze Beschreibung, die Website und ein Vortrag am Donnerstag" loading="lazy" width="720" height="1560"></picture></div><div class="phone"><picture><source srcset="assets/group-gathering-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/group-gathering-light.webp" alt="A THD AI talk in A008 on Thursday 18:00: seats fill in a half circle as people reply, with a Going button" data-de-alt="Ein Vortrag von THD AI in A008 am Donnerstag um 18:00: Plätze im Halbkreis füllen sich mit den Antworten, dazu ein Ich-komme-Knopf" loading="lazy" width="720" height="1560"></picture></div></div>
         <div>
           <p class="eyebrow" data-de="Studierendengruppen">Student groups</p>
-          <h2 data-de="Spieleabend, Vortrag, große Lernrunde">Game nights, talks, big study sessions</h2>
-          <p class="sub" data-de="Studierendengruppen registrieren sich offen bei THD AI und bekommen ein geprüftes Abzeichen. Dann kündigen sie Treffen in Räumen an, die die THD genehmigt hat.">Student groups register in the open with THD AI and get a checked tag. Then they announce gatherings in rooms THD approved for them.</p>
-          <ul class="feats" style="margin-top:28px">
-            <li><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><circle cx="12" cy="3.5" r="1.5"/><circle cx="12" cy="20.5" r="1.5"/><circle cx="3.5" cy="12" r="1.5"/><circle cx="20.5" cy="12" r="1.5"/></svg></span>
-              <div><h3 data-de="Passend zum Raum">Sized to the room</h3><p data-de="Vier Aufbauten, von Reihen bis langen Tischen. Die Plätze füllen sich, wenn Leute zusagen, mit Warteliste, wenn es voll ist.">Four setups, from rows to long tables. Seats fill as people reply, with a waiting list when it's full.</p></div></li>
-            <li><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M22 20c0-3-2-5.2-5-5.8"/></svg></span>
-              <div><h3 data-de="Planen ohne E-Mail-Listen">Plan without email lists</h3><p data-de="Organisatoren sehen, mit wie vielen sie rechnen können und welche Studiengänge kommen. Keine E-Mail-Adressen.">Organizers see how many to plan for and which programmes are coming. Never email addresses.</p></div></li>
-            <li><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
-              <div><h3 data-de="Geprüft, nie gekauft">Checked, never bought</h3><p data-de="Jede Gruppe registriert sich selbst im <a href=&quot;https://github.com/THD-AI/organizations&quot;>öffentlichen Register</a>. Das Abzeichen lässt sich nicht kaufen.">Every group registers itself in the <a href="https://github.com/THD-AI/organizations">public registry</a>. The tag can't be bought.</p></div></li>
-          </ul>
+          <h2 data-de="Eure Gruppe, eure Seite, eure Treffen">Your group, your page, your gatherings</h2>
+          <p class="sub" data-de="Clubs und Initiativen bekommen eine eigene Seite und laden zu Spieleabenden, Vorträgen und großen Lernrunden ein. So kommt eine Gruppe dazu:">Clubs and initiatives get their own page and invite people to game nights, talks and big study sessions. This is how a group gets in:</p>
+          <ol class="feats group-steps" style="margin-top:28px">
+            <li><span class="tile num">1</span>
+              <div><h3 data-de="In der App registrieren">Register in the app</h3><p data-de="Profil → Gruppe registrieren, mit den öffentlichen Angaben der Gruppe: Name, Kurzname, Website.">Profile → Register your group, with the group's public details: name, short name, website.</p></div></li>
+            <li><span class="tile num">2</span>
+              <div><h3 data-de="Offen geprüft">Checked in the open</h3><p data-de="Ein Nachweis im <a href=&quot;https://github.com/THD-AI/organizations&quot;>öffentlichen Register</a>, geprüft von einem THD-AI-Mitglied, das nicht ihr seid. Das Abzeichen lässt sich nicht kaufen.">One proof in the <a href="https://github.com/THD-AI/organizations">public registry</a>, checked by a THD AI member who isn't you. The tag can't be bought.</p></div></li>
+            <li><span class="tile num">3</span>
+              <div><h3 data-de="Treffen ankündigen">Host gatherings</h3><p data-de="In Räumen, die die THD für euch genehmigt hat. Leute antworten mit Ich komme, Vielleicht oder Kann nicht; ihr seht, mit wie vielen ihr rechnen könnt, nie E-Mail-Adressen.">In rooms THD approved for you. People reply Going, Maybe or Can't; you see how many to plan for, never email addresses.</p></div></li>
+          </ol>
         </div>
       </div>
     </div>
@@ -543,6 +585,12 @@
   try { saved = localStorage.getItem('thd_site_lang'); } catch {}
   set(saved || ((navigator.language || '').toLowerCase().startsWith('de') ? 'de' : 'en'));
   btn.addEventListener('click', () => set(document.documentElement.lang === 'de' ? 'en' : 'de'));
+
+  // How it works: without a profile / with a study profile.
+  document.querySelectorAll('.modes button').forEach((b) => b.addEventListener('click', () => {
+    document.querySelectorAll('.modes button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    document.querySelectorAll('[data-steps]').forEach((el) => { el.hidden = el.dataset.steps !== b.dataset.mode; });
+  }));
 
   // Latest Android release: link the APK directly and show its version.
   fetch('https://api.github.com/repos/arudaev/THD-Room-Finder/releases/latest')
