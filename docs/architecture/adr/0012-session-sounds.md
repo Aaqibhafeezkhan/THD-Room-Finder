@@ -33,7 +33,7 @@ call-to-action sound when it's time to focus again, never annoying.
 4. **The project owns the sounds.** They are synthesised by
    `scripts/dev/focus_sounds.py` from sine partials and noise, 64 kbps MP3
    for the web (about 20 KB each) and Ogg Vorbis for Android. Peaks at
-   −6 dBFS, soft attacks, at most 2.5 seconds.
+   −6 dBFS, soft attacks, about 3 seconds at most, mostly a fading tail.
 5. **Android plays them from the notification.** One notification channel
    per sound (`focus_<set>_<event>`; channel sounds can't change after
    creation), so the sound plays with the phone locked and respects silent

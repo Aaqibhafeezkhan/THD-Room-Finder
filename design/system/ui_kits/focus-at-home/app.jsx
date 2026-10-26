@@ -482,7 +482,7 @@ function Page() {
       <h2>Tablets, desktops and phones on their side</h2>
       <Wide theme={theme} />
       <h2>Sounds</h2>
-      <p className="lede">Down for a break, up for focus, resolve when done. Each under 2.5 s, soft attack, peaks at −6 dBFS. Made by scripts/dev/focus_sounds.py. Home defaults to Coffee break; campus keeps the phone's own sound unless you change it.</p>
+      <p className="lede">Down for a break, up for focus, resolve when done. About 3 s at most, mostly a fading tail; soft attack, peaks at −6 dBFS. Made by scripts/dev/focus_sounds.py. Home defaults to Coffee break; campus keeps the phone's own sound unless you change it.</p>
       <SoundTable />
     </main>
   );
