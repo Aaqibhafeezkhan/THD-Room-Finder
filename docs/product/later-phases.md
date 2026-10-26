@@ -13,12 +13,14 @@ First slice, specified: [study tables](study-tables.md).
 
 | Capability | Notes |
 |---|---|
-| Group session | Several participants, each with their own lease; the group lives while anyone is in it |
-| Join from map or list | One tap starts your own timer inside the group |
-| Profiles | Unique handle plus a free display name (Discord-style); optional avatar colour from vetted swatches |
-| Friends-lite | Follow a few classmates to see their public sessions first; no feed, no chat |
-| Planned sessions | "AIN 7 in I112 at 14:00", announced ahead, never a reservation |
-| "This room is empty" report | Lets students clear stale claims; abuse-limited |
+| Group session | Several participants, each with their own lease; the group lives while anyone is in it. Shipped as study tables |
+| Join from map or list | One tap starts your own timer inside the group. Shipped as the batch Join |
+| Profiles | Unique handle plus a free display name (Discord-style); optional avatar colour from vetted swatches. [#207](https://github.com/arudaev/THD-Room-Finder/issues/207) |
+| Friends-lite | Follow a few classmates to see their public sessions first; no feed, no chat. [#208](https://github.com/arudaev/THD-Room-Finder/issues/208) |
+| Planned sessions | "AIN 7 in I112 at 14:00", announced ahead, never a reservation. Shipped as study tables; weekly ones [#210](https://github.com/arudaev/THD-Room-Finder/issues/210) |
+| Online tables | A study table without a room, for focus at home. [#209](https://github.com/arudaev/THD-Room-Finder/issues/209) |
+| Table focus | A table's shared minutes. [#211](https://github.com/arudaev/THD-Room-Finder/issues/211) |
+| "This room is empty" report | Lets students clear stale claims; abuse-limited. [#212](https://github.com/arudaev/THD-Room-Finder/issues/212) |
 
 ## Phase 2 · M3 — Organizations and gatherings ([#24](https://github.com/arudaev/THD-Room-Finder/issues/24))
 
@@ -32,10 +34,10 @@ registry run by THD AI.
 | Capability | Notes |
 |---|---|
 | Organization account | Verified membership; members post on behalf of the org |
-| Paid tier | Around €1.99 per organization per month to cover hosting. **Payment never counts as verification.** |
-| Announcements | Room or place, time, recurrence, description, cancellation |
-| Org-hosted focus sessions | Open to everyone; shown with the org tag |
-| Moderation | Report, hide, revoke; audit trail |
+| Paid tier | Around €1.99 per organization per month to cover hosting. **Payment never counts as verification.** Decision: [#213](https://github.com/arudaev/THD-Room-Finder/issues/213) |
+| Announcements | Room or place, time, recurrence, description, cancellation. Shipped as gatherings; weekly ones [#214](https://github.com/arudaev/THD-Room-Finder/issues/214) |
+| Org-hosted focus sessions | Open to everyone; shown with the org tag. Shipped as the Group focus gathering |
+| Moderation | Report, hide, revoke; audit trail. Report and revoke shipped; hiding [#215](https://github.com/arudaev/THD-Room-Finder/issues/215) |
 
 Room use stays an **announcement**. Official bookings remain with THD; the app
 links to the official process and never pretends to book.
@@ -66,11 +68,11 @@ flowchart LR
 
 | Capability | Notes |
 |---|---|
-| City base map | Extend the 2.5D SVG renderer beyond campus; selected streets and squares |
-| Events | Place or street segment, time window, category, source, image |
-| Zones | Yellow area for active events, outline for upcoming; "today / this weekend" filter; "events only" mode |
-| Places | Museums and venues as permanent yellow places with current exhibitions and preview images |
-| Automation | Scheduled CI ingests, validates and commits snapshots; a PR or review issue for anything uncertain |
+| Sources | Which sources may be reused, and whether to build at all. [#216](https://github.com/arudaev/THD-Room-Finder/issues/216) |
+| City base map | Extend the 2.5D SVG renderer beyond campus; selected streets and squares. [#217](https://github.com/arudaev/THD-Room-Finder/issues/217) |
+| Events and zones | Place or street segment, time window, category, source, image; yellow area for active events, outline for upcoming; "today / this weekend" filter; "events only" mode. [#218](https://github.com/arudaev/THD-Room-Finder/issues/218) |
+| Places | Museums and venues as permanent yellow places with current exhibitions and preview images. [#219](https://github.com/arudaev/THD-Room-Finder/issues/219) |
+| Automation | Scheduled CI ingests, validates and commits snapshots; a PR or review issue for anything uncertain. [#220](https://github.com/arudaev/THD-Room-Finder/issues/220) |
 
 Hard rule: every source needs a licence or permission, and every image a
 reuse right. No scraping of sources that forbid it.
