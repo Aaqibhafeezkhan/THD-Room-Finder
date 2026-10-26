@@ -1,6 +1,6 @@
 # Focus at home and session sounds
 
-> **Status:** proposed for **v2.6** (milestone **M5 — Focus at home**, epic
+> **Status:** shipped in **v2.6** (milestone **M5 — Focus at home**, epic
 > [#187](https://github.com/arudaev/THD-Room-Finder/issues/187)).
 > Decisions: [ADR 0011](../architecture/adr/0011-focus-at-home.md) (a
 > session has a place) and [ADR 0012](../architecture/adr/0012-session-sounds.md)

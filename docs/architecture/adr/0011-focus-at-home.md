@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Proposed |
+| **Status** | Accepted |
 | **Date** | 26 October 2026 |
 | **Decided by** | Maintainer |
 | **Amends** | [ADR 0002](0002-focus-session-lifecycle.md) §1 (a session is in a room), [ADR 0004](0004-focus-rhythm.md) §4 (who shares), the streak rule in [focus sessions](../../product/focus-sessions.md#campus-closures-and-focus-streaks) |

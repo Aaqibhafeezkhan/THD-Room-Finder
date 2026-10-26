@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Proposed |
+| **Status** | Accepted |
 | **Date** | 26 October 2026 |
 | **Decided by** | Maintainer |
 | **Amends** | [ADR 0004](0004-focus-rhythm.md) §7 (notifications) |
