@@ -10,7 +10,8 @@ import type { CSSProperties, ReactNode } from 'react';
  * room is not claimed, and Set Up Study Profile.
  * On the Focus tab (ADR 0011) a chip names the place ("At home", "C211"), a
  * plain note replaces the controls, breaks carry a tip, and wide windows get
- * a larger timer.
+ * a larger timer. A speaker button turns the session's sounds off and on
+ * (ADR 0012): next to the place chip, or at the end of the title row.
  * Focus order: Start block → timer → visibility → name → End.
  */
 export type FocusVisibility = 'private' | 'public';
@@ -87,6 +88,14 @@ export interface FocusSurfaceProps {
     action?: ReactNode;
     /** A larger timer, for wide windows. */
     large?: boolean;
+    /** The speaker button: on = sounds play; `label` names it, "Sounds for this session". */
+    sound?: {
+        on: boolean;
+        label: string;
+        onToggle?: () => void;
+    };
+    /** A line under the timer while sounds wait for a tap. */
+    soundHint?: string;
     style?: CSSProperties;
 }
 /**

@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from '../core/Button.jsx';
 import { SegmentedControl } from '../core/SegmentedControl.jsx';
 import { Switch } from '../core/Switch.jsx';
-import { IconBreak, IconCampus, IconGroup, IconHome, IconLock, IconPhone, IconTimer } from './focusIcons.jsx';
+import { IconBreak, IconCampus, IconGroup, IconHome, IconLock, IconMute, IconPhone, IconSound, IconTimer } from './focusIcons.jsx';
 
 /**
  * The running session on room detail (D1, ADR 0004): a violet focus-container
@@ -16,9 +16,27 @@ import { IconBreak, IconCampus, IconGroup, IconHome, IconLock, IconPhone, IconTi
  * room is not claimed, and Set Up Study Profile.
  * On the Focus tab (ADR 0011) a chip names the place ("At home", "C211"), a
  * plain note replaces the controls, breaks carry a tip, and wide windows get
- * a larger timer.
+ * a larger timer. A speaker button turns the session's sounds off and on
+ * (ADR 0012): next to the place chip, or at the end of the title row.
  * Focus order: Start block → timer → visibility → name → End.
  */
+function SoundButton({ on, label, onToggle }) {
+    return (<button type="button" className="thd-icon-button" aria-label={label} aria-pressed={on} title={label} onClick={onToggle} style={{
+            width: 40,
+            height: 40,
+            margin: '-8px -8px -8px 0',
+            flexShrink: 0,
+            borderRadius: '50%',
+            border: 'none',
+            background: on ? 'transparent' : 'var(--focus-state-layer)',
+            color: 'inherit',
+            display: 'grid',
+            placeItems: 'center',
+            cursor: 'pointer',
+        }}>
+      {on ? <IconSound size={20}/> : <IconMute size={20}/>}
+    </button>);
+}
 function PlaceChip({ home, label }) {
     return (<span style={{
             alignSelf: 'flex-start',
@@ -62,7 +80,7 @@ function Track({ segments }) {
         })}
     </div>);
 }
-export function FocusSurface({ elapsed, elapsedLabel, phase = 'focus', phaseLabel, track, confirmLabel, onConfirm, plannedLine, visibility, showName, signedIn, text, onVisibility, onShowName, onEnd, onSetup, place, note, tip, action, large = false, style = {}, }) {
+export function FocusSurface({ elapsed, elapsedLabel, phase = 'focus', phaseLabel, track, confirmLabel, onConfirm, plannedLine, visibility, showName, signedIn, text, onVisibility, onShowName, onEnd, onSetup, place, note, tip, action, large = false, sound, soundHint, style = {}, }) {
     const onFocusText = { color: 'var(--md-on-focus-container)' };
     return (<section aria-label={text.title} style={{
             background: 'var(--md-focus-container)',
@@ -76,11 +94,15 @@ export function FocusSurface({ elapsed, elapsedLabel, phase = 'focus', phaseLabe
             fontFamily: 'var(--font-sans)',
             ...style,
         }}>
-      {place && <PlaceChip home={place.home} label={place.label}/>}
+      {place && (<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+          <PlaceChip home={place.home} label={place.label}/>
+          {sound && <SoundButton {...sound}/>}
+        </div>)}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 500 }}>
         {phase === 'focus' ? <IconTimer size={18}/> : <IconBreak size={18}/>}
         <span style={{ flex: 1, minWidth: 0 }}>{text.title}</span>
         {phaseLabel && <span style={{ fontWeight: 400, fontSize: 13 }}>{phaseLabel}</span>}
+        {!place && sound && <SoundButton {...sound}/>}
       </div>
       {phase === 'confirm' && confirmLabel && (<Button variant="filled" onClick={onConfirm} style={{ background: 'var(--md-focus)', color: 'var(--md-on-focus)', alignSelf: 'stretch' }}>
           {confirmLabel}
@@ -99,6 +121,7 @@ export function FocusSurface({ elapsed, elapsedLabel, phase = 'focus', phaseLabe
             <Track segments={track}/>
           </div>)}
         <div style={{ fontSize: 13, marginTop: 8 }}>{plannedLine}</div>
+        {soundHint && <div style={{ fontSize: 13, marginTop: 4, fontWeight: 500 }}>{soundHint}</div>}
       </div>
 
       {phase === 'break' && tip && (<div style={{

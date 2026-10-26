@@ -248,7 +248,7 @@ function SoundSheetBody({ title, value, place, onPick, onCancel }) {
         ))}
       </div>
       <p style={{ margin: 0, fontSize: 'var(--body-small-size)', ...muted, textWrap: 'pretty' }}>
-        A sound when a break starts, another when it's over (once more 5 minutes later if you haven't started), and one when you're done. Silent mode on your phone mutes them.
+        A sound when a break starts, another when it's over (once more 5 minutes later if you haven't started), and one when you're done. The speaker on the session turns them off for that session.
       </p>
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
         <Button variant="text" onClick={onCancel}>Cancel</Button>

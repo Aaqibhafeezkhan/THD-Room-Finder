@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, FocusStartCard, FocusSummary, FocusSurface, OnCampusCard } from '../../components';
-import { IconTimer } from '../../components/focus/focusIcons';
+import { IconMute, IconSound, IconTimer } from '../../components/focus/focusIcons';
 import { focusNotifier } from '../../data/focusNotifier';
+import { soundPlayer } from '../../data/focusSounds';
 import { formatTime } from '../../domain/format';
 import { getCampusHours } from '../../domain/openingHours';
 import type { Rhythm } from '../../domain/focusRhythm';
@@ -17,6 +18,9 @@ import { formatMinutes } from './copy';
 import { isHome, useFocusSession } from './FocusSessionContext';
 import { RhythmSheet } from './RhythmSheet';
 import { useRhythmPreference } from './rhythmPreference';
+import { useSoundsLocked } from './FocusSounds';
+import { SoundSheet } from './SoundSheet';
+import { soundName, useSoundPreference } from './soundPreference';
 import { rhythmLine, rhythmName, sessionView } from './sessionView';
 import { useFocusStats } from './useFocusStats';
 
@@ -39,6 +43,9 @@ export function FocusScreen() {
   const [picking, setPicking] = useState(false);
   const rhythm = picked ?? preferred;
   const wide = cls !== 'compact';
+  const [sounds, setSound] = useSoundPreference();
+  const [pickingSound, setPickingSound] = useState(false);
+  const locked = useSoundsLocked();
 
   const active = focus.active;
   const view = active && focus.plan && focus.status ? sessionView(active, focus.plan, focus.status, focus.now, t) : null;
@@ -61,6 +68,12 @@ export function FocusScreen() {
         onConfirm={() => void focus.confirm()}
         plannedLine={view.line}
         tip={view.tip}
+        sound={{
+          on: !active.muted,
+          label: active.muted ? t('Sounds off for this session', 'Töne für diese Session aus') : t('Sounds on for this session', 'Töne für diese Session an'),
+          onToggle: () => focus.setMuted(!active.muted),
+        }}
+        soundHint={locked ? t('Tap anywhere to turn sounds back on.', 'Tippe irgendwo, um die Töne wieder einzuschalten.') : undefined}
         note={
           home
             ? t('Only you see this session.', 'Nur du siehst diese Session.')
@@ -141,6 +154,12 @@ export function FocusScreen() {
               changeLabel: t('Change', 'Ändern'),
               onChange: () => setPicking(true),
             },
+            {
+              icon: sounds.home === 'silent' ? <IconMute size={16} /> : <IconSound size={16} />,
+              strong: soundName(sounds.home, t),
+              changeLabel: t('Change', 'Ändern'),
+              onChange: () => setPickingSound(true),
+            },
           ]}
         />
         <CampusLine onRooms={() => navigate('/rooms')} />
@@ -168,6 +187,8 @@ export function FocusScreen() {
   }
 
   async function startHome() {
+    // The tap unlocks audio, so the first break can sound (ADR 0012).
+    soundPlayer().unlock();
     // Asked on the first Start, like in a room (ADR 0004 §7); declining never
     // blocks focusing.
     const notifier = focusNotifier();
@@ -192,6 +213,7 @@ export function FocusScreen() {
         onClose={() => setPicking(false)}
         onPick={setPicked}
       />
+      <SoundSheet open={pickingSound} place="home" value={sounds.home} onClose={() => setPickingSound(false)} onPick={(s) => setSound('home', s)} />
     </>
   );
 }

@@ -7,6 +7,9 @@ import type { NotifyPermission } from '../../data/focusNotifier';
 import { exportHistory } from '../../domain/focusHistory';
 import { useFocusHistory } from '../focus/FocusHistoryContext';
 import { RhythmSheet } from '../focus/RhythmSheet';
+import { SoundSheet } from '../focus/SoundSheet';
+import { soundName, useSoundPreference } from '../focus/soundPreference';
+import type { SoundPlace } from '../focus/soundPreference';
 import { useRhythmPreference } from '../focus/rhythmPreference';
 import { useQuietPreference } from '../focus/useFocusSignals';
 import { rhythmLine, rhythmName } from '../focus/sessionView';
@@ -321,11 +324,14 @@ function Swatch({ accent, dark }: { accent: Accent; dark: boolean }) {
   );
 }
 
-/** Focus: the rhythm new sessions start with and notifications (ADR 0004). */
+/** Focus: the rhythm new sessions start with, the sounds per place
+ *  (ADR 0012) and notifications (ADR 0004). */
 function FocusGroup() {
   const { t } = useI18n();
   const [rhythm, setRhythm] = useRhythmPreference();
   const [open, setOpen] = useState(false);
+  const [sounds, setSound] = useSoundPreference();
+  const [soundFor, setSoundFor] = useState<SoundPlace | null>(null);
   const notifier = focusNotifier();
   const [permission, setPermission] = useState<NotifyPermission | null>(null);
   const [quiet, setQuiet] = useQuietPreference();
@@ -347,6 +353,16 @@ function FocusGroup() {
     <SettingsGroup title={t('Focus', 'Fokus')}>
       <SettingsRow label={t('Rhythm', 'Rhythmus')} sub={`${rhythmName(rhythm, t)} · ${rhythmLine(rhythm, t)}`}>
         <Button variant="text" onClick={() => setOpen(true)}>
+          {t('Change', 'Ändern')}
+        </Button>
+      </SettingsRow>
+      <SettingsRow label={t('Sounds at home', 'Töne zu Hause')} sub={soundName(sounds.home, t)} divider>
+        <Button variant="text" onClick={() => setSoundFor('home')}>
+          {t('Change', 'Ändern')}
+        </Button>
+      </SettingsRow>
+      <SettingsRow label={t('Sounds on campus', 'Töne auf dem Campus')} sub={soundName(sounds.campus, t)} divider>
+        <Button variant="text" onClick={() => setSoundFor('campus')}>
           {t('Change', 'Ändern')}
         </Button>
       </SettingsRow>
@@ -404,6 +420,13 @@ function FocusGroup() {
         value={rhythm}
         onClose={() => setOpen(false)}
         onPick={setRhythm}
+      />
+      <SoundSheet
+        open={soundFor !== null}
+        place={soundFor ?? 'home'}
+        value={sounds[soundFor ?? 'home']}
+        onClose={() => setSoundFor(null)}
+        onPick={(s) => soundFor && setSound(soundFor, s)}
       />
     </SettingsGroup>
   );

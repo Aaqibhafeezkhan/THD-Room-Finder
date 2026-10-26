@@ -304,6 +304,7 @@ export function FocusGallery() {
         />
         <FocusSurface
           place={{ home: true, label: t('At home', 'Zu Hause') }}
+          sound={{ on: true, label: t('Sounds on for this session', 'Töne für diese Session an') }}
           note={t('Only you see this session.', 'Nur du siehst diese Session.')}
           elapsed="17:24"
           phaseLabel={t('Block 1 of 6', 'Block 1 von 6')}
@@ -330,6 +331,8 @@ export function FocusGallery() {
         />
         <FocusSurface
           place={{ home: false, label: 'C211' }}
+          sound={{ on: false, label: t('Sounds off for this session', 'Töne für diese Session aus') }}
+          soundHint={t('Tap anywhere to turn sounds back on.', 'Tippe irgendwo, um die Töne wieder einzuschalten.')}
           note={t('Private · others see that someone is focusing here, not who.', 'Privat · Andere sehen, dass hier jemand lernt, aber nicht wer.')}
           action={<span style={{ fontSize: 14, fontWeight: 500, paddingLeft: 12 }}>{t('Open C211', 'C211 öffnen')}</span>}
           elapsed="14:00"

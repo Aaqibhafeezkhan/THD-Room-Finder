@@ -101,7 +101,8 @@ export default defineConfig({
       workbox: {
         // App shell is precached; THabella data is network-first with a
         // short cache so the app still opens (with last data) offline.
-        globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        // Session sounds (ADR 0012) too, so focus at home sounds offline.
+        globPatterns: ['**/*.{js,css,html,svg,png,woff2,mp3}'],
         // Opens the room when the focus-session notification is tapped.
         importScripts: ['focus-sw.js'],
         // Share and invite links and the API are served by Vercel functions,

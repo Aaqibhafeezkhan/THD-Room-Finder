@@ -4,6 +4,7 @@ import { ActivityRow, Button, ConfirmDialog, FocusButton, FocusSummary, FocusSur
 import type { FocusSurfaceText } from '../../components';
 import { roomKey } from '../../data/focusApi';
 import { focusNotifier } from '../../data/focusNotifier';
+import { soundPlayer } from '../../data/focusSounds';
 import type { RoomSummary } from '../../data/focusApi';
 import { ServiceError } from '../../data/identityApi';
 import { formatTime } from '../../domain/format';
@@ -16,6 +17,7 @@ import { SetupSheet } from '../profile/SetupSheet';
 import { useStudyProfile } from '../profile/StudyProfileContext';
 import { formatMinutes } from './copy';
 import { isHome, useFocusSession } from './FocusSessionContext';
+import { useSoundsLocked } from './FocusSounds';
 import { RhythmSheet } from './RhythmSheet';
 import { useRhythmPreference } from './rhythmPreference';
 import { rhythmLine, rhythmName, sessionView } from './sessionView';
@@ -53,6 +55,7 @@ export function RoomFocusPanel({ room, availability, closing, scheduleOnly, sche
   const [picked, setPicked] = useState<Rhythm | null>(null);
   const [picking, setPicking] = useState(false);
   const rhythm = picked ?? preferred;
+  const locked = useSoundsLocked();
 
   if (scheduleOnly) return null;
 
@@ -80,6 +83,8 @@ export function RoomFocusPanel({ room, availability, closing, scheduleOnly, sche
   };
 
   const startHere = async (join?: RoomSummary['batchRhythm']) => {
+    // The tap unlocks audio, so the first break can sound (ADR 0012).
+    soundPlayer().unlock();
     // Ask for notifications on the first Start (ADR 0004 §7); declining never
     // blocks focusing.
     const notifier = focusNotifier();
@@ -194,6 +199,12 @@ export function RoomFocusPanel({ room, availability, closing, scheduleOnly, sche
           onConfirm={() => void focus.confirm()}
           plannedLine={view.line}
           tip={view.tip}
+          sound={{
+            on: !here.muted,
+            label: here.muted ? t('Sounds off for this session', 'Töne für diese Session aus') : t('Sounds on for this session', 'Töne für diese Session an'),
+            onToggle: () => focus.setMuted(!here.muted),
+          }}
+          soundHint={locked ? t('Tap anywhere to turn sounds back on.', 'Tippe irgendwo, um die Töne wieder einzuschalten.') : undefined}
           visibility={here.visibility}
           showName={here.showName}
           signedIn={sharedHere}

@@ -4,6 +4,7 @@ import { AdaptiveNav, CheckInSheet } from '../components';
 import { isHome, useFocusSession } from '../features/focus/FocusSessionContext';
 import { sessionView } from '../features/focus/sessionView';
 import { FocusNotifications } from '../features/focus/FocusNotifications';
+import { FocusSounds } from '../features/focus/FocusSounds';
 import { LectureGuard } from '../features/focus/LectureGuard';
 import { AppUpdates } from '../features/update/AppUpdates';
 import type { NavItem } from '../components';
@@ -112,6 +113,7 @@ export function AppShell() {
       </Routes>
       </ErrorBoundary>
       <FocusNotifications />
+      <FocusSounds />
       <LectureGuard />
       <AppUpdates />
       <TableReminder />

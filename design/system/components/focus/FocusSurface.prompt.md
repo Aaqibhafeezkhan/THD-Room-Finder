@@ -32,3 +32,8 @@ one suggestion during breaks, and `large` gives wide windows a 72px timer.
   plannedLine="Break at 20:40 · ends 23:15 at the latest" visibility="private"
   showName={false} signedIn={false} text={copy} />
 ```
+
+`sound={{ on, label, onToggle }}` adds the speaker button (ADR 0012): next to
+the place chip, or at the end of the title row on room detail. Off, it sits
+on a tinted circle with a crossed speaker. `soundHint` shows one line under
+the timer while the browser waits for a tap before it may play audio.

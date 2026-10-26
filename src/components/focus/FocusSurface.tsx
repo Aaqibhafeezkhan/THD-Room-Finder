@@ -2,7 +2,7 @@ import type { CSSProperties, ReactNode } from 'react';
 import { Button } from '../core/Button';
 import { SegmentedControl } from '../core/SegmentedControl';
 import { Switch } from '../core/Switch';
-import { IconBreak, IconCampus, IconGroup, IconHome, IconLock, IconPhone, IconTimer } from './focusIcons';
+import { IconBreak, IconCampus, IconGroup, IconHome, IconLock, IconMute, IconPhone, IconSound, IconTimer } from './focusIcons';
 
 /**
  * The running session on room detail (D1, ADR 0004): a violet focus-container
@@ -15,7 +15,8 @@ import { IconBreak, IconCampus, IconGroup, IconHome, IconLock, IconPhone, IconTi
  * room is not claimed, and Set Up Study Profile.
  * On the Focus tab (ADR 0011) a chip names the place ("At home", "C211"), a
  * plain note replaces the controls, breaks carry a tip, and wide windows get
- * a larger timer.
+ * a larger timer. A speaker button turns the session's sounds off and on
+ * (ADR 0012): next to the place chip, or at the end of the title row.
  * Focus order: Start block → timer → visibility → name → End.
  */
 export type FocusVisibility = 'private' | 'public';
@@ -92,7 +93,39 @@ export interface FocusSurfaceProps {
   action?: ReactNode;
   /** A larger timer, for wide windows. */
   large?: boolean;
+  /** The speaker button: on = sounds play; `label` names it, "Sounds for this session". */
+  sound?: { on: boolean; label: string; onToggle?: () => void };
+  /** A line under the timer while sounds wait for a tap. */
+  soundHint?: string;
   style?: CSSProperties;
+}
+
+function SoundButton({ on, label, onToggle }: { on: boolean; label: string; onToggle?: () => void }) {
+  return (
+    <button
+      type="button"
+      className="thd-icon-button"
+      aria-label={label}
+      aria-pressed={on}
+      title={label}
+      onClick={onToggle}
+      style={{
+        width: 40,
+        height: 40,
+        margin: '-8px -8px -8px 0',
+        flexShrink: 0,
+        borderRadius: '50%',
+        border: 'none',
+        background: on ? 'transparent' : 'var(--focus-state-layer)',
+        color: 'inherit',
+        display: 'grid',
+        placeItems: 'center',
+        cursor: 'pointer',
+      }}
+    >
+      {on ? <IconSound size={20} /> : <IconMute size={20} />}
+    </button>
+  );
 }
 
 function PlaceChip({ home, label }: { home: boolean; label: string }) {
@@ -175,6 +208,8 @@ export function FocusSurface({
   tip,
   action,
   large = false,
+  sound,
+  soundHint,
   style = {},
 }: FocusSurfaceProps) {
   const onFocusText: CSSProperties = { color: 'var(--md-on-focus-container)' };
@@ -194,11 +229,17 @@ export function FocusSurface({
         ...style,
       }}
     >
-      {place && <PlaceChip home={place.home} label={place.label} />}
+      {place && (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+          <PlaceChip home={place.home} label={place.label} />
+          {sound && <SoundButton {...sound} />}
+        </div>
+      )}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 500 }}>
         {phase === 'focus' ? <IconTimer size={18} /> : <IconBreak size={18} />}
         <span style={{ flex: 1, minWidth: 0 }}>{text.title}</span>
         {phaseLabel && <span style={{ fontWeight: 400, fontSize: 13 }}>{phaseLabel}</span>}
+        {!place && sound && <SoundButton {...sound} />}
       </div>
       {phase === 'confirm' && confirmLabel && (
         <Button
@@ -229,6 +270,7 @@ export function FocusSurface({
           </div>
         )}
         <div style={{ fontSize: 13, marginTop: 8 }}>{plannedLine}</div>
+        {soundHint && <div style={{ fontSize: 13, marginTop: 4, fontWeight: 500 }}>{soundHint}</div>}
       </div>
 
       {phase === 'break' && tip && (

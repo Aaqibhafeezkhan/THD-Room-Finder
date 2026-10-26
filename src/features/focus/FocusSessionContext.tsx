@@ -54,6 +54,8 @@ export interface ActiveSession {
   /** Started on another device of the same student and picked up here
    *  (ADR 0005); this device stays quiet until a block is confirmed on it. */
   adopted?: boolean;
+  /** No sounds for this session (ADR 0012). */
+  muted?: boolean;
 }
 
 export interface EndedSession {
@@ -101,6 +103,8 @@ interface FocusSessionValue {
   limitTo: (end: Date) => Promise<void>;
   setVisibility: (v: Visibility) => Promise<void>;
   setShowName: (on: boolean) => Promise<void>;
+  /** Sounds off (or back on) for this session only. */
+  setMuted: (muted: boolean) => void;
   dismissSummary: () => void;
 }
 
@@ -373,6 +377,14 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
     [setActive],
   );
 
+  const setMuted = useCallback(
+    (muted: boolean) => {
+      const s = activeRef.current;
+      if (s) setActive({ ...s, muted });
+    },
+    [setActive],
+  );
+
   const limitTo = useCallback(
     async (end: Date) => {
       const s = activeRef.current;
@@ -496,9 +508,10 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
       limitTo,
       setVisibility,
       setShowName,
+      setMuted,
       dismissSummary: () => setLastEnded(null),
     }),
-    [active, plan, status, now, lastEnded, summaries, signedIn, start, startHome, conflict, resolveConflict, end, confirm, addAway, limitTo, setVisibility, setShowName],
+    [active, plan, status, now, lastEnded, summaries, signedIn, start, startHome, conflict, resolveConflict, end, confirm, addAway, limitTo, setVisibility, setShowName, setMuted],
   );
   return <FocusSessionContext.Provider value={value}>{children}</FocusSessionContext.Provider>;
 }
