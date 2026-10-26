@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { Button, KindIcon, TableRow, TableTag } from '../../components';
 import type { RoomGathering } from '../../data/gatheringsApi';
 import { roomKey } from '../../data/focusApi';

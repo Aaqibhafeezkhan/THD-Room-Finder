@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import { AppBar, IconButton, SeatRing, StatusCard, StudyTogetherButton, TableRow } from '../../components';
 import { IconMail, IconStar, IconStarFilled, IconUsers } from '../../components/icons';
 import { useRoomData } from '../rooms/RoomDataContext';

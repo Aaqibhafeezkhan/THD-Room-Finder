@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
-import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router';
 import { AdaptiveNav, CheckInSheet } from '../components';
 import { isHome, useFocusSession } from '../features/focus/FocusSessionContext';
 import { sessionView } from '../features/focus/sessionView';

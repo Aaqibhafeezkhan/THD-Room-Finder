@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { AppBar, FocusPill } from '../../components';
 import { useI18n } from '../../i18n';
 import { isHome, useFocusSession } from '../focus/FocusSessionContext';

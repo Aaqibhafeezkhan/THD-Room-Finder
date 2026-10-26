@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router';
 import { Button, TableRow, TableTag, VerifiedTag } from '../../components';
 import { registryIssueLink } from '../../domain/gatherings';
 import { useI18n } from '../../i18n';

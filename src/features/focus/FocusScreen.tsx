@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { Button, FocusStartCard, FocusSummary, FocusSurface, OnCampusCard } from '../../components';
 import { IconMute, IconSound, IconTimer } from '../../components/focus/focusIcons';
 import { focusNotifier } from '../../data/focusNotifier';

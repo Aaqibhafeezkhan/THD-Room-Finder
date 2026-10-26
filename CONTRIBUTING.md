@@ -11,7 +11,7 @@ This page is the short version. The details live in
 
 ## Five-minute setup
 
-Requires Node 20+.
+Requires Node 22.12+.
 
 ```bash
 git clone https://github.com/arudaev/THD-Room-Finder.git

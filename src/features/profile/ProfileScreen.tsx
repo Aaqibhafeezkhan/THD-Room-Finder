@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { Button, FocusGraph, ProfileHeader, Snackbar } from '../../components';
 import { useI18n } from '../../i18n';
 import { useTheme } from '../../lib/theme';

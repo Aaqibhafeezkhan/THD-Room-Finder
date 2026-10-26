@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { AppBar, Button, ConfirmDialog, SegmentedControl, Snackbar, Switch } from '../../components';
 import { focusNotifier } from '../../data/focusNotifier';
 import type { NotifyPermission } from '../../data/focusNotifier';

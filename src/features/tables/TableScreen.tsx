@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import { Capacitor } from '@capacitor/core';
 import { AppBar, Button, ConfirmDialog, ReplyBar, SeatRing, Sheet, Snackbar, StudyTableCard, TableTag } from '../../components';
 import { IconMail } from '../../components/icons';

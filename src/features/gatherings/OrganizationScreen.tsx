@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import { Capacitor } from '@capacitor/core';
 import { AppBar, Button, KindIcon, Snackbar, TableRow, VerifiedTag } from '../../components';
 import { ServiceError } from '../../data/identityApi';

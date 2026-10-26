@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import type { Room } from '../../domain/models';
 import { useStudyProfile } from '../profile/StudyProfileContext';
 import { SetupSheet } from '../profile/SetupSheet';
