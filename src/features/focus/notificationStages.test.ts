@@ -44,6 +44,13 @@ describe('notificationStages', () => {
     expect(text).not.toMatch(/AIN|Lena/);
   });
 
+  it('at home says so and opens the Focus tab (ADR 0011)', () => {
+    const s: ActiveSession = { ...session(), roomIdent: 'home', roomCode: '', place: 'home', reason: 'cap' };
+    const stages = notificationStages(s, plan(s), at(9, 45), t);
+    expect(brief(stages)).toEqual(['9:45 Focus · At home', '10:20 Break · At home', "10:30 Break's over · At home", '10:40 clear']);
+    expect(stages.every((x) => x.clear || x.url === '/focus')).toBe(true);
+  });
+
   it('Open counts up and asks every hour', () => {
     const s = { ...session(RHYTHMS.open), plannedEnd: at(12, 0).toISOString() };
     const stages = notificationStages(s, plan(s), at(9, 45), t);

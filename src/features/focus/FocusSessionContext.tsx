@@ -7,7 +7,7 @@ import { focusServiceConfigured, loadSupabase } from '../../data/supabaseClient'
 import { entryFor } from '../../domain/focusHistory';
 import { RHYTHMS, focusedMs, layout, statusAt } from '../../domain/focusRhythm';
 import type { AwaySpan, FocusStatus, Rhythm, SessionPlan } from '../../domain/focusRhythm';
-import { MAX_SESSION_MINUTES } from '../../domain/focusSession';
+import { MAX_SESSION_MINUTES, planHome } from '../../domain/focusSession';
 import type { EndReason, PlannedEnd } from '../../domain/focusSession';
 import { useStudyProfile } from '../profile/StudyProfileContext';
 import { adoptSession } from './adoptSession';
@@ -20,13 +20,18 @@ import { useFocusHistory } from './FocusHistoryContext';
  * at the end of the last confirmed block. With a study profile it is shared
  * through the focus service and the lease is renewed while the app is
  * visible and at each confirmation; without one, offline or in a room the
- * service doesn't know, it runs on this device only. Ending adds the focus
- * time (breaks excluded) to the local focus history. The session survives
+ * service doesn't know, it runs on this device only. A session at home
+ * (ADR 0011) always runs on this device only. Ending adds the focus time
+ * (breaks excluded) to the local focus history. The session survives
  * reloads (localStorage).
  */
 export interface ActiveSession {
+  /** The room's ident, or `HOME` at home. */
   roomIdent: string;
+  /** The room's code; empty at home. */
   roomCode: string;
+  /** Set at home: no room, no claim, never shared. Absent in a room. */
+  place?: 'home';
   startedAt: string;
   /** End of the last block; at or before the next lecture or 3 h. */
   plannedEnd: string;
@@ -80,6 +85,8 @@ interface FocusSessionValue {
   /** Sessions are shared (a study profile and the service). */
   shared: boolean;
   start: (room: { ident: string; code: string }, planned: PlannedEnd, opts: StartOptions) => Promise<void>;
+  /** Start focus at home (ADR 0011): on this device only, up to 3 h. */
+  startHome: (opts: { rhythm: Rhythm }) => Promise<void>;
   /** A session runs on another device: where, until the student decides. */
   conflict: { roomCode: string } | null;
   /** Move the other device's session here, or keep it there. */
@@ -98,6 +105,13 @@ interface FocusSessionValue {
 }
 
 const FocusSessionContext = createContext<FocusSessionValue | null>(null);
+
+/** The `roomIdent` of a session at home; never a THabella room. */
+export const HOME = 'home';
+
+export function isHome(s: { place?: 'home' } | null | undefined): boolean {
+  return s?.place === 'home';
+}
 
 const STORAGE_KEY = 'thd_focus_session';
 const RENEW_MS = 60_000;
@@ -173,7 +187,9 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
       const plain = p ? focusedMs(p, s.confirmed, until) : 0;
       // A shared session's entry is named after it, so two devices that both
       // record it store one entry once synced (ADR 0005).
-      const entry = entryFor(new Date(s.startedAt), until, s.roomCode, s.shared?.id, ms);
+      const home = isHome(s);
+      const made = entryFor(new Date(s.startedAt), until, home ? undefined : s.roomCode, s.shared?.id, ms);
+      const entry = made && home ? { ...made, home: true as const } : made;
       // Under a minute adds nothing, so there is nothing to sum up either.
       if (entry) {
         await history.add(entry);
@@ -225,8 +241,9 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
           showName: base.showName,
           requestId: uuid(),
           // Replace only what this device knows about; a session it doesn't
-          // know (another device) is the student's call.
-          replace: force || Boolean(current),
+          // know (another device) is the student's call. A home session was
+          // never on the server.
+          replace: force || Boolean(current && !isHome(current)),
           rhythm,
           ...(joinAnchor && { anchorAt: joinAnchor }),
         });
@@ -257,6 +274,36 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
       return begin(room, planned, opts, false);
     },
     [begin],
+  );
+
+  const startHome = useCallback(
+    async ({ rhythm }: { rhythm: Rhythm }) => {
+      setConflict(null);
+      const current = activeRef.current;
+      if (isHome(current)) return;
+      const t = new Date();
+      const p = layout(rhythm, t, t, planHome(t).end);
+      if (!p) return;
+      // A campus session ends first, its claim too: home is never shared.
+      if (current) await finish(t);
+      setLastEnded(null);
+      setActive({
+        roomIdent: HOME,
+        roomCode: '',
+        place: 'home',
+        startedAt: t.toISOString(),
+        plannedEnd: p.end.toISOString(),
+        reason: 'cap',
+        limitAt: planHome(t).end.toISOString(),
+        rhythm,
+        anchorAt: t.toISOString(),
+        confirmed: 1,
+        visibility: 'private',
+        showName: false,
+        shared: null,
+      });
+    },
+    [finish, setActive],
   );
 
   const end = useCallback(() => finish(new Date()), [finish]);
@@ -440,6 +487,7 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
       summaries,
       shared: signedIn,
       start,
+      startHome,
       conflict: conflict ? { roomCode: conflict.roomCode } : null,
       resolveConflict,
       end,
@@ -450,7 +498,7 @@ export function FocusSessionProvider({ children, api = CONFIGURED_API }: { child
       setShowName,
       dismissSummary: () => setLastEnded(null),
     }),
-    [active, plan, status, now, lastEnded, summaries, signedIn, start, conflict, resolveConflict, end, confirm, addAway, limitTo, setVisibility, setShowName],
+    [active, plan, status, now, lastEnded, summaries, signedIn, start, startHome, conflict, resolveConflict, end, confirm, addAway, limitTo, setVisibility, setShowName],
   );
   return <FocusSessionContext.Provider value={value}>{children}</FocusSessionContext.Provider>;
 }

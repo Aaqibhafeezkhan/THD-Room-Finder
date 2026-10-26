@@ -5,6 +5,7 @@ import type { FocusStatus, PresetId, Rhythm, SessionPlan } from '../../domain/fo
 import { rhythmId } from '../../domain/focusRhythm';
 import { formatElapsed } from '../../domain/focusSession';
 import type { Translate } from '../../i18n';
+import { isHome } from './FocusSessionContext';
 import type { ActiveSession } from './FocusSessionContext';
 
 /**
@@ -27,6 +28,12 @@ export interface SessionView {
   track?: FocusTrackSegment[];
   /** "Start block 3" / "Keep going" */
   confirmLabel: string;
+}
+
+/** "ends 11:20, before the 11:30 lecture"; at home "ends 23:15 at the latest". */
+function ends(s: ActiveSession, end: string, t: Translate): string {
+  if (isHome(s)) return t(`ends ${end} at the latest`, `endet spätestens ${end}`);
+  return t(`ends ${end}, ${until(s, t)}`, `endet ${end}, ${until(s, t)}`);
 }
 
 function until(s: ActiveSession, t: Translate): string {
@@ -95,7 +102,9 @@ export function sessionView(
       title: t('Focus', 'Fokus'),
       blockLabel: null,
       clockLabel: t(`${Math.floor(elapsed / 60000)} minutes focused`, `${Math.floor(elapsed / 60000)} Minuten fokussiert`),
-      line: t(`Ends ${end} · ${until(s, t)}`, `Endet ${end} · ${until(s, t)}`),
+      line: isHome(s)
+        ? t(`Ends ${end} at the latest`, `Endet spätestens ${end}`)
+        : t(`Ends ${end} · ${until(s, t)}`, `Endet ${end} · ${until(s, t)}`),
       confirmLabel: t('Keep Going', 'Weiter lernen'),
     };
   }
@@ -110,10 +119,7 @@ export function sessionView(
       title: t('Break', 'Pause'),
       blockLabel: t(`Block ${block} of ${plan.blocks} next`, `Danach Block ${block} von ${plan.blocks}`),
       clockLabel: t(`Break, ${mins(left)} minutes left`, `Pause, noch ${mins(left)} Minuten`),
-      line: t(
-        `Block ${block} at ${formatTime(phase.end)} · ends ${end}, ${until(s, t)}`,
-        `Block ${block} um ${formatTime(phase.end)} · endet ${end}, ${until(s, t)}`,
-      ),
+      line: t(`Block ${block} at ${formatTime(phase.end)} · `, `Block ${block} um ${formatTime(phase.end)} · `) + ends(s, end, t),
       track,
       confirmLabel: t(`Start Block ${block}`, `Block ${block} starten`),
     };
@@ -127,9 +133,9 @@ export function sessionView(
       `${mins(left)} minutes left in block ${phase.block}`,
       `Noch ${mins(left)} Minuten in Block ${phase.block}`,
     ),
-    line: next
-      ? t(`Break at ${formatTime(phase.end)} · ends ${end}, ${until(s, t)}`, `Pause um ${formatTime(phase.end)} · endet ${end}, ${until(s, t)}`)
-      : t(`Last block · ends ${end}, ${until(s, t)}`, `Letzter Block · endet ${end}, ${until(s, t)}`),
+    line:
+      (next ? t(`Break at ${formatTime(phase.end)} · `, `Pause um ${formatTime(phase.end)} · `) : t('Last block · ', 'Letzter Block · ')) +
+      ends(s, end, t),
     track,
     confirmLabel: '',
   };

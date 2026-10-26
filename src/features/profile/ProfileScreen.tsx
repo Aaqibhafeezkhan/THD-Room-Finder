@@ -117,7 +117,7 @@ export function ProfileScreen() {
             </>
           }
           label={`${t('Focus graph', 'Fokus-Verlauf')}. ${stats}`}
-          text={graphText(t, locale, focus.live)}
+          text={graphText(t, locale, focus.live, focus.home)}
           onShare={focus.hasSaved ? () => setSharing(true) : undefined}
         />
         <YourTables grid={cls === 'expanded'} when="none" />

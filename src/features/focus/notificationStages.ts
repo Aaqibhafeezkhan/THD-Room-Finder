@@ -3,6 +3,7 @@ import { formatTime } from '../../domain/format';
 import { CONFIRM_GRACE_MINUTES, isOpen, statusAt } from '../../domain/focusRhythm';
 import type { Phase, SessionPlan } from '../../domain/focusRhythm';
 import type { Translate } from '../../i18n';
+import { isHome } from './FocusSessionContext';
 import type { ActiveSession } from './FocusSessionContext';
 
 /**
@@ -10,7 +11,8 @@ import type { ActiveSession } from './FocusSessionContext';
  * needs (ADR 0004 §7): the running block or break with a countdown, the
  * break that follows, "Break's over" with Start Block N, and its removal
  * when nobody answered. A plan that runs out ends with a short note. Room
- * code and phase only, never a name or batch: it shows on the lock screen.
+ * code (or "At home") and phase only, never a name or batch: it shows on
+ * the lock screen. A home session opens the Focus tab.
  */
 export function notificationStages(
   s: ActiveSession,
@@ -20,8 +22,9 @@ export function notificationStages(
 ): NotificationStage[] {
   const status = statusAt(plan, s.confirmed, now);
   if (status.kind === 'done') return [];
-  const room = s.roomCode;
-  const url = `/room/${encodeURIComponent(s.roomIdent)}`;
+  const home = isHome(s);
+  const room = home ? t('At home', 'Zu Hause') : s.roomCode;
+  const url = home ? '/focus' : `/room/${encodeURIComponent(s.roomIdent)}`;
   const open = isOpen(s.rhythm);
   const endLabel = t('End', 'Beenden');
   const nowMs = now.getTime();

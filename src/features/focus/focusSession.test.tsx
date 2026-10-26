@@ -346,6 +346,78 @@ describe('focus sessions', () => {
     expect(ctx.active).toBeNull();
     expect(await recorded(store)).toEqual([[50, 'E212']]);
   });
+  describe('at home (ADR 0011)', () => {
+    it('runs the rhythm up to 3 h with no room, and records it as home', async () => {
+      const store = await mount({ signedIn: false, api: null });
+      await act(async () => ctx.startHome({ rhythm: RHYTHMS.pomodoro }));
+      expect(ctx.active).toMatchObject({ place: 'home', roomIdent: 'home', roomCode: '', shared: null, reason: 'cap' });
+      // 10:00 to the 13:00 cap: six Pomodoro blocks, the long break after the
+      // fourth, and a last block of 20 minutes.
+      expect(ctx.plan?.blocks).toBe(6);
+      expect(new Date(ctx.active!.plannedEnd).getTime()).toBe(new Date(2026, 9, 13, 13, 0).getTime());
+      await minutes(25);
+      expect(ctx.status?.kind).toBe('break');
+      await minutes(5);
+      expect(ctx.status?.kind).toBe('confirm');
+      await act(async () => ctx.confirm());
+      await minutes(10);
+      await act(async () => ctx.end());
+      expect(ctx.lastEnded).toMatchObject({ roomIdent: 'home', minutes: 35, blocks: 2 });
+      const [saved] = await store.all();
+      expect(saved).toMatchObject({ minutes: 35, home: true });
+      expect(saved.room).toBeUndefined();
+    });
+
+    it('never reaches the focus service, even with a study profile', async () => {
+      const api = fakeFocusApi();
+      await mount({ signedIn: true, api });
+      await act(async () => ctx.startHome({ rhythm: RHYTHMS.deep }));
+      await minutes(3);
+      expect(api.calls.start).toEqual([]);
+      expect(api.calls.renew).toBe(0);
+      await act(async () => ctx.end());
+      expect(api.calls.end).toEqual([]);
+    });
+
+    it('ends a shared campus session and its claim first', async () => {
+      const api = fakeFocusApi();
+      const store = await mount({ signedIn: true, api });
+      await act(async () => ctx.start(E212, plan(), deep));
+      await minutes(15);
+      await act(async () => ctx.startHome({ rhythm: RHYTHMS.pomodoro }));
+      expect(api.calls.end).toEqual(['s1']);
+      expect(ctx.active?.place).toBe('home');
+      expect(await recorded(store)).toEqual([[15, 'E212']]);
+    });
+
+    it('a room after home ends the home session and starts without replacing anything', async () => {
+      const api = fakeFocusApi();
+      const store = await mount({ signedIn: true, api });
+      await act(async () => ctx.startHome({ rhythm: RHYTHMS.pomodoro }));
+      await minutes(10);
+      await act(async () => ctx.start(E212, plan(), deep));
+      expect(ctx.active?.roomIdent).toBe(E212.ident);
+      expect(api.calls.start[0].replace).toBe(false);
+      expect((await store.all()).map((e) => [e.minutes, e.home])).toEqual([[10, true]]);
+    });
+
+    it('survives a reload as a home session', async () => {
+      const store = await mount({ signedIn: false, api: null });
+      await act(async () => ctx.startHome({ rhythm: RHYTHMS.pomodoro }));
+      await act(async () => root.unmount());
+      root = createRoot(container);
+      await mount({ signedIn: false, api: null, store });
+      expect(ctx.active).toMatchObject({ place: 'home', roomIdent: 'home' });
+    });
+
+    it('counts in the graph while it runs', async () => {
+      await mount({ signedIn: false, api: null });
+      await act(async () => ctx.startHome({ rhythm: RHYTHMS.deep }));
+      await minutes(12);
+      expect(stats.todayMinutes).toBe(12);
+    });
+  });
+
   describe('across devices (ADR 0005)', () => {
     const C011 = { roomKey: 'thd:r000000712', minutes: 120, visibility: 'private' as const, showName: false, requestId: 'phone', replace: false, rhythm: RHYTHMS.pomodoro };
 

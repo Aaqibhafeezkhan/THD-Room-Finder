@@ -15,7 +15,7 @@ import { useWindowClass } from '../../lib/useWindowClass';
 import { SetupSheet } from '../profile/SetupSheet';
 import { useStudyProfile } from '../profile/StudyProfileContext';
 import { formatMinutes } from './copy';
-import { useFocusSession } from './FocusSessionContext';
+import { isHome, useFocusSession } from './FocusSessionContext';
 import { RhythmSheet } from './RhythmSheet';
 import { useRhythmPreference } from './rhythmPreference';
 import { rhythmLine, rhythmName, sessionView } from './sessionView';
@@ -267,7 +267,9 @@ export function RoomFocusPanel({ room, availability, closing, scheduleOnly, sche
         </div>
         <p style={{ margin: 0, fontSize: 'var(--body-small-size)', color: 'var(--md-on-surface-variant)' }}>
           {focus.active
-            ? t(`This ends your session in ${focus.active.roomCode}.`, `Damit endet deine Session in ${focus.active.roomCode}.`)
+            ? isHome(focus.active)
+              ? t('This ends your session at home.', 'Damit endet deine Session zu Hause.')
+              : t(`This ends your session in ${focus.active.roomCode}.`, `Damit endet deine Session in ${focus.active.roomCode}.`)
             : scheduleUnknown
               ? t(
                   "Lectures can't be checked right now, so it runs until closing or 3 h. If a class comes in, end it there.",

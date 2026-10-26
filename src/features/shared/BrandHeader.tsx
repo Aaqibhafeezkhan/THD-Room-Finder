@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { AppBar, FocusPill } from '../../components';
 import { useI18n } from '../../i18n';
-import { useFocusSession } from '../focus/FocusSessionContext';
+import { isHome, useFocusSession } from '../focus/FocusSessionContext';
 import { sessionView } from '../focus/sessionView';
 import { OverflowMenu } from './OverflowMenu';
 
@@ -16,9 +16,11 @@ export function BrandHeader({ title, menu = true }: { title?: string; menu?: boo
   const navigate = useNavigate();
   const { t } = useI18n();
   const { active, plan, status, now } = useFocusSession();
-  // A running session shows as a pill on every tab (D1), opening its room:
-  // the time left in the block or break, or "Break's over".
+  // A running session shows as a pill on every tab (D1), opening its room
+  // (or Focus, at home): the time left in the block or break, or "Break's over".
   const view = active && plan && status ? sessionView(active, plan, status, now, t) : null;
+  const home = isHome(active);
+  const where = home ? t('At home', 'Zu Hause') : (active?.roomCode ?? '');
   return (
     <AppBar
       title={title}
@@ -29,12 +31,13 @@ export function BrandHeader({ title, menu = true }: { title?: string; menu?: boo
             <FocusPill
               elapsed={view.clock}
               phase={view.phase}
-              room={active.roomCode}
-              label={t(
-                `${view.title} in ${active.roomCode}, ${view.clockLabel}. Open room.`,
-                `${view.title} in ${active.roomCode}, ${view.clockLabel}. Raum öffnen.`,
-              )}
-              onOpen={() => navigate(`/room/${encodeURIComponent(active.roomIdent)}`)}
+              room={where}
+              label={
+                home
+                  ? t(`${view.title} at home, ${view.clockLabel}. Open Focus.`, `${view.title} zu Hause, ${view.clockLabel}. Fokus öffnen.`)
+                  : t(`${view.title} in ${where}, ${view.clockLabel}. Open room.`, `${view.title} in ${where}, ${view.clockLabel}. Raum öffnen.`)
+              }
+              onOpen={() => navigate(home ? '/focus' : `/room/${encodeURIComponent(active.roomIdent)}`)}
             />
           )}
           {menu && <OverflowMenu />}

@@ -1,7 +1,7 @@
 import { lazy, Suspense, useLayoutEffect, useMemo, useRef } from 'react';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AdaptiveNav, CheckInSheet } from '../components';
-import { useFocusSession } from '../features/focus/FocusSessionContext';
+import { isHome, useFocusSession } from '../features/focus/FocusSessionContext';
 import { sessionView } from '../features/focus/sessionView';
 import { FocusNotifications } from '../features/focus/FocusNotifications';
 import { LectureGuard } from '../features/focus/LectureGuard';
@@ -46,6 +46,8 @@ export function AppShell() {
   const focus = useFocusSession();
   const checkIn =
     focus.active && focus.plan && focus.status ? sessionView(focus.active, focus.plan, focus.status, focus.now, t) : null;
+  const home = isHome(focus.active);
+  const surfacePath = home ? '/focus' : `/room/${encodeURIComponent(focus.active?.roomIdent ?? '')}`;
 
   const items = useMemo<NavItem[]>(
     () => [
@@ -105,15 +107,20 @@ export function AppShell() {
       <TableReminder />
       {focus.active && checkIn && (
         <CheckInSheet
-          // On the session's own room the focus surface asks instead.
-          open={checkIn.phase === 'confirm' && location.pathname !== `/room/${encodeURIComponent(focus.active.roomIdent)}`}
+          // On the session's own surface (its room, or Focus at home) the
+          // surface asks instead.
+          open={checkIn.phase === 'confirm' && location.pathname !== surfacePath}
           variant={wide ? 'dialog' : 'sheet'}
           title={
-            checkIn.blockLabel
-              ? t(`Break's over in ${focus.active.roomCode}`, `Pause vorbei in ${focus.active.roomCode}`)
-              : t(`Still focusing in ${focus.active.roomCode}?`, `Lernst du noch in ${focus.active.roomCode}?`)
+            home
+              ? checkIn.blockLabel
+                ? t("Break's over at home", 'Pause vorbei zu Hause')
+                : t('Still focusing at home?', 'Lernst du noch zu Hause?')
+              : checkIn.blockLabel
+                ? t(`Break's over in ${focus.active.roomCode}`, `Pause vorbei in ${focus.active.roomCode}`)
+                : t(`Still focusing in ${focus.active.roomCode}?`, `Lernst du noch in ${focus.active.roomCode}?`)
           }
-          meta={`${checkIn.blockLabel ?? checkIn.clock} · ${focus.active.roomCode}`}
+          meta={`${checkIn.blockLabel ?? checkIn.clock} · ${home ? t('At home', 'Zu Hause') : focus.active.roomCode}`}
           body={checkIn.line}
           endLabel={t('End', 'Beenden')}
           keepLabel={checkIn.confirmLabel}

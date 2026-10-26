@@ -20,6 +20,8 @@ export interface FocusEntry {
   minutes: number;
   /** Room code, e.g. "E 212". Never leaves the device. */
   room?: string;
+  /** Focused at home instead of a room (ADR 0011). Never leaves the device. */
+  home?: true;
 }
 
 export interface DayMinutes {
@@ -62,24 +64,20 @@ export function dailyMinutes(entries: FocusEntry[]): DayMinutes[] {
 }
 
 /**
- * Consecutive open campus days with focus. Closed days pause the streak and
- * never add to it, even if they contain saved focus. An unfinished open day
- * doesn't break the streak until it is over. Calendar arithmetic preserves DST.
+ * Consecutive study days. Every day with focus counts, rest days included
+ * (focus at home, ADR 0011); an empty rest day (weekend, Christmas shutdown)
+ * pauses the streak, and an empty open campus day breaks it. Today doesn't
+ * break the streak until it is over. Calendar arithmetic preserves DST.
  */
 export function streak(days: DayMinutes[], today: Date): number {
   const active = new Set(days.filter((d) => d.minutes > 0).map((d) => d.date));
   const cursor = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const previousOpenDay = () => {
-    do cursor.setDate(cursor.getDate() - 1);
-    while (isFocusRestDay(cursor));
-  };
-  while (isFocusRestDay(cursor)) cursor.setDate(cursor.getDate() - 1);
-  // Only today's open day gets grace, not the last open day before a closure.
-  if (localDay(cursor) === localDay(today) && !active.has(localDay(cursor))) previousOpenDay();
-  let n = 0;
-  while (active.has(localDay(cursor))) {
-    n += 1;
-    previousOpenDay();
+  let n = active.has(localDay(cursor)) ? 1 : 0;
+  // Ten years back at most, so a calendar of rest days can't loop forever.
+  for (let i = 0; i < 3660; i++) {
+    cursor.setDate(cursor.getDate() - 1);
+    if (active.has(localDay(cursor))) n += 1;
+    else if (!isFocusRestDay(cursor)) break;
   }
   return n;
 }
@@ -96,6 +94,17 @@ export function semesterOf(today: Date): Semester {
   if (md >= 1001) return { term: 'winter', start: `${y}-10-01`, end: `${y + 1}-03-14` };
   if (md < 315) return { term: 'winter', start: `${y - 1}-10-01`, end: `${y}-03-14` };
   return { term: 'summer', start: `${y}-03-15`, end: `${y}-09-30` };
+}
+
+/** Minutes focused at home per local day (ADR 0011), for the day detail. */
+export function homeMinutes(entries: FocusEntry[]): Map<string, number> {
+  const byDay = new Map<string, number>();
+  for (const e of entries) {
+    if (!e.home) continue;
+    const day = localDay(new Date(e.startedAt));
+    byDay.set(day, (byDay.get(day) ?? 0) + e.minutes);
+  }
+  return byDay;
 }
 
 export function minutesBetween(days: DayMinutes[], start: string, end: string): number {
@@ -145,7 +154,8 @@ function isEntry(x: unknown): x is FocusEntry {
     Number.isInteger(e.minutes) &&
     e.minutes >= 1 &&
     e.minutes <= MAX_MINUTES &&
-    (e.room === undefined || (typeof e.room === 'string' && e.room.length <= 32))
+    (e.room === undefined || (typeof e.room === 'string' && e.room.length <= 32)) &&
+    (e.home === undefined || e.home === true)
   );
 }
 
@@ -167,6 +177,7 @@ export function parseHistoryFile(text: string): FocusEntry[] {
     endedAt: e.endedAt,
     minutes: e.minutes,
     ...(e.room ? { room: e.room } : {}),
+    ...(e.home ? { home: true as const } : {}),
   }));
 }
 
