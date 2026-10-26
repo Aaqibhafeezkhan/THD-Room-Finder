@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { RoomCard } from '../../components';
 import { useRoomData } from '../rooms/RoomDataContext';
 import { useRoomFilters } from '../rooms/RoomFilterContext';

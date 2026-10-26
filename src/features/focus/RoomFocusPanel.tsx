@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { ActivityRow, Button, ConfirmDialog, FocusButton, FocusSummary, FocusSurface, Snackbar } from '../../components';
 import type { FocusSurfaceText } from '../../components';
 import { roomKey } from '../../data/focusApi';

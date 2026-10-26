@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import { Capacitor } from '@capacitor/core';
 import { AppBar, Button, ConfirmDialog, Hall, ReplyBar, Snackbar, StudyTableCard, TableTag, VerifiedTag } from '../../components';
 import { IconShare } from '../../components/focus/focusIcons';

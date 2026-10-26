@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { RoomCard } from '../../components';
 import { IconStar } from '../../components/icons';
 import { useRoomData } from '../rooms/RoomDataContext';

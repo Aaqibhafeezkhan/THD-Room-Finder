@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import type { CSSProperties } from 'react';
 import { Button, SeatRing, Sheet, SlotChips, choiceChip } from '../../components';
 import type { SlotDay, SlotOption } from '../../components';

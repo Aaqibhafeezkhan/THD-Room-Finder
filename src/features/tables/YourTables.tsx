@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { Button, KindIcon, SeatRing, TableRow, TableTag } from '../../components';
 import type { Gathering } from '../../data/gatheringsApi';
 import type { StudyTable } from '../../data/tablesApi';

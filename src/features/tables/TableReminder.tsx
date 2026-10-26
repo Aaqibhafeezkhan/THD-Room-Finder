@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router';
 import { TableBanner } from '../../components';
 import { tableState } from '../../domain/tables';
 import { toCampusWallClock } from '../../domain/time';

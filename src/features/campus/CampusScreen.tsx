@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { BuildingRow, CampusMap, CAMPUS_GEOJSON, CAMPUS_CONTEXT, MapLegend, RoomCard } from '../../components';
 import type { Availability, BuildingFocusMarks } from '../../components';
 import { buildingFocus, focusBucket, rankByBucket } from '../../domain/focusSignals';
