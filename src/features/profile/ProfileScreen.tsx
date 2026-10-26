@@ -101,8 +101,8 @@ export function ProfileScreen() {
           stats={<>{focus.semesterMinutes ? formatMinutes(focus.semesterMinutes, locale) : t('0 h', '0 Std.')} <span className="thd-focus-period">{t('this semester', 'dieses Semester')}</span></>}
           secondaryStats={focus.hasHistory
             ? streakLine(t, focus.streak)
-            : <a href="/rooms" onClick={event => { event.preventDefault(); navigate('/rooms'); }}>
-                {t('Find a room for your first session', 'Finde einen Raum für deine erste Session')}
+            : <a href="/focus" onClick={event => { event.preventDefault(); navigate('/focus'); }}>
+                {t('Start your first focus session', 'Starte deine erste Fokus-Session')}
               </a>}
           status={
             <>

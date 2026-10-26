@@ -1,11 +1,14 @@
+import { Button } from '../../components';
+import { IconHome } from '../../components/focus/focusIcons';
 import type { CampusHours } from '../../domain/openingHours';
 import { formatDayTime } from '../../domain/format';
 import { useI18n } from '../../i18n';
 import { CAMPUS_HOURS_SOURCE, ACADEMIC_CALENDAR_SOURCE } from '../../../shared/campusCalendar.js';
 import { accessReason } from './accessCopy';
 
-/** A calm access notice, with the evidence one disclosure away. */
-export function ClosedNotice({ hours, compact: _compact = false }: { hours: CampusHours; compact?: boolean }) {
+/** A calm access notice, with the evidence one disclosure away, and a way
+ *  to focus at home instead (ADR 0011). */
+export function ClosedNotice({ hours, compact: _compact = false, onHome }: { hours: CampusHours; compact?: boolean; onHome?: () => void }) {
   const { t, locale } = useI18n();
   const unconfirmed = hours.access === 'unconfirmed';
   const reason = accessReason(hours.reason, t);
@@ -30,6 +33,13 @@ export function ClosedNotice({ hours, compact: _compact = false }: { hours: Camp
           <p><a href={CAMPUS_HOURS_SOURCE} target="_blank" rel="noopener noreferrer">{t('THD house rules', 'THD-Hausordnung')}</a>
           {' · '}<a href={ACADEMIC_CALENDAR_SOURCE} target="_blank" rel="noopener noreferrer">{t('Academic calendar rules', 'Regeln zu Vorlesungszeiten')}</a></p>
         </details>
+        {onHome && (
+          <div style={{ marginTop: 'var(--space-2)' }}>
+            <Button variant="filled" size="small" icon={<IconHome size={18} />} onClick={onHome}>
+              {t('Focus at home', 'Zu Hause fokussieren')}
+            </Button>
+          </div>
+        )}
       </div>
     </aside>
   );

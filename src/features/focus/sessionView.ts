@@ -28,6 +28,20 @@ export interface SessionView {
   track?: FocusTrackSegment[];
   /** "Start block 3" / "Keep going" */
   confirmLabel: string;
+  /** During a break, one short suggestion; it changes from break to break. */
+  tip?: string;
+}
+
+/** What to do in a break (BT-01), one per break in turn. */
+export function breakTip(block: number, t: Translate): string {
+  const tips = [
+    t('Stand up and stretch.', 'Steh auf und streck dich.'),
+    t('Refill your water.', 'Füll dein Wasser nach.'),
+    t('Rest your eyes: look out of a window.', 'Gönn deinen Augen eine Pause: Schau aus dem Fenster.'),
+    t('Make a coffee or a tea.', 'Mach dir einen Kaffee oder Tee.'),
+    t('Walk around for a minute.', 'Geh eine Minute herum.'),
+  ];
+  return tips[(Math.max(1, block) - 1) % tips.length];
 }
 
 /** "ends 11:20, before the 11:30 lecture"; at home "ends 23:15 at the latest". */
@@ -122,6 +136,7 @@ export function sessionView(
       line: t(`Block ${block} at ${formatTime(phase.end)} · `, `Block ${block} um ${formatTime(phase.end)} · `) + ends(s, end, t),
       track,
       confirmLabel: t(`Start Block ${block}`, `Block ${block} starten`),
+      tip: breakTip(phase.block, t),
     };
   }
   return {

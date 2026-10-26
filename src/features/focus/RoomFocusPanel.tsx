@@ -193,6 +193,7 @@ export function RoomFocusPanel({ room, availability, closing, scheduleOnly, sche
           confirmLabel={view.confirmLabel}
           onConfirm={() => void focus.confirm()}
           plannedLine={view.line}
+          tip={view.tip}
           visibility={here.visibility}
           showName={here.showName}
           signedIn={sharedHere}

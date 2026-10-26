@@ -1,12 +1,14 @@
 import type { CSSProperties, MouseEventHandler } from 'react';
-import { IconBreak, IconTimer } from './focusIcons';
+import { IconBreak, IconHome, IconTimer } from './focusIcons';
 
 /**
  * Your running session, visible from every other screen (D1, D3): trailing in
  * the brand app bar on phones, in the list-pane header on tablet and desktop.
  * Tapping it opens the room. Filled violet while focusing; tonal with a cup
- * during a break or when the next block is waiting (ADR 0004). The aria-label
- * is a full sentence, e.g. "Focus in E 212, 32 minutes left. Open room."
+ * during a break or when the next block is waiting (ADR 0004). At home a
+ * house stands in for the room code and the pill opens Focus (ADR 0011).
+ * The aria-label is a full sentence, e.g. "Focus in E 212, 32 minutes left.
+ * Open room."
  */
 export interface FocusPillProps {
   /** Time left in the phase, e.g. "32:10", or elapsed in the Open rhythm. */
@@ -14,13 +16,15 @@ export interface FocusPillProps {
   phase?: 'focus' | 'break' | 'confirm';
   /** Room code, e.g. "E 212". */
   room: string;
+  /** A session at home: a house instead of the room code. */
+  home?: boolean;
   /** Full-sentence accessible name. */
   label: string;
   onOpen?: MouseEventHandler;
   style?: CSSProperties;
 }
 
-export function FocusPill({ elapsed, phase = 'focus', room, label, onOpen, style = {} }: FocusPillProps) {
+export function FocusPill({ elapsed, phase = 'focus', room, home = false, label, onOpen, style = {} }: FocusPillProps) {
   const focusing = phase === 'focus';
   return (
     <button
@@ -46,7 +50,7 @@ export function FocusPill({ elapsed, phase = 'focus', room, label, onOpen, style
     >
       {focusing ? <IconTimer size={16} /> : <IconBreak size={16} />}
       <span style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>{elapsed}</span>
-      <span>{room}</span>
+      {home ? <IconHome size={16} /> : <span>{room}</span>}
     </button>
   );
 }

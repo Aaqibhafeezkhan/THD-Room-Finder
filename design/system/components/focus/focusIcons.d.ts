@@ -29,3 +29,7 @@ export declare const IconShare: ({ size, strokeWidth }: FocusIconProps) => JSX.E
 export declare const IconSettings: ({ size, strokeWidth }: FocusIconProps) => JSX.Element;
 /** Cup: a break between focus blocks (focus surface, pill). */
 export declare const IconBreak: ({ size, strokeWidth }: FocusIconProps) => JSX.Element;
+/** House: a session at home (ADR 0011). */
+export declare const IconHome: ({ size, strokeWidth }: FocusIconProps) => JSX.Element;
+/** Columned building: a campus room, the On campus card. */
+export declare const IconCampus: ({ size, strokeWidth }: FocusIconProps) => JSX.Element;

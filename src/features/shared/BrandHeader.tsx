@@ -10,9 +10,10 @@ const stickyBar = { position: 'sticky' as const, top: 0, zIndex: 10 };
 /**
  * Brand app bar shared by the top-level tabs. Settings (theme + language) live
  * behind a single icon menu on the right, keeping the bar minimal. Profile
- * passes `menu={false}`: its own header carries the gear.
+ * passes `menu={false}`: its own header carries the gear. Focus passes
+ * `pill={false}`: the session itself is on that page.
  */
-export function BrandHeader({ title, menu = true }: { title?: string; menu?: boolean }) {
+export function BrandHeader({ title, menu = true, pill = true }: { title?: string; menu?: boolean; pill?: boolean }) {
   const navigate = useNavigate();
   const { t } = useI18n();
   const { active, plan, status, now } = useFocusSession();
@@ -27,11 +28,12 @@ export function BrandHeader({ title, menu = true }: { title?: string; menu?: boo
       style={stickyBar}
       actions={
         <div style={{ display: 'flex', alignItems: 'center', gap: 4, paddingRight: '0.25rem' }}>
-          {active && view && (
+          {pill && active && view && (
             <FocusPill
               elapsed={view.clock}
               phase={view.phase}
               room={where}
+              home={home}
               label={
                 home
                   ? t(`${view.title} at home, ${view.clockLabel}. Open Focus.`, `${view.title} zu Hause, ${view.clockLabel}. Fokus öffnen.`)

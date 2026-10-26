@@ -91,7 +91,7 @@ export function streakLine(t: Translate, days: number): string {
 
 export function statsLine(t: Translate, locale: Locale, semesterMinutes: number, streakDays: number): string {
   if (semesterMinutes <= 0 && streakDays <= 0) {
-    return t('No focus yet. Start a session in any free room.', 'Noch kein Fokus. Starte eine Session in einem freien Raum.');
+    return t('No focus yet. Start a session at home or in a free room.', 'Noch kein Fokus. Starte eine Session zu Hause oder in einem freien Raum.');
   }
   const h = formatMinutes(semesterMinutes, locale);
   return t(`${h} this semester · ${streakDays}-day streak`, `${h} in diesem Semester · ${streakDays} Tage in Folge`);

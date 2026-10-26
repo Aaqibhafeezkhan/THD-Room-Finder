@@ -1,4 +1,4 @@
-import { lazy, Suspense, useLayoutEffect, useMemo, useRef } from 'react';
+import { lazy, Suspense, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AdaptiveNav, CheckInSheet } from '../components';
 import { isHome, useFocusSession } from '../features/focus/FocusSessionContext';
@@ -8,13 +8,14 @@ import { LectureGuard } from '../features/focus/LectureGuard';
 import { AppUpdates } from '../features/update/AppUpdates';
 import type { NavItem } from '../components';
 import { IconList, IconMap } from '../components/icons';
-import { IconPerson } from '../components/focus/focusIcons';
+import { IconPerson, IconTimer } from '../components/focus/focusIcons';
 import { useNavigationVariant } from '../lib/useWindowClass';
 import { useI18n } from '../i18n';
 import { HomeScreen } from '../features/home/HomeScreen';
 import { CampusScreen } from '../features/campus/CampusScreen';
 import { ProfileScreen } from '../features/profile/ProfileScreen';
 import { SettingsScreen } from '../features/profile/SettingsScreen';
+import { FocusScreen } from '../features/focus/FocusScreen';
 import { RoomDetailScreen } from '../features/detail/RoomDetailScreen';
 import { TableScreen } from '../features/tables/TableScreen';
 import { TableReminder } from '../features/tables/TableReminder';
@@ -44,6 +45,13 @@ export function AppShell() {
     if (location.pathname.startsWith('/profile') && page.current) page.current.scrollTop = 0;
   }, [location.pathname]);
   const focus = useFocusSession();
+  // Opening the app while a session runs lands on it (ADR 0011), once.
+  const landed = useRef(false);
+  useEffect(() => {
+    if (landed.current) return;
+    landed.current = true;
+    if (focus.active && location.pathname === '/') navigate('/focus', { replace: true });
+  }, [focus.active, location.pathname, navigate]);
   const checkIn =
     focus.active && focus.plan && focus.status ? sessionView(focus.active, focus.plan, focus.status, focus.now, t) : null;
   const home = isHome(focus.active);
@@ -53,6 +61,7 @@ export function AppShell() {
     () => [
       { id: 'campus', label: t('Campus', 'Campus'), icon: <IconMap /> },
       { id: 'rooms', label: t('Rooms', 'Räume'), icon: <IconList /> },
+      { id: 'focus', label: t('Focus', 'Fokus'), icon: <IconTimer size={24} /> },
       { id: 'profile', label: t('Profile', 'Profil'), icon: <IconPerson size={24} /> },
     ],
     [t],
@@ -77,6 +86,7 @@ export function AppShell() {
       <Routes>
         <Route path="/" element={<CampusScreen />} />
         <Route path="/rooms" element={<HomeScreen />} />
+        <Route path="/focus" element={<FocusScreen />} />
         <Route path="/profile" element={<ProfileScreen />} />
         <Route path="/profile/settings" element={<SettingsScreen />} />
         {/* The Saved tab became part of Profile (#37); old links still work. */}

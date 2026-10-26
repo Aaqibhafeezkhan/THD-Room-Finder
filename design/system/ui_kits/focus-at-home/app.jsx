@@ -5,7 +5,7 @@ const { FocusSummary, CheckInSheet, Logo, Sheet, Button } = D;
 
 // ── The rhythm engine, as in src/domain/focusRhythm.ts (minutes) ───────────
 const RHYTHMS = {
-  pomodoro: { name: 'Pomodoro', line: '25 min focus, 5 min break', focus: 25, brk: 5, long: 15, every: 4 },
+  pomodoro: { name: 'Pomodoro', line: '25 min focus, 5 min break, 15 min after every 4th block', focus: 25, brk: 5, long: 15, every: 4 },
   deep: { name: 'Deep', line: '50 min focus, 10 min break', focus: 50, brk: 10, long: 0, every: 0 },
 };
 const CAP = 180;
@@ -63,11 +63,11 @@ function viewOf(s, t, base) {
   const endLine = s.place === 'home' ? `ends ${hhmm(base, s.plan.end)} at the latest` : `ends ${hhmm(base, s.plan.end)}, before the 12:45 lecture`;
   if (st.kind === 'confirm') {
     return { st, phase: 'confirm', title: "Break's over", phaseLabel: blockLabel, clock: mmss(st.deadline - t), track,
-      plannedLine: `Start block ${p.block} by ${hhmm(base, st.deadline)}, or the session ends.`,
-      confirmLabel: `Start block ${p.block}` };
+      plannedLine: `No answer by ${hhmm(base, st.deadline)} ends the session.`,
+      confirmLabel: `Start Block ${p.block}` };
   }
   if (st.kind === 'break') {
-    return { st, phase: 'break', title: 'Break', phaseLabel: `Next: block ${p.block + 1}`, clock: mmss(p.end - t), track,
+    return { st, phase: 'break', title: 'Break', phaseLabel: `Block ${p.block + 1} of ${s.plan.blocks} next`, clock: mmss(p.end - t), track,
       plannedLine: `Block ${p.block + 1} at ${hhmm(base, p.end)} · ${endLine}`, tip: TIPS[(p.block - 1) % TIPS.length] };
   }
   return { st, phase: 'focus', title: 'Focus', phaseLabel: blockLabel, clock: mmss(p.end - t), track,
@@ -157,7 +157,7 @@ function FocusTab({ m, act, wide }) {
   return (
     <>
       {m.ended && (
-        <FocusSummary title="Session done" added={m.ended.added} addedLabel={m.ended.blocks > 1 ? `of focus in ${m.ended.blocks} blocks, added to your focus graph` : 'of focus, added to your focus graph'}
+        <FocusSummary title="Session ended" added={m.ended.added} addedLabel={m.ended.blocks > 1 ? `of focus in ${m.ended.blocks} blocks, added to your focus graph` : 'of focus, added to your focus graph'}
           todayLine={`Today ${m.ended.today} · 4-day streak`} viewGraphLabel="View Focus Graph" onViewGraph={act.profile} />
       )}
       <StartCard rhythm={r} sound={m.sounds.home} other={m.other} onStart={act.startHome} onRhythm={act.rhythm} onSound={act.soundSheet} />
@@ -375,7 +375,7 @@ const STATES = [
   { label: '2 · Running at home, block 1', m: { ...BASE_M, tab: 'focus', closed: true, ...fixed('home', 7.6) } },
   { label: '3 · Break, with a tip (break sound plays)', m: { ...BASE_M, tab: 'focus', closed: true, ...fixed('home', 27.2) } },
   { label: "4 · Break's over (inviting sound, reminder after 5 min)", m: { ...BASE_M, tab: 'focus', closed: true, ...fixed('home', 31.5) } },
-  { label: '5 · Done: summary, start again (done sound)', m: { ...BASE_M, tab: 'focus', closed: true, ended: { added: '1 h 40 min', blocks: 4, today: '2 h 30 min' } } },
+  { label: '5 · Ended: summary, start again (done sound at the planned end)', m: { ...BASE_M, tab: 'focus', closed: true, ended: { added: '1 h 40 min', blocks: 4, today: '2 h 30 min' } } },
   { label: '6 · Rooms at night: Focus at home', m: { ...BASE_M, tab: 'rooms', closed: true } },
   { label: '7 · Another tab: the pill shows the home session', m: { ...BASE_M, tab: 'campus', closed: true, ...fixed('home', 12) } },
   { label: '8 · Focus tab, morning: a session runs in C211', m: { ...BASE_M, tab: 'focus', closed: false, ...fixed('room', 41, { confirmed: 2 }) } },

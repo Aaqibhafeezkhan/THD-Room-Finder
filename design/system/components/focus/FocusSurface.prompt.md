@@ -19,3 +19,16 @@ timer for the time left to answer.
 Without a study profile the session stays on the device: no visibility
 control, "the room doesn't show as claimed", and Set Up Study Profile. All
 copy comes in through `text`.
+
+On the Focus tab (ADR 0011) the same card carries its place: `place={{ home: true, label: 'At home' }}`
+puts a house chip at the top (a building and the room code for a room).
+`note` replaces Private/Public and the signed-out note with one line ("Only
+you see this session."), `action` sits under it ("Open C211"), `tip` shows
+one suggestion during breaks, and `large` gives wide windows a 72px timer.
+
+```jsx
+<FocusSurface place={{ home: true, label: 'At home' }} note="Only you see this session."
+  elapsed="17:24" phaseLabel="Block 1 of 6" track={segments}
+  plannedLine="Break at 20:40 · ends 23:15 at the latest" visibility="private"
+  showName={false} signedIn={false} text={copy} />
+```

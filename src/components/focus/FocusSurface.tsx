@@ -2,7 +2,7 @@ import type { CSSProperties, ReactNode } from 'react';
 import { Button } from '../core/Button';
 import { SegmentedControl } from '../core/SegmentedControl';
 import { Switch } from '../core/Switch';
-import { IconBreak, IconGroup, IconLock, IconPhone, IconTimer } from './focusIcons';
+import { IconBreak, IconCampus, IconGroup, IconHome, IconLock, IconPhone, IconTimer } from './focusIcons';
 
 /**
  * The running session on room detail (D1, ADR 0004): a violet focus-container
@@ -13,6 +13,9 @@ import { IconBreak, IconGroup, IconLock, IconPhone, IconTimer } from './focusIco
  * End. When a break is over, "Start block 3" leads. Without a study profile
  * the session runs on the device: no visibility control, a line saying the
  * room is not claimed, and Set Up Study Profile.
+ * On the Focus tab (ADR 0011) a chip names the place ("At home", "C211"), a
+ * plain note replaces the controls, breaks carry a tip, and wide windows get
+ * a larger timer.
  * Focus order: Start block → timer → visibility → name → End.
  */
 export type FocusVisibility = 'private' | 'public';
@@ -77,7 +80,41 @@ export interface FocusSurfaceProps {
   onEnd?: () => void;
   /** Omit to hide Set Up (no focus service in this build). */
   onSetup?: () => void;
+  /** Where the session runs, as a chip at the top; omitted on room detail,
+   *  whose page already says it. */
+  place?: { home: boolean; label: string };
+  /** Replaces Private/Public and the signed-out note with one line, e.g.
+   *  "Only you see this session." at home. */
+  note?: ReactNode;
+  /** A short suggestion shown during breaks: "Stand up and stretch." */
+  tip?: string;
+  /** Under the note, e.g. "Open C211". */
+  action?: ReactNode;
+  /** A larger timer, for wide windows. */
+  large?: boolean;
   style?: CSSProperties;
+}
+
+function PlaceChip({ home, label }: { home: boolean; label: string }) {
+  return (
+    <span
+      style={{
+        alignSelf: 'flex-start',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 6,
+        height: 28,
+        padding: '0 10px 0 8px',
+        borderRadius: 'var(--radius-full)',
+        background: 'var(--focus-state-layer)',
+        fontSize: 13,
+        fontWeight: 500,
+      }}
+    >
+      {home ? <IconHome size={16} /> : <IconCampus size={16} />}
+      {label}
+    </span>
+  );
 }
 
 function Track({ segments }: { segments: FocusTrackSegment[] }) {
@@ -133,6 +170,11 @@ export function FocusSurface({
   onShowName,
   onEnd,
   onSetup,
+  place,
+  note,
+  tip,
+  action,
+  large = false,
   style = {},
 }: FocusSurfaceProps) {
   const onFocusText: CSSProperties = { color: 'var(--md-on-focus-container)' };
@@ -144,7 +186,7 @@ export function FocusSurface({
         color: 'var(--md-on-focus-container)',
         borderRadius: 'var(--radius-l)',
         boxShadow: 'var(--md-shadow-1)',
-        padding: 16,
+        padding: large ? 24 : 16,
         display: 'flex',
         flexDirection: 'column',
         gap: 14,
@@ -152,6 +194,7 @@ export function FocusSurface({
         ...style,
       }}
     >
+      {place && <PlaceChip home={place.home} label={place.label} />}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 500 }}>
         {phase === 'focus' ? <IconTimer size={18} /> : <IconBreak size={18} />}
         <span style={{ flex: 1, minWidth: 0 }}>{text.title}</span>
@@ -173,7 +216,7 @@ export function FocusSurface({
           style={{
             fontFamily: 'var(--font-mono)',
             fontVariantNumeric: 'tabular-nums',
-            fontSize: phase === 'confirm' ? 32 : 48,
+            fontSize: phase === 'confirm' ? 32 : large ? 72 : 48,
             fontWeight: 300,
             lineHeight: 1,
           }}
@@ -188,7 +231,29 @@ export function FocusSurface({
         <div style={{ fontSize: 13, marginTop: 8 }}>{plannedLine}</div>
       </div>
 
-      {signedIn ? (
+      {phase === 'break' && tip && (
+        <div
+          style={{
+            display: 'flex',
+            gap: 8,
+            alignItems: 'center',
+            padding: '10px 12px',
+            borderRadius: 'var(--radius-m)',
+            background: 'var(--focus-state-layer)',
+            fontSize: 13,
+          }}
+        >
+          <IconBreak size={16} />
+          <span>{tip}</span>
+        </div>
+      )}
+
+      {note !== undefined ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <p style={{ margin: 0, fontSize: 13, lineHeight: 1.45, textWrap: 'pretty' }}>{note}</p>
+          {action && <div style={{ marginLeft: -12 }}>{action}</div>}
+        </div>
+      ) : signedIn ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <SegmentedControl<FocusVisibility>
             tone="focus"

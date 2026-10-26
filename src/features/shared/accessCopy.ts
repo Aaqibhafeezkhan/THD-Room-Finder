@@ -15,8 +15,9 @@ export function accessReason(reason: CampusHours['reason'], t: Translate): strin
 
 /** Short profile copy; the room finder carries the full access notice. */
 export function profileAccessStatus(hours: CampusHours, t: Translate): string {
-  if (hours.reason === 'weekend') return t('Weekend · Streak paused', 'Wochenende · Lernserie pausiert');
-  if (hours.access === 'closed') return t('Campus closed today · Streak paused', 'Campus heute geschlossen · Lernserie pausiert');
+  // An empty rest day pauses the streak; focus at home still adds a day (ADR 0011).
+  if (hours.reason === 'weekend') return t('Weekend · Focus at home still counts', 'Wochenende · Fokus zu Hause zählt trotzdem');
+  if (hours.access === 'closed') return t('Campus closed today · Focus at home still counts', 'Campus heute geschlossen · Fokus zu Hause zählt trotzdem');
   if (hours.access === 'unconfirmed') {
     return [accessReason(hours.reason, t), t('Check campus access', 'Campuszugang prüfen')].filter(Boolean).join(' · ');
   }

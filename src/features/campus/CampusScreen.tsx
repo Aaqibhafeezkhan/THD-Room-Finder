@@ -345,7 +345,7 @@ export function CampusScreen() {
   // buildings are shut (and not previewing), else the selected building's rooms,
   // else the free-now hero + longest-free list.
   const panel = !(campusHours.open || preview) && !selectedMeta ? (
-    <ClosedNotice hours={campusHours} />
+    <ClosedNotice hours={campusHours} onHome={() => navigate('/focus')} />
   ) : selectedKey ? (
     <>
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>

@@ -60,6 +60,8 @@ export { FocusSurface } from './focus/FocusSurface';
 export type { FocusPhase, FocusSurfaceProps, FocusSurfaceText, FocusTrackSegment, FocusVisibility } from './focus/FocusSurface';
 export { FocusPill } from './focus/FocusPill';
 export type { FocusPillProps } from './focus/FocusPill';
+export { FocusStartCard, OnCampusCard } from './focus/FocusStartCard';
+export type { FocusStartCardProps, FocusStartChoice, OnCampusCardProps } from './focus/FocusStartCard';
 export { FocusSummary } from './focus/FocusSummary';
 export type { FocusSummaryProps } from './focus/FocusSummary';
 export { CheckInSheet } from './focus/CheckInSheet';

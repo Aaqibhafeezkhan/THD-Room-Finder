@@ -4,7 +4,7 @@ import { profileAccessStatus } from './accessCopy';
 
 describe('profile access copy', () => {
   it('does not call an unconfirmed weekend a physical closure', () => {
-    expect(profileAccessStatus(getCampusHours(new Date(2026, 9, 18, 12)), en => en)).toBe('Weekend · Streak paused');
+    expect(profileAccessStatus(getCampusHours(new Date(2026, 9, 18, 12)), en => en)).toBe('Weekend · Focus at home still counts');
   });
   it('keeps Christmas closure and ordinary after-hours different', () => {
     expect(profileAccessStatus(getCampusHours(new Date(2026, 11, 25, 12)), en => en)).toContain('Campus closed today');
