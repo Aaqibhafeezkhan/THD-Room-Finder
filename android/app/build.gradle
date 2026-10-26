@@ -35,6 +35,12 @@ android {
         }
     }
     buildTypes {
+        // Pull requests attach a debug build: it installs next to the real
+        // app ("Room Finder test"), so testing never replaces it or its data.
+        debug {
+            applicationIdSuffix ".test"
+            versionNameSuffix "-test"
+        }
         release {
             if (keystorePropertiesFile.exists()) {
                 signingConfig signingConfigs.release
