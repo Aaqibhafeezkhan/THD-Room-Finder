@@ -158,7 +158,7 @@ built from a week of these queries (Mon–Fri), cached 24h.
 
 ## Build & Run
 
-Requires Node 20+.
+Requires Node 22.12+.
 
 ```bash
 npm install
