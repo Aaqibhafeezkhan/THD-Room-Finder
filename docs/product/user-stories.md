@@ -27,6 +27,25 @@ acceptance criteria.
 | PV-01 | outsiders never to learn who is in a private session | sharing feels safe | [#17](https://github.com/arudaev/THD-Room-Finder/issues/17), [#22](https://github.com/arudaev/THD-Room-Finder/issues/22) |
 | OP-01 | (maintainer) bounded requests and a cost ceiling | the project stays affordable | [#17](https://github.com/arudaev/THD-Room-Finder/issues/17), [#22](https://github.com/arudaev/THD-Room-Finder/issues/22) |
 
+## v2.6 — Focus at home
+
+Spec: [focus at home and session sounds](focus-at-home.md). Epic [#187](https://github.com/arudaev/THD-Room-Finder/issues/187).
+
+| ID | As a student, I want… | So that… | Issue |
+|---|---|---|---|
+| HF-01 | to start a focus session at home in one tap | I use the same rhythm at home | [#190](https://github.com/arudaev/THD-Room-Finder/issues/190) |
+| HF-02 | to find my running session from anywhere | I never hunt for the timer | [#190](https://github.com/arudaev/THD-Room-Finder/issues/190) |
+| HF-03 | a home session without campus rules | lectures and closing times don't cut my evening | [#189](https://github.com/arudaev/THD-Room-Finder/issues/189) |
+| HF-04 | nobody to see my home sessions | studying at home stays private | [#189](https://github.com/arudaev/THD-Room-Finder/issues/189) |
+| HF-05 | a way to focus when the campus is closed | the app isn't a dead end at night | [#190](https://github.com/arudaev/THD-Room-Finder/issues/190) |
+| HF-06 | to know what happens to my other session | I don't lose a campus claim by accident | [#189](https://github.com/arudaev/THD-Room-Finder/issues/189), [#190](https://github.com/arudaev/THD-Room-Finder/issues/190) |
+| HF-07 | weekend study to count for my streak | the streak rewards what I actually did | [#189](https://github.com/arudaev/THD-Room-Finder/issues/189) |
+| HF-08 | notifications that say where I am | the lock screen makes sense | [#189](https://github.com/arudaev/THD-Room-Finder/issues/189) |
+| HF-09 | the same on tablet and desktop | I can focus at my laptop | [#190](https://github.com/arudaev/THD-Room-Finder/issues/190) |
+| SN-01–05, SN-07 | sounds for break, break's over and done, per place, with a preview and a mute | I notice breaks and come back on time | [#191](https://github.com/arudaev/THD-Room-Finder/issues/191) |
+| SN-06 | to hear them with the phone locked | I can put the phone away | [#192](https://github.com/arudaev/THD-Room-Finder/issues/192) |
+| BT-01 | a nudge for what to do in a break | the break actually rests me | [#190](https://github.com/arudaev/THD-Room-Finder/issues/190) |
+
 ## Later phases (candidates)
 
 | ID | Story | Epic |

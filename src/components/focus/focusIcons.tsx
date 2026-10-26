@@ -132,3 +132,44 @@ export const IconBreak = icon(
     <path d="M6 2v2" />
   </>,
 );
+
+/** House: a session at home (ADR 0011). */
+export const IconHome = icon(
+  <>
+    <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+    <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+  </>,
+);
+
+/** Columned building: a campus room, the On campus card. */
+export const IconCampus = icon(
+  <>
+    <path d="M10 18v-7" />
+    <path d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z" />
+    <path d="M14 18v-7" />
+    <path d="M18 18v-7" />
+    <path d="M3 22h18" />
+    <path d="M6 18v-7" />
+  </>,
+);
+
+/** Speaker: the session's sounds are on (ADR 0012). */
+export const IconSound = icon(
+  <>
+    <path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z" />
+    <path d="M16 9a5 5 0 0 1 0 6" />
+    <path d="M19.364 18.364a9 9 0 0 0 0-12.728" />
+  </>,
+);
+
+/** Crossed speaker: no sounds for this session. */
+export const IconMute = icon(
+  <>
+    <path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z" />
+    <line x1="22" x2="16" y1="9" y2="15" />
+    <line x1="16" x2="22" y1="9" y2="15" />
+  </>,
+);
+
+/** Play: preview a sound. */
+export const IconPlay = icon(<polygon points="6 3 20 12 6 21 6 3" />);

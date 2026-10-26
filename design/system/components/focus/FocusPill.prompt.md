@@ -9,3 +9,10 @@ a break or while the next block waits (`phase`).
 ```
 
 Updates once a minute under reduced motion.
+
+At home (ADR 0011) `home` shows a house instead of the room code, and the
+pill opens the Focus tab:
+
+```jsx
+<FocusPill elapsed="13:00" home room="At home" label="Focus at home, 13 minutes left in block 1. Open Focus." />
+```

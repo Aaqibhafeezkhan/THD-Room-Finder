@@ -31,6 +31,10 @@ export interface NotificationStage {
   endLabel?: string;
   /** Vibrate and sound when the stage begins. */
   alert: boolean;
+  /** The alert's sound (ADR 0012): "coffee_break" and the like, "silent",
+   *  or absent for the phone's own notification sound. On the web the page
+   *  plays a set itself, so the notification stays quiet. */
+  sound?: string;
   /** False for a final note that can be swiped away. */
   ongoing: boolean;
   /** Remove the notification instead. */
@@ -117,7 +121,7 @@ function webNotifier(): FocusNotifier {
       body: s.text,
       tag: TAG,
       icon: '/icons/app-icon-192.png',
-      silent: !alert,
+      silent: !alert || Boolean(s.sound),
       renotify: alert,
       requireInteraction: s.ongoing,
       data: { url: s.url },

@@ -15,6 +15,8 @@ Finder Design System* starts with the same context.
 | [06 · D3 message](06-d3-message.md) | The D3 prompt (list and map signals), for a fresh design chat |
 | [07 · D4 message](07-d4-message.md) | The D3 map fix and the D4 prompt (share card) |
 | [08 · D4 revision](08-d4-revision.md) | Share as a link with the card as its preview; semester grid; accents |
+| [09 · Study tables](09-study-tables.md) | M2: plan a study table in a free room and share one link |
+| [10 · Focus at home](10-focus-at-home.md) | v2.6: focus at home, the Focus tab and session sounds |
 
 **Source of truth for behaviour:**
 [focus sessions spec](https://github.com/arudaev/THD-Room-Finder/blob/main/docs/product/focus-sessions.md)

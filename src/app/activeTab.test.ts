@@ -5,6 +5,7 @@ describe('active navigation tab', () => {
   it('maps each tab path to its destination', () => {
     expect(activeId('/')).toBe('campus');
     expect(activeId('/rooms')).toBe('rooms');
+    expect(activeId('/focus')).toBe('focus');
     expect(activeId('/profile/settings')).toBe('profile');
   });
 

@@ -3,6 +3,7 @@ import {
   dailyMinutes,
   entryFor,
   exportHistory,
+  homeMinutes,
   liveEntry,
   mergeHistory,
   minutesBetween,
@@ -65,10 +66,16 @@ describe('streak', () => {
     expect(streak(week, at(2026, 10, d))).toBe(5);
   });
 
-  it('continues at six on Monday and ignores saved weekend sessions', () => {
+  it('counts a weekend day with focus and passes over the empty one (ADR 0011)', () => {
     const history = [...week, { date: '2026-10-10', minutes: 90 }, { date: '2026-10-12', minutes: 25 }];
-    expect(streak(history, at(2026, 10, 12))).toBe(6);
+    expect(streak(history, at(2026, 10, 12))).toBe(7);
+    expect(streak(history, at(2026, 10, 11))).toBe(6);
     expect(minutesBetween(history, '2026-10-05', '2026-10-12')).toBe(240);
+  });
+
+  it('counts focus on a Christmas shutdown day', () => {
+    const history = [{ date: '2026-12-23', minutes: 25 }, { date: '2026-12-28', minutes: 50 }, { date: '2027-01-07', minutes: 25 }];
+    expect(streak(history, at(2027, 1, 7))).toBe(3);
   });
 
   it('breaks on a missed Friday as soon as the weekend starts', () => {
@@ -77,9 +84,10 @@ describe('streak', () => {
     expect(streak(week.slice(0, 4), at(2026, 10, 12))).toBe(0);
   });
 
-  it('never creates streak days from empty or weekend-only history', () => {
+  it('never creates streak days from empty history; a weekend with focus starts one', () => {
     expect(streak([], at(2026, 10, 11))).toBe(0);
-    expect(streak([{ date: '2026-10-10', minutes: 25 }], at(2026, 10, 12))).toBe(0);
+    expect(streak([{ date: '2026-10-10', minutes: 25 }], at(2026, 10, 12))).toBe(1);
+    expect(streak([{ date: '2026-10-10', minutes: 25 }], at(2026, 10, 13))).toBe(0);
   });
 
   it.each([
@@ -115,6 +123,17 @@ describe('semesterOf', () => {
   });
 });
 
+describe('homeMinutes', () => {
+  it('sums focus at home per day and leaves campus focus out (ADR 0011)', () => {
+    const entries = [
+      { ...entry('a', at(2026, 10, 10, 9), 50), home: true as const },
+      entry('b', at(2026, 10, 10, 14), 25, 'E 212'),
+      { ...entry('c', at(2026, 10, 10, 20), 25), home: true as const },
+    ];
+    expect([...homeMinutes(entries)]).toEqual([['2026-10-10', 75]]);
+  });
+});
+
 describe('entryFor', () => {
   it('drops sessions under a minute and caps at 3 h', () => {
     expect(entryFor(at(2026, 10, 13, 10, 0), at(2026, 10, 13, 10, 0))).toBeNull();
@@ -128,6 +147,14 @@ describe('export and import', () => {
   it('round-trips an exported file', () => {
     const text = exportHistory(history, at(2026, 10, 14));
     expect(parseHistoryFile(text)).toEqual(history);
+  });
+
+  it('keeps focus at home through export and import (ADR 0011)', () => {
+    const home = { ...entry('h', at(2026, 10, 10, 20), 50), home: true as const };
+    const text = exportHistory([...history, home], at(2026, 10, 14));
+    expect(parseHistoryFile(text)).toEqual([...history, home]);
+    const odd = JSON.stringify({ format: 'thd-room-finder/focus-history', version: 1, entries: [{ ...home, home: 'yes' }] });
+    expect(parseHistoryFile(odd)).toEqual([]);
   });
 
   it('rejects files that are not a focus history', () => {

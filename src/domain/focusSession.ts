@@ -39,6 +39,14 @@ export function planEnd(now: Date, nextLecture: Date | null, closing: Date | nul
 }
 
 /**
+ * A session at home (ADR 0011) has no room, lecture or closing time: the
+ * rhythm runs until the 3-hour cap, or until it is ended or left unanswered.
+ */
+export function planHome(now: Date): PlannedEnd {
+  return { end: new Date(now.getTime() + MAX_SESSION_MINUTES * 60000), minutes: MAX_SESSION_MINUTES, reason: 'cap' };
+}
+
+/**
  * A lecture that the session's plan doesn't know about yet (#154): started
  * while the timetable was down, or added to THabella later. Returns `now`
  * when one is on in the room, else the start of the first one before

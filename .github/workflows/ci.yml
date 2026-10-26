@@ -52,3 +52,12 @@ jobs:
       - name: Native unit tests and debug APK
         working-directory: android
         run: ./gradlew testDebugUnitTest assembleDebug --no-daemon
+      # "Room Finder test" installs next to the real app, for trying a PR on
+      # a phone before a release.
+      - name: Attach the test APK
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: room-finder-test-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 14

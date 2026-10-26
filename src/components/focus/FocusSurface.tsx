@@ -2,7 +2,7 @@ import type { CSSProperties, ReactNode } from 'react';
 import { Button } from '../core/Button';
 import { SegmentedControl } from '../core/SegmentedControl';
 import { Switch } from '../core/Switch';
-import { IconBreak, IconGroup, IconLock, IconPhone, IconTimer } from './focusIcons';
+import { IconBreak, IconCampus, IconGroup, IconHome, IconLock, IconMute, IconPhone, IconSound, IconTimer } from './focusIcons';
 
 /**
  * The running session on room detail (D1, ADR 0004): a violet focus-container
@@ -13,6 +13,10 @@ import { IconBreak, IconGroup, IconLock, IconPhone, IconTimer } from './focusIco
  * End. When a break is over, "Start block 3" leads. Without a study profile
  * the session runs on the device: no visibility control, a line saying the
  * room is not claimed, and Set Up Study Profile.
+ * On the Focus tab (ADR 0011) a chip names the place ("At home", "C211"), a
+ * plain note replaces the controls, breaks carry a tip, and wide windows get
+ * a larger timer. A speaker button turns the session's sounds off and on
+ * (ADR 0012): next to the place chip, or at the end of the title row.
  * Focus order: Start block → timer → visibility → name → End.
  */
 export type FocusVisibility = 'private' | 'public';
@@ -77,7 +81,77 @@ export interface FocusSurfaceProps {
   onEnd?: () => void;
   /** Omit to hide Set Up (no focus service in this build). */
   onSetup?: () => void;
+  /** Where the session runs, as a chip at the top; omitted on room detail,
+   *  whose page already says it. */
+  place?: { home: boolean; label: string };
+  /** Replaces Private/Public and the signed-out note with one line, e.g.
+   *  "Only you see this session." at home. */
+  note?: ReactNode;
+  /** A short suggestion shown during breaks: "Stand up and stretch." */
+  tip?: string;
+  /** Under the note, e.g. "Open C211". */
+  action?: ReactNode;
+  /** A larger timer that grows with the window (up to 160 px, readable
+   *  across a room), for tablets and desktops. */
+  large?: boolean;
+  /** Short landscape windows: the timer on the left, its controls on the
+   *  right, so End stays on screen. */
+  split?: boolean;
+  /** The speaker button: on = sounds play; `label` names it, "Sounds for this session". */
+  sound?: { on: boolean; label: string; onToggle?: () => void };
+  /** A line under the timer while sounds wait for a tap. */
+  soundHint?: string;
   style?: CSSProperties;
+}
+
+function SoundButton({ on, label, onToggle }: { on: boolean; label: string; onToggle?: () => void }) {
+  return (
+    <button
+      type="button"
+      className="thd-icon-button"
+      aria-label={label}
+      aria-pressed={on}
+      title={label}
+      onClick={onToggle}
+      style={{
+        width: 40,
+        height: 40,
+        margin: '-8px -8px -8px 0',
+        flexShrink: 0,
+        borderRadius: '50%',
+        border: 'none',
+        background: on ? 'transparent' : 'var(--focus-state-layer)',
+        color: 'inherit',
+        display: 'grid',
+        placeItems: 'center',
+        cursor: 'pointer',
+      }}
+    >
+      {on ? <IconSound size={20} /> : <IconMute size={20} />}
+    </button>
+  );
+}
+
+function PlaceChip({ home, label }: { home: boolean; label: string }) {
+  return (
+    <span
+      style={{
+        alignSelf: 'flex-start',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 6,
+        height: 28,
+        padding: '0 10px 0 8px',
+        borderRadius: 'var(--radius-full)',
+        background: 'var(--focus-state-layer)',
+        fontSize: 13,
+        fontWeight: 500,
+      }}
+    >
+      {home ? <IconHome size={16} /> : <IconCampus size={16} />}
+      {label}
+    </span>
+  );
 }
 
 function Track({ segments }: { segments: FocusTrackSegment[] }) {
@@ -133,29 +207,31 @@ export function FocusSurface({
   onShowName,
   onEnd,
   onSetup,
+  place,
+  note,
+  tip,
+  action,
+  large = false,
+  split = false,
+  sound,
+  soundHint,
   style = {},
 }: FocusSurfaceProps) {
   const onFocusText: CSSProperties = { color: 'var(--md-on-focus-container)' };
-  return (
-    <section
-      aria-label={text.title}
-      style={{
-        background: 'var(--md-focus-container)',
-        color: 'var(--md-on-focus-container)',
-        borderRadius: 'var(--radius-l)',
-        boxShadow: 'var(--md-shadow-1)',
-        padding: 16,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 14,
-        fontFamily: 'var(--font-sans)',
-        ...style,
-      }}
-    >
+  const column: CSSProperties = { display: 'flex', flexDirection: 'column', gap: 14, minWidth: 0 };
+  const lead = (
+    <>
+      {place && (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+          <PlaceChip home={place.home} label={place.label} />
+          {sound && <SoundButton {...sound} />}
+        </div>
+      )}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 500 }}>
         {phase === 'focus' ? <IconTimer size={18} /> : <IconBreak size={18} />}
         <span style={{ flex: 1, minWidth: 0 }}>{text.title}</span>
         {phaseLabel && <span style={{ fontWeight: 400, fontSize: 13 }}>{phaseLabel}</span>}
+        {!place && sound && <SoundButton {...sound} />}
       </div>
       {phase === 'confirm' && confirmLabel && (
         <Button
@@ -173,7 +249,7 @@ export function FocusSurface({
           style={{
             fontFamily: 'var(--font-mono)',
             fontVariantNumeric: 'tabular-nums',
-            fontSize: phase === 'confirm' ? 32 : 48,
+            fontSize: phase === 'confirm' ? (large ? 48 : 32) : large ? 'clamp(64px, min(9vw, 14vh), 160px)' : 48,
             fontWeight: 300,
             lineHeight: 1,
           }}
@@ -185,10 +261,37 @@ export function FocusSurface({
             <Track segments={track} />
           </div>
         )}
-        <div style={{ fontSize: 13, marginTop: 8 }}>{plannedLine}</div>
+        <div style={{ fontSize: large ? 15 : 13, marginTop: 8 }}>{plannedLine}</div>
+        {soundHint && <div style={{ fontSize: 13, marginTop: 4, fontWeight: 500 }}>{soundHint}</div>}
       </div>
+    </>
+  );
 
-      {signedIn ? (
+  const rest = (
+    <>
+      {phase === 'break' && tip && (
+        <div
+          style={{
+            display: 'flex',
+            gap: 8,
+            alignItems: 'center',
+            padding: '10px 12px',
+            borderRadius: 'var(--radius-m)',
+            background: 'var(--focus-state-layer)',
+            fontSize: 13,
+          }}
+        >
+          <IconBreak size={16} />
+          <span>{tip}</span>
+        </div>
+      )}
+
+      {note !== undefined ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <p style={{ margin: 0, fontSize: 13, lineHeight: 1.45, textWrap: 'pretty' }}>{note}</p>
+          {action && <div style={{ marginLeft: -12 }}>{action}</div>}
+        </div>
+      ) : signedIn ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <SegmentedControl<FocusVisibility>
             tone="focus"
@@ -244,6 +347,36 @@ export function FocusSurface({
           {text.end}
         </Button>
       </div>
+    </>
+  );
+
+  return (
+    <section
+      aria-label={text.title}
+      style={{
+        background: 'var(--md-focus-container)',
+        color: 'var(--md-on-focus-container)',
+        borderRadius: 'var(--radius-l)',
+        boxShadow: 'var(--md-shadow-1)',
+        padding: large ? 'clamp(20px, 3vw, 32px)' : 16,
+        fontFamily: 'var(--font-sans)',
+        ...(split
+          ? { display: 'grid', gridTemplateColumns: 'minmax(0, 1.15fr) minmax(0, 1fr)', columnGap: 24, alignItems: 'start' }
+          : column),
+        ...style,
+      }}
+    >
+      {split ? (
+        <>
+          <div style={column}>{lead}</div>
+          <div style={{ ...column, justifyContent: 'flex-end', alignSelf: 'stretch' }}>{rest}</div>
+        </>
+      ) : (
+        <>
+          {lead}
+          {rest}
+        </>
+      )}
     </section>
   );
 }

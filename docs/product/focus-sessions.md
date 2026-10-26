@@ -245,9 +245,10 @@ from a server, leaderboards. See [later phases](later-phases.md).
 
 ### Campus closures and focus streaks
 
-Study streaks count study days: weekends and confirmed Christmas shutdown days
-pause the streak without adding days. Recorded study on any date remains in
-history and totals. Missing a non-rest weekday breaks the streak when it ends.
+Study streaks count study days. Weekends and confirmed Christmas shutdown days
+pause the streak when they are empty; a rest day with focus (at home, since
+v2.6, [ADR 0011](../architecture/adr/0011-focus-at-home.md)) adds a day like
+any other. Recorded study on any date remains in history and totals. Missing a non-rest weekday breaks the streak when it ends.
 Weekend pauses are a product rule, not a statement that every campus venue is
 physically locked.
 

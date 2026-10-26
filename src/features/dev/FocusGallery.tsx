@@ -8,10 +8,12 @@ import {
   FocusButton,
   FocusGraph,
   FocusPill,
+  FocusStartCard,
   FocusSummary,
   FocusSurface,
   ListNotice,
   MapLegend,
+  OnCampusCard,
   ProfileHeader,
   RoomCard,
   SegmentedControl,
@@ -21,6 +23,7 @@ import {
   Switch,
 } from '../../components';
 import type { FocusDay, FocusGraphText, FocusSurfaceText, FocusTrackSegment, FocusVisibility } from '../../components';
+import { IconTimer } from '../../components/focus/focusIcons';
 import { useI18n } from '../../i18n';
 import { roomStatusLabel } from '../shared/roomStatusLabel';
 import { useTheme } from '../../lib/theme';
@@ -255,7 +258,7 @@ export function FocusGallery() {
         <div style={{ maxWidth: 380 }}>
           <FocusGraph days={DAYS} today={TODAY} weeks={53} compact stats={t('21 h this semester', '21 Std. dieses Semester')} secondaryStats={t('12-day study streak', '12 Lerntage in Folge')} label={stats} text={graphText} onShare={() => undefined} />
         </div>
-        <FocusGraph days={[]} today={TODAY} weeks={20} stats={t('No focus yet. Start a session in any free room.', 'Noch kein Fokus. Starte eine Session in einem freien Raum.')} label="Focus graph" text={graphText} />
+        <FocusGraph days={[]} today={TODAY} weeks={20} stats={t('No focus yet. Start a session at home or in a free room.', 'Noch kein Fokus. Starte eine Session zu Hause oder in einem freien Raum.')} label="Focus graph" text={graphText} />
         <div style={{ background: 'var(--md-surface)', borderRadius: 'var(--radius-l)', boxShadow: 'var(--md-shadow-1)', padding: '4px 16px' }}>
           <Switch checked={quiet} onChange={setQuiet} label={t("Show my batch's sessions like anyone else's", 'Sessions meines Jahrgangs wie fremde anzeigen')} />
         </div>
@@ -280,6 +283,71 @@ export function FocusGallery() {
         </div>
         <MapLegend free={t('Free rooms', 'Freie Räume')} batch={t('AIN 7 studying', 'AIN 7 lernt hier')} claim={t('Focus session', 'Fokus-Session')} />
         <MapLegend free={t('Free rooms', 'Freie Räume')} note={t('Schedule only', 'Nur Belegung')} />
+      </Section>
+
+      <Section title="v2.6 · Focus at home">
+        <FocusStartCard
+          title={t('At home', 'Zu Hause')}
+          line={t('Only you see it. It counts in your focus graph.', 'Nur du siehst sie. Sie zählt in deinem Fokus-Verlauf.')}
+          startLabel={t('Start focus at home', 'Fokus zu Hause starten')}
+          choices={[{ icon: <IconTimer size={16} />, strong: 'Pomodoro', rest: t('25 min focus, 5 min break', '25 Min. Fokus, 5 Min. Pause'), changeLabel: t('Change', 'Ändern') }]}
+        />
+        <OnCampusCard
+          title={t('On campus', 'Auf dem Campus')}
+          line={t('Classroom buildings closed · opens Tue 06:30', 'Lehrgebäude geschlossen · öffnet Di 06:30')}
+          actionLabel={t('Plan', 'Planen')}
+        />
+        <OnCampusCard
+          title={t('On campus', 'Auf dem Campus')}
+          line={<><span style={{ color: 'var(--md-tertiary)', fontWeight: 500 }}>{t('38 rooms free', '38 Räume frei')}</span> {t('now', 'jetzt')}</>}
+          actionLabel={t('Find a room', 'Raum finden')}
+        />
+        <FocusSurface
+          place={{ home: true, label: t('At home', 'Zu Hause') }}
+          sound={{ on: true, label: t('Sounds on for this session', 'Töne für diese Session an') }}
+          note={t('Only you see this session.', 'Nur du siehst diese Session.')}
+          elapsed="17:24"
+          phaseLabel={t('Block 1 of 6', 'Block 1 von 6')}
+          track={track(0, 0.3)}
+          plannedLine={t('Break at 20:40 · ends 23:15 at the latest', 'Pause um 20:40 · endet spätestens 23:15')}
+          visibility="private"
+          showName={false}
+          signedIn={false}
+          text={surfaceText}
+        />
+        <FocusSurface
+          place={{ home: true, label: t('At home', 'Zu Hause') }}
+          note={t('Only you see this session.', 'Nur du siehst diese Session.')}
+          phase="break"
+          elapsed="2:48"
+          phaseLabel={t('Block 2 of 6 next', 'Danach Block 2 von 6')}
+          track={track(1, 0.45)}
+          tip={t('Stand up and stretch.', 'Steh auf und streck dich.')}
+          plannedLine={t('Block 2 at 20:45 · ends 23:15 at the latest', 'Block 2 um 20:45 · endet spätestens 23:15')}
+          visibility="private"
+          showName={false}
+          signedIn={false}
+          text={{ ...surfaceText, title: t('Break', 'Pause') }}
+        />
+        <FocusSurface
+          place={{ home: false, label: 'C211' }}
+          sound={{ on: false, label: t('Sounds off for this session', 'Töne für diese Session aus') }}
+          soundHint={t('Tap anywhere to turn sounds back on.', 'Tippe irgendwo, um die Töne wieder einzuschalten.')}
+          note={t('Private · others see that someone is focusing here, not who.', 'Privat · Andere sehen, dass hier jemand lernt, aber nicht wer.')}
+          action={<span style={{ fontSize: 14, fontWeight: 500, paddingLeft: 12 }}>{t('Open C211', 'C211 öffnen')}</span>}
+          elapsed="14:00"
+          phaseLabel={t('Block 2 of 3', 'Block 2 von 3')}
+          track={track(2, 0.6)}
+          plannedLine={t('Break at 11:00 · ends 12:40, before the 12:45 lecture', 'Pause um 11:00 · endet 12:40, vor der Vorlesung um 12:45')}
+          visibility="private"
+          showName={false}
+          signedIn
+          text={surfaceText}
+        />
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <FocusPill elapsed="13:00" home room={t('At home', 'Zu Hause')} label={t('Focus at home, 13 minutes left. Open Focus.', 'Fokus zu Hause, noch 13 Minuten. Fokus öffnen.')} />
+          <FocusPill elapsed="2:48" phase="break" home room={t('At home', 'Zu Hause')} label={t('Break at home, 3 minutes left. Open Focus.', 'Pause zu Hause, noch 3 Minuten. Fokus öffnen.')} />
+        </div>
       </Section>
 
       <Section title="D4 · Share card">

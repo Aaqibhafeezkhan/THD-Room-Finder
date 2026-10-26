@@ -235,7 +235,7 @@ export function HomeScreen() {
           </>
         ) : (
           <>
-            <ClosedNotice hours={campusHours} compact />
+            <ClosedNotice hours={campusHours} compact onHome={() => navigate('/focus')} />
             {campusHours.nextOpen && (
               <button
                 type="button"

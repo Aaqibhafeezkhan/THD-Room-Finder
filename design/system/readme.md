@@ -176,6 +176,17 @@ Cards: `guidelines/color-focus.html`, `focus-states.html`,
 `focus-ordering.html`, `focus-map-signal.html`, `focus-graph.html`, and
 `components/focus/focus.card.html` for the components.
 
+### Focus at home and sounds (v2.6)
+
+A session has a place: a campus room or **at home** (ADR 0011). The Focus tab
+starts focus at home and holds any running session; the focus surface names
+its place with a chip (house or building), carries a break tip and a speaker
+button. No new colours: the At home card's icon well is violet (your focus),
+the On campus card's teal (free on campus). Sounds (ADR 0012) live in
+`assets/sounds/`: three sets, each falling for a break, rising for focus and
+resolving when done. Prototype: `ui_kits/focus-at-home/`; brief
+`brief/10-focus-at-home.md`.
+
 ---
 
 ## Iconography
@@ -210,7 +221,8 @@ Cards: `guidelines/color-focus.html`, `focus-states.html`,
   `breakpoints.css` (window size classes + adaptive-nav metrics + responsive
   layout helpers), `elevation.css` (shape + shadow + motion).
 - `assets/logo/` — app icon (`icon.svg`, `icon-192/512/180.png`,
-  `maskable-512.png`); `assets/og-banner.png` — marketing banner.
+  `maskable-512.png`); `assets/og-banner.png` — marketing banner;
+  `assets/sounds/` — the focus session sounds (`<set>-<break|back|done>.mp3`).
 
 **Foundation cards** (`guidelines/`, shown on the Design System tab)
 - Colors: primary, status, surfaces, sponsor, **focus layer** · Type: display,
@@ -229,7 +241,7 @@ Cards: `guidelines/color-focus.html`, `focus-states.html`,
 - `focus/` — `ActivityRow`, `FocusButton`, `FocusSurface`, `FocusPill`,
   `FocusSummary`, `CheckInSheet`, `FocusBadge`, `FocusGraph`, `ShareCard`
   (+ `renderShareCard`), `ProfileHeader`, `ListNotice`, `MapLegend`,
-  `BuildingRow` (mirrored from the app)
+  `BuildingRow`, `FocusStartCard` + `OnCampusCard` (mirrored from the app)
   (EN/DE segmented control — the single in-app locale switch; small pill for an
   app bar, medium row for settings)
 - `app/` — `Logo`, `AppBar`, `RoomCard` (answer-first list row — leads with the
@@ -281,6 +293,8 @@ app) in **English and German**. Two foundations carry that:
   `IconButton`, and shares the campus + rooms data with the `campus-room-finder`
   template so map tints and room lists agree.
 - `website/` — the marketing landing page, recreated 1:1.
+- `focus-at-home/` — v2.6: the playable focus-at-home prototype (fast clock,
+  the real sounds), every state light and dark, the wide layout, the sound sets.
 
 **Other**
 - `SKILL.md` — makes this folder usable as a downloadable Claude Agent Skill.

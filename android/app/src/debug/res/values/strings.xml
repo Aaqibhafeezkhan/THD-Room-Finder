@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <!-- Test builds from pull requests install next to the real app. -->
+    <string name="app_name">Room Finder test</string>
+    <string name="title_activity_main">Room Finder test</string>
+</resources>

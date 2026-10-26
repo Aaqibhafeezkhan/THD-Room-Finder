@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { dailyMinutes, liveEntry, localDay, minutesBetween, minutesOn, semesterOf, streak, withLive } from '../../domain/focusHistory';
+import { dailyMinutes, homeMinutes, liveEntry, localDay, minutesBetween, minutesOn, semesterOf, streak, withLive } from '../../domain/focusHistory';
 import { useFocusHistory } from './FocusHistoryContext';
 import { useOptionalFocusSession } from './FocusSessionContext';
 
@@ -13,7 +13,8 @@ export function useFocusStats(now: Date = new Date(), { live = true }: { live?: 
   const { days: savedDays, entries, ready } = useFocusHistory();
   const session = useOptionalFocusSession();
   const today = localDay(now);
-  const running = live && session?.active && session.plan
+  const atHome = session?.active?.place === 'home';
+  const live0 = live && session?.active && session.plan
     ? liveEntry(
         {
           id: session.active.shared?.id ?? `live-${session.active.startedAt}`,
@@ -26,11 +27,13 @@ export function useFocusStats(now: Date = new Date(), { live = true }: { live?: 
         session.now,
       )
     : null;
+  const running = live0 && atHome ? { ...live0, home: true as const } : live0;
   // The saved entry wins once it is there; until then the running one counts.
   const current = running && !entries.some((e) => e.id === running.id) ? running : null;
   const liveKey = current ? `${current.startedAt}/${current.minutes}` : '';
   return useMemo(() => {
-    const days = current ? dailyMinutes(withLive(entries, current)) : savedDays;
+    const all = current ? withLive(entries, current) : entries;
+    const days = current ? dailyMinutes(all) : savedDays;
     const semester = semesterOf(now);
     return {
       ready,
@@ -43,6 +46,8 @@ export function useFocusStats(now: Date = new Date(), { live = true }: { live?: 
       semesterMinutes: minutesBetween(days, semester.start, semester.end),
       todayMinutes: minutesOn(days, today),
       streak: streak(days, now),
+      /** Minutes at home per day, for the day detail (ADR 0011). */
+      home: homeMinutes(all),
       /** The running session's day and minutes so far, or null. */
       live: current ? { date: localDay(new Date(current.startedAt)), minutes: current.minutes } : null,
     };

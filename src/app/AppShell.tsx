@@ -1,20 +1,22 @@
-import { lazy, Suspense, useLayoutEffect, useMemo, useRef } from 'react';
+import { lazy, Suspense, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AdaptiveNav, CheckInSheet } from '../components';
-import { useFocusSession } from '../features/focus/FocusSessionContext';
+import { isHome, useFocusSession } from '../features/focus/FocusSessionContext';
 import { sessionView } from '../features/focus/sessionView';
 import { FocusNotifications } from '../features/focus/FocusNotifications';
+import { FocusSounds } from '../features/focus/FocusSounds';
 import { LectureGuard } from '../features/focus/LectureGuard';
 import { AppUpdates } from '../features/update/AppUpdates';
 import type { NavItem } from '../components';
 import { IconList, IconMap } from '../components/icons';
-import { IconPerson } from '../components/focus/focusIcons';
+import { IconPerson, IconTimer } from '../components/focus/focusIcons';
 import { useNavigationVariant } from '../lib/useWindowClass';
 import { useI18n } from '../i18n';
 import { HomeScreen } from '../features/home/HomeScreen';
 import { CampusScreen } from '../features/campus/CampusScreen';
 import { ProfileScreen } from '../features/profile/ProfileScreen';
 import { SettingsScreen } from '../features/profile/SettingsScreen';
+import { FocusScreen } from '../features/focus/FocusScreen';
 import { RoomDetailScreen } from '../features/detail/RoomDetailScreen';
 import { TableScreen } from '../features/tables/TableScreen';
 import { TableReminder } from '../features/tables/TableReminder';
@@ -44,13 +46,23 @@ export function AppShell() {
     if (location.pathname.startsWith('/profile') && page.current) page.current.scrollTop = 0;
   }, [location.pathname]);
   const focus = useFocusSession();
+  // Opening the app while a session runs lands on it (ADR 0011), once.
+  const landed = useRef(false);
+  useEffect(() => {
+    if (landed.current) return;
+    landed.current = true;
+    if (focus.active && location.pathname === '/') navigate('/focus', { replace: true });
+  }, [focus.active, location.pathname, navigate]);
   const checkIn =
     focus.active && focus.plan && focus.status ? sessionView(focus.active, focus.plan, focus.status, focus.now, t) : null;
+  const home = isHome(focus.active);
+  const surfacePath = home ? '/focus' : `/room/${encodeURIComponent(focus.active?.roomIdent ?? '')}`;
 
   const items = useMemo<NavItem[]>(
     () => [
       { id: 'campus', label: t('Campus', 'Campus'), icon: <IconMap /> },
       { id: 'rooms', label: t('Rooms', 'Räume'), icon: <IconList /> },
+      { id: 'focus', label: t('Focus', 'Fokus'), icon: <IconTimer size={24} /> },
       { id: 'profile', label: t('Profile', 'Profil'), icon: <IconPerson size={24} /> },
     ],
     [t],
@@ -75,6 +87,7 @@ export function AppShell() {
       <Routes>
         <Route path="/" element={<CampusScreen />} />
         <Route path="/rooms" element={<HomeScreen />} />
+        <Route path="/focus" element={<FocusScreen />} />
         <Route path="/profile" element={<ProfileScreen />} />
         <Route path="/profile/settings" element={<SettingsScreen />} />
         {/* The Saved tab became part of Profile (#37); old links still work. */}
@@ -100,20 +113,26 @@ export function AppShell() {
       </Routes>
       </ErrorBoundary>
       <FocusNotifications />
+      <FocusSounds />
       <LectureGuard />
       <AppUpdates />
       <TableReminder />
       {focus.active && checkIn && (
         <CheckInSheet
-          // On the session's own room the focus surface asks instead.
-          open={checkIn.phase === 'confirm' && location.pathname !== `/room/${encodeURIComponent(focus.active.roomIdent)}`}
+          // On the session's own surface (its room, or Focus at home) the
+          // surface asks instead.
+          open={checkIn.phase === 'confirm' && location.pathname !== surfacePath}
           variant={wide ? 'dialog' : 'sheet'}
           title={
-            checkIn.blockLabel
-              ? t(`Break's over in ${focus.active.roomCode}`, `Pause vorbei in ${focus.active.roomCode}`)
-              : t(`Still focusing in ${focus.active.roomCode}?`, `Lernst du noch in ${focus.active.roomCode}?`)
+            home
+              ? checkIn.blockLabel
+                ? t("Break's over at home", 'Pause vorbei zu Hause')
+                : t('Still focusing at home?', 'Lernst du noch zu Hause?')
+              : checkIn.blockLabel
+                ? t(`Break's over in ${focus.active.roomCode}`, `Pause vorbei in ${focus.active.roomCode}`)
+                : t(`Still focusing in ${focus.active.roomCode}?`, `Lernst du noch in ${focus.active.roomCode}?`)
           }
-          meta={`${checkIn.blockLabel ?? checkIn.clock} · ${focus.active.roomCode}`}
+          meta={`${checkIn.blockLabel ?? checkIn.clock} · ${home ? t('At home', 'Zu Hause') : focus.active.roomCode}`}
           body={checkIn.line}
           endLabel={t('End', 'Beenden')}
           keepLabel={checkIn.confirmLabel}

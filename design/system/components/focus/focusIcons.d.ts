@@ -29,3 +29,13 @@ export declare const IconShare: ({ size, strokeWidth }: FocusIconProps) => JSX.E
 export declare const IconSettings: ({ size, strokeWidth }: FocusIconProps) => JSX.Element;
 /** Cup: a break between focus blocks (focus surface, pill). */
 export declare const IconBreak: ({ size, strokeWidth }: FocusIconProps) => JSX.Element;
+/** House: a session at home (ADR 0011). */
+export declare const IconHome: ({ size, strokeWidth }: FocusIconProps) => JSX.Element;
+/** Columned building: a campus room, the On campus card. */
+export declare const IconCampus: ({ size, strokeWidth }: FocusIconProps) => JSX.Element;
+/** Speaker: the session's sounds are on (ADR 0012). */
+export declare const IconSound: ({ size, strokeWidth }: FocusIconProps) => JSX.Element;
+/** Crossed speaker: no sounds for this session. */
+export declare const IconMute: ({ size, strokeWidth }: FocusIconProps) => JSX.Element;
+/** Play: preview a sound. */
+export declare const IconPlay: ({ size, strokeWidth }: FocusIconProps) => JSX.Element;

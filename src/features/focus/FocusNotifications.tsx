@@ -3,7 +3,9 @@ import { focusNotifier } from '../../data/focusNotifier';
 import type { FocusNotifier } from '../../data/focusNotifier';
 import { useI18n } from '../../i18n';
 import { useFocusSession } from './FocusSessionContext';
+import { sessionSound } from './FocusSounds';
 import { notificationStages } from './notificationStages';
+import { useSoundPreference } from './soundPreference';
 
 /**
  * Keeps the running-session notification in step with the session (ADR 0004
@@ -15,15 +17,17 @@ import { notificationStages } from './notificationStages';
 export function FocusNotifications({ notifier = focusNotifier() }: { notifier?: FocusNotifier }) {
   const focus = useFocusSession();
   const { t } = useI18n();
+  const [prefs] = useSoundPreference();
   const latest = useRef(focus);
   latest.current = focus;
 
   const { active, plan, status } = focus;
+  const set = sessionSound(active, prefs);
   // A session picked up from another device rings there, not here, until a
   // block is confirmed on this one (ADR 0005).
   const phaseKey =
     active && !active.adopted && status && status.kind !== 'done'
-      ? `${active.startedAt}|${active.confirmed}|${active.roomIdent}|${status.kind}|${'phase' in status ? status.phase.block : ''}`
+      ? `${active.startedAt}|${active.confirmed}|${active.roomIdent}|${status.kind}|${'phase' in status ? status.phase.block : ''}|${set}`
       : '';
 
   useEffect(() => {
@@ -32,8 +36,8 @@ export function FocusNotifications({ notifier = focusNotifier() }: { notifier?: 
       void notifier.clear().catch(() => undefined);
       return;
     }
-    void notifier.schedule(notificationStages(s, p, new Date(), t)).catch(() => undefined);
-  }, [phaseKey, plan, notifier, t]);
+    void notifier.schedule(notificationStages(s, p, new Date(), t, set)).catch(() => undefined);
+  }, [phaseKey, plan, notifier, t, set]);
 
   useEffect(
     () =>

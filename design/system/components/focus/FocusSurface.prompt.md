@@ -19,3 +19,25 @@ timer for the time left to answer.
 Without a study profile the session stays on the device: no visibility
 control, "the room doesn't show as claimed", and Set Up Study Profile. All
 copy comes in through `text`.
+
+On the Focus tab (ADR 0011) the same card carries its place: `place={{ home: true, label: 'At home' }}`
+puts a house chip at the top (a building and the room code for a room).
+`note` replaces Private/Public and the signed-out note with one line ("Only
+you see this session."), `action` sits under it ("Open C211"), `tip` shows
+one suggestion during breaks, and `large` gives wide windows a 72px timer.
+
+```jsx
+<FocusSurface place={{ home: true, label: 'At home' }} note="Only you see this session."
+  elapsed="17:24" phaseLabel="Block 1 of 6" track={segments}
+  plannedLine="Break at 20:40 · ends 23:15 at the latest" visibility="private"
+  showName={false} signedIn={false} text={copy} />
+```
+
+`sound={{ on, label, onToggle }}` adds the speaker button (ADR 0012): next to
+the place chip, or at the end of the title row on room detail. Off, it sits
+on a tinted circle with a crossed speaker. `soundHint` shows one line under
+the timer while the browser waits for a tap before it may play audio.
+
+Sizes: `large` (tablets and desktops) grows the timer with the window up to
+160px, readable across a room; `split` (short landscape windows) puts the
+timer on the left and its controls on the right, so End stays on screen.

@@ -1,0 +1,55 @@
+<!-- @dsCard group="Focus at home (v2.6)" viewport="1600x2400" name="Focus at home — prototype" subtitle="Playable: start focus at home from the Focus tab, hear the break, break's-over and done sounds on a fast clock. Every state light and dark, the wide layout and the three sound sets." -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Focus at home — prototype</title>
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: var(--font-sans); background: #ece9f1; }
+  a { color: var(--md-primary); }
+  a:hover { color: var(--md-focus); }
+  .doc { padding: 40px; color: var(--md-on-surface); background: #ece9f1; min-height: 100vh; }
+  .doc[data-theme="dark"] { background: #16141b; }
+  .top { display: flex; gap: 24px; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; margin-bottom: 24px; }
+  h1 { font-size: 32px; font-weight: 500; margin: 0 0 6px; }
+  h2 { font-size: 22px; font-weight: 500; margin: 48px 0 16px; }
+  h3 { font-size: 18px; font-weight: 500; margin: 0 0 6px; }
+  h4 { font-size: 13px; font-weight: 600; margin: 20px 0 8px; text-transform: uppercase; letter-spacing: .04em; color: var(--md-on-surface-variant); }
+  .lede { margin: 0; color: var(--md-on-surface-variant); max-width: 760px; line-height: 1.5; text-wrap: pretty; }
+  .muted { color: var(--md-on-surface-variant); margin: 0; font-size: 14px; }
+  .seg { display: inline-flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+  .seg button, .snd { font: 500 13px var(--font-sans); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--md-outline-variant); background: var(--md-surface); color: var(--md-on-surface); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  .seg button.on { background: var(--md-secondary-container); color: var(--md-on-secondary-container); border-color: transparent; }
+  .seg button:disabled { opacity: .4; cursor: default; }
+  .play { display: flex; gap: 40px; flex-wrap: wrap; align-items: flex-start; }
+  .controls { max-width: 420px; flex: 1; min-width: 300px; }
+  .controls p { line-height: 1.5; }
+  .clock { margin-top: 10px; font: 500 15px var(--font-mono); color: var(--md-on-surface-variant); }
+  .log { margin: 0; padding-left: 18px; font: 13px/1.7 var(--font-mono); }
+  .row { display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start; }
+  .shot { display: flex; flex-direction: column; gap: 10px; }
+  .label { font-size: 13px; color: var(--md-on-surface-variant); max-width: 360px; min-height: 18px; }
+  .phone { width: 360px; height: 760px; border-radius: 28px; overflow: hidden; position: relative; background: var(--md-bg); color: var(--md-on-surface);
+    box-shadow: 0 10px 40px rgba(30, 20, 60, .18); display: flex; flex-direction: column; font-size: var(--body-medium-size); }
+  .page { flex: 1; overflow: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; scrollbar-width: none; }
+  .desk { width: 1100px; max-width: 100%; height: 640px; border-radius: 16px; overflow: hidden; display: flex; background: var(--md-bg); color: var(--md-on-surface); box-shadow: 0 10px 40px rgba(30, 20, 60, .18); }
+  table.sounds { border-collapse: separate; border-spacing: 0 8px; }
+  table.sounds th { text-align: left; font-weight: 500; font-size: 13px; padding: 0 16px 0 0; color: var(--md-on-surface-variant); }
+  table.sounds th small { display: block; font-weight: 400; }
+  table.sounds td { padding: 12px 16px 12px 0; vertical-align: top; }
+  table.sounds td small { color: var(--md-on-surface-variant); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel" src="parts.jsx"></script>
+<script type="text/babel" src="app.jsx"></script>
+</body>
+</html>

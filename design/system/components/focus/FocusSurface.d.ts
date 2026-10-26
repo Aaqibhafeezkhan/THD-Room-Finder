@@ -8,6 +8,10 @@ import type { CSSProperties, ReactNode } from 'react';
  * End. When a break is over, "Start block 3" leads. Without a study profile
  * the session runs on the device: no visibility control, a line saying the
  * room is not claimed, and Set Up Study Profile.
+ * On the Focus tab (ADR 0011) a chip names the place ("At home", "C211"), a
+ * plain note replaces the controls, breaks carry a tip, and wide windows get
+ * a larger timer. A speaker button turns the session's sounds off and on
+ * (ADR 0012): next to the place chip, or at the end of the title row.
  * Focus order: Start block → timer → visibility → name → End.
  */
 export type FocusVisibility = 'private' | 'public';
@@ -69,9 +73,36 @@ export interface FocusSurfaceProps {
     onEnd?: () => void;
     /** Omit to hide Set Up (no focus service in this build). */
     onSetup?: () => void;
+    /** Where the session runs, as a chip at the top; omitted on room detail,
+     *  whose page already says it. */
+    place?: {
+        home: boolean;
+        label: string;
+    };
+    /** Replaces Private/Public and the signed-out note with one line, e.g.
+     *  "Only you see this session." at home. */
+    note?: ReactNode;
+    /** A short suggestion shown during breaks: "Stand up and stretch." */
+    tip?: string;
+    /** Under the note, e.g. "Open C211". */
+    action?: ReactNode;
+    /** A larger timer that grows with the window (up to 160 px, readable
+     *  across a room), for tablets and desktops. */
+    large?: boolean;
+    /** Short landscape windows: the timer on the left, its controls on the
+     *  right, so End stays on screen. */
+    split?: boolean;
+    /** The speaker button: on = sounds play; `label` names it, "Sounds for this session". */
+    sound?: {
+        on: boolean;
+        label: string;
+        onToggle?: () => void;
+    };
+    /** A line under the timer while sounds wait for a tap. */
+    soundHint?: string;
     style?: CSSProperties;
 }
 /**
- * @startingPoint section="Focus" subtitle="The running session on room detail" viewport="420x420"
+ * @startingPoint section="Focus" subtitle="The running session, on room detail and the Focus tab" viewport="420x460"
  */
 export declare function FocusSurface(props: FocusSurfaceProps): JSX.Element;
