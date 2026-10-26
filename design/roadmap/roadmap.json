@@ -6,7 +6,8 @@
     {"name": "Focus sessions", "chip": "Wrapping up", "stories": [
       ["Free rooms, live", "done"], ["Focus sessions and rhythms", "done"], ["Study profile and batch", "done"],
       ["Lock-screen notifications", "done"], ["Focus graph and share links", "done"], ["Sync across devices", "done"],
-      ["App updates itself", "done"], ["Device and privacy testing", "doing"], ["Programme and batch list", "done"], ["Works when THabella is down", "done"]]},
+      ["App updates itself", "done"], ["Device and privacy testing", "doing"], ["Programme and batch list", "done"], ["Works when THabella is down", "done"],
+      ["Focus at home", "done"], ["Sounds for breaks", "done"]]},
     {"name": "Group focus", "chip": "Now", "stories": [
       ["Study tables", "done"], ["Table links and seats", "done"], ["Your tables and reminders", "done"],
       ["Start together, in step", "done"], ["Invite to a running session", "done"], ["Handles and display names", "planned"], ["Group focus graph", "planned"]]},
