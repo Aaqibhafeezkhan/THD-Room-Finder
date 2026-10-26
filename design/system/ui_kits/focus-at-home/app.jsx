@@ -141,17 +141,29 @@ function Rail({ active }) {
 }
 
 // ── The Focus tab, every state from one description ───────────────────────
-function FocusTab({ m, act, wide }) {
+function FocusTab({ m, act, wide, split, columns }) {
   const r = RHYTHMS[m.rhythm];
   if (m.session && m.view && !m.view.done) {
     const s = m.session, v = m.view;
     const home = s.place === 'home';
     return (
-      <PlaceSurface wide={wide} place={s.place} placeLabel={home ? 'At home' : s.room} title={v.title} phase={v.phase} phaseLabel={v.phaseLabel}
+      <PlaceSurface wide={wide} split={split} place={s.place} placeLabel={home ? 'At home' : s.room} title={v.title} phase={v.phase} phaseLabel={v.phaseLabel}
         clock={v.clock} track={v.track} plannedLine={v.plannedLine} tip={v.tip} confirmLabel={v.confirmLabel} onConfirm={act.confirm}
         note={home ? 'Only you see this session.' : 'Private · others see that someone is focusing here, not who.'}
         roomAction={home ? null : <div style={{ marginLeft: -12 }}><Button variant="text" size="small" onClick={act.openRoom} style={{ color: 'var(--md-on-focus-container)' }}>Open {s.room}</Button></div>}
         sound={!s.muted} onSound={act.toggleSound} onEnd={act.end} />
+    );
+  }
+  if (columns) {
+    // Tablets, desktops and landscape phones: the two places side by side.
+    return (
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.25fr) minmax(0, 1fr)', gap: 16, alignItems: 'start' }}>
+        <StartCard rhythm={r} sound={m.sounds.home} other={m.other} onStart={act.startHome} onRhythm={act.rhythm} onSound={act.soundSheet} />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, minWidth: 0 }}>
+          <CampusCard closed={m.closed} onRooms={act.rooms} />
+          <TodayLine minutes={m.todayMinutes} streak={3} onGraph={act.profile} />
+        </div>
+      </div>
     );
   }
   return (
@@ -389,22 +401,43 @@ function Board({ theme }) {
   return <div className="row">{STATES.map((s) => <Phone key={s.label} m={s.m} act={NO_ACT} theme={theme} label={s.label} />)}</div>;
 }
 
-function Wide({ theme }) {
-  const { session, view } = fixed('home', 9.4);
+function Desk({ theme, label, children, w = 1100, h = 640, rail = true }) {
   return (
-    <div className="shot" data-screen-label="Desktop, running at home">
-      <div className="label">Tablet and desktop: Focus in the rail, the surface centred (max 560 px), a larger timer</div>
-      <div data-theme={theme} className="desk">
-        <Rail active="focus" />
+    <div className="shot" data-screen-label={label}>
+      <div className="label">{label}</div>
+      <div data-theme={theme} className="desk" style={{ width: w, height: h }}>
+        {rail && <Rail active="focus" />}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
           <Header title="Focus" />
-          <div style={{ flex: 1, display: 'grid', placeItems: 'start center', padding: 32, overflow: 'hidden' }}>
-            <div style={{ width: '100%', maxWidth: 560, display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <FocusTab m={{ ...BASE_M, tab: 'focus', closed: true, session, view }} act={NO_ACT} wide />
-            </div>
-          </div>
+          {children}
         </div>
       </div>
+    </div>
+  );
+}
+
+function Wide({ theme }) {
+  const { session, view } = fixed('home', 9.4);
+  const running = { ...BASE_M, tab: 'focus', closed: true, session, view };
+  const centre = (maxWidth, child) => (
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '24px 32px 8vh', overflow: 'hidden' }}>
+      <div style={{ width: '100%', maxWidth, marginInline: 'auto', display: 'flex', flexDirection: 'column', gap: 16 }}>{child}</div>
+    </div>
+  );
+  return (
+    <div className="row">
+      <Desk theme={theme} label="Desktop, nothing running: the two places side by side (max 960 px), in the optical centre">
+        {centre(960, <FocusTab m={{ ...BASE_M, tab: 'focus', closed: true }} act={NO_ACT} columns />)}
+      </Desk>
+      <Desk theme={theme} label="Desktop, running: a stage, the timer grows with the window up to 160 px">
+        {centre('clamp(560px, 46vw, 880px)', <FocusTab m={running} act={NO_ACT} wide />)}
+      </Desk>
+      <Desk theme={theme} w={780} h={360} label="Phone on its side: the timer beside its controls, so End stays on screen">
+        <div style={{ flex: 1, padding: 16, overflow: 'hidden' }}><FocusTab m={running} act={NO_ACT} split /></div>
+      </Desk>
+      <Desk theme={theme} w={780} h={360} label="Phone on its side, nothing running: two columns">
+        <div style={{ flex: 1, padding: 16, overflow: 'hidden' }}><FocusTab m={{ ...BASE_M, tab: 'focus', closed: false }} act={NO_ACT} columns /></div>
+      </Desk>
     </div>
   );
 }
@@ -446,7 +479,7 @@ function Page() {
       <Playable theme={theme} />
       <h2>Every state</h2>
       <Board theme={theme} />
-      <h2>Wide</h2>
+      <h2>Tablets, desktops and phones on their side</h2>
       <Wide theme={theme} />
       <h2>Sounds</h2>
       <p className="lede">Down for a break, up for focus, resolve when done. Each under 2.5 s, soft attack, peaks at −6 dBFS. Made by scripts/dev/focus_sounds.py. Home defaults to Coffee break; campus keeps the phone's own sound unless you change it.</p>

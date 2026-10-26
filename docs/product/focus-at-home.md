@@ -107,6 +107,20 @@ The surface shows the room chip (**C211**) and **Open C211**; Private/Public
 and Study together stay on room detail, where the room's context is. The
 speaker button works the same.
 
+## Sizes and orientations
+
+The Focus tab is laid out by the shape of the window, not only its width:
+
+| Window | Nothing running | A session runs |
+|---|---|---|
+| Phone upright (and any window under 600 px wide) | One column: At home, On campus, today | The surface, 48 px timer |
+| Short landscape (wider than tall, under 560 px high: phones on their side, short laptop windows) | Two columns: At home beside On campus and today | Split surface: timer, track and plan on the left; note, tip and End on the right, so End never falls below the fold |
+| Tablets and desktops (600 px wide and 560 px high or more), up to ultra-wide | Two columns, at most 960 px, in the optical centre of the window | A stage: the surface centred (560–880 px wide), the timer growing with the window up to 160 px so it reads across a room |
+
+Room detail keeps its own layout; its surface gets the speaker in the title
+row. Sheets (rhythm, sounds) become dialogs on wider windows and scroll when
+the window is short.
+
 ## Planning a home session
 
 | Rule | At home | On campus (unchanged) |
@@ -194,7 +208,7 @@ device. The Focus tab's sound line opens the same sheet for home.
 | HF-06 | to know what happens to my other session | I don't lose a campus claim by accident | Start lines say "This ends your session in C211." / "…at home."; the old session is recorded and ended |
 | HF-07 | weekend study to count for my streak | the streak rewards what I actually did | A rest day with focus adds a day; an empty one pauses; day detail shows home minutes |
 | HF-08 | notifications that say where I am | the lock screen makes sense | "Focus · At home", "Break · At home"; tapping opens the Focus tab |
-| HF-09 | the same on tablet and desktop | I can focus at my laptop | Focus tab in the rail and drawer; the surface centred, max 560 px; timer larger on expanded windows |
+| HF-09 | the same on tablet, desktop and a phone on its side | I can focus at my laptop or with the phone propped up | See [Sizes and orientations](#sizes-and-orientations): one column, split or a centred stage; End always on screen |
 | SN-01 | a pleasant sound when a break starts | I notice and actually take it | Break sound of the place's set at each block end |
 | SN-02 | an inviting sound when the break is over | I come back on time | Break's-over sound, then once more, quieter, 5 minutes later if unanswered |
 | SN-03 | a sound when the session is done | I know I finished | Done sound at the planned end only |

@@ -9,11 +9,10 @@ import { getCampusHours } from '../../domain/openingHours';
 import type { Rhythm } from '../../domain/focusRhythm';
 import { campusNow } from '../../domain/time';
 import { useI18n } from '../../i18n';
-import { useWindowClass } from '../../lib/useWindowClass';
+import { useFocusLayout } from '../../lib/useWindowClass';
 import { useStudyProfile } from '../profile/StudyProfileContext';
 import { useRoomData } from '../rooms/RoomDataContext';
 import { BrandHeader } from '../shared/BrandHeader';
-import { Page } from '../shared/ui';
 import { formatMinutes } from './copy';
 import { isHome, useFocusSession } from './FocusSessionContext';
 import { RhythmSheet } from './RhythmSheet';
@@ -34,7 +33,7 @@ import { useFocusStats } from './useFocusStats';
 export function FocusScreen() {
   const { t, locale } = useI18n();
   const navigate = useNavigate();
-  const cls = useWindowClass();
+  const layout = useFocusLayout();
   const focus = useFocusSession();
   const profile = useStudyProfile();
   const stats = useFocusStats();
@@ -42,7 +41,10 @@ export function FocusScreen() {
   const [picked, setPicked] = useState<Rhythm | null>(null);
   const [picking, setPicking] = useState(false);
   const rhythm = picked ?? preferred;
-  const wide = cls !== 'compact';
+  // Tablets and desktops centre a stage; short landscape screens put things
+  // side by side so nothing important falls below the fold.
+  const stage = layout === 'stage';
+  const twoColumns = layout !== 'stack';
   const [sounds, setSound] = useSoundPreference();
   const [pickingSound, setPickingSound] = useState(false);
   const locked = useSoundsLocked();
@@ -58,7 +60,8 @@ export function FocusScreen() {
     body = (
       <FocusSurface
         place={{ home, label: home ? t('At home', 'Zu Hause') : active.roomCode }}
-        large={wide}
+        large={stage}
+        split={layout === 'split'}
         elapsed={view.clock}
         elapsedLabel={view.clockLabel}
         phase={view.phase}
@@ -120,9 +123,17 @@ export function FocusScreen() {
     );
   } else {
     body = (
-      <>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: twoColumns ? 'minmax(0, 1.25fr) minmax(0, 1fr)' : 'minmax(0, 1fr)',
+          gap: 'var(--space-4)',
+          alignItems: 'start',
+        }}
+      >
         {ended && (
           <FocusSummary
+            style={{ gridColumn: '1 / -1' }}
             title={t('Session ended', 'Session beendet')}
             added={formatMinutes(ended.minutes, locale)}
             addedLabel={
@@ -162,6 +173,7 @@ export function FocusScreen() {
             },
           ]}
         />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)', minWidth: 0 }}>
         <CampusLine onRooms={() => navigate('/rooms')} />
         {!ended && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0 4px', fontSize: 'var(--body-medium-size)', color: 'var(--md-on-surface-variant)' }}>
@@ -182,7 +194,8 @@ export function FocusScreen() {
             </Button>
           </div>
         )}
-      </>
+        </div>
+      </div>
     );
   }
 
@@ -199,13 +212,28 @@ export function FocusScreen() {
     await focus.startHome({ rhythm });
   }
 
+  // A running session gets the most room on a stage (720 px, a little more
+  // on very wide screens); two columns of cards stop at 960 px. Both sit in
+  // the optical centre of tall windows instead of clinging to the top.
+  const maxWidth = active && view
+    ? stage ? 'clamp(560px, 46vw, 880px)' : layout === 'split' ? 960 : 560
+    : twoColumns ? 960 : 560;
   return (
-    <>
+    <div style={{ minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
       <BrandHeader title={t('Focus', 'Fokus')} menu={false} pill={false} />
-      {/* The surface is 560 px at most, centred on wide windows. */}
-      <Page style={{ maxWidth: 592 }}>
-        {body}
-      </Page>
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: stage ? 'center' : 'flex-start',
+          padding: stage ? 'var(--space-6) var(--gutter-fluid) 8vh' : 'var(--space-4)',
+        }}
+      >
+        <div style={{ width: '100%', maxWidth, marginInline: 'auto', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+          {body}
+        </div>
+      </div>
       <RhythmSheet
         open={picking}
         title={t('Rhythm for this session', 'Rhythmus für diese Session')}
@@ -214,7 +242,7 @@ export function FocusScreen() {
         onPick={setPicked}
       />
       <SoundSheet open={pickingSound} place="home" value={sounds.home} onClose={() => setPickingSound(false)} onPick={(s) => setSound('home', s)} />
-    </>
+    </div>
   );
 }
 

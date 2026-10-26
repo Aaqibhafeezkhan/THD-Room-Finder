@@ -108,17 +108,20 @@ function StartCard({ rhythm, sound, other, onStart, onRhythm, onSound }) {
 
 /** Focus tab, nothing running: the On campus card that leads to Rooms. */
 function CampusCard({ closed, onRooms }) {
+  // The action moves under the line when the card is narrow.
   return (
     <Card>
-      <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-        <Well tone="campus"><IconCampus size={20} /></Well>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 'var(--title-medium-size)', fontWeight: 500 }}>On campus</div>
-          <div style={{ fontSize: 'var(--body-medium-size)', ...muted }}>
-            {closed ? 'Classroom buildings closed · opens Tue 06:30' : <><span style={{ color: 'var(--md-tertiary)', fontWeight: 500 }}>38 rooms free</span> now</>}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 12px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center', flex: '1 1 180px', minWidth: 0 }}>
+          <Well tone="campus"><IconCampus size={20} /></Well>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 'var(--title-medium-size)', fontWeight: 500 }}>On campus</div>
+            <div style={{ fontSize: 'var(--body-medium-size)', ...muted }}>
+              {closed ? 'Classroom buildings closed · opens Tue 06:30' : <><span style={{ color: 'var(--md-tertiary)', fontWeight: 500 }}>38 rooms free</span> now</>}
+            </div>
           </div>
         </div>
-        <Button variant="text" size="small" onClick={onRooms}>{closed ? 'Plan' : 'Find a room'}</Button>
+        <div style={{ marginLeft: 'auto' }}><Button variant="text" size="small" onClick={onRooms}>{closed ? 'Plan' : 'Find a room'}</Button></div>
       </div>
     </Card>
   );
@@ -139,11 +142,11 @@ function TodayLine({ minutes, streak, onGraph }) {
  *  plain privacy line replaces Private/Public; a speaker button sits by End;
  *  breaks carry one tip. */
 function PlaceSurface({ place, placeLabel, title, phase, phaseLabel, clock, track, plannedLine, tip, confirmLabel, onConfirm,
-  note, roomAction, sound, onSound, onEnd, wide }) {
+  note, roomAction, sound, onSound, onEnd, wide, split }) {
   const on = { color: 'var(--md-on-focus-container)' };
-  return (
-    <section aria-label={title} style={{ background: 'var(--md-focus-container)', color: 'var(--md-on-focus-container)', borderRadius: 'var(--radius-l)',
-      boxShadow: 'var(--md-shadow-1)', padding: wide ? 24 : 16, display: 'flex', flexDirection: 'column', gap: 14, fontFamily: 'var(--font-sans)' }}>
+  const column = { display: 'flex', flexDirection: 'column', gap: 14, minWidth: 0 };
+  const lead = (
+    <>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: -4, marginRight: -8 }}>
         <PlaceChip place={place} label={placeLabel} />
         <button type="button" onClick={onSound} aria-pressed={!sound} aria-label="Sounds for this session" title={sound ? 'Sounds on for this session' : 'Sounds off for this session'}
@@ -160,10 +163,14 @@ function PlaceSurface({ place, placeLabel, title, phase, phaseLabel, clock, trac
         <Button variant="filled" onClick={onConfirm} style={{ background: 'var(--md-focus)', color: 'var(--md-on-focus)', alignSelf: 'stretch' }}>{confirmLabel}</Button>
       )}
       <div>
-        <div role="timer" style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums', fontSize: phase === 'confirm' ? 32 : wide ? 72 : 48, fontWeight: 300, lineHeight: 1 }}>{clock}</div>
+        <div role="timer" style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums', fontSize: phase === 'confirm' ? (wide ? 48 : 32) : wide ? 'clamp(64px, min(9vw, 14vh), 160px)' : 48, fontWeight: 300, lineHeight: 1 }}>{clock}</div>
         {track && track.length > 1 && <div style={{ marginTop: 12 }}><Track segments={track} /></div>}
-        <div style={{ fontSize: 13, marginTop: 8 }}>{plannedLine}</div>
+        <div style={{ fontSize: wide ? 15 : 13, marginTop: 8 }}>{plannedLine}</div>
       </div>
+    </>
+  );
+  const rest = (
+    <>
       {phase === 'break' && tip && (
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', padding: '10px 12px', borderRadius: 'var(--radius-m)', background: 'var(--focus-state-layer)', fontSize: 13 }}>
           <IconBreak size={16} /><span>{tip}</span>
@@ -175,6 +182,14 @@ function PlaceSurface({ place, placeLabel, title, phase, phaseLabel, clock, trac
         <span style={{ flex: 1, minWidth: 0, fontSize: 12, lineHeight: 1.4, textWrap: 'pretty' }}>Keeps running when your phone is locked. After each break, tap to start the next block.</span>
         <Button variant="outlined" onClick={onEnd} style={{ ...on, borderColor: 'var(--md-on-focus-container)', flexShrink: 0 }}>End</Button>
       </div>
+    </>
+  );
+  // Short landscape screens put the timer beside its controls, so End stays on screen.
+  return (
+    <section aria-label={title} style={{ background: 'var(--md-focus-container)', color: 'var(--md-on-focus-container)', borderRadius: 'var(--radius-l)',
+      boxShadow: 'var(--md-shadow-1)', padding: wide ? 'clamp(20px, 3vw, 32px)' : 16, fontFamily: 'var(--font-sans)',
+      ...(split ? { display: 'grid', gridTemplateColumns: 'minmax(0, 1.15fr) minmax(0, 1fr)', columnGap: 24, alignItems: 'start' } : column) }}>
+      {split ? <><div style={column}>{lead}</div><div style={{ ...column, justifyContent: 'flex-end', alignSelf: 'stretch' }}>{rest}</div></> : <>{lead}{rest}</>}
     </section>
   );
 }

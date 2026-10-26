@@ -122,14 +122,19 @@ export interface OnCampusCardProps {
 export function OnCampusCard({ title, line, actionLabel, onAction, style = {} }: OnCampusCardProps) {
   return (
     <section aria-label={title} style={{ ...card, ...style }}>
-      <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-        <Well tone="free">
-          <IconCampus size={20} />
-        </Well>
-        <Heading title={title} line={line} />
-        <Button variant="text" size="small" onClick={onAction}>
-          {actionLabel}
-        </Button>
+      {/* The action moves under the line when the card is narrow. */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 12px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center', flex: '1 1 180px', minWidth: 0 }}>
+          <Well tone="free">
+            <IconCampus size={20} />
+          </Well>
+          <Heading title={title} line={line} />
+        </div>
+        <div style={{ marginLeft: 'auto' }}>
+          <Button variant="text" size="small" onClick={onAction}>
+            {actionLabel}
+          </Button>
+        </div>
       </div>
     </section>
   );

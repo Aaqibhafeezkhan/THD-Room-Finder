@@ -86,8 +86,12 @@ export interface FocusSurfaceProps {
     tip?: string;
     /** Under the note, e.g. "Open C211". */
     action?: ReactNode;
-    /** A larger timer, for wide windows. */
+    /** A larger timer that grows with the window (up to 160 px, readable
+     *  across a room), for tablets and desktops. */
     large?: boolean;
+    /** Short landscape windows: the timer on the left, its controls on the
+     *  right, so End stays on screen. */
+    split?: boolean;
     /** The speaker button: on = sounds play; `label` names it, "Sounds for this session". */
     sound?: {
         on: boolean;

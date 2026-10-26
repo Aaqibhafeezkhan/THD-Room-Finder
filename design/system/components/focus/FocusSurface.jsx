@@ -80,20 +80,10 @@ function Track({ segments }) {
         })}
     </div>);
 }
-export function FocusSurface({ elapsed, elapsedLabel, phase = 'focus', phaseLabel, track, confirmLabel, onConfirm, plannedLine, visibility, showName, signedIn, text, onVisibility, onShowName, onEnd, onSetup, place, note, tip, action, large = false, sound, soundHint, style = {}, }) {
+export function FocusSurface({ elapsed, elapsedLabel, phase = 'focus', phaseLabel, track, confirmLabel, onConfirm, plannedLine, visibility, showName, signedIn, text, onVisibility, onShowName, onEnd, onSetup, place, note, tip, action, large = false, split = false, sound, soundHint, style = {}, }) {
     const onFocusText = { color: 'var(--md-on-focus-container)' };
-    return (<section aria-label={text.title} style={{
-            background: 'var(--md-focus-container)',
-            color: 'var(--md-on-focus-container)',
-            borderRadius: 'var(--radius-l)',
-            boxShadow: 'var(--md-shadow-1)',
-            padding: large ? 24 : 16,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 14,
-            fontFamily: 'var(--font-sans)',
-            ...style,
-        }}>
+    const column = { display: 'flex', flexDirection: 'column', gap: 14, minWidth: 0 };
+    const lead = (<>
       {place && (<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
           <PlaceChip home={place.home} label={place.label}/>
           {sound && <SoundButton {...sound}/>}
@@ -111,7 +101,7 @@ export function FocusSurface({ elapsed, elapsedLabel, phase = 'focus', phaseLabe
         <div role="timer" aria-label={elapsedLabel} style={{
             fontFamily: 'var(--font-mono)',
             fontVariantNumeric: 'tabular-nums',
-            fontSize: phase === 'confirm' ? 32 : large ? 72 : 48,
+            fontSize: phase === 'confirm' ? (large ? 48 : 32) : large ? 'clamp(64px, min(9vw, 14vh), 160px)' : 48,
             fontWeight: 300,
             lineHeight: 1,
         }}>
@@ -120,10 +110,11 @@ export function FocusSurface({ elapsed, elapsedLabel, phase = 'focus', phaseLabe
         {track && track.length > 1 && (<div style={{ marginTop: 12 }}>
             <Track segments={track}/>
           </div>)}
-        <div style={{ fontSize: 13, marginTop: 8 }}>{plannedLine}</div>
+        <div style={{ fontSize: large ? 15 : 13, marginTop: 8 }}>{plannedLine}</div>
         {soundHint && <div style={{ fontSize: 13, marginTop: 4, fontWeight: 500 }}>{soundHint}</div>}
       </div>
-
+    </>);
+    const rest = (<>
       {phase === 'break' && tip && (<div style={{
                 display: 'flex',
                 gap: 8,
@@ -176,5 +167,25 @@ export function FocusSurface({ elapsed, elapsedLabel, phase = 'focus', phaseLabe
           {text.end}
         </Button>
       </div>
+    </>);
+    return (<section aria-label={text.title} style={{
+            background: 'var(--md-focus-container)',
+            color: 'var(--md-on-focus-container)',
+            borderRadius: 'var(--radius-l)',
+            boxShadow: 'var(--md-shadow-1)',
+            padding: large ? 'clamp(20px, 3vw, 32px)' : 16,
+            fontFamily: 'var(--font-sans)',
+            ...(split
+                ? { display: 'grid', gridTemplateColumns: 'minmax(0, 1.15fr) minmax(0, 1fr)', columnGap: 24, alignItems: 'start' }
+                : column),
+            ...style,
+        }}>
+      {split ? (<>
+          <div style={column}>{lead}</div>
+          <div style={{ ...column, justifyContent: 'flex-end', alignSelf: 'stretch' }}>{rest}</div>
+        </>) : (<>
+          {lead}
+          {rest}
+        </>)}
     </section>);
 }

@@ -72,3 +72,34 @@ export function useNavigationVariant(): NavigationVariant {
   }, []);
   return variant;
 }
+
+/**
+ * How the Focus tab lays itself out (#190): `stack` on phones held upright,
+ * `split` on short landscape screens (the timer beside its controls, so End
+ * stays on screen), `stage` on tablets and desktops (centred, larger timer,
+ * the two places side by side), whatever the width.
+ */
+export type FocusLayout = 'stack' | 'split' | 'stage';
+
+export function focusLayoutFor(width: number, height: number): FocusLayout {
+  if (width > height && height < 560) return width >= 560 ? 'split' : 'stack';
+  if (width >= 600 && height >= 560) return 'stage';
+  return 'stack';
+}
+
+export function useFocusLayout(): FocusLayout {
+  const [layout, setLayout] = useState<FocusLayout>(() =>
+    typeof window === 'undefined' ? 'stack' : focusLayoutFor(window.innerWidth, window.innerHeight),
+  );
+  useEffect(() => {
+    const on = () => setLayout(focusLayoutFor(window.innerWidth, window.innerHeight));
+    on();
+    window.addEventListener('resize', on);
+    window.addEventListener('orientationchange', on);
+    return () => {
+      window.removeEventListener('resize', on);
+      window.removeEventListener('orientationchange', on);
+    };
+  }, []);
+  return layout;
+}

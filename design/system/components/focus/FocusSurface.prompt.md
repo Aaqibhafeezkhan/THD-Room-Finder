@@ -37,3 +37,7 @@ one suggestion during breaks, and `large` gives wide windows a 72px timer.
 the place chip, or at the end of the title row on room detail. Off, it sits
 on a tinted circle with a crossed speaker. `soundHint` shows one line under
 the timer while the browser waits for a tap before it may play audio.
+
+Sizes: `large` (tablets and desktops) grows the timer with the window up to
+160px, readable across a room; `split` (short landscape windows) puts the
+timer on the left and its controls on the right, so End stays on screen.
