@@ -8,6 +8,7 @@ guideline cards, UI kits, templates, assets, `readme.md` and `SKILL.md`.
 |---|---|---|
 | THD Room Finder Design System (design system) | `de229b71-7390-4512-805f-a450449acdf8` | https://claude.ai/design/p/de229b71-7390-4512-805f-a450449acdf8 |
 | THD Room Finder — Focus (Phase 1) (design project, attaches the system) | `79245808-3482-40bf-a5f4-eb70ee8e78a5` | https://claude.ai/design/p/79245808-3482-40bf-a5f4-eb70ee8e78a5 |
+| THD Room Finder – Focus at home (v2.6) (design project, attaches the system) | `61341b3a-030a-4141-add5-e0d55e3d85d0` | https://claude.ai/design/p/61341b3a-030a-4141-add5-e0d55e3d85d0 |
 
 ## What is where
 
@@ -70,3 +71,4 @@ When a design session changes the system inside Claude Design:
 | July 2026 | System created from the v1 apps and website; React recreations, campus map, templates |
 | 13 October 2026 | Mirrored into git; dark-theme selector aligned with the app; readme rewritten for v2; Phase 1 focus layer (tokens, five cards) and `brief/` added ([#31](https://github.com/arudaev/THD-Room-Finder/issues/31)) |
 | 14 October 2026 | D1–D4 approved: graph ramp, graph colours and inverse surface added; focus components, new core controls and the extended `RoomCard` mirrored from `src/components/`; focus graph card refreshed ([#62](https://github.com/arudaev/THD-Room-Finder/issues/62)) |
+| 26 October 2026 | Focus at home (v2.6): the `focus-at-home` prototype kit and the session sounds in `assets/sounds/` ([#188](https://github.com/arudaev/THD-Room-Finder/issues/188)) |

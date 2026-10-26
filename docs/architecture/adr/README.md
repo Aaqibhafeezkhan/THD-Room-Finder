@@ -16,6 +16,8 @@ ADR **amends** or **supersedes** them, and the old one gets a pointer.
 | [0008](0008-organization-registry.md) | Organizations are verified in a public registry | Proposed |
 | [0009](0009-timetable-outages.md) | A timetable outage removes availability, not rooms or focus | Accepted |
 | [0010](0010-session-to-table.md) | A running focus session can become a study table | Accepted |
+| [0011](0011-focus-at-home.md) | A focus session has a place, a campus room or home | Proposed |
+| [0012](0012-session-sounds.md) | Focus sessions play their own sounds | Proposed |
 
 Operating limits and the hosted activation checklist live in
 [pilot verification](../pilot-verification.md).

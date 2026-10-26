@@ -20,6 +20,7 @@ design/
 |---|---|---|---|
 | **THD Room Finder Design System** | Design system | `de229b71-7390-4512-805f-a450449acdf8` | **Current.** Tokens, components, guideline cards, UI kits, templates and the brief. Every THD design project attaches it. Mirrored in `system/` ([sync](system/README-SYNC.md)) |
 | **THD Room Finder — Focus (Phase 1)** | Design project | listed in [README-SYNC](system/README-SYNC.md) | Runs sessions D1–D4 from [brief/03-sessions.md](brief/03-sessions.md). First message: [brief/00-first-message.md](brief/00-first-message.md) |
+| **THD Room Finder – Focus at home (v2.6)** | Design project | listed in [README-SYNC](system/README-SYNC.md) | The playable focus-at-home prototype ([brief/10-focus-at-home.md](brief/10-focus-at-home.md)); its source is `system/ui_kits/focus-at-home/` |
 
 **Design system vs. design project vs. Claude project.** A *design system*
 project holds the brand: tokens, components and rules. It is attached to other
