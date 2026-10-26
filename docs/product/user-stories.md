@@ -46,12 +46,25 @@ Spec: [focus at home and session sounds](focus-at-home.md). Epic [#187](https://
 | SN-06 | to hear them with the phone locked | I can put the phone away | [#192](https://github.com/arudaev/THD-Room-Finder/issues/192) |
 | BT-01 | a nudge for what to do in a break | the break actually rests me | [#190](https://github.com/arudaev/THD-Room-Finder/issues/190) |
 
-## Later phases (candidates)
+## Later phases
 
-| ID | Story | Epic |
-|---|---|---|
-| GF-01 | Join a batchmate's session as a group that survives one person leaving | [#23](https://github.com/arudaev/THD-Room-Finder/issues/23) |
-| PF-01 | A unique handle and a display name, like Discord | [#23](https://github.com/arudaev/THD-Room-Finder/issues/23) |
-| OR-01 | (organization) announce a gathering with a verified tag | [#24](https://github.com/arudaev/THD-Room-Finder/issues/24) |
-| CT-01 | See what is happening in Deggendorf this weekend as yellow zones | [#25](https://github.com/arudaev/THD-Room-Finder/issues/25) |
-| CT-02 | Browse museum exhibitions with preview images | [#25](https://github.com/arudaev/THD-Room-Finder/issues/25) |
+Shipped: study tables (ST stories in [study-tables.md](study-tables.md)) and
+student groups (O stories in [organizations.md](organizations.md)). The rest
+are issues still to be specified before building.
+
+| ID | As a student, I want… | So that… | Issue |
+|---|---|---|---|
+| PF-01 | a unique handle next to my display name | classmates can tell two "Lena"s apart | [#207](https://github.com/arudaev/THD-Room-Finder/issues/207) |
+| GF-02 | to follow a few classmates and see their public sessions first | I find my friends, not just my batch | [#208](https://github.com/arudaev/THD-Room-Finder/issues/208) |
+| GF-03 | a study table without a room | my group can focus together from home | [#209](https://github.com/arudaev/THD-Room-Finder/issues/209) |
+| GF-04 | a study table that repeats every week | my group keeps one link | [#210](https://github.com/arudaev/THD-Room-Finder/issues/210) |
+| GF-05 | to see a table's shared focus | the group sees its effort add up | [#211](https://github.com/arudaev/THD-Room-Finder/issues/211) |
+| GF-06 | to report that a claimed room is empty | stale claims don't push rooms down | [#212](https://github.com/arudaev/THD-Room-Finder/issues/212) |
+| OR-02 | (maintainer) a decision on the paid tier | M3 can close or continue | [#213](https://github.com/arudaev/THD-Room-Finder/issues/213) |
+| OR-03 | (organizer) a gathering that repeats every week | I don't recreate it | [#214](https://github.com/arudaev/THD-Room-Finder/issues/214) |
+| OR-04 | (reviewer) to hide a reported gathering, on record | misuse stops without revoking a group | [#215](https://github.com/arudaev/THD-Room-Finder/issues/215) |
+| CT-00 | (maintainer) to know which city sources may be reused | the layer stays legal | [#216](https://github.com/arudaev/THD-Room-Finder/issues/216) |
+| CT-01 | the town centre on the map | events have a place | [#217](https://github.com/arudaev/THD-Room-Finder/issues/217) |
+| CT-02 | what is happening this weekend, as yellow zones | I find something to do | [#218](https://github.com/arudaev/THD-Room-Finder/issues/218) |
+| CT-03 | museums and venues with their current exhibitions | I see what is on | [#219](https://github.com/arudaev/THD-Room-Finder/issues/219) |
+| CT-04 | (maintainer) events that refresh themselves | the layer doesn't go stale | [#220](https://github.com/arudaev/THD-Room-Finder/issues/220) |
