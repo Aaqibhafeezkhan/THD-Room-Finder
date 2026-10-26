@@ -8,4 +8,14 @@
     <string name="focus_channel_running_description">The running session and its countdown, also on the lock screen</string>
     <string name="focus_channel_alerts">Breaks and blocks</string>
     <string name="focus_channel_alerts_description">When a break starts and when the next block is waiting</string>
+    <string name="focus_channel_silent">Breaks and blocks, silent</string>
+    <string name="focus_channel_silent_description">Vibration only, for sessions without sound</string>
+    <string name="focus_channel_sound">%1$s · %2$s</string>
+    <string name="focus_channel_sound_description">The sound for this moment of a focus session</string>
+    <string name="focus_sound_coffee">Coffee break</string>
+    <string name="focus_sound_jingle">Jingle</string>
+    <string name="focus_sound_chimes">Chimes</string>
+    <string name="focus_moment_break">break starts</string>
+    <string name="focus_moment_back">break\'s over</string>
+    <string name="focus_moment_done">session done</string>
 </resources>

@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.media.AudioAttributes;
+import android.net.Uri;
 import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
@@ -29,6 +31,12 @@ import de.thd.roomfinder.R;
  * session while the app is closed. The countdown is drawn by the system
  * (a chronometer), so nothing has to run in between. The notification is
  * public on the lock screen: it only carries the room code and the phase.
+ *
+ * Each alert stage names its sound (ADR 0012): "coffee_break" and the like
+ * post on a channel made for that sound, so it plays with the phone locked
+ * and follows silent mode and Do Not Disturb; "silent" vibrates only; no
+ * sound keeps the phone's own (focus_alerts). A channel's sound is fixed
+ * when it is created, hence one channel per sound.
  */
 final class FocusNotifier {
     static final String EXTRA_ACTION = "focusAction";
@@ -37,7 +45,18 @@ final class FocusNotifier {
     private static final String KEY_STAGES = "stages";
     private static final String CHANNEL_RUNNING = "focus_running";
     private static final String CHANNEL_ALERTS = "focus_alerts";
+    private static final String CHANNEL_SILENT = "focus_silent";
     private static final int NOTIFICATION_ID = 4212;
+    /** The sets with their own files (ADR 0012), and each set's three sounds. */
+    private static final String[] SETS = {"coffee", "jingle", "chimes"};
+    private static final String[] MOMENTS = {"break", "back", "done"};
+    private static final int[][] SOUNDS = {
+        {R.raw.focus_coffee_break, R.raw.focus_coffee_back, R.raw.focus_coffee_done},
+        {R.raw.focus_jingle_break, R.raw.focus_jingle_back, R.raw.focus_jingle_done},
+        {R.raw.focus_chimes_break, R.raw.focus_chimes_back, R.raw.focus_chimes_done},
+    };
+    private static final int[] SET_NAMES = {R.string.focus_sound_coffee, R.string.focus_sound_jingle, R.string.focus_sound_chimes};
+    private static final int[] MOMENT_NAMES = {R.string.focus_moment_break, R.string.focus_moment_back, R.string.focus_moment_done};
     private static final int COLOR_FOCUS = 0xFF6A4BA8;
 
     private FocusNotifier() {}
@@ -57,6 +76,54 @@ final class FocusNotifier {
         alerts.setLockscreenVisibility(android.app.Notification.VISIBILITY_PUBLIC);
         nm.createNotificationChannel(running);
         nm.createNotificationChannel(alerts);
+
+        NotificationChannel silent = new NotificationChannel(
+                CHANNEL_SILENT, ctx.getString(R.string.focus_channel_silent), NotificationManager.IMPORTANCE_HIGH);
+        silent.setDescription(ctx.getString(R.string.focus_channel_silent_description));
+        silent.setSound(null, null);
+        silent.enableVibration(true);
+        silent.setLockscreenVisibility(android.app.Notification.VISIBILITY_PUBLIC);
+        nm.createNotificationChannel(silent);
+
+        AudioAttributes attrs = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build();
+        for (int s = 0; s < SETS.length; s++) {
+            for (int m = 0; m < MOMENTS.length; m++) {
+                NotificationChannel ch = new NotificationChannel(
+                        channelFor(SETS[s] + "_" + MOMENTS[m]),
+                        ctx.getString(R.string.focus_channel_sound, ctx.getString(SET_NAMES[s]), ctx.getString(MOMENT_NAMES[m])),
+                        NotificationManager.IMPORTANCE_HIGH);
+                ch.setDescription(ctx.getString(R.string.focus_channel_sound_description));
+                ch.setSound(soundUri(ctx, SOUNDS[s][m]), attrs);
+                ch.enableVibration(true);
+                ch.setShowBadge(false);
+                ch.setLockscreenVisibility(android.app.Notification.VISIBILITY_PUBLIC);
+                nm.createNotificationChannel(ch);
+            }
+        }
+    }
+
+    /** The channel an alert with this sound posts on; see the class comment. */
+    static String channelFor(String sound) {
+        if (sound == null || sound.isEmpty()) return CHANNEL_ALERTS;
+        if ("silent".equals(sound)) return CHANNEL_SILENT;
+        return "focus_" + sound;
+    }
+
+    /** The raw file for "coffee_break" and the like, or 0. */
+    private static int soundRes(String sound) {
+        for (int s = 0; s < SETS.length; s++) {
+            for (int m = 0; m < MOMENTS.length; m++) {
+                if ((SETS[s] + "_" + MOMENTS[m]).equals(sound)) return SOUNDS[s][m];
+            }
+        }
+        return 0;
+    }
+
+    private static Uri soundUri(Context ctx, int res) {
+        return Uri.parse("android.resource://" + ctx.getPackageName() + "/" + res);
     }
 
     static void save(Context ctx, String stages) {
@@ -71,6 +138,9 @@ final class FocusNotifier {
 
     /** Shows the stage that has begun and arms an alarm for the next one. */
     static void apply(Context ctx, boolean fromAlarm) {
+        // An alarm can fire before the app ran since an update; creating a
+        // channel again is cheap and keeps any change the student made.
+        ensureChannels(ctx);
         JSONArray stages;
         try {
             stages = new JSONArray(prefs(ctx).getString(KEY_STAGES, "[]"));
@@ -110,7 +180,11 @@ final class FocusNotifier {
             return;
         }
         boolean ongoing = s.optBoolean("ongoing", true);
-        NotificationCompat.Builder b = new NotificationCompat.Builder(ctx, alert ? CHANNEL_ALERTS : CHANNEL_RUNNING)
+        String sound = s.optString("sound", "");
+        // An unknown sound (from a newer web bundle) falls back to the phone's own.
+        String channel = !alert ? CHANNEL_RUNNING
+                : "silent".equals(sound) || soundRes(sound) != 0 ? channelFor(sound) : CHANNEL_ALERTS;
+        NotificationCompat.Builder b = new NotificationCompat.Builder(ctx, channel)
                 .setSmallIcon(R.drawable.ic_stat_focus)
                 .setColor(COLOR_FOCUS)
                 .setContentTitle(s.optString("title"))
@@ -123,6 +197,13 @@ final class FocusNotifier {
                 .setCategory(NotificationCompat.CATEGORY_PROGRESS)
                 .setPriority(alert ? NotificationCompat.PRIORITY_HIGH : NotificationCompat.PRIORITY_LOW)
                 .setContentIntent(launch(ctx, null, 0));
+        // Before Android 8 there are no channels: the notification carries it.
+        if (alert && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            int res = soundRes(sound);
+            if (res != 0) b.setSound(soundUri(ctx, res));
+            else if ("silent".equals(sound)) b.setDefaults(NotificationCompat.DEFAULT_VIBRATE);
+            else b.setDefaults(NotificationCompat.DEFAULT_ALL);
+        }
         long countdownTo = s.optLong("countdownTo");
         long countUpFrom = s.optLong("countUpFrom");
         if (countdownTo > 0) {

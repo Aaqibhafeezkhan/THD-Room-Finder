@@ -4,4 +4,14 @@
     <string name="focus_channel_running_description">Die laufende Session mit Countdown, auch auf dem Sperrbildschirm</string>
     <string name="focus_channel_alerts">Pausen und Blöcke</string>
     <string name="focus_channel_alerts_description">Wenn eine Pause beginnt und wenn der nächste Block wartet</string>
+    <string name="focus_channel_silent">Pausen und Blöcke, lautlos</string>
+    <string name="focus_channel_silent_description">Nur Vibration, für Sessions ohne Ton</string>
+    <string name="focus_channel_sound">%1$s · %2$s</string>
+    <string name="focus_channel_sound_description">Der Ton für diesen Moment einer Fokus-Session</string>
+    <string name="focus_sound_coffee">Kaffeepause</string>
+    <string name="focus_sound_jingle">Jingle</string>
+    <string name="focus_sound_chimes">Glöckchen</string>
+    <string name="focus_moment_break">Pause beginnt</string>
+    <string name="focus_moment_back">Pause vorbei</string>
+    <string name="focus_moment_done">Session beendet</string>
 </resources>
