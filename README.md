@@ -80,6 +80,10 @@ long as I need?"*:
 - **Saved rooms** – star your usual spot; Profile answers "free right now?"
 - **Focus sessions** – start focus in a free room, in rhythms of blocks and
   breaks; Private claims the room anonymously, Public invites your batch
+- **Focus at home** – the same rhythm without a room, from the Focus tab; only
+  you see it, and it counts in your focus graph
+- **Session sounds** – coffee pours for a break, bright dings call you back;
+  pick a set for home and for campus, on Android even with the phone locked
 - **Study profile** – sign in with an email code and pick your programme from
   the [THD programme list](shared/programmes.json); you appear as e.g. *AIN 7*
 - **Focus graph** – your semester on Profile, built on the device, shareable as
@@ -231,6 +235,7 @@ batch. Next is a measured pilot with student batches, then the city layer.
 |---|---|---|
 | Foundation | Design system, docs, board and automation | Done |
 | Phase 1 | Focus sessions: private claims, batch sessions, Profile tab, focus graph | Shipped (v2.3); end-to-end verification open |
+| Phase 1 | Focus at home, the Focus tab and session sounds | Shipped (v2.6) |
 | Phase 2 | Study tables; student groups and gatherings | Shipped (v2.5) |
 | Phase 3 | City layer: Deggendorf events, festivals and museums | Later |
 
