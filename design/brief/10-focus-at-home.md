@@ -33,7 +33,7 @@ No illustrations, no home imagery.
 ## Sound rules
 
 - Down for a break, up for focus, resolve when done.
-- Short (≤ 2.5 s), soft attack, peaks at −6 dBFS; one reminder, never a loop.
+- Short (about 3 s at most, mostly a fading tail), soft attack, peaks at −6 dBFS; one reminder, never a loop.
 - Sounds are never the only signal: the surface, the notification and the
   vibration say the same.
 

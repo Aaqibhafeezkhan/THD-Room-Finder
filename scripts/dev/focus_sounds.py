@@ -9,8 +9,9 @@ owns them outright and anyone can change one and render it again:
 
 Each set has three sounds. The rule that ties them together: down for a
 break, up for focus. A break falls or settles, back-to-focus rises, and done
-resolves. Nothing is longer than 2.5 s, attacks are soft and peaks sit at
--6 dBFS, so no sound startles. Needs numpy and ffmpeg (libmp3lame, libvorbis).
+resolves. None lasts longer than about 3 s (mostly a fading tail), attacks
+are soft and peaks sit at -6 dBFS, so no sound startles. Needs numpy and
+ffmpeg (libmp3lame, libvorbis).
 """
 
 from __future__ import annotations
