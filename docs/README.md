@@ -69,6 +69,7 @@ flowchart LR
 - [Building and releasing](development/building-and-releasing.md)
 - [Installing on a device](development/installing.md)
 - [CI and automation](development/ci-and-automation.md)
+- [Security checks](development/security-checks.md): Dependabot and the Supabase advisors
 
 **Contributing**
 - [Workflow](contributing/workflow.md)

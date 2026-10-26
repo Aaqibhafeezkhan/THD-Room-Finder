@@ -31,6 +31,10 @@ jobs:
       # Postgres only: applies supabase/migrations and supabase/seed.sql.
       - run: supabase db start
       - run: supabase test db
+      # The dashboard's Security Advisor, run on the migrations: fails on
+      # ERROR lints such as a public table without RLS. The WARN/INFO
+      # ones are by design (docs/development/security-checks.md).
+      - run: supabase db advisors --local --type security --level error --fail-on error
       - name: Generated types are up to date
         run: |
           supabase gen types typescript --local --schema public > /tmp/types.ts
