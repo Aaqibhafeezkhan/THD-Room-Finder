@@ -101,7 +101,13 @@ describe('buildingAvailability', () => {
 
 describe('isOnCampusMap', () => {
   it('accepts a mapped Deggendorf room', () => {
-    expect(isOnCampusMap(room({ ident: 'a1', building: 'A', name: 'A 0.13 Hörsaal' }))).toBe(true);
+    expect(isOnCampusMap(room({ ident: 'a1', building: 'A', name: 'A008' }))).toBe(true);
+  });
+
+  it('rejects a Cham room named without the Badstraße suffix', () => {
+    const cham = room({ ident: 'c2', building: 'B', name: 'B 1.06' });
+    expect(campusKeyForRoom(cham)).toBe('B');
+    expect(isOnCampusMap(cham)).toBe(false); // Cham's "B 1.06", not Deggendorf's B004
   });
 
   it('rejects a remote Cham/Badstraße room that reuses a Deggendorf letter', () => {
