@@ -55,6 +55,14 @@ export const CAMPUS_KEY_TO_BUILDINGS: Record<string, string[]> = {
 const OFF_CAMPUS_MARKERS = ['badstra', 'cham', 'pfarrkirchen', 'ecri', 'rottal'];
 
 /**
+ * Cham numbers its rooms "<Letter> <floor>.<room>" ("B 1.07 Labor 5"), while
+ * the Deggendorf core uses "<Letter><number>" ("B004", "C211"). Two Cham
+ * meeting rooms come without the "(Badstraße)" suffix ("B 1.06", "B 1.13"),
+ * so the code shape is the only thing that tells them apart.
+ */
+const CHAM_ROOM_CODE = /^[A-L] \d+\.\d+/;
+
+/**
  * Whether a room belongs on the Deggendorf campus map. The 2.5D map only draws
  * the Deggendorf riverside core, so a room qualifies when it (a) resolves to a
  * mapped footprint and (b) carries no remote-campus marker. Rooms at other sites
@@ -65,7 +73,7 @@ export function isOnCampusMap(room: Room): boolean {
   const text = normalizeForMatching(
     [room.name, room.displayName, room.untisLongname ?? ''].join(' '),
   );
-  return !OFF_CAMPUS_MARKERS.some((m) => text.includes(m));
+  return !OFF_CAMPUS_MARKERS.some((m) => text.includes(m)) && !CHAM_ROOM_CODE.test(room.name);
 }
 
 /** Resolve one parsed THabella room onto its campus-map footprint. */
