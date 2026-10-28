@@ -67,6 +67,19 @@ describe('computeFreeRooms', () => {
     expect(free.some((f) => f.room.ident === 'pool')).toBe(false);
   });
 
+  it('drops placeholders, foyers and the old culture room, but not rooms that mention them', () => {
+    const odd = [
+      makeRoom('ext', 'Extern', 'Extern'),
+      makeRoom('dash', '--', '--'),
+      makeRoom('greg', 'GREG', 'GREG'),
+      makeRoom('foyer', 'B', 'B004 - Foyer'),
+      makeRoom('kultur', 'Kulturraum', 'Kulturraum (nur bis 31.03.25!)'),
+      makeRoom('lab', 'E', 'E105 - Externes Labor'),
+    ];
+    const free = computeFreeRooms(odd, [], now);
+    expect(free.map((f) => f.room.ident)).toEqual(['lab']);
+  });
+
   it('restricts to eligible (teaching) idents when provided', () => {
     const free = computeFreeRooms(rooms, events, now, {
       eligibleIdents: new Set(['a', 'b']),

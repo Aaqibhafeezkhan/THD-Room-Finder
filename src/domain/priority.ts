@@ -103,9 +103,19 @@ const EXCLUDED_VENUE_MARKERS = [
   'beachvolleyball',
   'tennisplatz',
   'begegnungsst',
+  'foyer',
+  'kulturraum',
 ];
 
+/**
+ * THabella entries that stand for no room at all ("--" is tagged
+ * "Platzhalter"). Matched against the whole name, so "Extern" can't catch a
+ * real room that merely mentions it.
+ */
+const PLACEHOLDER_NAMES = new Set(['--', 'extern', 'greg']);
+
 export function isExcludedVenue(room: Room): boolean {
+  if (PLACEHOLDER_NAMES.has(room.name.trim().toLowerCase())) return true;
   const text = normalizeForMatching(
     [room.name, room.displayName, room.untisLongname ?? ''].join(' '),
   );
