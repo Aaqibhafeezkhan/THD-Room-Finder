@@ -7,7 +7,7 @@
  * `Availability` shape the `CampusMap` component consumes, without importing it.
  */
 import type { FreeRoom, Room } from './models';
-import { isExcludedVenue, normalizeForMatching } from './priority';
+import { isExcludedVenue, remoteCampus } from './priority';
 
 /** One building's headline availability. */
 export interface BuildingCount {
@@ -46,34 +46,14 @@ export const CAMPUS_KEY_TO_BUILDINGS: Record<string, string[]> = {
 };
 
 /**
- * Room-name markers for THD's non-Deggendorf campuses (Cham/Badstraße and
- * Pfarrkirchen/ECRI). These remote sites reuse Deggendorf building letters —
- * Cham has its own "A"/"B" — so they collide with mapped footprints and must be
- * rejected explicitly. Matched against the umlaut-folded room text, so
- * "Badstraße" → "badstrasse" matches "badstra".
- */
-const OFF_CAMPUS_MARKERS = ['badstra', 'cham', 'pfarrkirchen', 'ecri', 'rottal'];
-
-/**
- * Cham numbers its rooms "<Letter> <floor>.<room>" ("B 1.07 Labor 5"), while
- * the Deggendorf core uses "<Letter><number>" ("B004", "C211"). Two Cham
- * meeting rooms come without the "(Badstraße)" suffix ("B 1.06", "B 1.13"),
- * so the code shape is the only thing that tells them apart.
- */
-const CHAM_ROOM_CODE = /^[A-L] \d+\.\d+/;
-
-/**
  * Whether a room belongs on the Deggendorf campus map. The 2.5D map only draws
  * the Deggendorf riverside core, so a room qualifies when it (a) resolves to a
- * mapped footprint and (b) carries no remote-campus marker. Rooms at other sites
- * (Cham, Pfarrkirchen, Land-Au, …) stay in the full Rooms list but off the map.
+ * mapped footprint and (b) isn't at a remote campus, whose rooms reuse the
+ * Deggendorf building letters. Rooms at other sites (Cham, Pfarrkirchen,
+ * Land-Au, …) stay in the full Rooms list but off the map.
  */
 export function isOnCampusMap(room: Room): boolean {
-  if (campusKeyForRoom(room) === null) return false;
-  const text = normalizeForMatching(
-    [room.name, room.displayName, room.untisLongname ?? ''].join(' '),
-  );
-  return !OFF_CAMPUS_MARKERS.some((m) => text.includes(m)) && !CHAM_ROOM_CODE.test(room.name);
+  return campusKeyForRoom(room) !== null && remoteCampus(room) === null;
 }
 
 /** Resolve one parsed THabella room onto its campus-map footprint. */

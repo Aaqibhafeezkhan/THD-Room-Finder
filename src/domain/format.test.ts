@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { formatDuration, formatTime, formatDayTime, statusBannerText } from './format';
+import type { Room } from './models';
+import { formatDuration, formatTime, formatDayTime, roomMeta, statusBannerText } from './format';
 
 describe('formatDuration', () => {
   it('formats hours and minutes, dropping zero parts', () => {
@@ -48,5 +49,26 @@ describe('formatDayTime', () => {
     expect(formatDayTime(date, 'en')).toContain('7 Jan 2027');
     expect(formatDayTime(date, 'de')).toContain('7. Jan. 2027');
     expect(formatDayTime(date, 'en')).toContain('06:30');
+  });
+});
+
+describe('roomMeta', () => {
+  const room = (name: string, building: string, seats: number): Room => ({
+    id: 1, ident: name, name, code: name.split(' - ')[0], building, floor: 0, displayName: name,
+    seatsRegular: seats, seatsExam: 0, facilities: [], bookable: false,
+    inChargeName: null, inChargeEmail: null, untisLongname: null,
+  });
+
+  it('names the building and seats for a Deggendorf room', () => {
+    expect(roomMeta(room('C211 - EDV', 'C', 24))).toBe('Building C · 24 seats');
+  });
+
+  it('leads with the campus for a Cham room, even without the Badstraße suffix', () => {
+    expect(roomMeta(room('B 0.13 Hörsaal 1 (Badstraße)', 'B', 40))).toBe('Cham · Building B · 40 seats');
+    expect(roomMeta(room('B 1.06', 'B', 0), 'de')).toBe('Cham · Gebäude B');
+  });
+
+  it('leads with Pfarrkirchen for an ECRI room', () => {
+    expect(roomMeta(room('EC 1.07 - 1.10', 'EC', 90))).toBe('Pfarrkirchen · Building EC · 90 seats');
   });
 });

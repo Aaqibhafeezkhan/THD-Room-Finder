@@ -67,11 +67,36 @@ describe('computeFreeRooms', () => {
     expect(free.some((f) => f.room.ident === 'pool')).toBe(false);
   });
 
+  it('drops placeholders, foyers and the old culture room, but not rooms that mention them', () => {
+    const odd = [
+      makeRoom('ext', 'Extern', 'Extern'),
+      makeRoom('dash', '--', '--'),
+      makeRoom('greg', 'GREG', 'GREG'),
+      makeRoom('foyer', 'B', 'B004 - Foyer'),
+      makeRoom('kultur', 'Kulturraum', 'Kulturraum (nur bis 31.03.25!)'),
+      makeRoom('lab', 'E', 'E105 - Externes Labor'),
+    ];
+    const free = computeFreeRooms(odd, [], now);
+    expect(free.map((f) => f.room.ident)).toEqual(['lab']);
+  });
+
   it('restricts to eligible (teaching) idents when provided', () => {
     const free = computeFreeRooms(rooms, events, now, {
       eligibleIdents: new Set(['a', 'b']),
     });
     expect(free.map((f) => f.room.ident)).toEqual(['b', 'a']);
+  });
+
+  it('ranks other campuses after Deggendorf rooms that are free just as long', () => {
+    const tied = [
+      makeRoom('cham', 'A', 'A 0.14 Hörsaal Rädlinger (Badstraße)'),
+      makeRoom('cham-bare', 'B', 'B 1.06'),
+      makeRoom('ecri', 'EC', 'EC.B 0.13 (Chemielabor)'),
+      makeRoom('degg', 'C', 'C211 - EDV'),
+      makeRoom('deggs', 'Deggs', 'Deggs 2.09 (Computerraum)'),
+    ];
+    const free = computeFreeRooms(tied, [], now);
+    expect(free.map((f) => f.room.ident)).toEqual(['degg', 'deggs', 'cham', 'cham-bare', 'ecri']);
   });
 });
 
