@@ -62,6 +62,11 @@ flowchart LR
 3. Tag the merge commit: `git tag vX.Y.Z && git push origin vX.Y.Z`.
 4. `release.yml` builds and publishes. It fails rather than publishing an
    unsigned APK. A tag can be rebuilt with *Run workflow* and the tag name.
+5. Replace the generated notes with the ones drafted in the release PR.
+6. Bring the [landing page](https://arudaev.github.io/THD-Room-Finder/) up
+   to date in a `docs(website)` PR: copy, FAQ and screenshots for anything
+   students now see differently. The APK buttons read the latest version
+   on their own.
 
 | Secret | Content |
 |---|---|
