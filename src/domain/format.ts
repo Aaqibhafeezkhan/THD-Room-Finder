@@ -4,6 +4,8 @@
  * Kept framework-free so it's unit-testable and reusable across screens.
  */
 import type { FreeRoom, Room, RoomAvailability, RoomStatus } from './models';
+import { remoteCampus } from './priority';
+import type { RemoteCampus } from './priority';
 
 const MS_PER_MINUTE = 60_000;
 
@@ -47,11 +49,20 @@ export function freeRoomDuration(free: FreeRoom, now: Date, locale: 'en' | 'de' 
   return formatDuration((free.freeUntil.getTime() - now.getTime()) / MS_PER_MINUTE, locale);
 }
 
-/** RoomCard identity meta line, e.g. "Building A · 45 seats" / "Gebäude A · 45 Plätze". */
+const CAMPUS_NAMES: Record<RemoteCampus, string> = { cham: 'Cham', pfarrkirchen: 'Pfarrkirchen' };
+
+/**
+ * RoomCard identity meta line, e.g. "Building A · 45 seats" / "Gebäude A · 45 Plätze".
+ * Remote campuses reuse Deggendorf's letters, so they lead with the campus:
+ * "Cham · Building A · 45 seats".
+ */
 export function roomMeta(room: Room, locale: 'en' | 'de' = 'en'): string {
   const de = locale === 'de';
+  const campus = remoteCampus(room);
   const seats = room.seatsRegular > 0 ? `${room.seatsRegular} ${de ? 'Plätze' : 'seats'}` : null;
-  return [`${de ? 'Gebäude' : 'Building'} ${room.building}`, seats].filter(Boolean).join(' · ');
+  return [campus && CAMPUS_NAMES[campus], `${de ? 'Gebäude' : 'Building'} ${room.building}`, seats]
+    .filter(Boolean)
+    .join(' · ');
 }
 
 export interface StatusText {

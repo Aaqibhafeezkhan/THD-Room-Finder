@@ -6,7 +6,7 @@
  *   • the "teaching rooms only" eligibility filter.
  */
 import type { FreeRoom, Room, RoomAvailability, RoomStatus, ScheduledEvent } from './models';
-import { isExcludedVenue, isPriority } from './priority';
+import { isExcludedVenue, isPriority, remoteCampus } from './priority';
 import { isOnCampusMap } from './campusAvailability';
 
 /** A free room whose remaining window is at/under this is "closing soon" (amber). */
@@ -116,7 +116,11 @@ export function computeFreeRooms(
     const pa = isPriority(a.room) ? 1 : 0;
     const pb = isPriority(b.room) ? 1 : 0;
     if (pa !== pb) return pb - pa;
-    // 3) Stable, human-friendly ordering.
+    // 3) The rest of Deggendorf ahead of the other campuses.
+    const ra = remoteCampus(a.room) ? 1 : 0;
+    const rb = remoteCampus(b.room) ? 1 : 0;
+    if (ra !== rb) return ra - rb;
+    // 4) Stable, human-friendly ordering.
     if (a.room.building !== b.room.building) {
       return a.room.building < b.room.building ? -1 : 1;
     }

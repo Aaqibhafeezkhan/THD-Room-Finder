@@ -43,6 +43,44 @@ function searchableText(room: Room): string {
   );
 }
 
+/**
+ * THD's campuses outside Deggendorf. They reuse Deggendorf building letters —
+ * Cham has its own "A"/"B" — so a parsed building alone can't place a room.
+ */
+export type RemoteCampus = 'cham' | 'pfarrkirchen';
+
+/**
+ * Room-name markers for the remote campuses, matched against the umlaut-folded
+ * room text, so "Badstraße" → "badstrasse" matches "badstra".
+ */
+const REMOTE_CAMPUS_MARKERS: [RemoteCampus, string[]][] = [
+  ['cham', ['badstra', 'cham']],
+  ['pfarrkirchen', ['pfarrkirchen', 'ecri', 'rottal']],
+];
+
+/**
+ * Cham numbers its rooms "<Letter> <floor>.<room>" ("B 1.07 Labor 5"), while
+ * the Deggendorf core uses "<Letter><number>" ("B004", "C211"). Two Cham
+ * meeting rooms come without the "(Badstraße)" suffix ("B 1.06", "B 1.13"),
+ * so the code shape is the only thing that tells them apart.
+ */
+const CHAM_ROOM_CODE = /^[A-L] \d+\.\d+/;
+
+/** ECRI in Pfarrkirchen prefixes its rooms "EC" or "EC.B" ("EC 1.07", "EC.B 0.13"). */
+const ECRI_ROOM_CODE = /^EC(\.B)? \d/;
+
+/** The remote campus a room belongs to, or null for Deggendorf. */
+export function remoteCampus(room: Room): RemoteCampus | null {
+  const text = normalizeForMatching(
+    [room.name, room.displayName, room.untisLongname ?? ''].join(' '),
+  );
+  for (const [campus, markers] of REMOTE_CAMPUS_MARKERS) {
+    if (markers.some((m) => text.includes(m))) return campus;
+  }
+  if (CHAM_ROOM_CODE.test(room.name)) return 'cham';
+  return ECRI_ROOM_CODE.test(room.name) ? 'pfarrkirchen' : null;
+}
+
 function containsWord(text: string, word: string): boolean {
   const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   return new RegExp(`(^|\\W)${escaped}($|\\W)`).test(text);
@@ -75,7 +113,7 @@ export function isExcludedVenue(room: Room): boolean {
 }
 
 export function isPriority(room: Room): boolean {
-  if (!MAIN_CAMPUS_BUILDINGS.has(room.building)) return false;
+  if (!MAIN_CAMPUS_BUILDINGS.has(room.building) || remoteCampus(room)) return false;
 
   const text = searchableText(room);
   if (EXCLUDED_MARKERS.some((m) => text.includes(m))) return false;

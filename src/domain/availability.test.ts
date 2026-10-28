@@ -73,6 +73,18 @@ describe('computeFreeRooms', () => {
     });
     expect(free.map((f) => f.room.ident)).toEqual(['b', 'a']);
   });
+
+  it('ranks other campuses after Deggendorf rooms that are free just as long', () => {
+    const tied = [
+      makeRoom('cham', 'A', 'A 0.14 Hörsaal Rädlinger (Badstraße)'),
+      makeRoom('cham-bare', 'B', 'B 1.06'),
+      makeRoom('ecri', 'EC', 'EC.B 0.13 (Chemielabor)'),
+      makeRoom('degg', 'C', 'C211 - EDV'),
+      makeRoom('deggs', 'Deggs', 'Deggs 2.09 (Computerraum)'),
+    ];
+    const free = computeFreeRooms(tied, [], now);
+    expect(free.map((f) => f.room.ident)).toEqual(['degg', 'deggs', 'cham', 'cham-bare', 'ecri']);
+  });
 });
 
 describe('computeRoomAvailability', () => {
