@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>THD Room Finder: free rooms at THD, and how long they stay free</title>
-  <meta name="description" content="Every free teaching room at THD Deggendorf right now, and how long it stays free. Focus there, or invite friends with one link. Free, open source, no account needed.">
+  <meta name="description" content="Every free teaching room at THD Deggendorf right now, and how long it stays free. Focus there or at home, or invite friends with one link. Free, open source, no account needed.">
   <link rel="canonical" href="https://arudaev.github.io/THD-Room-Finder/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="THD Room Finder">
   <meta property="og:url" content="https://arudaev.github.io/THD-Room-Finder/">
   <meta property="og:title" content="THD Room Finder: free rooms at THD, and how long they stay free">
-  <meta property="og:description" content="Every free teaching room at THD Deggendorf, longest-free first. Focus there, or invite friends with one link. Free, open source, no account needed.">
+  <meta property="og:description" content="Every free teaching room at THD Deggendorf, longest-free first. Focus there or at home, or invite friends with one link. Free, open source, no account needed.">
   <meta property="og:image" content="https://arudaev.github.io/THD-Room-Finder/assets/og.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -169,6 +169,7 @@
     .stack .phone { position: absolute; width: 58%; max-width: 270px; }
     .stack .phone:first-child { left: 4%; top: 0; transform: rotate(-4deg); }
     .stack .phone:last-child { right: 4%; top: 64px; transform: rotate(3deg); }
+    .split + .split { margin-top: 96px; }
     .graph-card { margin-top: 48px; border-radius: var(--radius-l); overflow: hidden; box-shadow: var(--shadow-1); background: var(--md-surface); }
 
     /* Map */
@@ -272,11 +273,11 @@
     <div class="wrap">
       <div class="hero-copy">
         <span class="chip">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M22 20c0-3-2-5.2-5-5.8"/></svg>
-          <span data-de="Neu: zusammen lernen">New: study together</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>
+          <a href="#home" style="color:inherit;text-decoration:none" data-de="Neu: Fokus zu Hause">New: focus at home</a>
         </span>
         <h1 data-de="Finde einen freien Raum. <em>Und wie lange er frei bleibt.</em>">Find a free room. <em>See how long it stays free.</em></h1>
-        <p class="lead" data-de="Jeder Lehrraum der TH Deggendorf, direkt aus dem offiziellen Stundenplan, sortiert danach, wie lange er frei bleibt. Dann lern dort, allein oder mit Freunden.">Every teaching room at THD Deggendorf, straight from the official timetable, sorted by how long it stays free. Then study there, alone or with friends.</p>
+        <p class="lead" data-de="Jeder Lehrraum der TH Deggendorf, direkt aus dem offiziellen Stundenplan, sortiert danach, wie lange er frei bleibt. Dann lern dort, allein oder mit Freunden, oder im selben Rhythmus zu Hause.">Every teaching room at THD Deggendorf, straight from the official timetable, sorted by how long it stays free. Then study there, alone or with friends, or in the same rhythm at home.</p>
         <div class="ctas">
           <a class="btn filled" href="https://thd-room-finder.vercel.app/">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
@@ -327,7 +328,7 @@
       </div></div>
       <div class="steps" data-steps="guest">
         <div class="step">
-          <div class="phone"><picture><source srcset="assets/guest-rooms-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/guest-rooms-light.webp" alt="The room list on a phone: 108 rooms free right now, C211 at the top, free for 11 hours 20 minutes" data-de-alt="Die Raumliste auf dem Handy: 108 Räume gerade frei, oben C211, frei für 11 Stunden 20 Minuten" loading="lazy" width="720" height="1560"></picture></div>
+          <div class="phone"><picture><source srcset="assets/guest-rooms-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/guest-rooms-light.webp" alt="The room list on a phone: 90 rooms free right now, the top ones free for 5 hours 20 minutes" data-de-alt="Die Raumliste auf dem Handy: 90 Räume gerade frei, die obersten frei für 5 Stunden 20 Minuten" loading="lazy" width="720" height="1560"></picture></div>
           <div>
             <span class="num">1</span>
             <h3 data-de="Finde einen Raum">Find a room</h3>
@@ -335,7 +336,7 @@
           </div>
         </div>
         <div class="step">
-          <div class="phone"><picture><source srcset="assets/guest-focus-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/guest-focus-light.webp" alt="A focus session on this device in C211: 11:58 left in block 1 of 6, and a note that someone else is already studying there" data-de-alt="Eine Fokus-Session auf diesem Gerät in C211: noch 11:58 in Block 1 von 6, dazu der Hinweis, dass dort schon jemand lernt" loading="lazy" width="720" height="1560"></picture></div>
+          <div class="phone"><picture><source srcset="assets/guest-focus-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/guest-focus-light.webp" alt="A focus session on this device in C211: 11:57 left in block 1 of 6, and a note that someone else is already studying there" data-de-alt="Eine Fokus-Session auf diesem Gerät in C211: noch 11:57 in Block 1 von 6, dazu der Hinweis, dass dort schon jemand lernt" loading="lazy" width="720" height="1560"></picture></div>
           <div>
             <span class="num">2</span>
             <h3 data-de="Starte den Fokus">Start focus</h3>
@@ -369,7 +370,7 @@
           </div>
         </div>
         <div class="step">
-          <div class="phone"><picture><source srcset="assets/profile-profile-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/profile-profile-light.webp" alt="Lena's profile, AIN 7: a study table tomorrow, 25 hours this semester and 18 study days in a row" data-de-alt="Lenas Profil, AIN 7: ein Lerntisch morgen, 25 Stunden in diesem Semester und 18 Lerntage in Folge" loading="lazy" width="720" height="1560"></picture></div>
+          <div class="phone"><picture><source srcset="assets/profile-profile-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/profile-profile-light.webp" alt="Lena's profile, AIN 7: a study table tomorrow, 33 hours this semester and 26 study days in a row" data-de-alt="Lenas Profil, AIN 7: ein Lerntisch morgen, 33 Stunden in diesem Semester und 26 Lerntage in Folge" loading="lazy" width="720" height="1560"></picture></div>
           <div>
             <span class="num">3</span>
             <h3 data-de="Dein Semester, überall">Your semester, everywhere</h3>
@@ -430,6 +431,25 @@
           <div class="phone"><picture><source srcset="assets/profile-break-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/profile-break-light.webp" alt="The same session in C211 on a break: 2:58 left, block 2 of 6 next, still public to AIN 7" data-de-alt="Dieselbe Session in C211 in der Pause: noch 2:58, als Nächstes Block 2 von 6, weiter öffentlich für AIN 7" loading="lazy" width="720" height="1560"></picture></div>
         </div>
       </div>
+      <div class="split rev" id="home">
+        <div class="stack groups-stack">
+          <div class="phone"><picture><source srcset="assets/home-idle-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/home-idle-light.webp" alt="The Focus tab: Start focus at home with Pomodoro and the Coffee break sound, and 156 rooms free on campus" data-de-alt="Der Fokus-Tab: Fokus zu Hause starten mit Pomodoro und dem Kaffeepause-Klang, dazu 156 freie Räume auf dem Campus" loading="lazy" width="720" height="1560"></picture></div>
+          <div class="phone"><picture><source srcset="assets/home-break-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/home-break-light.webp" alt="A session at home on a break: 2:57 left, block 2 of 6 next, with the tip Stand up and stretch" data-de-alt="Eine Session zu Hause in der Pause: noch 2:57, als Nächstes Block 2 von 6, mit dem Tipp Steh auf und streck dich" loading="lazy" width="720" height="1560"></picture></div>
+        </div>
+        <div>
+          <p class="eyebrow" data-de="Fokus zu Hause">Focus at home</p>
+          <h2 data-de="Kein Raum frei? Dann zu Hause">No room? Focus at home</h2>
+          <p class="sub" data-de="Derselbe Rhythmus aus Blöcken und Pausen, nur ohne Raum. Der Fokus-Tab startet ihn mit einem Tipp und zeigt jede laufende Session, zu Hause oder auf dem Campus.">The same rhythm of blocks and breaks, just without a room. The Focus tab starts it in one tap and holds whatever is running, at home or on campus.</p>
+          <ul class="feats" style="margin-top:28px">
+            <li><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg></span>
+              <div><h3 data-de="Pausen, die man hört">Breaks you can hear</h3><p data-de="Kaffee fließt, wenn die Pause beginnt, drei helle Töne rufen dich zurück. Wähl Kaffeepause, Jingle oder Glöckchen, für zu Hause und für den Campus, oder behalt den Ton deines Handys.">Coffee pours when a break starts, and three bright dings call you back. Pick Coffee break, Jingle or Chimes, for home and for campus, or keep your phone's own sound.</p></div></li>
+            <li><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+              <div><h3 data-de="Bleibt auf deinem Handy">Stays on your phone</h3><p data-de="Niemand sieht eine Session zu Hause. Angemeldet zählen nur die fertigen Minuten in deinem Fokus-Verlauf.">Nobody sees a session at home. Signed in, only the finished minutes count in your focus graph.</p></div></li>
+            <li><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 15h.01M12 15h.01M16 15h.01"/></svg></span>
+              <div><h3 data-de="Wochenenden zählen">Weekends count</h3><p data-de="Ein Wochenende oder Feiertag mit Fokus verlängert jetzt deine Serie. Freie Tage ohne Fokus halten sie nur an.">A weekend or holiday with focus now adds to your streak. Rest days without focus only pause it.</p></div></li>
+          </ul>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -457,7 +477,7 @@
   <section id="groups">
     <div class="wrap">
       <div class="split rev">
-        <div class="stack groups-stack"><div class="phone"><picture><source srcset="assets/group-page-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/group-page-light.webp" alt="The THD AI group page: verified, a short description, its website and a talk coming up on Thursday" data-de-alt="Die Gruppenseite von THD AI: geprüft, eine kurze Beschreibung, die Website und ein Vortrag am Donnerstag" loading="lazy" width="720" height="1560"></picture></div><div class="phone"><picture><source srcset="assets/group-gathering-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/group-gathering-light.webp" alt="A THD AI talk in A008 on Thursday 18:00: seats fill in a half circle as people reply, with a Going button" data-de-alt="Ein Vortrag von THD AI in A008 am Donnerstag um 18:00: Plätze im Halbkreis füllen sich mit den Antworten, dazu ein Ich-komme-Knopf" loading="lazy" width="720" height="1560"></picture></div></div>
+        <div class="stack groups-stack"><div class="phone"><picture><source srcset="assets/group-page-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/group-page-light.webp" alt="The THD AI group page: verified, a short description, its website and a talk coming up today" data-de-alt="Die Gruppenseite von THD AI: geprüft, eine kurze Beschreibung, die Website und ein Vortrag heute" loading="lazy" width="720" height="1560"></picture></div><div class="phone"><picture><source srcset="assets/group-gathering-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/group-gathering-light.webp" alt="A THD AI talk in A008 today at 18:00: seats fill in a half circle as people reply, with a Going button" data-de-alt="Ein Vortrag von THD AI in A008 heute um 18:00: Plätze im Halbkreis füllen sich mit den Antworten, dazu ein Ich-komme-Knopf" loading="lazy" width="720" height="1560"></picture></div></div>
         <div>
           <p class="eyebrow" data-de="Studierendengruppen">Student groups</p>
           <h2 data-de="Eure Gruppe, eure Seite, eure Treffen">Your group, your page, your gatherings</h2>
@@ -505,7 +525,7 @@
           <h3 data-de="Im Browser">In the browser</h3><p data-de="Läuft auf Laptop und Handy, auch offline, sobald es einmal geladen ist.">Runs on laptops and phones, offline too once it has loaded.</p>
           <a class="btn filled small" href="https://thd-room-finder.vercel.app/" data-de="App öffnen">Open app</a></div>
         <div class="card"><span class="tile"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85a.637.637 0 00-.83.22l-1.88 3.24a11.43 11.43 0 00-8.94 0L5.65 5.67a.643.643 0 00-.87-.2c-.28.18-.37.54-.22.83L6.4 9.48A10.78 10.78 0 001 18h22a10.78 10.78 0 00-5.4-8.52zM7 15.25a1.25 1.25 0 110-2.5 1.25 1.25 0 010 2.5zm10 0a1.25 1.25 0 110-2.5 1.25 1.25 0 010 2.5z"/></svg></span>
-          <h3>Android</h3><p data-de="Die App mit Sperrbildschirm-Benachrichtigung, die sich nach der ersten Installation selbst aktualisiert. Android 5.1 oder neuer; beim ersten Mal die Installation aus dem Browser erlauben.">The app with the lock-screen notification, and it updates itself after the first install. Android 5.1 or newer; allow installing from your browser the first time.</p>
+          <h3>Android</h3><p data-de="Die App mit Countdown auf dem Sperrbildschirm und Pausenklängen, auch bei gesperrtem Handy. Nach der ersten Installation aktualisiert sie sich selbst. Android 5.1 oder neuer; beim ersten Mal die Installation aus dem Browser erlauben.">The app with a lock-screen countdown and break sounds, even on a locked phone. It updates itself after the first install. Android 5.1 or newer; allow installing from your browser the first time.</p>
           <a class="btn tonal small apk" href="https://github.com/arudaev/THD-Room-Finder/releases/latest" target="_blank" rel="noopener"><span data-de="APK herunterladen">Download APK</span><span class="ver"></span></a></div>
         <div class="card" id="iphone"><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M12 18h.01"/></svg></span>
           <h3>iPhone</h3>
