@@ -39,5 +39,7 @@ jobs:
         if: ${{ env.PROJECTS_TOKEN != '' }}
         with:
           github-token: ${{ env.PROJECTS_TOKEN }}
+          # Every call sets or clears a field, so retrying a GitHub 5xx is safe.
+          retries: 3
           script: |
             await require('./.github/scripts/project-sync.cjs')({github, context, core});
