@@ -20,6 +20,8 @@ concurrency:
 
 jobs:
   sync:
+    # Forks lack this repo's secrets, labels and project: skip there.
+    if: github.repository == 'arudaev/THD-Room-Finder'
     runs-on: ubuntu-latest
     env:
       PROJECTS_TOKEN: ${{ secrets.PROJECTS_TOKEN }}

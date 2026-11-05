@@ -46,7 +46,8 @@ jobs:
   deploy:
     name: Database — push migrations to the hosted project
     needs: contract
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    # Forks lack this repo's secrets, labels and project: skip there.
+    if: github.repository == 'arudaev/THD-Room-Finder' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     concurrency:
       group: database-deploy
