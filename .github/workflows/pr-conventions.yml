@@ -17,6 +17,8 @@ concurrency:
 
 jobs:
   conventions:
+    # Forks lack this repo's secrets, labels and project: skip there.
+    if: github.repository == 'arudaev/THD-Room-Finder'
     name: PR conventions
     runs-on: ubuntu-latest
     steps:

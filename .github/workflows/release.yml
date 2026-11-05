@@ -16,6 +16,8 @@ permissions:
 
 jobs:
   release:
+    # Forks lack this repo's secrets, labels and project: skip there.
+    if: github.repository == 'arudaev/THD-Room-Finder'
     name: Build web + signed Android APK, publish release
     runs-on: ubuntu-latest
     env:

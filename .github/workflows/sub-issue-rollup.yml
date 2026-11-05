@@ -16,6 +16,8 @@ concurrency:
 
 jobs:
   rollup:
+    # Forks lack this repo's secrets, labels and project: skip there.
+    if: github.repository == 'arudaev/THD-Room-Finder'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
