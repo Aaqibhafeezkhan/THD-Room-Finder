@@ -52,7 +52,9 @@ Expect: Profile keeps the last known account and says it can't reach it
 (never "Not signed in"); sessions start on the device with "Offline: this
 session runs on your device"; tables and gatherings keep what they showed and
 offer *Try again*; nothing says a claim or invite was shared when it wasn't;
-no spinner lasts longer than the timeout.
+no spinner lasts longer than the timeout. Saved rooms still star and unstar,
+Profile says the account can't be reached, and the changes reach the account
+once it answers again.
 
 ## Automated checks
 

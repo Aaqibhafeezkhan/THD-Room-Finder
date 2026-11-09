@@ -5,6 +5,7 @@ import { supabaseIdentityApi } from '../../data/identityApi';
 import type { Identity, IdentityApi, IdentityInput, Programme } from '../../data/identityApi';
 import { batchLabel } from '../../domain/batch';
 import { forgetAccount, readAccount, readStale, write, writeAccount } from '../../data/cache';
+import { forgetSyncBase } from '../../data/savedRoomsStore';
 
 /**
  * The signed-in student and their study profile (#18). Browsing, saved rooms
@@ -120,6 +121,7 @@ export function StudyProfileProvider({ children, api: injected }: { children: Re
     await api.deleteIdentity();
     await api.signOut();
     forgetAccount();
+    forgetSyncBase();
     setIdentity(null);
     setEmail(null);
   }, [api]);

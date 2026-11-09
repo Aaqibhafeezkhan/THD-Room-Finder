@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router';
-import { RoomCard } from '../../components';
+import { Button, RoomCard } from '../../components';
 import { IconStar } from '../../components/icons';
 import { useRoomData } from '../rooms/RoomDataContext';
 import { useFavorites } from '../favorites/favorites';
@@ -22,7 +22,7 @@ export function SavedRooms({ grid = false }: { grid?: boolean }) {
   const { rooms, events, schedule, planningTime, queryTime, preview, isCustomTime, campusHours } = useRoomData();
   // No timetable (or not yet): say so per room, never "free" (#154).
   const unknown = schedule === 'unavailable' || schedule === 'loading';
-  const { favorites } = useFavorites();
+  const { favorites, sync, retrySync } = useFavorites();
 
   const saved = favorites
     .map((ident) => rooms.find((r) => r.ident === ident))
@@ -36,6 +36,22 @@ export function SavedRooms({ grid = false }: { grid?: boolean }) {
       <h2 style={{ margin: 0, fontSize: 'var(--title-small-size)', fontWeight: 500, color: 'var(--md-on-surface)' }}>
         {heading}
       </h2>
+      {sync === 'failed' && (
+        <p style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8, color: 'var(--md-on-surface-variant)', fontSize: 'var(--body-small-size)' }}>
+          <span style={{ flex: 1 }}>
+            {t(
+              "Can't reach your account right now. Your saved rooms are safe on this device and will sync later.",
+              'Dein Konto ist gerade nicht erreichbar. Deine gespeicherten Räume sind auf diesem Gerät sicher und werden später synchronisiert.',
+            )}
+          </span>
+          <Button variant="text" onClick={retrySync}>{t('Try again', 'Erneut versuchen')}</Button>
+        </p>
+      )}
+      {sync === 'synced' && favorites.length > 0 && (
+        <p style={{ margin: 0, fontSize: 'var(--body-small-size)', color: 'var(--md-on-surface-variant)' }}>
+          {t('On every device you sign in on.', 'Auf jedem Gerät, auf dem du angemeldet bist.')}
+        </p>
+      )}
       {isCustomTime && favorites.length > 0 && (
         <p style={{ margin: 0, fontSize: 'var(--body-small-size)', color: 'var(--md-on-surface-variant)' }}>
           {t('Availability at the selected time', 'Verfügbarkeit zur gewählten Zeit')}: {formatDayTime(queryTime, locale)}
