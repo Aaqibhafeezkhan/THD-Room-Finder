@@ -6,7 +6,7 @@ ADR **amends** or **supersedes** them, and the old one gets a pointer.
 
 | ADR | Title | Status |
 |---|---|---|
-| [0001](0001-study-presence.md) | Individual room study presence: identity, audience, data contract | Proposed contract; amended by 0002 |
+| [0001](0001-study-presence.md) | Individual room study presence: identity, audience, data contract | Proposed contract; amended by 0002 and 0013 |
 | [0002](0002-focus-session-lifecycle.md) | Focus session lifecycle, sharing modes and local history | Accepted; values provisional until [#39](https://github.com/arudaev/THD-Room-Finder/issues/39); §1–2 amended by 0004, §3 by 0003 and 0005 |
 | [0003](0003-focus-graph-share-links.md) | Focus graph share links with a stateless preview | Accepted; built 15 October 2026 |
 | [0004](0004-focus-rhythm.md) | Focus rhythm, device-only focus and session notifications | Accepted |
@@ -18,6 +18,7 @@ ADR **amends** or **supersedes** them, and the old one gets a pointer.
 | [0010](0010-session-to-table.md) | A running focus session can become a study table | Accepted |
 | [0011](0011-focus-at-home.md) | A focus session has a place, a campus room or home | Accepted; shipped in v2.6 |
 | [0012](0012-session-sounds.md) | Focus sessions play their own sounds | Accepted; shipped in v2.6 |
+| [0013](0013-saved-rooms-across-devices.md) | Saved rooms sync with the account | Accepted |
 
 Operating limits and the hosted activation checklist live in
 [pilot verification](../pilot-verification.md).

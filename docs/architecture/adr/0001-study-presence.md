@@ -1,6 +1,6 @@
 # ADR 0001: individual room study presence
 
-Status: implementation contract proposed for M1-S1; operational activation remains gated. **Amended by [ADR 0002](0002-focus-session-lifecycle.md) (13 October 2026)**: the sharing model, the lease/expiry rules and the history rule are replaced where marked below. Date: 10 October 2026. Scope authority: [project charter](../../../PROJECT-CHARTER.md). Tracks [#17](https://github.com/arudaev/THD-Room-Finder/issues/17); component implementation remains [#21](https://github.com/arudaev/THD-Room-Finder/issues/21). **Implemented locally** as the [focus service contract](../focus-service.md) (14 October 2026); the deviations are listed there.
+Status: implementation contract proposed for M1-S1; operational activation remains gated. **Amended by [ADR 0002](0002-focus-session-lifecycle.md) (13 October 2026)**: the sharing model, the lease/expiry rules and the history rule are replaced where marked below. Date: 10 October 2026. Scope authority: [project charter](../../../PROJECT-CHARTER.md). Tracks [#17](https://github.com/arudaev/THD-Room-Finder/issues/17); component implementation remains [#21](https://github.com/arudaev/THD-Room-Finder/issues/21). **Implemented locally** as the [focus service contract](../focus-service.md) (14 October 2026); the deviations are listed there. **Amended by [ADR 0013](0013-saved-rooms-across-devices.md) (9 November 2026)**: signed in, saved rooms sync with the account; signed out, they stay local.
 
 ## Decision
 

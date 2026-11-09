@@ -14,7 +14,7 @@ and in the Android app. Release notes: [GitHub releases](https://github.com/arud
 | Session sounds | A sound when a break starts, when it's over (one reminder 5 min later) and when you're done; Coffee break, Jingle, Chimes, phone default or silent, per place; mute a session | Android plays them from the notification with the phone locked ([ADR 0012](../architecture/adr/0012-session-sounds.md)) |
 | Study profile | Email code sign-in, programme and intake from the [THD programme list](../../shared/programmes.json), batch label such as *AIN 7* | Optional; without it focus stays on the device |
 | Private and Public | Private claims the room anonymously; Public lets your batch see you and join in step | [ADR 0002](../architecture/adr/0002-focus-session-lifecycle.md) |
-| Profile (`/profile`) | Semester focus graph (live while a session runs, home minutes in the day detail), hours, streak (weekends count when you focused), saved rooms, share card link, appearance | Signed in, dates and minutes sync across devices |
+| Profile (`/profile`) | Semester focus graph (live while a session runs, home minutes in the day detail), hours, streak (weekends count when you focused), saved rooms, share card link, appearance | Signed in, dates and minutes and saved rooms sync across devices |
 | Study tables (`/t/:link`) | Set a table in a free room, share one link, people take a seat and start together; turn a running session into a table | [Spec](study-tables.md) |
 | Student groups (`/o/`, `/g/:link`) | Groups registered with THD AI host gatherings people reply to | [Organizations](organizations.md) |
 | Outages | Without THabella the app lists known rooms as "availability unknown" and focus still starts | [ADR 0009](../architecture/adr/0009-timetable-outages.md) |
