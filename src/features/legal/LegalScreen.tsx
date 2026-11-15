@@ -20,20 +20,10 @@ import type { Operator } from './operator';
  * Change the text when one of those changes.
  */
 function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
+  // Plain text on the page, like a document: no card, no shadow. The gap
+  // between sections does the separating.
   return (
-    <section
-      id={id}
-      aria-label={title}
-      style={{
-        background: 'var(--md-surface)',
-        borderRadius: 'var(--radius-l)',
-        boxShadow: 'var(--md-shadow-1)',
-        padding: 'var(--space-4)',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 'var(--space-3)',
-      }}
-    >
+    <section id={id} aria-label={title} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
       <h2 style={{ margin: 0, fontSize: 'var(--title-medium-size)', fontWeight: 500, color: 'var(--md-on-surface)' }}>
         {title}
       </h2>
@@ -44,7 +34,7 @@ function Section({ id, title, children }: { id: string; title: string; children:
 
 function P({ children }: { children: ReactNode }) {
   return (
-    <p style={{ margin: 0, fontSize: 'var(--body-medium-size)', lineHeight: 1.5, color: 'var(--md-on-surface-variant)' }}>
+    <p style={{ margin: 0, fontSize: 'var(--body-medium-size)', lineHeight: 1.6, color: 'var(--md-on-surface-variant)', overflowWrap: 'anywhere' }}>
       {children}
     </p>
   );
@@ -53,7 +43,7 @@ function P({ children }: { children: ReactNode }) {
 function Topic({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-      <h3 style={{ margin: 0, fontSize: 'var(--body-large-size)', fontWeight: 500, color: 'var(--md-on-surface)' }}>
+      <h3 style={{ margin: 0, fontSize: 'var(--body-medium-size)', fontWeight: 500, color: 'var(--md-on-surface)' }}>
         {title}
       </h3>
       <P>{children}</P>
@@ -79,7 +69,7 @@ export function LegalScreen({ operator = OPERATOR, signIn = focusServiceConfigur
         onBack={() => navigate('/profile/settings')}
         style={{ position: 'sticky', top: 0, zIndex: 10 }}
       />
-      <Page>
+      <Page style={{ gap: 'var(--space-8)', paddingBottom: 'var(--space-10)' }}>
         <Section id="about" title={t('Not an official THD app', 'Keine offizielle App der THD')}>
           <P>
             {t(

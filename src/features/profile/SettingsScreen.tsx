@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { AppBar, Button, ConfirmDialog, SegmentedControl, Snackbar, Switch } from '../../components';
 import { focusNotifier } from '../../data/focusNotifier';
 import type { NotifyPermission } from '../../data/focusNotifier';
@@ -433,6 +433,39 @@ function FocusGroup() {
   );
 }
 
+/**
+ * The last thing on the page, below every setting: what the app is, in one
+ * muted line, and two small links (#248). Deliberately not a settings group:
+ * it is there for whoever looks for it and out of the way for everyone else.
+ */
+function SettingsFooter() {
+  const { t } = useI18n();
+  const quiet = { color: 'inherit', textDecoration: 'underline', textUnderlineOffset: 3 } as const;
+  return (
+    <footer
+      style={{
+        padding: 'var(--space-2) var(--space-1) var(--space-6)',
+        textAlign: 'center',
+        fontSize: 'var(--body-small-size)',
+        lineHeight: 1.6,
+        color: 'var(--md-on-surface-variant)',
+      }}
+    >
+      <div>
+        {t('THD Room Finder', 'THD Room Finder')} {__APP_VERSION__} ·{' '}
+        {t('a student project, not an official THD app', 'ein studentisches Projekt, keine offizielle App der THD')}
+      </div>
+      <div>
+        <Link to="/profile/about" style={quiet}>{t('About and privacy', 'Über die App und Datenschutz')}</Link>
+        {' · '}
+        <a href={OPERATOR.github} target="_blank" rel="noreferrer" style={quiet}>
+          {t('Help and ideas on GitHub', 'Hilfe und Ideen auf GitHub')}
+        </a>
+      </div>
+    </footer>
+  );
+}
+
 export function SettingsScreen({ children }: { children?: ReactNode }) {
   const navigate = useNavigate();
   const { t, locale, setLocale } = useI18n();
@@ -506,32 +539,7 @@ export function SettingsScreen({ children }: { children?: ReactNode }) {
           </div>
         </SettingsGroup>
         <HistoryGroup onMessage={setSnack} />
-        <SettingsGroup title={t('About', 'Über die App')}>
-          <SettingsRow
-            label={t('Not an official THD app', 'Keine offizielle App der THD')}
-            sub={t(
-              'A student project. THD does not operate it and is not responsible for it.',
-              'Ein studentisches Projekt. Die THD betreibt die App nicht und ist nicht dafür verantwortlich.',
-            )}
-          />
-          <SettingsRow
-            label={t('Help, ideas, contributing', 'Hilfe, Ideen, Mitmachen')}
-            sub={t(
-              'Reach Alex, who builds the app, on GitHub: for support, a question, a suggestion, or to help build it.',
-              'Schreib Alex, der die App baut, auf GitHub: für Hilfe, eine Frage, einen Vorschlag oder zum Mitbauen.',
-            )}
-            divider
-          >
-            <Button variant="text" size="small" href={OPERATOR.github} target="_blank" rel="noreferrer">
-              {OPERATOR.github.replace('https://', '')}
-            </Button>
-          </SettingsRow>
-          <SettingsRow label={t('Privacy and imprint', 'Datenschutz und Impressum')} divider>
-            <Button variant="text" size="small" onClick={() => navigate('/profile/about')}>
-              {t('Read', 'Lesen')}
-            </Button>
-          </SettingsRow>
-        </SettingsGroup>
+        <SettingsFooter />
       </Page>
       <Snackbar message={snack} onClose={() => setSnack('')} bottom={96} />
     </>
