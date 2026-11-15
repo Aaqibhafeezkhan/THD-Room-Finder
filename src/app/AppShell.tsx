@@ -16,6 +16,7 @@ import { HomeScreen } from '../features/home/HomeScreen';
 import { CampusScreen } from '../features/campus/CampusScreen';
 import { ProfileScreen } from '../features/profile/ProfileScreen';
 import { SettingsScreen } from '../features/profile/SettingsScreen';
+import { LegalScreen } from '../features/legal/LegalScreen';
 import { FocusScreen } from '../features/focus/FocusScreen';
 import { RoomDetailScreen } from '../features/detail/RoomDetailScreen';
 import { TableScreen } from '../features/tables/TableScreen';
@@ -90,6 +91,7 @@ export function AppShell() {
         <Route path="/focus" element={<FocusScreen />} />
         <Route path="/profile" element={<ProfileScreen />} />
         <Route path="/profile/settings" element={<SettingsScreen />} />
+        <Route path="/profile/about" element={<LegalScreen />} />
         {/* The Saved tab became part of Profile (#37); old links still work. */}
         <Route path="/saved" element={<Navigate to="/profile" replace />} />
         {/* Share and invite links opened inside the app land on the map. */}

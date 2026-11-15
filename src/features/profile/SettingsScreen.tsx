@@ -505,6 +505,20 @@ export function SettingsScreen({ children }: { children?: ReactNode }) {
           </div>
         </SettingsGroup>
         <HistoryGroup onMessage={setSnack} />
+        <SettingsGroup title={t('About', 'Über die App')}>
+          <SettingsRow
+            label={t('Not an official THD app', 'Keine offizielle App der THD')}
+            sub={t(
+              'A student project. THD does not operate it and is not responsible for it.',
+              'Ein studentisches Projekt. Die THD betreibt die App nicht und ist nicht dafür verantwortlich.',
+            )}
+          />
+          <SettingsRow label={t('Privacy and imprint', 'Datenschutz und Impressum')} divider>
+            <Button variant="text" size="small" onClick={() => navigate('/profile/about')}>
+              {t('Read', 'Lesen')}
+            </Button>
+          </SettingsRow>
+        </SettingsGroup>
       </Page>
       <Snackbar message={snack} onClose={() => setSnack('')} bottom={96} />
     </>
