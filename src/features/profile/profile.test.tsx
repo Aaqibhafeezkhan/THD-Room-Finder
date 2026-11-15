@@ -123,8 +123,16 @@ const session = {
   room: 'E 212',
 };
 
-async function render(node: ReactNode) {
+async function render(node: ReactNode, { folded = false } = {}) {
   await act(async () => root.render(node));
+  // Focus, Appearance and Focus history start folded; most tests want their rows.
+  if (!folded) await unfold();
+}
+
+async function unfold() {
+  for (const b of [...container.querySelectorAll<HTMLButtonElement>('button[aria-expanded="false"]')]) {
+    await act(async () => b.click());
+  }
 }
 
 function radio(name: string): HTMLElement {
@@ -146,6 +154,34 @@ describe('Settings', () => {
 
     await act(async () => radio('Violet').click());
     expect(document.documentElement.hasAttribute('data-accent')).toBe(false);
+  });
+
+  it('opens short: Focus, Appearance and Focus history folded, each saying what is set', async () => {
+    await render(
+      <Providers path="/profile/settings">
+        <SettingsScreen />
+      </Providers>,
+      { folded: true },
+    );
+    const folded = [...container.querySelectorAll('button[aria-expanded="false"]')].map((b) => b.textContent);
+    expect(folded).toEqual(['FocusPomodoro', 'AppearanceSystem · English', 'Focus history0 sessions']);
+    expect(container.querySelectorAll('[role="radio"]')).toHaveLength(0);
+
+    await unfold();
+    expect(radio('Dark')).toBeTruthy();
+  });
+
+  it('ends with the maker’s GitHub and the about page, in view without unfolding', async () => {
+    await render(
+      <Providers path="/profile/settings">
+        <SettingsScreen />
+      </Providers>,
+      { folded: true },
+    );
+    const github = container.querySelector<HTMLAnchorElement>('a[href="https://github.com/arudaev"]');
+    expect(github?.textContent).toContain('Help, ideas, contributing');
+    expect(github?.target).toBe('_blank');
+    expect(container.querySelector('a[href="/profile/about"]')?.textContent).toContain('About and privacy');
   });
 
   it('restores a saved graph colour on start', async () => {
