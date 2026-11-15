@@ -2,10 +2,9 @@
  * Who runs the app, for the imprint. One place, so the notice and the
  * imprint cannot disagree.
  *
- * `address` and `email` are the maintainer's to fill in (#248): a postal
- * address and a contact address he is willing to publish. Until they are set
- * the imprint shows the name and the public repository as the way to reach
- * him, and says that the postal address is missing.
+ * `address` is the maintainer's to fill in (#248): a postal address he is
+ * willing to publish. Until it is set the imprint says that the postal
+ * address is missing. `email` is the address he chose for contact.
  */
 export interface Operator {
   name: string;
@@ -19,6 +18,6 @@ export interface Operator {
 export const OPERATOR: Operator = {
   name: 'Alexander Rudaev',
   address: null,
-  email: null,
+  email: 'alex.rudaev@outlook.com',
   repository: 'https://github.com/arudaev/THD-Room-Finder',
 };
