@@ -171,16 +171,17 @@ describe('Settings', () => {
     expect(radio('Dark')).toBeTruthy();
   });
 
-  it('ends with the maker’s GitHub and the about page, in view without unfolding', async () => {
+  it('ends with the repository, the website and the about page, in view without unfolding', async () => {
     await render(
       <Providers path="/profile/settings">
         <SettingsScreen />
       </Providers>,
       { folded: true },
     );
-    const github = container.querySelector<HTMLAnchorElement>('a[href="https://github.com/arudaev"]');
+    const github = container.querySelector<HTMLAnchorElement>('a[href="https://github.com/arudaev/THD-Room-Finder#contributing"]');
     expect(github?.textContent).toContain('Help, ideas, contributing');
     expect(github?.target).toBe('_blank');
+    expect(container.querySelector('a[href="https://arudaev.github.io/THD-Room-Finder/"]')?.textContent).toContain('Website');
     expect(container.querySelector('a[href="/profile/about"]')?.textContent).toContain('About and privacy');
   });
 

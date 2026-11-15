@@ -94,11 +94,11 @@ export function LegalScreen({ operator = OPERATOR, signIn = focusServiceConfigur
         <Section id="contact" title={t('Help, ideas, contributing', 'Hilfe, Ideen, Mitmachen')}>
           <P>
             {t(
-              'For support, a question or a suggestion, or if you would like to help build the app, reach Alex on GitHub: ',
-              'Für Hilfe, eine Frage oder einen Vorschlag, oder wenn du an der App mitbauen möchtest, schreib Alex auf GitHub: ',
+              'For support, a question or a suggestion, or if you would like to help build the app, go to the project on GitHub: ',
+              'Für Hilfe, eine Frage oder einen Vorschlag, oder wenn du an der App mitbauen möchtest, geh zum Projekt auf GitHub: ',
             )}
-            <a href={operator.github} target="_blank" rel="noreferrer" style={link}>
-              {operator.github.replace('https://', '')}
+            <a href={operator.contributing} target="_blank" rel="noreferrer" style={link}>
+              {operator.repository.replace('https://', '')}
             </a>
           </P>
           <P>
@@ -107,6 +107,12 @@ export function LegalScreen({ operator = OPERATOR, signIn = focusServiceConfigur
               {t('open an issue', 'ein Issue öffnen')}
             </a>
             {t('. How to contribute is in CONTRIBUTING.md there.', '. Wie man mitmacht, steht dort in CONTRIBUTING.md.')}
+          </P>
+          <P>
+            {t('Website: ', 'Website: ')}
+            <a href={operator.website} target="_blank" rel="noreferrer" style={link}>
+              {operator.website.replace('https://', '').replace(/\/$/, '')}
+            </a>
           </P>
         </Section>
 

@@ -2,7 +2,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { AppBar, Button, ConfirmDialog, SegmentedControl, Snackbar, Switch } from '../../components';
-import { IconChevronDown, IconChevronRight, IconExternal, IconGitHub, IconInfo } from '../../components/icons';
+import { IconChevronDown, IconChevronRight, IconExternal, IconGitHub, IconGlobe, IconInfo } from '../../components/icons';
 import { focusNotifier } from '../../data/focusNotifier';
 import type { NotifyPermission } from '../../data/focusNotifier';
 import { exportHistory } from '../../domain/focusHistory';
@@ -535,8 +535,8 @@ function FocusGroup() {
 }
 
 /**
- * About, at the end of the list (#248): the maker's GitHub for help, ideas
- * and contributing, and the page that says what the app is and what it
+ * About, at the end of the list (#248): the repository for help, ideas and
+ * contributing, the project's website, and the page that says what the app is and what it
  * stores. Under it, the version, small.
  */
 function AboutGroup() {
@@ -548,13 +548,20 @@ function AboutGroup() {
           icon={<IconGitHub />}
           label="GitHub"
           sub={t('Help, ideas, contributing', 'Hilfe, Ideen, Mitmachen')}
-          href={OPERATOR.github}
+          href={OPERATOR.contributing}
         />
         <LinkRow
           icon={<IconInfo />}
           label={t('About and privacy', 'Über die App und Datenschutz')}
           sub={t('Not an official THD app', 'Keine offizielle App der THD')}
           to="/profile/about"
+          divider
+        />
+        <LinkRow
+          icon={<IconGlobe />}
+          label={t('Website', 'Website')}
+          sub={OPERATOR.website.replace('https://', '').replace(/\/$/, '')}
+          href={OPERATOR.website}
           divider
         />
       </SettingsGroup>
