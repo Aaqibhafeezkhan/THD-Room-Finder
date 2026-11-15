@@ -223,7 +223,7 @@ design/         Mirror of the Claude Design system + design brief
 
 ## License
 
-GPL-3.0 — see [LICENSE](LICENSE).
+GPL-3.0 — see [LICENSE](LICENSE). Copyright and what a copy or fork has to keep: [NOTICE.md](NOTICE.md).
 
 ## Roadmap
 

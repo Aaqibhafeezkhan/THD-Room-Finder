@@ -44,6 +44,8 @@ const someone: Operator = {
   address: ['Beispielweg 1', '94469 Deggendorf'],
   email: 'erika@example.org',
   repository: 'https://example.org/repo',
+  github: 'https://example.org/erika',
+  since: 2026,
 };
 
 describe('about, privacy and imprint', () => {
@@ -72,6 +74,18 @@ describe('about, privacy and imprint', () => {
     await render(<LegalScreen operator={{ ...someone, address: null, email: null }} />);
     expect(container.textContent).toContain('A postal address will be added here.');
     expect(container.querySelector('a[href="https://example.org/repo/issues"]')).not.toBeNull();
+  });
+
+  it("names the maker's GitHub profile as the place for support, ideas and contributing", async () => {
+    await render(<LegalScreen operator={someone} />);
+    expect(container.textContent).toContain('Help, ideas, contributing');
+    expect(container.querySelector('a[href="https://example.org/erika"]')).not.toBeNull();
+  });
+
+  it("carries the copyright line with the licence's conditions", async () => {
+    await render(<LegalScreen operator={someone} />);
+    expect(container.textContent).toContain('© 2026 Erika Mustermann.');
+    expect(container.textContent).toContain('stay under the same licence');
   });
 
   it('reads in German when the language is German', async () => {

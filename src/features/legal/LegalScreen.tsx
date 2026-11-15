@@ -101,6 +101,25 @@ export function LegalScreen({ operator = OPERATOR, signIn = focusServiceConfigur
           </P>
         </Section>
 
+        <Section id="contact" title={t('Help, ideas, contributing', 'Hilfe, Ideen, Mitmachen')}>
+          <P>
+            {t(
+              'For support, a question or a suggestion, or if you would like to help build the app, reach Alex on GitHub: ',
+              'Für Hilfe, eine Frage oder einen Vorschlag, oder wenn du an der App mitbauen möchtest, schreib Alex auf GitHub: ',
+            )}
+            <a href={operator.github} target="_blank" rel="noreferrer" style={link}>
+              {operator.github.replace('https://', '')}
+            </a>
+          </P>
+          <P>
+            {t('Bugs and ideas can also go straight to the project: ', 'Fehler und Ideen kannst du auch direkt beim Projekt melden: ')}
+            <a href={`${operator.repository}/issues`} target="_blank" rel="noreferrer" style={link}>
+              {t('open an issue', 'ein Issue öffnen')}
+            </a>
+            {t('. How to contribute is in CONTRIBUTING.md there.', '. Wie man mitmacht, steht dort in CONTRIBUTING.md.')}
+          </P>
+        </Section>
+
         <Section id="privacy" title={t('Privacy', 'Datenschutz')}>
           <Topic title={t('Without signing in', 'Ohne Anmeldung')}>
             {t(
@@ -179,6 +198,13 @@ export function LegalScreen({ operator = OPERATOR, signIn = focusServiceConfigur
               <a href={`${operator.repository}/issues`} target="_blank" rel="noreferrer" style={link}>
                 {t('open an issue on GitHub', 'ein Issue auf GitHub öffnen')}
               </a>
+            )}
+          </P>
+          <P>
+            {`© ${operator.since} ${operator.name}. `}
+            {t(
+              'Released under GPL-3.0: you may use, copy and change the app, but every copy has to keep this notice, name its changes and stay under the same licence with its source open.',
+              'Veröffentlicht unter GPL-3.0: Du darfst die App nutzen, kopieren und ändern, aber jede Kopie muss diesen Hinweis behalten, ihre Änderungen nennen und mit offenem Quelltext unter derselben Lizenz bleiben.',
             )}
           </P>
         </Section>

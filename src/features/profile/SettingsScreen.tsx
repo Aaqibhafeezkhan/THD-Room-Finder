@@ -20,6 +20,7 @@ import { useTheme } from '../../lib/theme';
 import { useMapPrefs } from '../../lib/mapPrefs';
 import { useI18n } from '../../i18n';
 import { Page } from '../shared/ui';
+import { OPERATOR } from '../legal/operator';
 
 /**
  * Settings behind the Profile gear (D2): a plain grouped list, one setting per
@@ -513,6 +514,18 @@ export function SettingsScreen({ children }: { children?: ReactNode }) {
               'Ein studentisches Projekt. Die THD betreibt die App nicht und ist nicht dafür verantwortlich.',
             )}
           />
+          <SettingsRow
+            label={t('Help, ideas, contributing', 'Hilfe, Ideen, Mitmachen')}
+            sub={t(
+              'Reach Alex, who builds the app, on GitHub: for support, a question, a suggestion, or to help build it.',
+              'Schreib Alex, der die App baut, auf GitHub: für Hilfe, eine Frage, einen Vorschlag oder zum Mitbauen.',
+            )}
+            divider
+          >
+            <Button variant="text" size="small" href={OPERATOR.github} target="_blank" rel="noreferrer">
+              {OPERATOR.github.replace('https://', '')}
+            </Button>
+          </SettingsRow>
           <SettingsRow label={t('Privacy and imprint', 'Datenschutz und Impressum')} divider>
             <Button variant="text" size="small" onClick={() => navigate('/profile/about')}>
               {t('Read', 'Lesen')}
