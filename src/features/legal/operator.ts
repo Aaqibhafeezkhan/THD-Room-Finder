@@ -13,6 +13,12 @@ export interface Operator {
   /** A public contact address, or null until the maintainer provides one. */
   email: string | null;
   repository: string;
+  /** Where to go for support, questions, ideas and offers to help: the repository's Contributing section. */
+  contributing: string;
+  /** The project's website. */
+  website: string;
+  /** The year of the first commit, for the copyright line. */
+  since: number;
 }
 
 export const OPERATOR: Operator = {
@@ -20,4 +26,7 @@ export const OPERATOR: Operator = {
   address: null,
   email: 'alex.rudaev@outlook.com',
   repository: 'https://github.com/arudaev/THD-Room-Finder',
+  contributing: 'https://github.com/arudaev/THD-Room-Finder#contributing',
+  website: 'https://arudaev.github.io/THD-Room-Finder/',
+  since: 2026,
 };

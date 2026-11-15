@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { AppBar, Button, ConfirmDialog, SegmentedControl, Snackbar, Switch } from '../../components';
+import { IconChevronDown, IconChevronRight, IconExternal, IconGitHub, IconGlobe, IconInfo } from '../../components/icons';
 import { focusNotifier } from '../../data/focusNotifier';
 import type { NotifyPermission } from '../../data/focusNotifier';
 import { exportHistory } from '../../domain/focusHistory';
@@ -20,6 +21,7 @@ import { useTheme } from '../../lib/theme';
 import { useMapPrefs } from '../../lib/mapPrefs';
 import { useI18n } from '../../i18n';
 import { Page } from '../shared/ui';
+import { OPERATOR } from '../legal/operator';
 
 /**
  * Settings behind the Profile gear (D2): a plain grouped list, one setting per
@@ -28,37 +30,134 @@ import { Page } from '../shared/ui';
  * Focus holds the default rhythm (ADR 0004); the focus history group exports,
  * imports and clears the device-only history.
  */
-export function SettingsGroup({ title, children }: { title: string; children: ReactNode }) {
+const card = {
+  background: 'var(--md-surface)',
+  borderRadius: 'var(--radius-l)',
+  boxShadow: 'var(--md-shadow-1)',
+  padding: '4px 16px',
+  display: 'flex',
+  flexDirection: 'column',
+} as const;
+
+/**
+ * A group of settings. With a `summary` it starts folded: one row with the
+ * group's name and what is set now, which opens the rows on a press. Settings
+ * then opens as a short list a student can take in at once, with the things
+ * changed rarely (focus, appearance, history) one press away.
+ */
+export function SettingsGroup({ title, summary, children }: { title: string; summary?: string; children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+  const body = useId();
+  if (summary === undefined) {
+    return (
+      <section aria-label={title} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+        <h2
+          style={{
+            margin: 0,
+            padding: '0 var(--space-1)',
+            fontSize: 'var(--title-small-size)',
+            fontWeight: 500,
+            color: 'var(--md-primary)',
+          }}
+        >
+          {title}
+        </h2>
+        <div style={card}>{children}</div>
+      </section>
+    );
+  }
   return (
-    <section aria-label={title} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-      <h2
-        style={{
-          margin: 0,
-          padding: '0 var(--space-1)',
-          fontSize: 'var(--title-small-size)',
-          fontWeight: 500,
-          color: 'var(--md-primary)',
-        }}
-      >
-        {title}
+    <section aria-label={title} style={card}>
+      <h2 style={{ margin: 0, font: 'inherit' }}>
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-controls={body}
+          onClick={() => setOpen((o) => !o)}
+          style={{
+            width: '100%',
+            minHeight: 56,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 16,
+            padding: '10px 0',
+            background: 'none',
+            border: 'none',
+            font: 'inherit',
+            color: 'inherit',
+            textAlign: 'left',
+            cursor: 'pointer',
+          }}
+        >
+          <span style={{ minWidth: 0 }}>
+            <span style={{ display: 'block', fontSize: 'var(--body-large-size)', color: 'var(--md-on-surface)' }}>{title}</span>
+            {!open && (
+              <span style={{ display: 'block', fontSize: 'var(--body-medium-size)', color: 'var(--md-on-surface-variant)' }}>
+                {summary}
+              </span>
+            )}
+          </span>
+          <span
+            style={{
+              display: 'flex',
+              color: 'var(--md-on-surface-variant)',
+              transform: open ? 'rotate(180deg)' : 'none',
+            }}
+          >
+            <IconChevronDown />
+          </span>
+        </button>
       </h2>
-      <div
-        style={{
-          background: 'var(--md-surface)',
-          borderRadius: 'var(--radius-l)',
-          boxShadow: 'var(--md-shadow-1)',
-          padding: '4px 16px',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        {children}
-      </div>
+      {open && (
+        <div id={body} style={{ display: 'flex', flexDirection: 'column', borderTop: '1px solid var(--md-outline-variant)' }}>
+          {children}
+        </div>
+      )}
     </section>
   );
 }
 
-/** A labelled row with its control under or beside the label. */
+/** A whole row that is a link: an icon, a label with a line under it, and where it leads. */
+function LinkRow({ icon, label, sub, to, href, divider = false }: {
+  icon: ReactNode;
+  label: string;
+  sub: string;
+  /** A screen in the app, or … */
+  to?: string;
+  /** … another site, opened in a new tab. */
+  href?: string;
+  divider?: boolean;
+}) {
+  const style = {
+    minHeight: 56,
+    display: 'flex',
+    alignItems: 'center',
+    gap: 16,
+    padding: '10px 0',
+    color: 'inherit',
+    textDecoration: 'none',
+    borderTop: divider ? '1px solid var(--md-outline-variant)' : 'none',
+  } as const;
+  const content = (
+    <>
+      <span style={{ display: 'flex', color: 'var(--md-on-surface-variant)' }}>{icon}</span>
+      <span style={{ flex: 1, minWidth: 0 }}>
+        <span style={{ display: 'block', fontSize: 'var(--body-large-size)', color: 'var(--md-on-surface)' }}>{label}</span>
+        <span style={{ display: 'block', fontSize: 'var(--body-medium-size)', color: 'var(--md-on-surface-variant)' }}>{sub}</span>
+      </span>
+      <span style={{ display: 'flex', color: 'var(--md-on-surface-variant)' }}>
+        {to ? <IconChevronRight size={20} /> : <IconExternal size={20} />}
+      </span>
+    </>
+  );
+  return to ? (
+    <Link to={to} style={style}>{content}</Link>
+  ) : (
+    <a href={href} target="_blank" rel="noreferrer" style={style}>{content}</a>
+  );
+}
+
 export function SettingsRow({ label, sub, children, divider = false }: {
   label: string;
   sub?: ReactNode;
@@ -132,7 +231,10 @@ function HistoryGroup({ onMessage }: { onMessage: (m: string) => void }) {
   };
 
   return (
-    <SettingsGroup title={t('Focus history', 'Fokus-Verlauf')}>
+    <SettingsGroup
+      title={t('Focus history', 'Fokus-Verlauf')}
+      summary={t(entries.length === 1 ? '1 session' : `${entries.length} sessions`, entries.length === 1 ? '1 Session' : `${entries.length} Sessions`)}
+    >
       <SettingsRow
         label={
           syncedWith
@@ -350,7 +452,7 @@ function FocusGroup() {
   }, [notifier]);
 
   return (
-    <SettingsGroup title={t('Focus', 'Fokus')}>
+    <SettingsGroup title={t('Focus', 'Fokus')} summary={rhythmName(rhythm, t)}>
       <SettingsRow label={t('Rhythm', 'Rhythmus')} sub={`${rhythmName(rhythm, t)} · ${rhythmLine(rhythm, t)}`}>
         <Button variant="text" onClick={() => setOpen(true)}>
           {t('Change', 'Ändern')}
@@ -432,6 +534,51 @@ function FocusGroup() {
   );
 }
 
+/**
+ * About, at the end of the list (#248): the repository for help, ideas and
+ * contributing, the project's website, and the page that says what the app is and what it
+ * stores. Under it, the version, small.
+ */
+function AboutGroup() {
+  const { t } = useI18n();
+  return (
+    <>
+      <SettingsGroup title={t('About', 'Über die App')}>
+        <LinkRow
+          icon={<IconGitHub />}
+          label="GitHub"
+          sub={t('Help, ideas, contributing', 'Hilfe, Ideen, Mitmachen')}
+          href={OPERATOR.contributing}
+        />
+        <LinkRow
+          icon={<IconInfo />}
+          label={t('About and privacy', 'Über die App und Datenschutz')}
+          sub={t('Not an official THD app', 'Keine offizielle App der THD')}
+          to="/profile/about"
+          divider
+        />
+        <LinkRow
+          icon={<IconGlobe />}
+          label={t('Website', 'Website')}
+          sub={OPERATOR.website.replace('https://', '').replace(/\/$/, '')}
+          href={OPERATOR.website}
+          divider
+        />
+      </SettingsGroup>
+      <div
+        style={{
+          paddingBottom: 'var(--space-4)',
+          textAlign: 'center',
+          fontSize: 'var(--body-small-size)',
+          color: 'var(--md-on-surface-variant)',
+        }}
+      >
+        THD Room Finder {__APP_VERSION__}
+      </div>
+    </>
+  );
+}
+
 export function SettingsScreen({ children }: { children?: ReactNode }) {
   const navigate = useNavigate();
   const { t, locale, setLocale } = useI18n();
@@ -460,7 +607,10 @@ export function SettingsScreen({ children }: { children?: ReactNode }) {
         {children}
         <ProfileGroups onMessage={setSnack} />
         <FocusGroup />
-        <SettingsGroup title={t('Appearance', 'Darstellung')}>
+        <SettingsGroup
+          title={t('Appearance', 'Darstellung')}
+          summary={`${{ system: t('System', 'System'), light: t('Light', 'Hell'), dark: t('Dark', 'Dunkel') }[theme]} · ${locale === 'de' ? 'Deutsch' : 'English'}`}
+        >
           <SettingsRow label={t('Theme', 'Design')}>
             <SegmentedControl<Theme>
               tone="primary"
@@ -505,20 +655,7 @@ export function SettingsScreen({ children }: { children?: ReactNode }) {
           </div>
         </SettingsGroup>
         <HistoryGroup onMessage={setSnack} />
-        <SettingsGroup title={t('About', 'Über die App')}>
-          <SettingsRow
-            label={t('Not an official THD app', 'Keine offizielle App der THD')}
-            sub={t(
-              'A student project. THD does not operate it and is not responsible for it.',
-              'Ein studentisches Projekt. Die THD betreibt die App nicht und ist nicht dafür verantwortlich.',
-            )}
-          />
-          <SettingsRow label={t('Privacy and imprint', 'Datenschutz und Impressum')} divider>
-            <Button variant="text" size="small" onClick={() => navigate('/profile/about')}>
-              {t('Read', 'Lesen')}
-            </Button>
-          </SettingsRow>
-        </SettingsGroup>
+        <AboutGroup />
       </Page>
       <Snackbar message={snack} onClose={() => setSnack('')} bottom={96} />
     </>

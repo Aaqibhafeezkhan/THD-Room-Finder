@@ -20,20 +20,10 @@ import type { Operator } from './operator';
  * Change the text when one of those changes.
  */
 function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
+  // Plain text on the page, like a document: no card, no shadow. The gap
+  // between sections does the separating.
   return (
-    <section
-      id={id}
-      aria-label={title}
-      style={{
-        background: 'var(--md-surface)',
-        borderRadius: 'var(--radius-l)',
-        boxShadow: 'var(--md-shadow-1)',
-        padding: 'var(--space-4)',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 'var(--space-3)',
-      }}
-    >
+    <section id={id} aria-label={title} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
       <h2 style={{ margin: 0, fontSize: 'var(--title-medium-size)', fontWeight: 500, color: 'var(--md-on-surface)' }}>
         {title}
       </h2>
@@ -44,7 +34,7 @@ function Section({ id, title, children }: { id: string; title: string; children:
 
 function P({ children }: { children: ReactNode }) {
   return (
-    <p style={{ margin: 0, fontSize: 'var(--body-medium-size)', lineHeight: 1.5, color: 'var(--md-on-surface-variant)' }}>
+    <p style={{ margin: 0, fontSize: 'var(--body-medium-size)', lineHeight: 1.6, color: 'var(--md-on-surface-variant)', overflowWrap: 'anywhere' }}>
       {children}
     </p>
   );
@@ -53,7 +43,7 @@ function P({ children }: { children: ReactNode }) {
 function Topic({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-      <h3 style={{ margin: 0, fontSize: 'var(--body-large-size)', fontWeight: 500, color: 'var(--md-on-surface)' }}>
+      <h3 style={{ margin: 0, fontSize: 'var(--body-medium-size)', fontWeight: 500, color: 'var(--md-on-surface)' }}>
         {title}
       </h3>
       <P>{children}</P>
@@ -79,7 +69,7 @@ export function LegalScreen({ operator = OPERATOR, signIn = focusServiceConfigur
         onBack={() => navigate('/profile/settings')}
         style={{ position: 'sticky', top: 0, zIndex: 10 }}
       />
-      <Page>
+      <Page style={{ gap: 'var(--space-8)', paddingBottom: 'var(--space-10)' }}>
         <Section id="about" title={t('Not an official THD app', 'Keine offizielle App der THD')}>
           <P>
             {t(
@@ -97,6 +87,31 @@ export function LegalScreen({ operator = OPERATOR, signIn = focusServiceConfigur
             {t('The code is open source under GPL-3.0: ', 'Der Code ist Open Source unter GPL-3.0: ')}
             <a href={operator.repository} target="_blank" rel="noreferrer" style={link}>
               {operator.repository.replace('https://', '')}
+            </a>
+          </P>
+        </Section>
+
+        <Section id="contact" title={t('Help, ideas, contributing', 'Hilfe, Ideen, Mitmachen')}>
+          <P>
+            {t(
+              'For support, a question or a suggestion, or if you would like to help build the app, go to the project on GitHub: ',
+              'Für Hilfe, eine Frage oder einen Vorschlag, oder wenn du an der App mitbauen möchtest, geh zum Projekt auf GitHub: ',
+            )}
+            <a href={operator.contributing} target="_blank" rel="noreferrer" style={link}>
+              {operator.repository.replace('https://', '')}
+            </a>
+          </P>
+          <P>
+            {t('Bugs and ideas can also go straight to the project: ', 'Fehler und Ideen kannst du auch direkt beim Projekt melden: ')}
+            <a href={`${operator.repository}/issues`} target="_blank" rel="noreferrer" style={link}>
+              {t('open an issue', 'ein Issue öffnen')}
+            </a>
+            {t('. How to contribute is in CONTRIBUTING.md there.', '. Wie man mitmacht, steht dort in CONTRIBUTING.md.')}
+          </P>
+          <P>
+            {t('Website: ', 'Website: ')}
+            <a href={operator.website} target="_blank" rel="noreferrer" style={link}>
+              {operator.website.replace('https://', '').replace(/\/$/, '')}
             </a>
           </P>
         </Section>
@@ -179,6 +194,13 @@ export function LegalScreen({ operator = OPERATOR, signIn = focusServiceConfigur
               <a href={`${operator.repository}/issues`} target="_blank" rel="noreferrer" style={link}>
                 {t('open an issue on GitHub', 'ein Issue auf GitHub öffnen')}
               </a>
+            )}
+          </P>
+          <P>
+            {`© ${operator.since} ${operator.name}. `}
+            {t(
+              'Released under GPL-3.0: you may use, copy and change the app, but every copy has to keep this notice, name its changes and stay under the same licence with its source open.',
+              'Veröffentlicht unter GPL-3.0: Du darfst die App nutzen, kopieren und ändern, aber jede Kopie muss diesen Hinweis behalten, ihre Änderungen nennen und mit offenem Quelltext unter derselben Lizenz bleiben.',
             )}
           </P>
         </Section>
