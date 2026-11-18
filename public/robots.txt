@@ -1,0 +1,12 @@
+# THD Room Finder: free rooms at THD Deggendorf, live.
+# What this is, in plain text: /about and /llms.txt
+#
+# Pages are open to read. /api/ is the app's own proxy to THD's timetable,
+# not a public API: please don't fetch it. Shared links carry noindex.
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /dev/
+
+Sitemap: https://thd-room-finder.vercel.app/sitemap.xml

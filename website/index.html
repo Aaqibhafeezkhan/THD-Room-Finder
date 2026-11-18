@@ -240,6 +240,97 @@
     }
     @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
   </style>
+  <link rel="alternate" type="text/markdown" href="https://thd-room-finder.vercel.app/llms.txt" title="llms.txt">
+  <script type="application/ld+json">
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "THD Room Finder",
+    "url": "https://thd-room-finder.vercel.app/",
+    "description": "Every free teaching room at THD Deggendorf right now, sorted by how long it stays free, with Pomodoro focus sessions alone, with friends or at home.",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Web, Android",
+    "inLanguage": [
+      "en",
+      "de"
+    ],
+    "isAccessibleForFree": true,
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "EUR"
+    },
+    "codeRepository": "https://github.com/arudaev/THD-Room-Finder",
+    "subjectOf": {
+      "@type": "WebPage",
+      "url": "https://thd-room-finder.vercel.app/about"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is this an official THD app?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. It's a student project. It uses the public room and timetable data from THabella, but the university doesn't run it."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How accurate is \"free\"?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "As accurate as the timetable: a room counts as free when nothing is booked in it right now. Some rooms are still locked; the app marks those \"may be locked\"."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I book a room?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. The app shows free rooms and lets you invite people, but it never reserves a room. Official bookings go through THD."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I need an account?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Without one, everything runs on your device. An email code is enough to take a seat at a study table; you only need a study profile to claim rooms and study with your batch."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can others see where I study?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Only if you want them to. Without a study profile nobody sees anything. With one, a private session only shows \"taken\"; a public one shows your batch the room, and your name only if you turn it on."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I use it on my phone and laptop?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Signed in, your focus graph and saved rooms are the same on both, and a session running on your phone shows on your laptop too, where you can start the next block or end it."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does it work offline?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Rooms and the day's timetable are cached, and a focus session keeps running without a connection. If THD's timetable itself is down, the app lists rooms as \"availability unknown\" instead of guessing."
+        }
+      }
+    ]
+  }
+]
+  </script>
 </head>
 <body>
 
@@ -573,6 +664,7 @@
       <p class="fine" data-de="Illustrationen mit KI erstellt, nach Fotos vom Campus. Screenshots aus der echten App.">Illustrations made with AI from photos of the campus. Screenshots are from the real app.</p>
     </div>
     <div class="links">
+      <a href="https://thd-room-finder.vercel.app/about" data-de="Über das Projekt">About</a>
       <a href="https://github.com/arudaev/THD-Room-Finder" target="_blank" rel="noopener">GitHub</a>
       <a href="https://github.com/arudaev/THD-Room-Finder/releases" target="_blank" rel="noopener" data-de="Versionen">Releases</a>
       <a href="https://github.com/arudaev/THD-Room-Finder/issues/new/choose" target="_blank" rel="noopener" data-de="Fehler melden">Report a bug</a>

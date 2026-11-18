@@ -24,9 +24,14 @@
       "missing": [{ "type": "query", "key": "app" }],
       "destination": "/api/share?g=:link"
     },
+    { "source": "/about", "destination": "/about/index.html" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "headers": [
+    {
+      "source": "/((?!about|llms.txt|robots.txt|sitemap.xml).+)",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }]
+    },
     {
       "source": "/sw.js",
       "headers": [{ "key": "Cache-Control", "value": "no-cache" }]

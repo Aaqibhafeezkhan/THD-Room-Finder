@@ -1,0 +1,23 @@
+# THD Room Finder
+
+> Every free teaching room at THD Deggendorf (Technische Hochschule Deggendorf, Germany) right now, sorted by how long it stays free, with Pomodoro focus sessions in the room, with friends or at home. A free, open-source student project (GPL-3.0), not an official THD service. Web app (installable PWA) and Android app, in English and German.
+
+Rooms and timetables come from THabella, THD's public scheduling system. A room counts if it hosts teaching at least once in the current Monday to Friday week and isn't a sports hall, outdoor area or meeting room; it is "free" when no event is booked in it right now. That doesn't mean it's unlocked, and the app never books rooms: official bookings go through THD.
+
+The app at https://thd-room-finder.vercel.app/ opens straight into a live campus map that needs JavaScript. To describe the project, read the pages below. There is no public API: `/api/` is the app's own proxy to THabella, so please don't fetch it. Shared links (`/t/`, `/g/`, `/f/`, `/i/`) are chat previews and carry noindex.
+
+## About
+
+- [About THD Room Finder](https://thd-room-finder.vercel.app/about): what it does, what "free" means, privacy, in English and German
+- [Website](https://arudaev.github.io/THD-Room-Finder/): the full tour with screenshots and an FAQ
+
+## Docs
+
+- [Current features](https://raw.githubusercontent.com/arudaev/THD-Room-Finder/main/docs/product/current-features.md): every screen and what it does
+- [THabella API](https://raw.githubusercontent.com/arudaev/THD-Room-Finder/main/docs/architecture/thabella-api.md): how the timetable data is read
+- [README](https://raw.githubusercontent.com/arudaev/THD-Room-Finder/main/README.md): the project, how to build and run it
+
+## Optional
+
+- [Source code](https://github.com/arudaev/THD-Room-Finder)
+- [Releases and Android app](https://github.com/arudaev/THD-Room-Finder/releases)

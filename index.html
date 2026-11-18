@@ -31,10 +31,35 @@
     <meta name="twitter:image" content="https://thd-room-finder.vercel.app/og.jpg" />
     <link rel="icon" type="image/svg+xml" href="/icons/app-icon.svg" />
     <link rel="apple-touch-icon" href="/icons/app-icon-180.png" />
-    <title>THD Room Finder</title>
+    <link rel="canonical" href="https://thd-room-finder.vercel.app/" />
+    <link rel="alternate" type="text/markdown" href="/llms.txt" title="llms.txt" />
+    <title>THD Room Finder: free rooms at THD Deggendorf, live</title>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "THD Room Finder",
+        "url": "https://thd-room-finder.vercel.app/",
+        "description": "Every free teaching room at THD Deggendorf right now, sorted by how long it stays free, with Pomodoro focus sessions alone, with friends or at home.",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Web, Android",
+        "inLanguage": ["en", "de"],
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+        "codeRepository": "https://github.com/arudaev/THD-Room-Finder",
+        "subjectOf": { "@type": "WebPage", "url": "https://thd-room-finder.vercel.app/about" }
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <p>
+        THD Room Finder shows every free teaching room at THD Deggendorf right now, and how long
+        it stays free. The app needs JavaScript. Read what it is on
+        <a href="/about">the about page</a> or in <a href="/llms.txt">llms.txt</a>.
+      </p>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

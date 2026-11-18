@@ -107,7 +107,14 @@ export default defineConfig({
         importScripts: ['focus-sw.js'],
         // Share and invite links and the API are served by Vercel functions,
         // never the cached app shell (a link must reach its preview page).
-        navigateFallbackDenylist: [/^\/f\//, /^\/i\//, /^\/api\//],
+        // The about page and the crawler files are static pages of their own.
+        navigateFallbackDenylist: [
+          /^\/f\//,
+          /^\/i\//,
+          /^\/api\//,
+          /^\/about(\/|$)/,
+          /^\/(robots\.txt|sitemap\.xml|llms\.txt)$/,
+        ],
         runtimeCaching: [
           {
             urlPattern: ({ url }) => url.pathname.startsWith('/api/'),
