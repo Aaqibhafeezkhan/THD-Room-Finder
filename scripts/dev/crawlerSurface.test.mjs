@@ -2,7 +2,7 @@ import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { ABOUT, buildAbout, missingGerman } from '../build/about.mjs';
+import { ABOUT, APP, buildAbout, missingGerman } from '../build/about.mjs';
 
 // Crawlers and AI agents get a front door (#252): the landing site served at
 // /about/ and /about/de/, plus robots.txt, sitemap.xml and llms.txt, are indexable; every
@@ -80,6 +80,10 @@ describe('crawler front door', () => {
         expect(html, lang).toContain(`<html lang="${lang}">`);
         expect(html, lang).toContain(`<link rel="canonical" href="${ABOUT}${lang === 'de' ? 'de/' : ''}">`);
         expect(html, lang).toContain(`id="lang" class="icon-btn lang" href="${lang === 'de' ? '/about/' : '/about/de/'}"`);
+        // The logo and "Open app" open the app in the page's language.
+        expect(html, lang).toContain(`<a class="brand" href="/?lang=${lang}">`);
+        expect(html, lang).not.toContain(`href="${APP}"`);
+        expect(html.split(`href="/?lang=${lang}"`).length - 1, lang).toBeGreaterThanOrEqual(4);
         for (const [, ref] of html.matchAll(/(?:src|srcset|href)="((?:\.\.\/)?(?:assets|icons)\/[^"]+)"/g)) {
           expect(existsSync(join(dirname(file), ref)), `${lang} ${ref}`).toBe(true);
         }

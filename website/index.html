@@ -705,6 +705,11 @@
     alts.forEach(n => { n.alt = de ? n.dataset.deAlt : n.dataset.enAlt; });
     btn.textContent = de ? 'EN' : 'DE';
     btn.setAttribute('aria-label', de ? 'Read in English' : 'Auf Deutsch lesen');
+    // "Open app" opens the app in the language being read.
+    document.querySelectorAll('a[href^="https://thd-room-finder.vercel.app/"]').forEach((a) => {
+      const url = new URL(a.href);
+      if (url.pathname === '/') { url.searchParams.set('lang', lang); a.href = url.href; }
+    });
     try { localStorage.setItem('thd_site_lang', lang); } catch {}
   };
   let saved = null;

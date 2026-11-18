@@ -10,7 +10,8 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
 
-export const ABOUT = 'https://thd-room-finder.vercel.app/about/';
+export const APP = 'https://thd-room-finder.vercel.app/';
+export const ABOUT = `${APP}about/`;
 
 // GitHub Pages' own sitemap lists the github.io URL; the app host has its own.
 const SKIP = new Set(['desktop.ini', 'sitemap.xml', 'index.html']);
@@ -34,6 +35,15 @@ function linkLanguage(doc, to) {
   link.setAttribute('aria-label', to === 'de' ? 'Auf Deutsch lesen' : 'Read in English');
   link.textContent = to.toUpperCase();
   button.replaceWith(link);
+}
+
+/** The logo and every "Open app" link open the app in the page's language. */
+function linkApp(doc, lang) {
+  const app = `/?lang=${lang}`;
+  for (const link of doc.querySelectorAll(`a[href="${APP}"]`)) link.href = app;
+  const brand = doc.querySelector('a.brand');
+  if (!brand) throw new Error('about: the logo link (a.brand) is missing');
+  brand.href = app;
 }
 
 /** Every piece of English text on the page needs its German twin. */
@@ -63,6 +73,7 @@ export function missingGerman(html) {
 export function englishPage(html) {
   const doc = parse(html);
   linkLanguage(doc, 'de');
+  linkApp(doc, 'en');
   return serialize(doc);
 }
 
@@ -83,6 +94,7 @@ export function germanPage(html) {
   locale.setAttribute('content', 'de_DE');
   doc.querySelector('meta[property="og:url"]').after(locale);
   linkLanguage(doc, 'en');
+  linkApp(doc, 'de');
 
   // The FAQ markup follows the German FAQ.
   for (const script of doc.querySelectorAll('script[type="application/ld+json"]')) {
