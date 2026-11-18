@@ -25,11 +25,12 @@
       "destination": "/api/share?g=:link"
     },
     { "source": "/about", "destination": "/about/index.html" },
+    { "source": "/about/de", "destination": "/about/de/index.html" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "headers": [
     {
-      "source": "/((?!about|llms.txt|robots.txt|sitemap.xml).+)",
+      "source": "/((?!(?:about(?:/de)?/?|llms\\.txt|robots\\.txt|sitemap\\.xml)$).+)",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }]
     },
     {

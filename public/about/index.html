@@ -4,130 +4,88 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>About THD Room Finder: free rooms at THD Deggendorf, live</title>
-  <meta name="description" content="What THD Room Finder is: every free teaching room at THD Deggendorf right now and how long it stays free, plus focus sessions. A free, open-source student project. Auf Deutsch weiter unten.">
+  <meta name="description" content="See which teaching rooms at THD Deggendorf are free right now and for how long, then focus there or at home. A free, open-source student project, not run by THD.">
   <link rel="canonical" href="https://thd-room-finder.vercel.app/about">
+  <link rel="alternate" hreflang="en" href="https://thd-room-finder.vercel.app/about">
+  <link rel="alternate" hreflang="de" href="https://thd-room-finder.vercel.app/about/de">
+  <link rel="alternate" hreflang="x-default" href="https://thd-room-finder.vercel.app/about">
   <link rel="alternate" type="text/markdown" href="/llms.txt" title="llms.txt">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="THD Room Finder">
   <meta property="og:url" content="https://thd-room-finder.vercel.app/about">
   <meta property="og:title" content="About THD Room Finder">
-  <meta property="og:description" content="Every free teaching room at THD Deggendorf right now, and how long it stays free. A free, open-source student project.">
+  <meta property="og:description" content="Which teaching rooms at THD Deggendorf are free right now, and for how long. A free, open-source student project.">
   <meta property="og:image" content="https://thd-room-finder.vercel.app/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="THD Room Finder: an illustrated THD seminar room next to the app showing a running Pomodoro focus block in room C011.">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://thd-room-finder.vercel.app/og.jpg">
   <link rel="icon" type="image/svg+xml" href="/icons/app-icon.svg">
   <meta name="color-scheme" content="light dark">
-  <style>
-    /* Tokens mirror src/styles/tokens (the app's design system). */
-    :root {
-      --md-primary: #1565C0; --md-on-primary: #FFFFFF;
-      --md-bg: #F4F6FA; --md-surface: #FDFCFF; --md-on-surface: #1C1B1F;
-      --md-on-surface-variant: #44464F; --md-surface-variant: #E1E2EC;
-      --shadow: 0 1px 2px rgba(0,0,0,.08), 0 2px 8px rgba(0,0,0,.06);
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --md-primary: #90CAF9; --md-on-primary: #003063;
-        --md-bg: #111318; --md-surface: #1A1C21; --md-on-surface: #E3E2E6;
-        --md-on-surface-variant: #C4C6D0; --md-surface-variant: #2A2D35;
-        --shadow: 0 1px 2px rgba(0,0,0,.4), 0 2px 8px rgba(0,0,0,.3);
-      }
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; background: var(--md-bg); color: var(--md-on-surface);
-      font: 17px/1.6 Roboto, system-ui, -apple-system, "Segoe UI", sans-serif;
-    }
-    main { max-width: 720px; margin: 0 auto; padding: 32px 16px 48px; }
-    header { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
-    header img { width: 48px; height: 48px; border-radius: 12px; }
-    h1 { font-size: 1.6rem; line-height: 1.25; margin: 0; }
-    h2 { font-size: 1.25rem; margin: 2rem 0 .5rem; }
-    h3 { font-size: 1rem; margin: 1.25rem 0 .25rem; }
-    p, li { color: var(--md-on-surface-variant); }
-    strong { color: var(--md-on-surface); }
-    a { color: var(--md-primary); }
-    ul { padding-left: 1.2rem; }
-    li { margin: .3rem 0; }
-    .lead { font-size: 1.1rem; color: var(--md-on-surface); }
-    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0 8px; }
-    .actions a {
-      display: inline-block; padding: 10px 18px; border-radius: 999px; text-decoration: none;
-      background: var(--md-surface); box-shadow: var(--shadow); font-weight: 500;
-    }
-    .actions a.primary { background: var(--md-primary); color: var(--md-on-primary); }
-    section { background: var(--md-surface); box-shadow: var(--shadow); border-radius: 20px; padding: 4px 22px 18px; margin-top: 24px; }
-    code { background: var(--md-surface-variant); padding: 1px 6px; border-radius: 6px; font-size: .9em; }
-    footer { margin-top: 32px; font-size: .9rem; color: var(--md-on-surface-variant); }
-  </style>
+  <link rel="stylesheet" href="/about/about.css">
 </head>
 <body>
+<header>
+  <img src="/icons/app-icon.svg" alt="" width="48" height="48">
+  <h1>THD Room Finder</h1>
+</header>
 <main>
-  <header>
-    <img src="/icons/app-icon.svg" alt="" width="48" height="48">
-    <h1>THD Room Finder</h1>
-  </header>
-  <p class="lead">Every teaching room at THD Deggendorf, straight from the official timetable, sorted by how long it stays free. Then study there, alone or with friends, or in the same rhythm at home.</p>
-  <p>Free, open source, no account needed. A student project, not an official THD service. <a href="#de" lang="de">Auf Deutsch ↓</a></p>
-  <nav class="actions" aria-label="Links">
+  <p class="lead">See which teaching rooms at THD Deggendorf are free right now, and for how long. Then study there, alone or with friends, or at home with the same focus timer.</p>
+  <p>Free and open source, no account needed, in English and German. An unofficial student project: THD doesn't run it. <a href="/about/de" hreflang="de" lang="de">Diese Seite auf Deutsch</a></p>
+  <nav class="actions" aria-label="Project links">
     <a class="primary" href="/">Open the app</a>
     <a href="https://arudaev.github.io/THD-Room-Finder/">Website</a>
     <a href="https://github.com/arudaev/THD-Room-Finder">GitHub</a>
   </nav>
 
+  <figure class="shot"><picture><source srcset="/about/guest-rooms-dark.webp" media="(prefers-color-scheme: dark)"><img src="/about/guest-rooms-light.webp" alt="The room list on a phone: 90 rooms free right now, the top ones free for 5 hours 20 minutes" width="720" height="1560"></picture></figure>
+
+  <section aria-labelledby="why">
+    <h2 id="why">Why it exists</h2>
+    <p>I'm a student at THD. On a normal weekday, around a hundred teaching rooms stand empty for hours, while people walk the corridors trying doors. So I built an app that reads the public timetable and shows you which rooms are free, and for how long, before you walk over.</p>
+  </section>
+
   <section aria-labelledby="what">
     <h2 id="what">What it does</h2>
     <ul>
-      <li><strong>Free rooms, longest-free first.</strong> On a campus map or as a list: free for 10 hours, or until the 14:00 lecture. Rooms closing within 40 minutes are marked.</li>
-      <li><strong>Plan ahead.</strong> Pick any date and time, like tomorrow at 9, and see what will be free.</li>
-      <li><strong>Focus there.</strong> One tap starts Pomodoro, 25 minutes of focus and 5 of break, or a longer rhythm. The session ends before the next lecture in that room.</li>
-      <li><strong>Or focus at home.</strong> The same rhythm, only on your device. Nobody sees it.</li>
-      <li><strong>Study together.</strong> Set a study table in a free room and share one link; people take a seat and start in step. With a study profile, your batch can see where you study, if you want them to.</li>
-      <li><strong>Student groups.</strong> Groups registered with THD AI host gatherings people reply to.</li>
-      <li><strong>Runs everywhere.</strong> In the browser on laptops and phones, offline once loaded, and as an Android app with a lock-screen countdown and break sounds.</li>
+      <li><strong>Free rooms, longest-free first.</strong> On a campus map or as a list: free for 10 hours, or until the 14:00 lecture. A room with a lecture in the next 40 minutes is marked "closing soon".</li>
+      <li><strong>Plan ahead.</strong> Pick a date and time, like tomorrow at 9, and see what will be free.</li>
+      <li><strong>Focus in the room.</strong> One tap starts a Pomodoro timer: 25 minutes of focus, then a 5-minute break. Longer rhythms are there too. The session ends before the room's next lecture.</li>
+      <li><strong>Or focus at home.</strong> The same timer, kept on your device. Nobody sees it.</li>
+      <li><strong>Study together.</strong> Set up a study table, a study session in a free room, and share one link. People take a seat and start at the same time.</li>
+      <li><strong>See your batch.</strong> With a study profile, people from your batch (your programme and semester, like AIN 7) can see where you study, but only if you choose Public.</li>
+      <li><strong>Student groups.</strong> Groups checked in a public registry run by THD AI, a student community, can post meetups that people reply to.</li>
+      <li><strong>On your phone and laptop.</strong> It works in any browser, and offline once it has loaded. On iPhone, add it to the home screen. The Android app adds a lock-screen countdown and break sounds.</li>
     </ul>
   </section>
 
   <section aria-labelledby="free">
     <h2 id="free">What "free" means</h2>
-    <p>Rooms and timetables come from THabella, THD's public scheduling system. A room counts if it hosts teaching at least once in the current Monday to Friday week and isn't a sports hall, an outdoor area or a meeting room. It's free when nothing is booked in it right now.</p>
-    <p>That's as accurate as the timetable: some rooms are still locked, and the app marks those "may be locked". The app never books a room; official bookings go through THD. If THabella is down, rooms stay listed as "availability unknown" instead of guessing.</p>
+    <p>Rooms and timetables come from THabella, THD's public scheduling system. A room counts if it hosts teaching at least once in the current Monday to Friday week, and isn't on a short list of places like sports halls, outdoor areas and meeting rooms. It's free when nothing is booked in it right now.</p>
+    <p>So it's as accurate as the timetable. Some rooms are often locked anyway, and the app marks those "may be locked". The app never books a room: official bookings go through THD. If THabella is down, rooms stay listed as "availability unknown". The app doesn't guess.</p>
   </section>
 
   <section aria-labelledby="privacy">
     <h2 id="privacy">Privacy</h2>
-    <p>Finding rooms and focus sessions work without signing in, and without an account your focus history and saved rooms never leave your device. A study profile, signed in with an email code, is only needed to study with your batch. Signed in, your history syncs dates and minutes only, never the rooms you studied in. The web app counts page visits without cookies.</p>
+    <p>Finding rooms and focusing work without an account. Without one, your focus history and saved rooms stay on your device. The web app counts page visits without cookies, and the app never reads your location.</p>
+    <p>Signing in is optional and uses a code sent to your email. You need it to set up or join a study table, or for a study profile. The focus service, hosted at Supabase, then stores your email, your study profile, your sessions in rooms, the dates and minutes of your focus history, your saved rooms, and the tables and meetups you create or answer. Sessions at home never leave your device. You can delete your profile and synced history in Settings.</p>
+    <p>The full privacy notice and imprint are in the app under <a href="/profile/about">Profile, About</a>.</p>
   </section>
 
   <section aria-labelledby="agents">
     <h2 id="agents">For search engines and AI agents</h2>
-    <p>This page is the plain-text front door. The app at <a href="/">/</a> opens straight into the live campus map, so to describe the project, read here, <a href="/llms.txt"><code>/llms.txt</code></a> or the <a href="https://arudaev.github.io/THD-Room-Finder/">website</a>.</p>
+    <p>The app at <a href="/">/</a> opens straight into a live campus map that needs JavaScript. To describe the project, use this page, <a href="/llms.txt" class="mono">/llms.txt</a> or the <a href="https://arudaev.github.io/THD-Room-Finder/">website</a>.</p>
     <ul>
-      <li>There's no public API. <code>/api/</code> is a small proxy to THabella for the app itself; please don't crawl or script it.</li>
+      <li>There's no public API. <code>/api/</code> is a small proxy to THabella for the app itself, so please don't crawl or script it.</li>
       <li>Shared links (<code>/t/</code>, <code>/g/</code>, <code>/f/</code>, <code>/i/</code>) are previews for chat apps and stay out of search results.</li>
       <li>The code is on <a href="https://github.com/arudaev/THD-Room-Finder">GitHub</a> under GPL-3.0, with the <a href="https://github.com/arudaev/THD-Room-Finder/blob/main/docs/product/current-features.md">current features</a> and how the <a href="https://github.com/arudaev/THD-Room-Finder/blob/main/docs/architecture/thabella-api.md">THabella data</a> is read.</li>
+      <li>Questions or concerns, also from THD: <a href="https://github.com/arudaev/THD-Room-Finder/issues/new/choose">open an issue on GitHub</a>.</li>
     </ul>
   </section>
-
-  <section id="de" lang="de" aria-labelledby="de-title">
-    <h2 id="de-title">Auf Deutsch</h2>
-    <p>Jeder Lehrraum der TH Deggendorf, direkt aus dem offiziellen Stundenplan, sortiert danach, wie lange er frei bleibt. Dann lern dort, allein oder mit Freunden, oder im selben Rhythmus zu Hause. Kostenlos, Open Source, kein Konto nötig.</p>
-    <h3>Was die App kann</h3>
-    <ul>
-      <li><strong>Freie Räume</strong> auf der Campuskarte oder als Liste, jetzt oder für später. Die Räume, die am längsten frei bleiben, stehen oben.</li>
-      <li><strong>Fokus-Sessions:</strong> Ein Tipp startet Pomodoro, 25 Minuten Fokus und 5 Minuten Pause. Die Session endet vor der nächsten Vorlesung, im Raum oder zu Hause.</li>
-      <li><strong>Zusammen lernen:</strong> Einen Lerntisch in einem freien Raum aufstellen und einen Link teilen. Mit Studienprofil sieht dein Jahrgang, wo du lernst, wenn du willst.</li>
-      <li><strong>Überall:</strong> im Browser, auch offline, und als Android-App mit Countdown auf dem Sperrbildschirm.</li>
-    </ul>
-    <h3>Was „frei“ heißt</h3>
-    <p>So genau wie der Stundenplan: Ein Raum gilt als frei, wenn dort gerade keine Veranstaltung in THabella eingetragen ist. Manche Räume sind trotzdem abgeschlossen; die App markiert sie mit „evtl. abgeschlossen“. Sie reserviert nie einen Raum, offizielle Buchungen laufen über die THD.</p>
-    <h3>Privatsphäre</h3>
-    <p>Ohne Konto verlassen dein Fokus-Verlauf und deine gespeicherten Räume nie dein Gerät. Die Web-App zählt Seitenaufrufe ohne Cookies.</p>
-    <p>Ein Studentenprojekt an der Technischen Hochschule Deggendorf, keine offizielle Anwendung der THD. <a href="/">App öffnen</a> · <a href="https://arudaev.github.io/THD-Room-Finder/">Website</a> · <a href="https://github.com/arudaev/THD-Room-Finder">GitHub</a></p>
-  </section>
-
-  <footer>
-    <p>THD Room Finder: a student project at Technische Hochschule Deggendorf. Not an official THD service. Built by <a href="https://github.com/arudaev">a THD student</a>, open on GitHub.</p>
-  </footer>
 </main>
+<footer>
+  <p>THD Room Finder: a student project at Technische Hochschule Deggendorf. Not an official THD service. Built by <a href="https://github.com/arudaev">a THD student</a>, open on GitHub.</p>
+</footer>
 </body>
 </html>

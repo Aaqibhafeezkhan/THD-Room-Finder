@@ -103,6 +103,8 @@ export default defineConfig({
         // short cache so the app still opens (with last data) offline.
         // Session sounds (ADR 0012) too, so focus at home sounds offline.
         globPatterns: ['**/*.{js,css,html,svg,png,woff2,mp3}'],
+        // The about pages are for visitors and crawlers, always fresh from the network.
+        globIgnores: ['about/**'],
         // Opens the room when the focus-session notification is tapped.
         importScripts: ['focus-sw.js'],
         // Share and invite links and the API are served by Vercel functions,
@@ -112,8 +114,8 @@ export default defineConfig({
           /^\/f\//,
           /^\/i\//,
           /^\/api\//,
-          /^\/about(\/|$)/,
-          /^\/(robots\.txt|sitemap\.xml|llms\.txt)$/,
+          /^\/about(\/|\?|$)/,
+          /^\/(robots\.txt|sitemap\.xml|llms\.txt)(\?|$)/,
         ],
         runtimeCaching: [
           {

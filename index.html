@@ -38,28 +38,49 @@
       {
         "@context": "https://schema.org",
         "@type": "WebApplication",
+        "@id": "https://thd-room-finder.vercel.app/#app",
         "name": "THD Room Finder",
         "url": "https://thd-room-finder.vercel.app/",
-        "description": "Every free teaching room at THD Deggendorf right now, sorted by how long it stays free, with Pomodoro focus sessions alone, with friends or at home.",
+        "description": "Shows which teaching rooms at THD Deggendorf are free right now, and for how long, with Pomodoro focus sessions in the room, with friends or at home. An unofficial, open-source student project.",
         "applicationCategory": "EducationalApplication",
         "operatingSystem": "Web, Android",
-        "inLanguage": ["en", "de"],
+        "inLanguage": [
+          "en",
+          "de"
+        ],
         "isAccessibleForFree": true,
-        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
-        "codeRepository": "https://github.com/arudaev/THD-Room-Finder",
-        "subjectOf": { "@type": "WebPage", "url": "https://thd-room-finder.vercel.app/about" }
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "EUR"
+        },
+        "license": "https://www.gnu.org/licenses/gpl-3.0.html",
+        "author": {
+          "@type": "Person",
+          "name": "Alexander Rudaev",
+          "url": "https://github.com/arudaev"
+        },
+        "sameAs": [
+          "https://github.com/arudaev/THD-Room-Finder",
+          "https://arudaev.github.io/THD-Room-Finder/"
+        ],
+        "subjectOf": {
+          "@type": "AboutPage",
+          "url": "https://thd-room-finder.vercel.app/about"
+        }
       }
     </script>
   </head>
   <body>
-    <div id="root"></div>
     <noscript>
-      <p>
-        THD Room Finder shows every free teaching room at THD Deggendorf right now, and how long
-        it stays free. The app needs JavaScript. Read what it is on
-        <a href="/about">the about page</a> or in <a href="/llms.txt">llms.txt</a>.
+      <p style="margin: 0; padding: 24px 16px; font: 17px/1.6 system-ui, sans-serif">
+        THD Room Finder shows which teaching rooms at THD Deggendorf are free right now, and for
+        how long. The app needs JavaScript. Read what it is on
+        <a href="/about">the about page</a> (<a href="/about/de" lang="de">auf Deutsch</a>) or in
+        <a href="/llms.txt">llms.txt</a>.
       </p>
     </noscript>
+    <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

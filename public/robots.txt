@@ -1,11 +1,15 @@
 # THD Room Finder: free rooms at THD Deggendorf, live.
-# What this is, in plain text: /about and /llms.txt
+# What this is: /about (English), /about/de (Deutsch) and /llms.txt
 #
 # Pages are open to read. /api/ is the app's own proxy to THD's timetable,
 # not a public API: please don't fetch it. Shared links carry noindex.
 
 User-agent: *
 Allow: /
+# Preview images for shared links, fetched by chat apps.
+Allow: /api/card
+Allow: /api/table-card
+Allow: /api/gathering-card
 Disallow: /api/
 Disallow: /dev/
 

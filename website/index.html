@@ -246,9 +246,10 @@
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
+    "@id": "https://thd-room-finder.vercel.app/#app",
     "name": "THD Room Finder",
     "url": "https://thd-room-finder.vercel.app/",
-    "description": "Every free teaching room at THD Deggendorf right now, sorted by how long it stays free, with Pomodoro focus sessions alone, with friends or at home.",
+    "description": "Shows which teaching rooms at THD Deggendorf are free right now, and for how long, with Pomodoro focus sessions in the room, with friends or at home. An unofficial, open-source student project.",
     "applicationCategory": "EducationalApplication",
     "operatingSystem": "Web, Android",
     "inLanguage": [
@@ -261,9 +262,18 @@
       "price": "0",
       "priceCurrency": "EUR"
     },
-    "codeRepository": "https://github.com/arudaev/THD-Room-Finder",
+    "license": "https://www.gnu.org/licenses/gpl-3.0.html",
+    "author": {
+      "@type": "Person",
+      "name": "Alexander Rudaev",
+      "url": "https://github.com/arudaev"
+    },
+    "sameAs": [
+      "https://github.com/arudaev/THD-Room-Finder",
+      "https://arudaev.github.io/THD-Room-Finder/"
+    ],
     "subjectOf": {
-      "@type": "WebPage",
+      "@type": "AboutPage",
       "url": "https://thd-room-finder.vercel.app/about"
     }
   },
@@ -316,7 +326,7 @@
         "name": "Can I use it on my phone and laptop?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes. Signed in, your focus graph and saved rooms are the same on both, and a session running on your phone shows on your laptop too, where you can start the next block or end it."
+          "text": "Yes. Signed in, your focus graph and saved rooms are the same on both, and a session in a room, started on your phone, shows on your laptop too, where you can start the next block or end it."
         }
       },
       {
@@ -649,7 +659,7 @@
         <details><summary data-de="Sehen andere, wo ich lerne?">Can others see where I study?</summary>
           <p data-de="Nur wenn du es willst. Ohne Studienprofil sieht niemand etwas. Mit Profil zeigt eine private Session nur „belegt“, eine öffentliche zeigt deinem Jahrgang den Raum, deinen Namen nur, wenn du ihn einschaltest.">Only if you want them to. Without a study profile nobody sees anything. With one, a private session only shows "taken"; a public one shows your batch the room, and your name only if you turn it on.</p></details>
         <details><summary data-de="Läuft es auf Handy und Laptop zugleich?">Can I use it on my phone and laptop?</summary>
-          <p data-de="Ja. Angemeldet sind dein Fokus-Verlauf und deine gespeicherten Räume auf beiden gleich, und eine laufende Session auf dem Handy erscheint auch auf dem Laptop. Dort kannst du den nächsten Block starten oder sie beenden.">Yes. Signed in, your focus graph and saved rooms are the same on both, and a session running on your phone shows on your laptop too, where you can start the next block or end it.</p></details>
+          <p data-de="Ja. Angemeldet sind dein Fokus-Verlauf und deine gespeicherten Räume auf beiden gleich, und eine laufende Session in einem Raum erscheint auch auf dem Laptop. Dort kannst du den nächsten Block starten oder sie beenden.">Yes. Signed in, your focus graph and saved rooms are the same on both, and a session in a room, started on your phone, shows on your laptop too, where you can start the next block or end it.</p></details>
         <details><summary data-de="Funktioniert es offline?">Does it work offline?</summary>
           <p data-de="Ja. Räume und der Stundenplan des Tages werden zwischengespeichert, und eine Fokus-Session läuft auch ohne Netz weiter. Ist der THD-Stundenplan selbst nicht erreichbar, zeigt die App die Räume als „Verfügbarkeit unbekannt“, statt zu raten.">Yes. Rooms and the day's timetable are cached, and a focus session keeps running without a connection. If THD's timetable itself is down, the app lists rooms as "availability unknown" instead of guessing.</p></details>
       </div>
