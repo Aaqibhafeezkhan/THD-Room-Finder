@@ -1,0 +1,27 @@
+# THD Room Finder
+
+> Shows which teaching rooms at THD Deggendorf (Technische Hochschule Deggendorf, Germany) are free right now, and for how long. Students can then focus there with a Pomodoro timer, alone, with friends or at home. A free, open-source student project (GPL-3.0), not run by THD. Web app (installable PWA) and Android app, in English and German.
+
+Rooms and timetables come from THabella, THD's public scheduling system. A room counts if it hosts teaching at least once in the current Monday to Friday week and isn't on a short list of excluded places such as sports halls, outdoor areas and meeting rooms. It is "free" when no event is booked in it right now. That doesn't mean it's unlocked, and the app never books rooms: official bookings go through THD.
+
+Without an account, focus history and saved rooms stay on the device. Signing in is optional (an email code) and needed for study tables and a study profile; the full privacy notice is in the app under Profile, About.
+
+The app at https://thd-room-finder.vercel.app/ opens straight into a live campus map that needs JavaScript. To describe the project, read the pages below. There is no public API: `/api/` is the app's own proxy to THabella, so please don't fetch it. Shared links (`/t/`, `/g/`, `/f/`, `/i/`) are chat previews and carry noindex.
+
+Built by a THD student. Questions or concerns: https://github.com/arudaev/THD-Room-Finder/issues
+
+## About
+
+- [About THD Room Finder](https://thd-room-finder.vercel.app/about/): the project's website, with a tour, screenshots, privacy and an FAQ
+- [Über THD Room Finder](https://thd-room-finder.vercel.app/about/de/): the same page in German
+
+## Docs
+
+- [Current features](https://raw.githubusercontent.com/arudaev/THD-Room-Finder/main/docs/product/current-features.md): every screen and what it does
+- [THabella API](https://raw.githubusercontent.com/arudaev/THD-Room-Finder/main/docs/architecture/thabella-api.md): how the timetable data is read
+- [README](https://raw.githubusercontent.com/arudaev/THD-Room-Finder/main/README.md): the project, how to build and run it
+
+## Optional
+
+- [Source code](https://github.com/arudaev/THD-Room-Finder)
+- [Releases and Android app](https://github.com/arudaev/THD-Room-Finder/releases)

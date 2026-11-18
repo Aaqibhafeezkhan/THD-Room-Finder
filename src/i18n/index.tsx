@@ -18,7 +18,20 @@ interface I18nValue {
 const I18nContext = createContext<I18nValue | null>(null);
 const STORAGE_KEY = 'thd_locale';
 
+/**
+ * A link may ask for a language with `?lang=de` or `?lang=en` (the about
+ * pages do, so "Open app" opens the app in the language the visitor read).
+ */
+export function localeFromSearch(search: string): Locale | null {
+  const lang = new URLSearchParams(search).get('lang');
+  return lang === 'de' || lang === 'en' ? lang : null;
+}
+
 function initialLocale(): Locale {
+  if (typeof location !== 'undefined') {
+    const asked = localeFromSearch(location.search);
+    if (asked) return asked;
+  }
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved === 'en' || saved === 'de') return saved;
@@ -33,6 +46,14 @@ function initialLocale(): Locale {
 
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [locale, setLocale] = useState<Locale>(initialLocale);
+
+  // The language from the link is saved below; drop it from the address.
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has('lang')) return;
+    url.searchParams.delete('lang');
+    window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
+  }, []);
 
   useEffect(() => {
     try {

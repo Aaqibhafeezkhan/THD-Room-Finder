@@ -31,9 +31,55 @@
     <meta name="twitter:image" content="https://thd-room-finder.vercel.app/og.jpg" />
     <link rel="icon" type="image/svg+xml" href="/icons/app-icon.svg" />
     <link rel="apple-touch-icon" href="/icons/app-icon-180.png" />
-    <title>THD Room Finder</title>
+    <link rel="canonical" href="https://thd-room-finder.vercel.app/" />
+    <link rel="alternate" type="text/markdown" href="/llms.txt" title="llms.txt" />
+    <title>THD Room Finder: free rooms at THD Deggendorf, live</title>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "@id": "https://thd-room-finder.vercel.app/#app",
+        "name": "THD Room Finder",
+        "url": "https://thd-room-finder.vercel.app/",
+        "description": "Shows which teaching rooms at THD Deggendorf are free right now, and for how long, with Pomodoro focus sessions in the room, with friends or at home. An unofficial, open-source student project.",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Web, Android",
+        "inLanguage": [
+          "en",
+          "de"
+        ],
+        "isAccessibleForFree": true,
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "EUR"
+        },
+        "license": "https://www.gnu.org/licenses/gpl-3.0.html",
+        "author": {
+          "@type": "Person",
+          "name": "Alexander Rudaev",
+          "url": "https://github.com/arudaev"
+        },
+        "sameAs": [
+          "https://github.com/arudaev/THD-Room-Finder",
+          "https://arudaev.github.io/THD-Room-Finder/"
+        ],
+        "subjectOf": {
+          "@type": "AboutPage",
+          "url": "https://thd-room-finder.vercel.app/about/"
+        }
+      }
+    </script>
   </head>
   <body>
+    <noscript>
+      <p style="margin: 0; padding: 24px 16px; font: 17px/1.6 system-ui, sans-serif">
+        THD Room Finder shows which teaching rooms at THD Deggendorf are free right now, and for
+        how long. The app needs JavaScript. Read what it is on
+        <a href="/about/">the about page</a> or in
+        <a href="/llms.txt">llms.txt</a>.
+      </p>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "npm run build:web",
   "outputDirectory": "dist",
   "github": {
     "silent": true,
@@ -11,6 +11,10 @@
       "maxDuration": 10
     }
   },
+  "redirects": [
+    { "source": "/about", "destination": "/about/", "permanent": true },
+    { "source": "/about/de", "destination": "/about/de/", "permanent": true }
+  ],
   "rewrites": [
     { "source": "/f/:payload", "destination": "/api/share?p=:payload" },
     { "source": "/i/:variant", "destination": "/api/share?i=:variant" },
@@ -27,6 +31,10 @@
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "headers": [
+    {
+      "source": "/((?!(?:about/(?:de/)?|llms\\.txt|robots\\.txt|sitemap\\.xml)$).+)",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }]
+    },
     {
       "source": "/sw.js",
       "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
