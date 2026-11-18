@@ -90,7 +90,6 @@ describe('crawler front door', () => {
       }
       expect(readFileSync(pages.de, 'utf8')).toContain('"name": "Ist das eine offizielle App der THD?"');
       expect(existsSync(join(out, 'desktop.ini'))).toBe(false);
-      expect(existsSync(join(out, 'sitemap.xml'))).toBe(false);
     } finally {
       rmSync(out, { recursive: true, force: true });
     }

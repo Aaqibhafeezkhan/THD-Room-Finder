@@ -13,8 +13,7 @@ import { JSDOM } from 'jsdom';
 export const APP = 'https://thd-room-finder.vercel.app/';
 export const ABOUT = `${APP}about/`;
 
-// GitHub Pages' own sitemap lists the github.io URL; the app host has its own.
-const SKIP = new Set(['desktop.ini', 'sitemap.xml', 'index.html']);
+const SKIP = new Set(['desktop.ini', 'index.html']);
 
 // Text that reads the same in both languages and needs no data-de.
 const SAME_IN_BOTH = new Set(['THD Room Finder', 'GitHub', 'Android', 'iPhone', 'FAQ', 'EN', 'DE', 'THD AI', 'Pomodoro']);
