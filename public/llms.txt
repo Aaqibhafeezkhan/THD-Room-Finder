@@ -12,9 +12,7 @@ Built by a THD student. Questions or concerns: https://github.com/arudaev/THD-Ro
 
 ## About
 
-- [About THD Room Finder](https://thd-room-finder.vercel.app/about): what it does, what "free" means, privacy
-- [Über THD Room Finder](https://thd-room-finder.vercel.app/about/de): the same page in German
-- [Website](https://arudaev.github.io/THD-Room-Finder/): the full tour with screenshots and an FAQ
+- [About THD Room Finder](https://thd-room-finder.vercel.app/about/): the project's website, with a tour, screenshots, privacy and an FAQ (also at https://arudaev.github.io/THD-Room-Finder/)
 
 ## Docs
 

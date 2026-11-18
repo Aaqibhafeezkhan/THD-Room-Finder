@@ -1,10 +1,13 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { copyLanding } from '../build/about.mjs';
 
-// Crawlers and AI agents get a front door (#252): /about, /about/de,
-// robots.txt, sitemap.xml and llms.txt are indexable; every other path on the
-// app host answers with the SPA shell and must carry X-Robots-Tag: noindex.
+// Crawlers and AI agents get a front door (#252): the landing site served at
+// /about/, plus robots.txt, sitemap.xml and llms.txt, are indexable; every
+// other path on the app host answers with the SPA shell and must carry
+// X-Robots-Tag: noindex.
 const root = join(import.meta.dirname, '../..');
 const read = (path) => readFileSync(join(root, path), 'utf8');
 const vercel = JSON.parse(read('vercel.json'));
@@ -19,7 +22,6 @@ const ORIGIN = 'https://thd-room-finder.vercel.app';
 const sitemapPaths = [...read('public/sitemap.xml').matchAll(/<loc>([^<]+)<\/loc>/g)].map(
   ([, loc]) => loc.replace(ORIGIN, ''),
 );
-const pageFile = (path) => (path === '/' ? 'index.html' : `public${path}/index.html`);
 
 // robots.txt as the bots that honour it read it: the longest matching rule wins.
 const robots = read('public/robots.txt');
@@ -31,9 +33,12 @@ const crawlable = (path) => {
   return !match || match.kind === 'Allow';
 };
 
+const ldBlocks = (file) =>
+  [...read(file).matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].flatMap(([, json]) => [JSON.parse(json)].flat());
+
 describe('crawler front door', () => {
   it('keeps the front doors indexable', () => {
-    for (const path of ['/', '/about', '/about/', '/about/de', '/llms.txt', '/robots.txt', '/sitemap.xml']) {
+    for (const path of ['/', '/about/', '/llms.txt', '/robots.txt', '/sitemap.xml']) {
       expect(noindexed(path), path).toBe(false);
     }
   });
@@ -41,26 +46,35 @@ describe('crawler front door', () => {
   it('keeps app screens, shared links and unknown paths out of search', () => {
     for (const path of [
       '/rooms', '/focus', '/profile', '/profile/about', '/room/C011', '/t/abc', '/g/abc', '/f/x', '/i/x',
-      '/o/thd-ai', '/nope', '/About', '/aboutus', '/about/en', '/llms.txt.bak', '/llmsxtxt',
+      '/o/thd-ai', '/nope', '/About/', '/aboutus', '/about/en', '/llms.txt.bak', '/llmsxtxt',
     ]) {
       expect(noindexed(path), path).toBe(true);
     }
   });
 
-  it('lists only indexable pages that exist in the sitemap', () => {
-    expect(sitemapPaths).toEqual(['/', '/about', '/about/de']);
-    for (const path of sitemapPaths) {
-      expect(noindexed(path), path).toBe(false);
-      expect(existsSync(join(root, pageFile(path))), path).toBe(true);
-    }
+  it('lists only the app in the sitemap while the landing site is canonical on GitHub Pages', () => {
+    expect(sitemapPaths).toEqual(['/']);
+    expect(read('website/index.html')).toContain('<link rel="canonical" href="https://arudaev.github.io/THD-Room-Finder/">');
   });
 
-  it('rewrites the about pages to their static files before the SPA catch-all', () => {
-    const sources = vercel.rewrites.map((r) => r.source);
-    const catchAll = sources.indexOf('/((?!api/).*)');
-    for (const path of ['/about', '/about/de']) {
-      expect(sources.indexOf(path), path).toBeGreaterThan(-1);
-      expect(sources.indexOf(path), path).toBeLessThan(catchAll);
+  it('sends /about to /about/, where the landing page and its relative assets resolve', () => {
+    expect(vercel.redirects).toContainEqual({ source: '/about', destination: '/about/', permanent: true });
+    expect(vercel.buildCommand).toBe('npm run build:web');
+    expect(JSON.parse(read('package.json')).scripts['build:web']).toContain('scripts/build/about.mjs');
+  });
+
+  it('copies the landing site into the build without Windows clutter', () => {
+    const out = mkdtempSync(join(tmpdir(), 'about-'));
+    try {
+      copyLanding(join(root, 'website'), out);
+      expect(readFileSync(join(out, 'index.html'), 'utf8')).toBe(read('website/index.html'));
+      for (const [, src] of read('website/index.html').matchAll(/(?:src|srcset|href)="((?:assets|icons)\/[^"]+)"/g)) {
+        expect(existsSync(join(out, src)), src).toBe(true);
+      }
+      expect(existsSync(join(out, 'desktop.ini'))).toBe(false);
+      expect(existsSync(join(out, 'sitemap.xml'))).toBe(false);
+    } finally {
+      rmSync(out, { recursive: true, force: true });
     }
   });
 
@@ -75,28 +89,7 @@ describe('crawler front door', () => {
     expect(robots).toContain(`Sitemap: ${ORIGIN}/sitemap.xml`);
   });
 
-  it.each([
-    ['/about', 'en', '/about/de'],
-    ['/about/de', 'de', '/about'],
-  ])('serves %s without scripts, in its language, linked to the other', (path, lang, other) => {
-    const page = read(pageFile(path));
-    expect(page).not.toContain('<script');
-    expect(page).toContain(`<html lang="${lang}">`);
-    expect(page).toContain(`<link rel="canonical" href="${ORIGIN}${path}">`);
-    expect(page).toContain(`hreflang="${lang === 'en' ? 'de' : 'en'}" href="${ORIGIN}${other}"`);
-    expect(page).toContain(`<a href="${other}"`);
-  });
-
-  // The pages and the JSON-LD are kept by hand in several places; keep them in step.
-  it('keeps the English and German about pages linking to the same places', () => {
-    const links = (path) =>
-      new Set([...read(pageFile(path)).matchAll(/href="([^"]+)"/g)].map(([, href]) => href).filter((h) => !h.startsWith('/about')));
-    expect(links('/about/de')).toEqual(links('/about'));
-  });
-
   it('describes the app the same way on the app and the landing page', () => {
-    const ldBlocks = (file) =>
-      [...read(file).matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].flatMap(([, json]) => [JSON.parse(json)].flat());
     const app = (file) => ldBlocks(file).find((block) => block['@type'] === 'WebApplication');
     expect(app('website/index.html')).toEqual(app('index.html'));
   });
@@ -107,9 +100,7 @@ describe('crawler front door', () => {
     const shown = [...page.matchAll(/<details><summary[^>]*>([\s\S]*?)<\/summary>\s*<p[^>]*>([\s\S]*?)<\/p><\/details>/g)].map(
       ([, q, a]) => [text(q), text(a)],
     );
-    const faq = [...page.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
-      .flatMap(([, json]) => [JSON.parse(json)].flat())
-      .find((block) => block['@type'] === 'FAQPage');
+    const faq = ldBlocks('website/index.html').find((block) => block['@type'] === 'FAQPage');
     expect(faq.mainEntity.map((q) => [q.name, q.acceptedAnswer.text])).toEqual(shown);
   });
 });
