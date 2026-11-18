@@ -50,7 +50,8 @@ against the rooms that actually host teaching, to show which classrooms are
 replaces the v1 native Android + native iOS + vanilla-JS PWA – all preserved
 under the `v1-native` git tag.)
 
-> **No accounts. No backend. No configuration.** Just open the app and find a room.
+> **No account needed.** Open the app and find a room. Signing in (an email
+> code) is optional, for study tables and a study profile.
 
 The v2 redesign sharpens one question – *"where can I sit, right now, for as
 long as I need?"*:
