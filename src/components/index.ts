@@ -27,6 +27,8 @@ export type { SkeletonProps } from './core/Skeleton';
 export { Logo } from './app/Logo';
 export type { LogoProps } from './app/Logo';
 export { AppBar } from './app/AppBar';
+export { BrandLink } from './app/BrandLink';
+export type { BrandTarget } from './app/BrandLink';
 export type { AppBarProps } from './app/AppBar';
 export { RoomCard } from './app/RoomCard';
 export type { RoomCardProps, RoomCardStatus, RoomCardFocus } from './app/RoomCard';

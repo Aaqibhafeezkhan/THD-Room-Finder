@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import type { CSSProperties, MouseEvent, ReactNode } from 'react';
 import { Logo } from './Logo';
+import { BrandLink } from './BrandLink';
+import type { BrandTarget } from './BrandLink';
 
 /**
  * Material 3 adaptive navigation. One component, three forms, picked by window
@@ -23,6 +25,8 @@ export interface AdaptiveNavProps {
   onSelect?: (id: string) => void;
   variant?: 'auto' | 'bar' | 'rail' | 'drawer';
   title?: string;
+  /** Rail and drawer: where the logo and wordmark lead. */
+  brand?: BrandTarget;
   header?: ReactNode;
   footer?: ReactNode;
   style?: CSSProperties;
@@ -101,6 +105,7 @@ export function AdaptiveNav({
   onSelect,
   variant = 'auto',
   title = 'THD Room Finder',
+  brand,
   header = null,
   footer = null,
   style = {},
@@ -205,7 +210,9 @@ export function AdaptiveNav({
         }}
       >
         <div style={{ height: 40, display: 'grid', placeItems: 'center', marginBottom: 8 }}>
-          <Logo size={28} />
+          <BrandLink to={brand}>
+            <Logo size={28} />
+          </BrandLink>
         </div>
         {header}
         <div
@@ -282,10 +289,12 @@ export function AdaptiveNav({
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 12px 16px' }}>
-        <Logo size={28} />
-        <span style={{ fontWeight: 500, fontSize: '1.125rem', color: 'var(--md-on-surface)' }}>
-          {title}
-        </span>
+        <BrandLink to={brand}>
+          <Logo size={28} />
+          <span style={{ fontWeight: 500, fontSize: '1.125rem', color: 'var(--md-on-surface)' }}>
+            {title}
+          </span>
+        </BrandLink>
       </div>
       {header}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
