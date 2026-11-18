@@ -1,11 +1,11 @@
 import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { copyLanding } from '../build/about.mjs';
+import { ABOUT, buildAbout, missingGerman } from '../build/about.mjs';
 
 // Crawlers and AI agents get a front door (#252): the landing site served at
-// /about/, plus robots.txt, sitemap.xml and llms.txt, are indexable; every
+// /about/ and /about/de/, plus robots.txt, sitemap.xml and llms.txt, are indexable; every
 // other path on the app host answers with the SPA shell and must carry
 // X-Robots-Tag: noindex.
 const root = join(import.meta.dirname, '../..');
@@ -38,7 +38,7 @@ const ldBlocks = (file) =>
 
 describe('crawler front door', () => {
   it('keeps the front doors indexable', () => {
-    for (const path of ['/', '/about/', '/llms.txt', '/robots.txt', '/sitemap.xml']) {
+    for (const path of ['/', '/about/', '/about/de/', '/llms.txt', '/robots.txt', '/sitemap.xml']) {
       expect(noindexed(path), path).toBe(false);
     }
   });
@@ -46,31 +46,45 @@ describe('crawler front door', () => {
   it('keeps app screens, shared links and unknown paths out of search', () => {
     for (const path of [
       '/rooms', '/focus', '/profile', '/profile/about', '/room/C011', '/t/abc', '/g/abc', '/f/x', '/i/x',
-      '/o/thd-ai', '/nope', '/About/', '/aboutus', '/about/en', '/llms.txt.bak', '/llmsxtxt',
+      '/o/thd-ai', '/nope', '/About/', '/aboutus', '/about/en/', '/about/de/x', '/llms.txt.bak', '/llmsxtxt',
     ]) {
       expect(noindexed(path), path).toBe(true);
     }
   });
 
-  it('lists only the app in the sitemap while the landing site is canonical on GitHub Pages', () => {
-    expect(sitemapPaths).toEqual(['/']);
-    expect(read('website/index.html')).toContain('<link rel="canonical" href="https://arudaev.github.io/THD-Room-Finder/">');
+  it('lists the app and both about pages, with the landing source pointing its canonical here', () => {
+    expect(sitemapPaths).toEqual(['/', '/about/', '/about/de/']);
+    const source = read('website/index.html');
+    expect(source).toContain(`<link rel="canonical" href="${ABOUT}">`);
+    expect(source).toContain(`<link rel="alternate" hreflang="de" href="${ABOUT}de/">`);
   });
 
-  it('sends /about to /about/, where the landing page and its relative assets resolve', () => {
+  it('sends /about and /about/de to their folders, where relative assets resolve', () => {
     expect(vercel.redirects).toContainEqual({ source: '/about', destination: '/about/', permanent: true });
+    expect(vercel.redirects).toContainEqual({ source: '/about/de', destination: '/about/de/', permanent: true });
     expect(vercel.buildCommand).toBe('npm run build:web');
     expect(JSON.parse(read('package.json')).scripts['build:web']).toContain('scripts/build/about.mjs');
   });
 
-  it('copies the landing site into the build without Windows clutter', () => {
+  it('has German for every piece of English on the landing page', () => {
+    expect(missingGerman(read('website/index.html'))).toEqual([]);
+  });
+
+  it('builds an English and a German page whose assets resolve and which link each other', () => {
     const out = mkdtempSync(join(tmpdir(), 'about-'));
     try {
-      copyLanding(join(root, 'website'), out);
-      expect(readFileSync(join(out, 'index.html'), 'utf8')).toBe(read('website/index.html'));
-      for (const [, src] of read('website/index.html').matchAll(/(?:src|srcset|href)="((?:assets|icons)\/[^"]+)"/g)) {
-        expect(existsSync(join(out, src)), src).toBe(true);
+      buildAbout(join(root, 'website'), out);
+      const pages = { en: join(out, 'index.html'), de: join(out, 'de', 'index.html') };
+      for (const [lang, file] of Object.entries(pages)) {
+        const html = readFileSync(file, 'utf8');
+        expect(html, lang).toContain(`<html lang="${lang}">`);
+        expect(html, lang).toContain(`<link rel="canonical" href="${ABOUT}${lang === 'de' ? 'de/' : ''}">`);
+        expect(html, lang).toContain(`id="lang" class="icon-btn lang" href="${lang === 'de' ? '/about/' : '/about/de/'}"`);
+        for (const [, ref] of html.matchAll(/(?:src|srcset|href)="((?:\.\.\/)?(?:assets|icons)\/[^"]+)"/g)) {
+          expect(existsSync(join(dirname(file), ref)), `${lang} ${ref}`).toBe(true);
+        }
       }
+      expect(readFileSync(pages.de, 'utf8')).toContain('"name": "Ist das eine offizielle App der THD?"');
       expect(existsSync(join(out, 'desktop.ini'))).toBe(false);
       expect(existsSync(join(out, 'sitemap.xml'))).toBe(false);
     } finally {

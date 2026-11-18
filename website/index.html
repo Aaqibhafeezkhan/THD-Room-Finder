@@ -3,18 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>THD Room Finder: free rooms at THD, and how long they stay free</title>
-  <meta name="description" content="Every free teaching room at THD Deggendorf right now, and how long it stays free. Focus there or at home, or invite friends with one link. Free, open source, no account needed.">
-  <link rel="canonical" href="https://arudaev.github.io/THD-Room-Finder/">
+  <title data-de="THD Room Finder: freie Räume an der THD, und wie lange sie frei bleiben">THD Room Finder: free rooms at THD, and how long they stay free</title>
+  <meta name="description" content="Every free teaching room at THD Deggendorf right now, and how long it stays free. Focus there or at home, or invite friends with one link. Free, open source, no account needed." data-de-content="Jeder freie Lehrraum der TH Deggendorf, jetzt gerade, und wie lange er frei bleibt. Lern dort oder zu Hause, oder lade Freunde mit einem Link ein. Kostenlos, Open Source, ohne Konto.">
+  <link rel="canonical" href="https://thd-room-finder.vercel.app/about/">
+  <link rel="alternate" hreflang="en" href="https://thd-room-finder.vercel.app/about/">
+  <link rel="alternate" hreflang="de" href="https://thd-room-finder.vercel.app/about/de/">
+  <link rel="alternate" hreflang="x-default" href="https://thd-room-finder.vercel.app/about/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="THD Room Finder">
-  <meta property="og:url" content="https://arudaev.github.io/THD-Room-Finder/">
-  <meta property="og:title" content="THD Room Finder: free rooms at THD, and how long they stay free">
-  <meta property="og:description" content="Every free teaching room at THD Deggendorf, longest-free first. Focus there or at home, or invite friends with one link. Free, open source, no account needed.">
+  <meta property="og:url" content="https://thd-room-finder.vercel.app/about/">
+  <meta property="og:title" content="THD Room Finder: free rooms at THD, and how long they stay free" data-de-content="THD Room Finder: freie Räume an der THD, und wie lange sie frei bleiben">
+  <meta property="og:description" content="Every free teaching room at THD Deggendorf, longest-free first. Focus there or at home, or invite friends with one link. Free, open source, no account needed." data-de-content="Jeder freie Lehrraum der TH Deggendorf, sortiert nach freier Zeit. Lern dort oder zu Hause, oder lade Freunde mit einem Link ein. Kostenlos, Open Source, ohne Konto.">
   <meta property="og:image" content="https://arudaev.github.io/THD-Room-Finder/assets/og.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="THD Room Finder: an illustrated THD seminar room next to the app showing a running Pomodoro focus block in room C011.">
+  <meta property="og:image:alt" content="THD Room Finder: an illustrated THD seminar room next to the app showing a running Pomodoro focus block in room C011." data-de-content="THD Room Finder: ein gezeichneter Seminarraum der THD neben der App mit einem laufenden Pomodoro-Fokusblock in Raum C011.">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://arudaev.github.io/THD-Room-Finder/assets/og.jpg">
   <link rel="icon" href="icons/app-icon.svg" type="image/svg+xml">
@@ -491,8 +494,8 @@
         <p class="sub" data-de="Jedes Gebäude ist danach eingefärbt, wie viele Räume gerade frei sind. Tippe auf ein Gebäude, um seine Räume zu sehen.">Every building is tinted by how many rooms are free right now. Tap one to see its rooms.</p>
       </div>
       <div class="browser">
-        <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span>thd-room-finder.vercel.app</span></div>
-        <picture><source srcset="assets/desktop-map-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/desktop-map-light.webp" alt="The campus map on a laptop, signed in: building C outlined in violet because your batch is studying there, your own session in C211, and the longest-free rooms listed on the right" loading="lazy" width="1600" height="1000"></picture>
+        <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span translate="no">thd-room-finder.vercel.app</span></div>
+        <picture><source srcset="assets/desktop-map-dark.webp" media="(prefers-color-scheme: dark)"><img src="assets/desktop-map-light.webp" alt="The campus map on a laptop, signed in: building C outlined in violet because your batch is studying there, your own session in C211, and the longest-free rooms listed on the right" data-de-alt="Die Campuskarte auf dem Laptop, angemeldet: Gebäude C violett umrandet, weil dein Jahrgang dort lernt, deine eigene Session in C211, und rechts die Räume, die am längsten frei bleiben" loading="lazy" width="1600" height="1000"></picture>
       </div>
       <div class="legend" aria-hidden="true">
         <span><i style="background:var(--md-tertiary)"></i><span data-de="Frei">Free</span></span>
@@ -691,7 +694,9 @@
   labels.forEach(n => { n.dataset.enLabel = n.getAttribute('aria-label'); });
   const alts = [...document.querySelectorAll('[data-de-alt]')];
   alts.forEach(n => { n.dataset.enAlt = n.alt; });
+  // On the app host the pages are built per language and #lang is a link.
   const btn = document.getElementById('lang');
+  if (btn && btn.tagName === 'BUTTON') {
   const set = (lang) => {
     const de = lang === 'de';
     document.documentElement.lang = lang;
@@ -706,6 +711,7 @@
   try { saved = localStorage.getItem('thd_site_lang'); } catch {}
   set(saved || ((navigator.language || '').toLowerCase().startsWith('de') ? 'de' : 'en'));
   btn.addEventListener('click', () => set(document.documentElement.lang === 'de' ? 'en' : 'de'));
+  }
 
   // How it works: without a profile / with a study profile.
   document.querySelectorAll('.modes button').forEach((b) => b.addEventListener('click', () => {
