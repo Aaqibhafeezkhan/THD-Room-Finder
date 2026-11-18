@@ -23,6 +23,7 @@ import { TableScreen } from '../features/tables/TableScreen';
 import { TableReminder } from '../features/tables/TableReminder';
 import { GatheringScreen } from '../features/gatherings/GatheringScreen';
 import { OrganizationScreen } from '../features/gatherings/OrganizationScreen';
+import { useAboutTarget } from '../features/shared/aboutLink';
 import { activeId } from './activeTab';
 import { ErrorBoundary } from './ErrorBoundary';
 
@@ -37,6 +38,7 @@ export function AppShell() {
   const variant = useNavigationVariant();
   const wide = variant !== 'bar';
   const { t } = useI18n();
+  const about = useAboutTarget();
   const navigate = useNavigate();
   const location = useLocation();
   const page = useRef<HTMLElement>(null);
@@ -79,6 +81,7 @@ export function AppShell() {
       active={tab.current}
       onSelect={onSelect}
       variant={variant}
+      brand={about}
     />
   );
 

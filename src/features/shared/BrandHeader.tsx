@@ -3,6 +3,7 @@ import { AppBar, FocusPill } from '../../components';
 import { useI18n } from '../../i18n';
 import { isHome, useFocusSession } from '../focus/FocusSessionContext';
 import { sessionView } from '../focus/sessionView';
+import { useAboutTarget } from './aboutLink';
 import { OverflowMenu } from './OverflowMenu';
 
 const stickyBar = { position: 'sticky' as const, top: 0, zIndex: 10 };
@@ -16,6 +17,7 @@ const stickyBar = { position: 'sticky' as const, top: 0, zIndex: 10 };
 export function BrandHeader({ title, menu = true, pill = true }: { title?: string; menu?: boolean; pill?: boolean }) {
   const navigate = useNavigate();
   const { t } = useI18n();
+  const about = useAboutTarget();
   const { active, plan, status, now } = useFocusSession();
   // A running session shows as a pill on every tab (D1), opening its room
   // (or Focus, at home): the time left in the block or break, or "Break's over".
@@ -25,6 +27,7 @@ export function BrandHeader({ title, menu = true, pill = true }: { title?: strin
   return (
     <AppBar
       title={title}
+      brand={about}
       style={stickyBar}
       actions={
         <div style={{ display: 'flex', alignItems: 'center', gap: 4, paddingRight: '0.25rem' }}>

@@ -1,5 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { Logo } from './Logo';
+import { BrandLink } from './BrandLink';
+import type { BrandTarget } from './BrandLink';
 import { IconButton } from '../core/IconButton';
 
 /**
@@ -14,10 +16,12 @@ export interface AppBarProps {
   /** Accessible name of the back button. */
   backLabel?: string;
   actions?: ReactNode;
+  /** Brand mode: where the logo (and the wordmark, when no title) leads. */
+  brand?: BrandTarget;
   style?: CSSProperties;
 }
 
-export function AppBar({ mode = 'brand', title, onBack, backLabel = 'Back', actions = null, style = {} }: AppBarProps) {
+export function AppBar({ mode = 'brand', title, onBack, backLabel = 'Back', actions = null, brand, style = {} }: AppBarProps) {
   const bar: CSSProperties = {
     display: 'flex',
     alignItems: 'center',
@@ -64,6 +68,22 @@ export function AppBar({ mode = 'brand', title, onBack, backLabel = 'Back', acti
     );
   }
 
+  const name = (
+    <span
+      style={{
+        fontWeight: 500,
+        fontSize: '1.375rem',
+        color: 'var(--md-on-surface)',
+        minWidth: 0,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {title || 'THD Room Finder'}
+    </span>
+  );
+
   return (
     <header style={bar}>
       <div
@@ -76,20 +96,12 @@ export function AppBar({ mode = 'brand', title, onBack, backLabel = 'Back', acti
           minWidth: 0,
         }}
       >
-        <Logo size={24} />
-        <span
-          style={{
-            fontWeight: 500,
-            fontSize: '1.375rem',
-            color: 'var(--md-on-surface)',
-            minWidth: 0,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {title || 'THD Room Finder'}
-        </span>
+        {/* The wordmark joins the link; a page title stays plain text. */}
+        <BrandLink to={brand}>
+          <Logo size={24} />
+          {!title && name}
+        </BrandLink>
+        {title && name}
       </div>
       {actions}
     </header>
