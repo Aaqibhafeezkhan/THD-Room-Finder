@@ -52,6 +52,12 @@ describe('crawler front door', () => {
     }
   });
 
+  it('links the app shell to both about pages in plain HTML, not only in <noscript>', () => {
+    const shell = read('index.html').replace(/<noscript>[\s\S]*?<\/noscript>/g, '');
+    expect(shell).toContain('<a href="/about/">');
+    expect(shell).toContain('<a href="/about/de/">');
+  });
+
   it('lists the app and both about pages, with the landing source pointing its canonical here', () => {
     expect(sitemapPaths).toEqual(['/', '/about/', '/about/de/']);
     const source = read('website/index.html');
